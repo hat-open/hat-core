@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hat Core - ${page.title}</title>
+<link href="main.css" rel="stylesheet">
+</head>
+<body>
+    <div id="main">
+        <div id="header">
+            <div class="title">Hat Core</div>
+            <div class="subtitle">advanced SCADA-like core system components</div>
+        </div>
+        <div id="navigation">
+            % for i in page.links:
+                <a href="${i['path']}">
+                    <span class="fa ${i['icon']}"></span>
+                    ${i['label']}
+                </a>
+            % endfor
+        </div>
+        <div id="page" class="page-${page.name}">
+            ${self.body()}
+        </div>
+    </div>
+    <div id="copyright">
+        Copyright © 2020 Hat Open
+        <a href="https://github.com/hat-open/hat-core/blob/master/AUTHORS">AUTHORS</a>
+    </div>
+</body>
+</html>

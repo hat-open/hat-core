@@ -1,0 +1,11 @@
+[report]
+show_missing = True
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+
+[run]
+include =
+    ../src_py/*
+omit =
+    ../src_py/hat/doit/*

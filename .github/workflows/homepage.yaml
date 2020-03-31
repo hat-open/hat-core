@@ -1,0 +1,30 @@
+name: homepage
+on:
+    push:
+        branches:
+            - master
+jobs:
+    homepage:
+        runs-on: ubuntu-latest
+        steps:
+          - name: checkout repository
+            uses: actions/checkout@v2
+          - name: install sassc
+            run: sudo apt-get install -q -y sassc
+          - name: install python
+            uses: actions/setup-python@v1
+            with:
+                python-version: 3.8
+          - name: install requirements.pip.txt
+            run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.pip.txt
+          - name: doit homepage
+            run: doit homepage
+          - name: deploy
+            uses: peaceiris/actions-gh-pages@v3
+            with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                publish_dir: ./build/homepage
+                publish_branch: gh-pages
+                force_orphan: true

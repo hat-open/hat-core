@@ -1,0 +1,7 @@
+__pycache__
+/.doit.db
+/build
+/dist
+/cache
+/node_modules
+/src_py/hat/_sqlite*
