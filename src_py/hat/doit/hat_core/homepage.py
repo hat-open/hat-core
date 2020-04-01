@@ -7,6 +7,7 @@ from hat.doit.hat_core.docs import html_dst_dir as docs_src_dir
 
 __all__ = ['task_homepage',
            'task_homepage_pages',
+           'task_homepage_static',
            'task_homepage_sass',
            'task_homepage_docs']
 
@@ -20,6 +21,7 @@ def task_homepage():
     """Homepage - build"""
     return {'actions': None,
             'task_dep': ['homepage_pages',
+                         'homepage_static',
                          'homepage_sass',
                          'homepage_docs']}
 
@@ -34,6 +36,18 @@ def task_homepage_pages():
         yield {'name': str(page.dst_path),
                'actions': [page.build],
                'targets': [page.dst_path]}
+
+
+def task_homepage_static():
+    """Homepage - copy static assets"""
+    mappings = {Path('logo/favicon.ico'): dst_dir / 'favicon.ico'}
+
+    for src_path, dst_path in mappings.items():
+        yield {'name': str(dst_path),
+               'actions': [(common.mkdir_p, [dst_path.parent]),
+                           (common.cp_r, [src_path, dst_path])],
+               'file_dep': [src_path],
+               'targets': [dst_path]}
 
 
 def task_homepage_sass():
