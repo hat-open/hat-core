@@ -9,7 +9,8 @@ import packaging.version
 from hat.doit import common
 
 
-__all__ = ['task_pyhat_util']
+__all__ = ['task_pyhat_util',
+           'task_pyhat_peg']
 
 
 build_dir = Path('build/pyhat')
@@ -37,6 +38,19 @@ def task_pyhat_util():
                            dependencies=['pyyaml',
                                          'jsonschema',
                                          'jsonpatch'],
+                           mappings=mappings)
+
+
+def task_pyhat_peg():
+    """PyHat - build hat-peg"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-peg')
+        src_py = src_py_dir / 'hat/peg.py'
+        yield src_py, dst_dir / src_py.relative_to(src_py_dir)
+
+    return _get_task_build(name='hat-peg',
+                           description='Hat PEG parser',
+                           dependencies=['hat-util'],
                            mappings=mappings)
 
 

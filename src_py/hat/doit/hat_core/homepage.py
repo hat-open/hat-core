@@ -120,7 +120,9 @@ class Page:
     def python_libraries(self):
         return [
             {'title': 'hat-util',
-             'description': 'Utility modules'}
+             'description': 'Utility modules'},
+            {'title': 'hat-peg',
+             'description': 'Parsing expression grammar'}
         ]
 
     @property
@@ -130,7 +132,9 @@ class Page:
     @property
     def python_packages(self):
         return [{'name': 'hat-util',
-                 'docs': 'docs/libraries/util.html'}]
+                 'docs': 'docs/libraries/util.html'},
+                {'name': 'hat-peg',
+                         'docs': 'docs/libraries/peg.html'}]
 
     @property
     def javascript_packages(self):
