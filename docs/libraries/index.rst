@@ -6,3 +6,4 @@ Libraries
 
     util
     peg
+    juggler

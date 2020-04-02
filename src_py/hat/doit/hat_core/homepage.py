@@ -122,7 +122,9 @@ class Page:
             {'title': 'hat-util',
              'description': 'Utility modules'},
             {'title': 'hat-peg',
-             'description': 'Parsing expression grammar'}
+             'description': 'Parsing expression grammar'},
+            {'title': 'hat-juggler',
+             'description': 'Juggler communication protocol'},
         ]
 
     @property
@@ -134,7 +136,9 @@ class Page:
         return [{'name': 'hat-util',
                  'docs': 'docs/libraries/util.html'},
                 {'name': 'hat-peg',
-                         'docs': 'docs/libraries/peg.html'}]
+                 'docs': 'docs/libraries/peg.html'},
+                {'name': 'hat-juggler',
+                 'docs': 'docs/libraries/juggler.html'}]
 
     @property
     def javascript_packages(self):

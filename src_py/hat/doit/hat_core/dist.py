@@ -8,7 +8,9 @@ from hat.doit.hat_core.pyhat import build_dir as pyhat_dir
 __all__ = ['task_dist',
            'task_dist_upload',
            'task_dist_pyhat_util',
-           'task_dist_pyhat_peg']
+           'task_dist_pyhat_peg',
+           'task_dist_pyhat_juggler']
+
 
 dist_dir = Path('dist')
 dist_py_dir = dist_dir / 'pip'
@@ -19,11 +21,12 @@ def task_dist():
     """Dist - create all distribution packages"""
     return {'actions': None,
             'task_dep': ['dist_pyhat_util',
-                         'dist_pyhat_peg']}
+                         'dist_pyhat_peg',
+                         'dist_pyhat_juggler']}
 
 
 def task_dist_upload():
-    """Dist - upload to nibbler"""
+    """Dist - upload packages"""
     def upload():
         pass
 
@@ -39,6 +42,11 @@ def task_dist_pyhat_util():
 def task_dist_pyhat_peg():
     """Dist - create pyhat hat-peg distribution"""
     return _get_task_dist_pyhat('hat-peg', 'pyhat_peg')
+
+
+def task_dist_pyhat_juggler():
+    """Dist - create pyhat hat-juggler distribution"""
+    return _get_task_dist_pyhat('hat-juggler', 'pyhat_juggler')
 
 
 def _get_task_dist_pyhat(name, build_task):

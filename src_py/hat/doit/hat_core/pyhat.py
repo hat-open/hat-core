@@ -10,7 +10,8 @@ from hat.doit import common
 
 
 __all__ = ['task_pyhat_util',
-           'task_pyhat_peg']
+           'task_pyhat_peg',
+           'task_pyhat_juggler']
 
 
 build_dir = Path('build/pyhat')
@@ -51,6 +52,21 @@ def task_pyhat_peg():
     return _get_task_build(name='hat-peg',
                            description='Hat PEG parser',
                            dependencies=['hat-util'],
+                           mappings=mappings)
+
+
+def task_pyhat_juggler():
+    """PyHat - build hat-juggler"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-juggler')
+        src_py = src_py_dir / 'hat/juggler.py'
+        yield src_py, dst_dir / src_py.relative_to(src_py_dir)
+
+    return _get_task_build(name='hat-juggler',
+                           description='Hat Juggler protocol',
+                           dependencies=['aiohttp',
+                                         'hat-util',
+                                         'hat-json'],
                            mappings=mappings)
 
 
