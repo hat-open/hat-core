@@ -44,15 +44,18 @@ Python packages require Python 3.8 and can be installed with `pip`::
 
 where ``package-name`` is one of following:
 
-    * hat-util
+    * `hat-util <https://pypi.org/project/hat-util>`_
+      (`util docs <https://hat-open.github.io/hat-core/docs/libraries/util.html>`_)
 
         Utility module
 
-    * hat-peg
+    * `hat-peg <https://pypi.org/project/hat-peg>`_
+      (`peg docs <https://hat-open.github.io/hat-core/docs/libraries/peg.html>`_)
 
         Parsing expression grammar
 
-    * hat-juggler
+    * `hat-juggler <https://pypi.org/project/hat-juggler>`_
+      (`juggler docs <https://hat-open.github.io/hat-core/docs/libraries/juggler.html>`_)
 
         Juggler communication protocol
 
