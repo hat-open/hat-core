@@ -54,6 +54,11 @@ where ``package-name`` is one of following:
 
         Parsing expression grammar
 
+    * `hat-sbs <https://pypi.org/project/hat-sbs>`_
+      (`sbs docs <https://hat-open.github.io/hat-core/docs/libraries/sbs.html>`_)
+
+        Simple binary serialization
+
     * `hat-juggler <https://pypi.org/project/hat-juggler>`_
       (`juggler docs <https://hat-open.github.io/hat-core/docs/libraries/juggler.html>`_)
 

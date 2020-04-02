@@ -11,6 +11,7 @@ from hat.doit import common
 
 __all__ = ['task_pyhat_util',
            'task_pyhat_peg',
+           'task_pyhat_sbs',
            'task_pyhat_juggler']
 
 
@@ -52,6 +53,20 @@ def task_pyhat_peg():
     return _get_task_build(name='hat-peg',
                            description='Hat PEG parser',
                            dependencies=['hat-util'],
+                           mappings=mappings)
+
+
+def task_pyhat_sbs():
+    """PyHat - build hat-sbs"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-sbs')
+        for i in (src_py_dir / 'hat/sbs').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+
+    return _get_task_build(name='hat-sbs',
+                           description='Hat simple binary serializer',
+                           dependencies=['hat-util',
+                                         'hat-peg'],
                            mappings=mappings)
 
 

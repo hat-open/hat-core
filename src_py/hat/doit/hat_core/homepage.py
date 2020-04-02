@@ -123,6 +123,8 @@ class Page:
              'description': 'Utility modules'},
             {'title': 'hat-peg',
              'description': 'Parsing expression grammar'},
+            {'title': 'hat-sbs',
+             'description': 'Simple binary serialization'},
             {'title': 'hat-juggler',
              'description': 'Juggler communication protocol'},
         ]
@@ -137,6 +139,8 @@ class Page:
                  'docs': 'docs/libraries/util.html'},
                 {'name': 'hat-peg',
                  'docs': 'docs/libraries/peg.html'},
+                {'name': 'hat-sbs',
+                 'docs': 'docs/libraries/sbs.html'},
                 {'name': 'hat-juggler',
                  'docs': 'docs/libraries/juggler.html'}]
 

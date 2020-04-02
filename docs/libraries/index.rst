@@ -6,4 +6,5 @@ Libraries
 
     util
     peg
+    sbs
     juggler
