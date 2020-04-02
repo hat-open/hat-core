@@ -2,7 +2,7 @@ Hat Core - advanced SCADA-like core system components
 =====================================================
 
 Hat Open is open-source framework of tools and libraries for developing
-applications used for remote monitoring, control and management of 
+applications used for remote monitoring, control and management of
 intelligent electronic devices such as IoT devices, PLCs, industrial
 automation or home automation systems.
 
@@ -47,6 +47,14 @@ where ``package-name`` is one of following:
     * hat-util
 
         Utility module
+
+    * hat-peg
+
+        Parsing expression grammar
+
+    * hat-juggler
+
+        Juggler communication protocol
 
 
 Build
