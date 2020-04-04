@@ -2,6 +2,7 @@ from pathlib import Path
 import subprocess
 
 from hat.doit import common
+from hat.doit.hat_core.jshat.lib import build_dir as jshat_dir
 from hat.doit.hat_core.pyhat import build_dir as pyhat_dir
 
 
@@ -10,7 +11,8 @@ __all__ = ['task_dist',
            'task_dist_pyhat_util',
            'task_dist_pyhat_peg',
            'task_dist_pyhat_sbs',
-           'task_dist_pyhat_juggler']
+           'task_dist_pyhat_juggler',
+           'task_dist_jshat_util']
 
 
 dist_dir = Path('dist')
@@ -24,7 +26,8 @@ def task_dist():
             'task_dep': ['dist_pyhat_util',
                          'dist_pyhat_peg',
                          'dist_pyhat_sbs',
-                         'dist_pyhat_juggler']}
+                         'dist_pyhat_juggler',
+                         'dist_jshat_util']}
 
 
 def task_dist_upload():
@@ -56,6 +59,11 @@ def task_dist_pyhat_juggler():
     return _get_task_dist_pyhat('hat-juggler', 'pyhat_juggler')
 
 
+def task_dist_jshat_util():
+    """Dist - create jshat @hat-core/util distribution"""
+    return _get_task_dist_jshat('@hat-core/util', 'jshat_lib_util')
+
+
 def _get_task_dist_pyhat(name, build_task):
     src_path = pyhat_dir / name
     dst_path = dist_py_dir / name
@@ -64,8 +72,23 @@ def _get_task_dist_pyhat(name, build_task):
             'task_dep': [build_task]}
 
 
+def _get_task_dist_jshat(name, build_task):
+    src_path = jshat_dir / name
+    dst_path = dist_js_dir
+    return {'actions': [(common.mkdir_p, [dst_path]),
+                        (_create_npm_package, [src_path, dst_path])],
+            'task_dep': [build_task]}
+
+
 def _create_wheel(src_path, dst_path):
     subprocess.run(['python', 'setup.py', '-q', 'bdist_wheel',
                     '--dist-dir', str(dst_path.resolve())],
                    cwd=str(src_path),
+                   check=True)
+
+
+def _create_npm_package(src_path, dst_path):
+    subprocess.run(['npm', 'pack', '--silent', str(src_path.resolve())],
+                   stdout=subprocess.DEVNULL,
+                   cwd=str(dst_path),
                    check=True)

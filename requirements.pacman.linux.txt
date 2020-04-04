@@ -1,1 +1,8 @@
+libyaml
+nodejs
+npm
+pandoc
+python
+python-pip
 sassc
+yarn
