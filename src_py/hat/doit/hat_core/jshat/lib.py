@@ -7,7 +7,8 @@ from hat.util import json
 
 
 __all__ = ['task_jshat_lib_util',
-           'task_jshat_lib_renderer']
+           'task_jshat_lib_renderer',
+           'task_jshat_lib_future']
 
 
 src_dir = Path('src_js')
@@ -38,6 +39,18 @@ def task_jshat_lib_renderer():
                          mappings=mappings,
                          deps={'snabbdom': '*',
                                '@hat-core/util': '*'})
+
+
+def task_jshat_lib_future():
+    """JsHat library - build @hat-core/future"""
+    def mappings():
+        dst_dir = _get_dst_dir('@hat-core/future')
+        src_js = src_dir / '@hat-core/future.js'
+        yield src_js, dst_dir / 'index.js'
+
+    return _get_task_lib(name='@hat-core/future',
+                         desc='Hat async future implementation',
+                         mappings=mappings)
 
 
 def _get_task_lib(name, desc, mappings, deps={}):

@@ -13,7 +13,8 @@ __all__ = ['task_dist',
            'task_dist_pyhat_sbs',
            'task_dist_pyhat_juggler',
            'task_dist_jshat_util',
-           'task_dist_jshat_renderer']
+           'task_dist_jshat_renderer',
+           'task_dist_jshat_future']
 
 
 dist_dir = Path('dist')
@@ -29,7 +30,8 @@ def task_dist():
                          'dist_pyhat_sbs',
                          'dist_pyhat_juggler',
                          'dist_jshat_util',
-                         'dist_jshat_renderer']}
+                         'dist_jshat_renderer',
+                         'dist_jshat_future']}
 
 
 def task_dist_upload():
@@ -69,6 +71,11 @@ def task_dist_jshat_util():
 def task_dist_jshat_renderer():
     """Dist - create jshat @hat-core/renderer distribution"""
     return _get_task_dist_jshat('@hat-core/renderer', 'jshat_lib_renderer')
+
+
+def task_dist_jshat_future():
+    """Dist - create jshat @hat-core/future distribution"""
+    return _get_task_dist_jshat('@hat-core/future', 'jshat_lib_future')
 
 
 def _get_task_dist_pyhat(name, build_task):

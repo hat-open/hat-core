@@ -135,7 +135,9 @@ class Page:
             {'title': '@hat-core/util',
              'description': 'Utility module'},
             {'title': '@hat-core/renderer',
-             'description': 'Virtual DOM renderer'}
+             'description': 'Virtual DOM renderer'},
+            {'title': '@hat-core/future',
+             'description': 'Async Future implementation'},
         ]
 
     @property
@@ -152,7 +154,8 @@ class Page:
     @property
     def javascript_packages(self):
         return [{'name': '@hat-core/util'},
-                {'name': '@hat-core/renderer'}]
+                {'name': '@hat-core/renderer'},
+                {'name': '@hat-core/future'}]
 
     def build(self):
         tmpl.mako_build(src_dir, self.src_path, self.dst_path, {'page': self})

@@ -82,6 +82,10 @@ where ``package-name`` is one of following:
 
         Virtual DOM renderer
 
+    * `@hat-core/future <https://www.npmjs.com/package/@hat-core/future>`_
+
+        Async Future implementation
+
 
 Build
 -----
