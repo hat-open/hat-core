@@ -32,10 +32,10 @@ jobs:
             run: doit check
           - name: doit test
             run: doit test
-          - name: doit dist
-            run: doit dist
-          - name: upload artifacts
-            uses: actions/upload-artifact@v1
-            with:
-                name: dist
-                path: dist
+          # - name: doit dist
+          #   run: doit dist
+          # - name: upload artifacts
+          #   uses: actions/upload-artifact@v1
+          #   with:
+          #       name: dist
+          #       path: dist
