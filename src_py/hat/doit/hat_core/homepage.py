@@ -133,7 +133,9 @@ class Page:
     def javascript_libraries(self):
         return [
             {'title': '@hat-core/util',
-             'description': 'Utility module'}
+             'description': 'Utility module'},
+            {'title': '@hat-core/renderer',
+             'description': 'Virtual DOM renderer'}
         ]
 
     @property
@@ -149,7 +151,8 @@ class Page:
 
     @property
     def javascript_packages(self):
-        return [{'name': '@hat-core/util'}]
+        return [{'name': '@hat-core/util'},
+                {'name': '@hat-core/renderer'}]
 
     def build(self):
         tmpl.mako_build(src_dir, self.src_path, self.dst_path, {'page': self})

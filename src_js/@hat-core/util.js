@@ -1,9 +1,9 @@
-/** @module "@hat"/util
+/** @module "@hat-core"/util
  */
 
 /**
  * Path can be an object property name, array index, or array of Paths
- * @typedef {string|number|Path[]} module:"@hat"/util.Path
+ * @typedef {string|number|Path[]} module:"@hat-core"/util.Path
  */
 
 /**

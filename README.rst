@@ -65,6 +65,24 @@ where ``package-name`` is one of following:
         Juggler communication protocol
 
 
+JavaScript packages
+'''''''''''''''''''
+
+JavaScript packages can be installed with `npm`::
+
+    $ npm install <package-name>
+
+where ``package-name`` is one of following:
+
+    * `@hat-core/util <https://www.npmjs.com/package/@hat-core/util>`_
+
+        Utility module
+
+    * `@hat-core/renderer <https://www.npmjs.com/package/@hat-core/renderer>`_
+
+        Virtual DOM renderer
+
+
 Build
 -----
 

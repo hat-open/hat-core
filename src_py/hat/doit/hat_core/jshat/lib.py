@@ -6,7 +6,8 @@ from hat.doit import common
 from hat.util import json
 
 
-__all__ = ['task_jshat_lib_util']
+__all__ = ['task_jshat_lib_util',
+           'task_jshat_lib_renderer']
 
 
 src_dir = Path('src_js')
@@ -23,6 +24,20 @@ def task_jshat_lib_util():
     return _get_task_lib(name='@hat-core/util',
                          desc='Hat utility module',
                          mappings=mappings)
+
+
+def task_jshat_lib_renderer():
+    """JsHat library - build @hat-core/renderer"""
+    def mappings():
+        dst_dir = _get_dst_dir('@hat-core/renderer')
+        src_js = src_dir / '@hat-core/renderer.js'
+        yield src_js, dst_dir / 'index.js'
+
+    return _get_task_lib(name='@hat-core/renderer',
+                         desc='Hat virtual DOM renderer',
+                         mappings=mappings,
+                         deps={'snabbdom': '*',
+                               '@hat-core/util': '*'})
 
 
 def _get_task_lib(name, desc, mappings, deps={}):
