@@ -1,5 +1,5 @@
-Hat Core - advanced SCADA-like core system components
-=====================================================
+Hat Core - remote control and monitoring framework core
+=======================================================
 
 Hat Open is open-source framework of tools and libraries for developing
 applications used for remote monitoring, control and management of
