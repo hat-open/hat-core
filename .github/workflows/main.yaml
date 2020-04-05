@@ -1,13 +1,28 @@
 name: main
 on:
     push:
-        branches:
-            - master
+        branches-ignore:
+            - gh-pages
     pull_request:
-        branches:
-            - master
+        branches-ignore:
+            - gh-pages
 jobs:
-    main:
+    check:
+        runs-on: ubuntu-latest
+        steps:
+          - name: checkout repository
+            uses: actions/checkout@v2
+          - name: install python
+            uses: actions/setup-python@v1
+            with:
+                python-version: ${{ matrix.python_version }}
+          - name: install requirements.pip.txt
+            run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.pip.txt
+          - name: doit check
+            run: doit check
+    test:
         strategy:
             matrix:
                 platform:
@@ -28,14 +43,28 @@ jobs:
             run: |
                 python -m pip install --upgrade pip
                 pip install -r requirements.pip.txt
-          - name: doit check
-            run: doit check
           - name: doit test
             run: doit test
-          # - name: doit dist
-          #   run: doit dist
-          # - name: upload artifacts
-          #   uses: actions/upload-artifact@v1
-          #   with:
-          #       name: dist
-          #       path: dist
+    dist:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+          - name: checkout repository
+            uses: actions/checkout@v2
+          - name: install ubuntu requirements
+            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
+          - name: install python
+            uses: actions/setup-python@v1
+            with:
+                python-version: 3.8
+          - name: install requirements.pip.txt
+            run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.pip.txt
+          - name: doit dist
+            run: doit dist
+          - name: upload artifacts
+            uses: actions/upload-artifact@v1
+            with:
+                name: dist
+                path: dist
