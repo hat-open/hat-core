@@ -80,8 +80,7 @@ def task_pyhat_juggler():
     return _get_task_build(name='hat-juggler',
                            description='Hat Juggler protocol',
                            dependencies=['aiohttp',
-                                         'hat-util',
-                                         'hat-json'],
+                                         'hat-util'],
                            mappings=mappings)
 
 
