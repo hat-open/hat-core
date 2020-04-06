@@ -7,6 +7,8 @@ extensions = ['sphinx.ext.imgmath',
               'sphinx.ext.autosummary',
               'sphinx.ext.napoleon',
               'sphinx.ext.imgmath',
+              'hat.sphinx.include_dir',
+              'hat.sphinx.exec',
               'hat.sphinx.patch']
 
 with open('../VERSION', encoding='utf-8') as f:

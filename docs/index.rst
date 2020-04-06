@@ -7,3 +7,4 @@ Content
 
     introduction
     libraries/index
+    appendix/index
