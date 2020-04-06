@@ -7,13 +7,15 @@ import sys
 import packaging.version
 
 from hat.doit import common
+from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
 
 
 __all__ = ['task_pyhat_util',
            'task_pyhat_peg',
            'task_pyhat_sbs',
            'task_pyhat_chatter',
-           'task_pyhat_juggler']
+           'task_pyhat_juggler',
+           'task_pyhat_duktape']
 
 
 build_dir = Path('build/pyhat')
@@ -106,6 +108,23 @@ def task_pyhat_juggler():
                            mappings=mappings)
 
 
+def task_pyhat_duktape():
+    """PyHat - build hat-duktape"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-duktape')
+        src_py = src_py_dir / 'hat/duktape.py'
+        dst_py = dst_dir / src_py.relative_to(src_py_dir)
+        yield src_py, dst_py
+        yield duktape_lib_path, dst_py.parent / duktape_lib_path.name
+
+    return _get_task_build(name='hat-duktape',
+                           description='Hat Python Duktape JS wrapper',
+                           dependencies=[],
+                           mappings=mappings,
+                           platform_specific=True,
+                           task_dep=['duktape'])
+
+
 def _get_task_build(name, description, dependencies, mappings, *,
                     console_scripts=[], gui_scripts=[],
                     platform_specific=False, task_dep=[]):
@@ -181,6 +200,8 @@ def _get_plat_name():
     arch, _ = platform.architecture()
     if sys.platform == 'win32' and arch == '32bit':
         return 'win32'
+    if sys.platform == 'win32' and arch == '64bit':
+        return 'win_amd64'
     if sys.platform == 'linux' and arch == '64bit':
         return 'manylinux1_x86_64'
     if sys.platform == 'darwin' and arch == '64bit':

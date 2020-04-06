@@ -129,6 +129,8 @@ class Page:
              'description': 'Chatter communication protocol'},
             {'title': 'hat-juggler',
              'description': 'Juggler communication protocol'},
+            {'title': 'hat-duktape',
+             'description': 'Python Duktape JS wrapper'}
         ]
 
     @property
@@ -155,7 +157,9 @@ class Page:
                 {'name': 'hat-chatter',
                  'docs': 'docs/libraries/chatter.html'},
                 {'name': 'hat-juggler',
-                 'docs': 'docs/libraries/juggler.html'}]
+                 'docs': 'docs/libraries/juggler.html'},
+                {'name': 'hat-duktape',
+                 'docs': 'docs/libraries/duktape.html'}]
 
     @property
     def javascript_packages(self):

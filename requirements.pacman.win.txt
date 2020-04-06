@@ -1,1 +1,7 @@
+git
 mingw-w64-i686-sassc
+mingw-w64-i686-toolchain
+patch
+socat
+xorriso
+zip

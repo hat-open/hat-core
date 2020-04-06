@@ -9,3 +9,4 @@ Libraries
     sbs
     chatter
     juggler
+    duktape

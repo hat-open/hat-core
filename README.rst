@@ -69,6 +69,11 @@ where ``package-name`` is one of following:
 
         Juggler communication protocol
 
+    * `hat-duktape <https://pypi.org/project/hat-duktape>`_
+      (`duktape docs <https://hat-open.github.io/hat-core/docs/libraries/duktape.html>`_)
+
+        Python Duktape JS wrapper
+
 
 JavaScript packages
 '''''''''''''''''''

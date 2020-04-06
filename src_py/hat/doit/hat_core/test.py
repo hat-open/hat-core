@@ -15,4 +15,5 @@ def task_test():
                        check=True)
 
     return {'actions': [run],
-            'pos_arg': 'args'}
+            'pos_arg': 'args',
+            'task_dep': ['duktape']}
