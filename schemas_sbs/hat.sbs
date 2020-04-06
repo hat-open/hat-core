@@ -1,0 +1,16 @@
+module Hat
+
+Msg = Tuple {
+    id:     Integer
+    first:  Integer
+    owner:  Boolean
+    token:  Boolean
+    last:   Boolean
+    data:   Data
+}
+
+Data = Tuple {
+    module:  Maybe(String)
+    type:    String
+    data:    Bytes
+}

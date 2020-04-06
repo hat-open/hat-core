@@ -125,6 +125,8 @@ class Page:
              'description': 'Parsing expression grammar'},
             {'title': 'hat-sbs',
              'description': 'Simple binary serialization'},
+            {'title': 'hat-chatter',
+             'description': 'Chatter communication protocol'},
             {'title': 'hat-juggler',
              'description': 'Juggler communication protocol'},
         ]
@@ -150,6 +152,8 @@ class Page:
                  'docs': 'docs/libraries/peg.html'},
                 {'name': 'hat-sbs',
                  'docs': 'docs/libraries/sbs.html'},
+                {'name': 'hat-chatter',
+                 'docs': 'docs/libraries/chatter.html'},
                 {'name': 'hat-juggler',
                  'docs': 'docs/libraries/juggler.html'}]
 

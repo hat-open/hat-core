@@ -11,6 +11,7 @@ __all__ = ['task_dist',
            'task_dist_pyhat_util',
            'task_dist_pyhat_peg',
            'task_dist_pyhat_sbs',
+           'task_dist_pyhat_chatter',
            'task_dist_pyhat_juggler',
            'task_dist_jshat_util',
            'task_dist_jshat_renderer',
@@ -29,6 +30,7 @@ def task_dist():
             'task_dep': ['dist_pyhat_util',
                          'dist_pyhat_peg',
                          'dist_pyhat_sbs',
+                         'dist_pyhat_chatter',
                          'dist_pyhat_juggler',
                          'dist_jshat_util',
                          'dist_jshat_renderer',
@@ -58,6 +60,11 @@ def task_dist_pyhat_peg():
 def task_dist_pyhat_sbs():
     """Dist - create pyhat hat-sbs distribution"""
     return _get_task_dist_pyhat('hat-sbs', 'pyhat_sbs')
+
+
+def task_dist_pyhat_chatter():
+    """Dist - create pyhat hat-chatter distribution"""
+    return _get_task_dist_pyhat('hat-chatter', 'pyhat_chatter')
 
 
 def task_dist_pyhat_juggler():

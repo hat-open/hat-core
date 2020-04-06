@@ -57,6 +57,11 @@ where ``package-name`` is one of following:
     * `hat-sbs <https://pypi.org/project/hat-sbs>`_
       (`sbs docs <https://hat-open.github.io/hat-core/docs/libraries/sbs.html>`_)
 
+        Chatter communication protocol
+
+    * `hat-chatter <https://pypi.org/project/hat-chatter>`_
+      (`chatter docs <https://hat-open.github.io/hat-core/docs/libraries/chatter.html>`_)
+
         Simple binary serialization
 
     * `hat-juggler <https://pypi.org/project/hat-juggler>`_

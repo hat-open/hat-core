@@ -12,11 +12,13 @@ from hat.doit import common
 __all__ = ['task_pyhat_util',
            'task_pyhat_peg',
            'task_pyhat_sbs',
+           'task_pyhat_chatter',
            'task_pyhat_juggler']
 
 
 build_dir = Path('build/pyhat')
 src_json_dir = Path('schemas_json')
+src_sbs_dir = Path('schemas_sbs')
 src_py_dir = Path('src_py')
 
 
@@ -67,6 +69,26 @@ def task_pyhat_sbs():
                            description='Hat simple binary serializer',
                            dependencies=['hat-util',
                                          'hat-peg'],
+                           mappings=mappings)
+
+
+def task_pyhat_chatter():
+    """PyHat - build hat-chatter"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-chatter')
+        src_py = src_py_dir / 'hat/chatter.py'
+        yield src_py, dst_dir / src_py.relative_to(src_py_dir)
+        schemas_sbs_hat = src_sbs_dir / 'hat.sbs'
+        yield schemas_sbs_hat, (dst_dir / 'hat/schemas_sbs'
+                                / schemas_sbs_hat.relative_to(src_sbs_dir))
+        schemas_sbs_ping = src_sbs_dir / 'hat/ping.sbs'
+        yield schemas_sbs_ping, (dst_dir / 'hat/schemas_sbs'
+                                 / schemas_sbs_ping.relative_to(src_sbs_dir))
+
+    return _get_task_build(name='hat-chatter',
+                           description='Hat Chatter protocol',
+                           dependencies=['hat-util',
+                                         'hat-sbs'],
                            mappings=mappings)
 
 

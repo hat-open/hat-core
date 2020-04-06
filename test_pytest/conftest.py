@@ -5,6 +5,7 @@ import socket
 
 from hat.util import aio
 from hat.util import json
+from hat import sbs
 
 
 def pytest_configure(config):
@@ -12,6 +13,7 @@ def pytest_configure(config):
 
     root_path = Path(__file__).parent.parent
     json.default_schemas_json_path = root_path / 'schemas_json'
+    sbs.default_schemas_sbs_path = root_path / 'schemas_sbs'
 
 
 @pytest.fixture

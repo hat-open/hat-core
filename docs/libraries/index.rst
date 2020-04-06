@@ -7,4 +7,5 @@ Libraries
     util
     peg
     sbs
+    chatter
     juggler
