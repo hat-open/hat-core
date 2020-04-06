@@ -8,7 +8,8 @@ from hat.util import json
 
 __all__ = ['task_jshat_lib_util',
            'task_jshat_lib_renderer',
-           'task_jshat_lib_future']
+           'task_jshat_lib_future',
+           'task_jshat_lib_juggler']
 
 
 src_dir = Path('src_js')
@@ -51,6 +52,20 @@ def task_jshat_lib_future():
     return _get_task_lib(name='@hat-core/future',
                          desc='Hat async future implementation',
                          mappings=mappings)
+
+
+def task_jshat_lib_juggler():
+    """JsHat library - build @hat-core/juggler"""
+    def mappings():
+        dst_dir = _get_dst_dir('@hat-core/juggler')
+        src_js = src_dir / '@hat-core/juggler.js'
+        yield src_js, dst_dir / 'index.js'
+
+    return _get_task_lib(name='@hat-core/juggler',
+                         desc='Hat juggler client library',
+                         mappings=mappings,
+                         deps={'jiff': '*',
+                               '@hat-core/util': '*'})
 
 
 def _get_task_lib(name, desc, mappings, deps={}):

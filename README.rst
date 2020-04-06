@@ -86,6 +86,10 @@ where ``package-name`` is one of following:
 
         Async Future implementation
 
+    * `@hat-core/juggler <https://www.npmjs.com/package/@hat-core/juggler>`_
+
+        Juggler client library
+
 
 Build
 -----

@@ -138,6 +138,8 @@ class Page:
              'description': 'Virtual DOM renderer'},
             {'title': '@hat-core/future',
              'description': 'Async Future implementation'},
+            {'title': '@hat-core/juggler',
+             'description': 'Juggler client library'},
         ]
 
     @property
@@ -155,7 +157,8 @@ class Page:
     def javascript_packages(self):
         return [{'name': '@hat-core/util'},
                 {'name': '@hat-core/renderer'},
-                {'name': '@hat-core/future'}]
+                {'name': '@hat-core/future'},
+                {'name': '@hat-core/juggler'}]
 
     def build(self):
         tmpl.mako_build(src_dir, self.src_path, self.dst_path, {'page': self})
