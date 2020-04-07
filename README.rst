@@ -74,6 +74,10 @@ where ``package-name`` is one of following:
 
         Python Duktape JS wrapper
 
+    * `hat-sqlite3 <https://pypi.org/project/hat-sqlite3>`_
+
+        Hat specific sqlite3 build
+
 
 JavaScript packages
 '''''''''''''''''''

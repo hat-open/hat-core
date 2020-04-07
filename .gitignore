@@ -4,4 +4,4 @@ __pycache__
 /dist
 /cache
 /node_modules
-/src_py/hat/_sqlite*
+/src_py/hat/_sqlite3.*

@@ -8,6 +8,7 @@ import packaging.version
 
 from hat.doit import common
 from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
+from hat.doit.hat_core.pymod import sqlite3_mod_path
 
 
 __all__ = ['task_pyhat_util',
@@ -15,7 +16,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_sbs',
            'task_pyhat_chatter',
            'task_pyhat_juggler',
-           'task_pyhat_duktape']
+           'task_pyhat_duktape',
+           'task_pyhat_sqlite3']
 
 
 build_dir = Path('build/pyhat')
@@ -123,6 +125,26 @@ def task_pyhat_duktape():
                            mappings=mappings,
                            platform_specific=True,
                            task_dep=['duktape'])
+
+
+def task_pyhat_sqlite3():
+    """PyHat - build hat-sqlite3"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-sqlite3')
+
+        src_py = src_py_dir / 'hat/sqlite3.py'
+        dst_py = dst_dir / src_py.relative_to(src_py_dir)
+        yield src_py, dst_py
+
+        dst_lib = dst_dir / sqlite3_mod_path.relative_to(src_py_dir)
+        yield sqlite3_mod_path, dst_lib
+
+    return _get_task_build(name='hat-sqlite3',
+                           description='Hat Sqlite3 build',
+                           dependencies=[],
+                           mappings=mappings,
+                           platform_specific=True,
+                           task_dep=['pymod_sqlite3'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,

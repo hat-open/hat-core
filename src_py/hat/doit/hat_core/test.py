@@ -16,4 +16,5 @@ def task_test():
 
     return {'actions': [run],
             'pos_arg': 'args',
-            'task_dep': ['duktape']}
+            'task_dep': ['duktape',
+                         'pymod']}
