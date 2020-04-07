@@ -17,7 +17,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_chatter',
            'task_pyhat_juggler',
            'task_pyhat_duktape',
-           'task_pyhat_sqlite3']
+           'task_pyhat_sqlite3',
+           'task_pyhat_drivers']
 
 
 build_dir = Path('build/pyhat')
@@ -145,6 +146,23 @@ def task_pyhat_sqlite3():
                            mappings=mappings,
                            platform_specific=True,
                            task_dep=['pymod_sqlite3'])
+
+
+def task_pyhat_drivers():
+    """PyHat - build hat-drivers"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-drivers')
+        for i in (src_py_dir / 'hat/drivers').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        for i in (src_json_dir / 'drivers').rglob('*.yaml'):
+            yield i, (dst_dir / 'hat/schemas_json'
+                              / i.relative_to(src_json_dir))
+
+    return _get_task_build(name='hat-drivers',
+                           description='Hat communication drivers',
+                           dependencies=['pyserial',
+                                         'hat-util'],
+                           mappings=mappings)
 
 
 def _get_task_build(name, description, dependencies, mappings, *,

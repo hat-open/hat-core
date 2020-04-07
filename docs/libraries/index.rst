@@ -10,3 +10,4 @@ Libraries
     chatter
     juggler
     duktape
+    drivers/index

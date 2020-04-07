@@ -132,7 +132,9 @@ class Page:
             {'title': 'hat-duktape',
              'description': 'Python Duktape JS wrapper'},
             {'title': 'hat-sqlite3',
-             'description': 'Hat specific sqlite3 build'}
+             'description': 'Hat specific sqlite3 build'},
+            {'title': 'hat-drivers',
+             'description': 'Communication drivers'}
         ]
 
     @property
@@ -162,7 +164,9 @@ class Page:
                  'docs': 'docs/libraries/juggler.html'},
                 {'name': 'hat-duktape',
                  'docs': 'docs/libraries/duktape.html'},
-                {'name': 'hat-sqlite3'}]
+                {'name': 'hat-sqlite3'},
+                {'name': 'hat-drivers',
+                 'docs': 'docs/libraries/drivers/index.html'}]
 
     @property
     def javascript_packages(self):

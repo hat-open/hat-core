@@ -78,6 +78,11 @@ where ``package-name`` is one of following:
 
         Hat specific sqlite3 build
 
+    * `hat-drivers <https://pypi.org/project/hat-drivers>`_
+      (`drivers docs <https://hat-open.github.io/hat-core/docs/libraries/drivers/index.html>`_)
+
+        Communication drivers
+
 
 JavaScript packages
 '''''''''''''''''''

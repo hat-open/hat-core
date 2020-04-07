@@ -1,0 +1,57 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://drivers/serial.yaml#"
+title: Serial client configuration
+type: object
+required:
+    - port
+properties:
+    port:
+        title: Port name
+        description: |
+            Port name dependent of operating system
+            (e.g. `/dev/ttyUSB0`, `COM3`, ...)
+        type: string
+    baudrate:
+        title: Baud rate
+        type: integer
+        default: 9600
+    bytesize:
+        title: Number of data bits
+        enum:
+            - FIVEBITS
+            - SIXBITS
+            - SEVENBITS
+            - EIGHTBITS
+        default: EIGHTBITS
+    parity:
+        title: Parity checking
+        enum:
+            - PARITY_NONE
+            - PARITY_EVEN
+            - PARITY_ODD
+            - PARITY_MARK
+            - PARITY_SPACE
+        default: PARITY_NONE
+    stopbits:
+        title: Number of stop bits
+        enum:
+            - STOPBITS_ONE
+            - STOPBITS_ONE_POINT_FIVE
+            - STOPBITS_TWO
+        default: STOPBITS_ONE
+    rtscts:
+        title: Enable hardware RTS/CTS flow control
+        type: boolean
+        default: False
+    dsrdtr:
+        title: Enable hardware DSR/DTR flow control
+        type: boolean
+        default: False
+    silent_interval:
+        title: Silent interval
+        description: |
+            Minimum time in seconds between writing two consecutive messages
+        type: number
+        default: 0
+...
