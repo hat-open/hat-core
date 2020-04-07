@@ -2,3 +2,4 @@ libyaml-dev
 pandoc
 python3.8-dev
 sassc
+socat
