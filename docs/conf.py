@@ -1,3 +1,4 @@
+from pathlib import Path
 
 
 extensions = ['sphinx.ext.imgmath',
@@ -7,6 +8,7 @@ extensions = ['sphinx.ext.imgmath',
               'sphinx.ext.autosummary',
               'sphinx.ext.napoleon',
               'sphinx.ext.imgmath',
+              'sphinxcontrib.plantuml',
               'hat.sphinx.include_dir',
               'hat.sphinx.exec',
               'hat.sphinx.patch']
@@ -53,3 +55,5 @@ plot_include_source = False
 plot_html_show_source_link = False
 plot_html_show_formats = False
 plot_formats = ['png']
+
+plantuml = f"java -jar {Path('../cache/tools/plantuml.jar').resolve()}"
