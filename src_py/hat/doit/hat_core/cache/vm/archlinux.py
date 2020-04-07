@@ -116,6 +116,7 @@ def task_cache_vm_archlinux_run():
     return {'actions': [run],
             'params': [{'name': 'save',
                         'default': False,
+                        'long': 'save',
                         'type': bool,
                         'help': 'save changes to disk image'}],
             'task_dep': ['cache_vm_archlinux']}

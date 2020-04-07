@@ -1,4 +1,4 @@
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import contextlib
 import functools
 import subprocess
@@ -8,10 +8,12 @@ import time
 
 from hat.doit import common
 from hat.doit.hat_core.cache.vm.archlinux import img_path as archlinux_img_path
+from hat.doit.hat_core.cache.vm.archlinux import img_path as win10_img_path
 from hat.doit.hat_core.cache.vm.key import ssh_key_path
 
 
-__all__ = ['task_vm_archlinux']
+__all__ = ['task_vm_archlinux',
+           'task_vm_win10']
 
 
 build_dir = Path('build/vm')
@@ -26,6 +28,17 @@ def task_vm_archlinux():
                      dst_dir=build_dir / 'archlinux',
                      task_dep=['cache_vm_key',
                                'cache_vm_archlinux'])
+
+
+def task_vm_win10():
+    """VM - run task in win10"""
+    return _get_task(img_path=win10_img_path,
+                     localtime=True,
+                     user='User',
+                     cwd=PureWindowsPath('c:\\hat'),
+                     dst_dir=build_dir / 'win10',
+                     task_dep=['cache_vm_key',
+                               'cache_vm_win10'])
 
 
 def _get_task(img_path, localtime, user, cwd, dst_dir, task_dep):
