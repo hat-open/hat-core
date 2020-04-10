@@ -35,11 +35,12 @@ def task_jshat_lib_renderer():
         src_js = src_dir / '@hat-core/renderer.js'
         yield src_js, dst_dir / 'index.js'
 
+    version = _get_version()
     return _get_task_lib(name='@hat-core/renderer',
                          desc='Hat virtual DOM renderer',
                          mappings=mappings,
                          deps={'snabbdom': '*',
-                               '@hat-core/util': '*'})
+                               '@hat-core/util': f'~{version}'})
 
 
 def task_jshat_lib_future():
@@ -61,11 +62,12 @@ def task_jshat_lib_juggler():
         src_js = src_dir / '@hat-core/juggler.js'
         yield src_js, dst_dir / 'index.js'
 
+    version = _get_version()
     return _get_task_lib(name='@hat-core/juggler',
                          desc='Hat juggler client library',
                          mappings=mappings,
                          deps={'jiff': '*',
-                               '@hat-core/util': '*'})
+                               '@hat-core/util': f'~{version}'})
 
 
 def _get_task_lib(name, desc, mappings, deps={}):
