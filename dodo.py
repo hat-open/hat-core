@@ -11,8 +11,7 @@ src_py_path = str(Path('src_py').resolve())
 
 sys.path += [src_py_path]
 if pythonpath:
-    pythonpath_del = ';' if sys.platform == 'win32' else ':'
-    os.environ['PYTHONPATH'] = f'{src_py_path}{pythonpath_del}{pythonpath}'
+    os.environ['PYTHONPATH'] = f'{src_py_path}{os.pathsep}{pythonpath}'
 else:
     os.environ['PYTHONPATH'] = src_py_path
 
