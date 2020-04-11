@@ -213,6 +213,8 @@ def _create_setup_py(path, name, description, dependencies, console_scripts,
                 f"      include_package_data=True,\n"
                 f"      install_requires={repr(dependencies)},\n"
                 f"      python_requires='>=3.8',\n"
+                f"      license='MIT',\n"
+                f"      zip_safe=False,\n"
                 f"      classifiers=[\n"
                 f"          'Programming Language :: Python :: 3',\n"
                 f"          'License :: OSI Approved :: MIT License',\n"
