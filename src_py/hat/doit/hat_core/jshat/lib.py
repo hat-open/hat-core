@@ -102,7 +102,7 @@ def _create_package_json(name, desc, deps):
     package = {'name': name,
                'version': version,
                'description': desc,
-               'homepage': 'https://hat-open.github.io/hat-core',
+               'homepage': 'https://github.com/hat-open/hat-core',
                'bugs': 'https://github.com/hat-open/hat-core/issues',
                'license': 'MIT',
                'main': 'index.js',

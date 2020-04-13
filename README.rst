@@ -16,8 +16,8 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 For more information see:
 
     * Hat Open homepage - ``in development``
-    * Hat Core homepage - `<https://hat-open.github.io/hat-core>`_
-    * Hat Core documentation - `<https://hat-open.github.io/hat-core/docs>`_
+    * Hat Core homepage - `<https://core.hat-open.com>`_
+    * Hat Core documentation - `<https://core.hat-open.com/docs>`_
     * Hat Core git repository - `<https://github.com/hat-open/hat-core.git>`_
     * Hat Core issues - `<https://github.com/hat-open/hat-core/issues>`_
 
@@ -45,32 +45,32 @@ Python packages require Python 3.8 and can be installed with `pip`::
 where ``package-name`` is one of following:
 
     * `hat-util <https://pypi.org/project/hat-util>`_
-      (`util docs <https://hat-open.github.io/hat-core/docs/libraries/util.html>`_)
+      (`util docs <https://core.hat-open.com/docs/libraries/util.html>`_)
 
         Utility module
 
     * `hat-peg <https://pypi.org/project/hat-peg>`_
-      (`peg docs <https://hat-open.github.io/hat-core/docs/libraries/peg.html>`_)
+      (`peg docs <https://core.hat-open.com/docs/libraries/peg.html>`_)
 
         Parsing expression grammar
 
     * `hat-sbs <https://pypi.org/project/hat-sbs>`_
-      (`sbs docs <https://hat-open.github.io/hat-core/docs/libraries/sbs.html>`_)
+      (`sbs docs <https://core.hat-open.com/docs/libraries/sbs.html>`_)
 
         Chatter communication protocol
 
     * `hat-chatter <https://pypi.org/project/hat-chatter>`_
-      (`chatter docs <https://hat-open.github.io/hat-core/docs/libraries/chatter.html>`_)
+      (`chatter docs <https://core.hat-open.com/docs/libraries/chatter.html>`_)
 
         Simple binary serialization
 
     * `hat-juggler <https://pypi.org/project/hat-juggler>`_
-      (`juggler docs <https://hat-open.github.io/hat-core/docs/libraries/juggler.html>`_)
+      (`juggler docs <https://core.hat-open.com/docs/libraries/juggler.html>`_)
 
         Juggler communication protocol
 
     * `hat-duktape <https://pypi.org/project/hat-duktape>`_
-      (`duktape docs <https://hat-open.github.io/hat-core/docs/libraries/duktape.html>`_)
+      (`duktape docs <https://core.hat-open.com/docs/libraries/duktape.html>`_)
 
         Python Duktape JS wrapper
 
@@ -79,7 +79,7 @@ where ``package-name`` is one of following:
         Hat specific sqlite3 build
 
     * `hat-drivers <https://pypi.org/project/hat-drivers>`_
-      (`drivers docs <https://hat-open.github.io/hat-core/docs/libraries/drivers/index.html>`_)
+      (`drivers docs <https://core.hat-open.com/docs/libraries/drivers/index.html>`_)
 
         Communication drivers
 
