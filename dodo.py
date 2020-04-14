@@ -4,6 +4,7 @@ from pathlib import Path
 
 
 DOIT_CONFIG = {'backend': 'sqlite3',
+               'default_tasks': ['dist'],
                'verbosity': 2}
 
 pythonpath = os.environ.get('PYTHONPATH')

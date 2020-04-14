@@ -147,7 +147,7 @@ class Page:
             {'title': '@hat-core/future',
              'description': 'Async Future implementation'},
             {'title': '@hat-core/juggler',
-             'description': 'Juggler client library'},
+             'description': 'Juggler client library'}
         ]
 
     @property

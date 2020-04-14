@@ -143,12 +143,17 @@ Package managers used for managing dependencies:
 
         Package manager available as part of CPython installation.
 
+    * yarn
+
+        Package manager for NodeJS.
+
 List of all dependencies for building and running hat components is available
 in:
 
     * requirements.pacman.win.txt (windows only)
     * requirements.pacman.linux.txt (archlinux only)
     * requirements.pip.txt
+    * package.json
 
 Python code targets CPython 3.8 only.
 
