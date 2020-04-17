@@ -21,6 +21,10 @@ jobs:
                 pip install -r requirements.pip.txt
           - name: doit homepage
             run: doit homepage
+          - name: create CNAME
+            if: github.repository == "hat-open/hat-core"
+            run: |
+                 echo "core.hat-open.com" > build/homepage/CNAME
           - name: deploy
             uses: peaceiris/actions-gh-pages@v3
             with:
