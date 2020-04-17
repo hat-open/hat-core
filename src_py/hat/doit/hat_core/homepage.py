@@ -114,7 +114,10 @@ class Page:
 
     @property
     def components(self):
-        return []
+        return [
+            {'title': 'hat-orchestrator',
+             'description': 'Simple cross-platform daemon/service manager'}
+        ]
 
     @property
     def python_libraries(self):
@@ -166,7 +169,9 @@ class Page:
                  'docs': 'docs/libraries/duktape.html'},
                 {'name': 'hat-sqlite3'},
                 {'name': 'hat-drivers',
-                 'docs': 'docs/libraries/drivers/index.html'}]
+                 'docs': 'docs/libraries/drivers/index.html'},
+                {'name': 'hat-orchestrator',
+                 'docs': 'docs/components/orchestrator.html'}]
 
     @property
     def javascript_packages(self):

@@ -83,6 +83,11 @@ where ``package-name`` is one of following:
 
         Communication drivers
 
+    * `hat-orchestrator <https://pypi.org/project/hat-orchestrator>`_
+      (`orchestrator docs <https://core.hat-open.com/docs/components/orchestrator.html>`_)
+
+        Simple cross-platform daemon/service manager
+
 
 JavaScript packages
 '''''''''''''''''''

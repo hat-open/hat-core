@@ -18,7 +18,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_juggler',
            'task_pyhat_duktape',
            'task_pyhat_sqlite3',
-           'task_pyhat_drivers']
+           'task_pyhat_drivers',
+           'task_pyhat_orchestrator']
 
 
 build_dir = Path('build/pyhat')
@@ -163,6 +164,33 @@ def task_pyhat_drivers():
                            dependencies=['pyserial',
                                          'hat-util'],
                            mappings=mappings)
+
+
+def task_pyhat_orchestrator():
+    """PyHat - build hat-orchestrator"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-orchestrator')
+        jshat_build = Path('build/jshat/app/orchestrator')
+        src_json = src_json_dir / 'orchestrator.yaml'
+        for i in (src_py_dir / 'hat/orchestrator').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        yield src_json, (dst_dir / 'hat/schemas_json'
+                                 / src_json.relative_to(src_json_dir))
+        for i in jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/orchestrator/ui'
+                              / i.relative_to(jshat_build))
+
+    return _get_task_build(
+        name='hat-orchestrator',
+        description='Hat Orchestrator',
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-juggler'],
+        mappings=mappings,
+        console_scripts=['hat-orchestrator = hat.orchestartor.main:main'],
+        task_dep=['jshat_app'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,
