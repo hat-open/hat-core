@@ -41,4 +41,6 @@ function app(name, entry) {
 }
 
 
-module.exports = [];
+module.exports = [
+    app('orchestrator', '.' + path.sep + path.join('src_js', '@hat-core', 'orchestrator', 'main'))
+];

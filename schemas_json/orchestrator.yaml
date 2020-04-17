@@ -1,0 +1,72 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://orchestrator.yaml#"
+title: Orchestrator
+description: Orchestrators's configuration
+type: object
+required:
+    - type
+    - log
+    - components
+    - ui
+properties:
+    type:
+        enum:
+            - orchestrator
+        description: configuration type identification
+    version:
+        type: string
+        description: component version
+    log:
+        "$ref": "hat://logging.yaml#"
+    components:
+        title: Components
+        type: array
+        items:
+            "$ref": "hat://orchestrator.yaml#/definitions/component"
+    ui:
+        "$ref": "hat://orchestrator.yaml#/definitions/ui"
+definitions:
+    component:
+        title: Component
+        type: object
+        required:
+            - name
+            - args
+            - delay
+            - revive
+        properties:
+            name:
+                title: Component name
+                type: string
+            args:
+                title: Command line arguments
+                description: |
+                    Shell command executed by orchestrator from
+                    orchestrator's current working directory
+                type: array
+                items:
+                    type: string
+            delay:
+                title: Delay
+                description: |
+                    Startup delay applied only for first component's
+                    startup. If value is 0, timeout is ignored.
+                type: number
+            revive:
+                title: Revive
+                description: |
+                    If this property is set to true, orchestrator will start
+                    component's process if process is stopped.
+                type: boolean
+    ui:
+        title: Server
+        type: object
+        required:
+            - address
+        properties:
+            address:
+                title: UI address
+                type: string
+                default: "http://localhost:23021"
+...

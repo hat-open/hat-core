@@ -1,0 +1,49 @@
+@import '~normalize.css/normalize';
+
+@import '../../common/grid';
+@import '../../common/fonts/roboto';
+@import '../../common/fonts/fontawesome';
+
+
+html, body {
+    margin: 0px;
+    font-family: 'Roboto';
+}
+
+.orchestrator {
+    max-width: 960px;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    table {
+        @extend table.grid;
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        th.col-component {}
+        th.col-delay { width: 100px; }
+        th.col-fatal { width: 100px; }
+        th.col-revive { width: 100px; }
+        th.col-status { width: 100px; }
+        th.col-action { width: 100px; }
+
+        td.col-delay { text-align: right; }
+        td.col-fatal { text-align: center; }
+        td.col-revive { text-align: center; }
+        td.col-status { text-align: center; }
+        td.col-action {
+            text-align: center;
+            button {
+                margin: 0px 2px;
+            }
+        }
+    }
+}
