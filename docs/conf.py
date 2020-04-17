@@ -9,6 +9,7 @@ extensions = ['sphinx.ext.imgmath',
               'sphinx.ext.napoleon',
               'sphinx.ext.imgmath',
               'sphinxcontrib.plantuml',
+              'sphinxcontrib.programoutput',
               'hat.sphinx.include_dir',
               'hat.sphinx.exec',
               'hat.sphinx.patch']

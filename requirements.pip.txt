@@ -19,4 +19,5 @@ PyYAML == 5.1.2
 setuptools == 41.0.1
 Sphinx == 2.2.1
 sphinxcontrib-plantuml == 0.17.1
+sphinxcontrib-programoutput == 0.15
 wheel == 0.33.4
