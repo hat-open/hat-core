@@ -20,7 +20,7 @@ jobs:
             uses: actions/setup-python@v1
             with:
                 python-version: 3.8
-          - name: install requirements.github.ubuntu.txt 
+          - name: install requirements.github.ubuntu.txt
             run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
           - name: install requirements.pip.txt
             run: |
@@ -29,7 +29,7 @@ jobs:
           - name: doit check
             run: doit check
           - name: doit test
-            run: doit test
+            run: doit test test_unit
     dist:
         needs: test
         runs-on: ubuntu-latest
