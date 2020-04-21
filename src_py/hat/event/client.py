@@ -65,15 +65,19 @@ Example of high-level interface usage::
 
 Attributes:
     mlog (logging.Logger): module logger
+    reconnect_delay (int): delay in seconds before trying to reconnect to
+        event server (used in high-level interface)
 
 """
 
-import logging
 import asyncio
+import logging
 
-from hat import util
 from hat import chatter
+from hat import util
 from hat.event import common
+from hat.util import aio
+
 
 mlog = logging.getLogger(__name__)
 
@@ -109,11 +113,12 @@ async def connect(sbs_repo, address, subscriptions=None, **kwargs):
 
     """
     client = Client()
-    client._async_group = util.AsyncGroup(exception_cb=client._on_exception_cb)
+    client._async_group = aio.Group(exception_cb=client._on_exception_cb)
     client._conv_futures = {}
-    client._event_queue = util.Queue()
+    client._event_queue = aio.Queue()
 
     client._conn = await chatter.connect(sbs_repo, address, **kwargs)
+    client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
     if subscriptions:
         client._conn.send(chatter.Data(module='HatEvent',
                                        type='MsgSubscribe',
@@ -150,7 +155,7 @@ class Client:
         """
         try:
             return await self._event_queue.get()
-        except util.QueueClosedError:
+        except aio.QueueClosedError:
             raise chatter.ConnectionClosedError
 
     def register(self, events):
@@ -230,8 +235,6 @@ class Client:
             self._event_queue.close()
             for f in self._conv_futures.values():
                 f.set_exception(chatter.ConnectionClosedError)
-            await util.uncancellable(self._conn.async_close(),
-                                     raise_cancel=False)
 
     def _process_received_msg(self, msg):
         if msg.data.module != 'HatEvent':
@@ -257,7 +260,7 @@ class Client:
 
 async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
                      subscriptions=None):
-    """Continuously communicate with current active Event Server
+    """Continuously communicate with currently active Event Server
 
     `sbs_repo` is instance of event SBS repository which should be created
     with :func:`common.create_sbs_repo`.
@@ -275,7 +278,7 @@ async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
     `async_run_cb` execution is cancelled when:
         * :func:`run_client` finishes execution
         * connection to Event Server is closed
-        * diferent active Event Server is detected from Monitor Server's list
+        * different active Event Server is detected from Monitor Server's list
           of components
 
     :func:`run_client` finishes execution when:
@@ -307,7 +310,7 @@ async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
 
     async def _address_loop(monitor_client, address_change, server_group):
         nonlocal address
-        queue = util.Queue()
+        queue = aio.Queue()
         with monitor_client.register_change_cb(lambda: queue.put_nowait(None)):
             while True:
                 new_address = _get_server_address(monitor_client.components,
@@ -317,7 +320,7 @@ async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
                     address_change.set()
                 await queue.get()
 
-    async with util.AsyncGroup() as group:
+    async with aio.Group() as group:
         group.spawn(_address_loop,
                     monitor_client, address_change, server_group)
         while True:
@@ -355,11 +358,12 @@ async def _connect_and_run_loop(sbs_repo, group, address, subscriptions,
                              'will try to reconnect... %s', e, exc_info=e)
                 await asyncio.sleep(reconnect_delay)
 
-        async with group.create_subgroup() as subgroup:
-            run_future = subgroup.spawn(async_run_cb, client)
-            try:
+        try:
+            async with group.create_subgroup() as subgroup:
+                run_future = subgroup.spawn(async_run_cb, client)
                 await asyncio.wait([run_future, client.closed],
                                    return_when=asyncio.FIRST_COMPLETED)
+                # TODO maybe we should check for closing.done()
                 if client.closed.done():
                     mlog.warning('connection to event server closed')
                     continue
@@ -369,8 +373,8 @@ async def _connect_and_run_loop(sbs_repo, group, address, subscriptions,
                         return run_future.result()
                     except asyncio.CancelledError:
                         continue
-            finally:
-                await client.async_close()
+        finally:
+            await client.async_close()
 
 
 def _get_server_address(components, server_group):

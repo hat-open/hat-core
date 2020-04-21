@@ -5,11 +5,12 @@ Attributes:
 
 """
 
+import contextlib
 import logging
 
 from hat import chatter
-from hat import util
 from hat.event.server import common
+from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ async def create(conf, sbs_repo, engine):
     with :func:`common.create_sbs_repo`.
 
     Args:
-        conf (Any): configuration defined by
+        conf (hat.json.Data): configuration defined by
             ``hat://event/main.yaml#/definitions/communication``
         sbs_repo (hat.sbs.Repository): event SBS repository
         engine (hat.event.module_engine.ModuleEngine): module engine
@@ -35,16 +36,17 @@ async def create(conf, sbs_repo, engine):
     """
     comm = Communication()
     comm._engine = engine
-    comm._async_group = util.AsyncGroup(exception_cb=lambda e: mlog.error(
+    comm._async_group = aio.Group(exception_cb=lambda e: mlog.error(
         'exception in communication: %s', e, exc_info=e))
     comm._connection_ids = {}
     comm._subs_registry = common.SubscriptionRegistry()
 
-    comm._chatter_server = await chatter.listen(
+    chatter_server = await chatter.listen(
         sbs_repo=sbs_repo,
         address=conf['address'],
         on_connection_cb=lambda conn: comm._async_group.spawn(
             comm._connection_loop, conn))
+    comm._async_group.spawn(aio.call_on_cancel, chatter_server.async_close)
     comm._async_group.spawn(comm._run_engine)
     return comm
 
@@ -58,7 +60,6 @@ class Communication:
 
     async def async_close(self):
         """Async close"""
-        await self._chatter_server.async_close()
         await self._async_group.async_close()
 
     async def _connection_loop(self, conn):
@@ -84,7 +85,6 @@ class Communication:
             with self._engine.register_events_cb(self._on_events):
                 await self._engine.closed
         finally:
-            await util.uncancellable(self._chatter_server.async_close())
             self._async_group.close()
 
     def _process_msg(self, msg, conn):
@@ -134,7 +134,8 @@ class Communication:
             for conn in self._subs_registry.find(event.event_type):
                 conn_notify[conn] = (conn_notify.get(conn, []) + [event])
         for conn, notify_events in conn_notify.items():
-            conn.send(chatter.Data(module='HatEvent',
-                                   type='MsgNotify',
-                                   data=[common.event_to_sbs(e)
-                                         for e in notify_events]))
+            with contextlib.suppress(chatter.ConnectionClosedError):
+                conn.send(chatter.Data(module='HatEvent',
+                                       type='MsgNotify',
+                                       data=[common.event_to_sbs(e)
+                                             for e in notify_events]))
