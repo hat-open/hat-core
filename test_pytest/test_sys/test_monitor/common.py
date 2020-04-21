@@ -3,6 +3,7 @@ import sys
 import psutil
 import signal
 
+from hat import sbs
 from hat import util
 from hat.util import aio
 from hat.util import json
@@ -54,9 +55,9 @@ def run_monitor_subprocess(conf, conf_folder_path):
                      if sys.platform == 'win32' else 0)
     return psutil.Popen(
         ['python', '-m', 'hat.monitor.server.main', '--conf', str(conf_path),
-         '--json-schemas-path', '../schemas_json',
-         '--sbs-schemas-path', '../schemas_sbs',
-         '--ui-path', '../build/jshat/app/monitor'],
+         '--json-schemas-path', json.default_schemas_json_path,
+         '--sbs-schemas-path', sbs.default_schemas_sbs_path,
+         '--ui-path', ''],
         creationflags=creationflags)
 
 
