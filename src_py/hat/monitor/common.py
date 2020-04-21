@@ -43,7 +43,7 @@ def component_info_to_sbs(info):
         info (ComponentInfo): component info
 
     Returns:
-        Any: SBS data
+        hat.sbs.Data: SBS data
 
     """
     return {'cid': info.cid,
@@ -60,7 +60,7 @@ def component_info_from_sbs(data):
     """Convert SBS data to component info
 
     Args:
-        data (Any): SBS data
+        data (hat.sbs.Data): SBS data
 
     Returns:
         ComponentInfo
@@ -86,7 +86,7 @@ def create_msg_client_sbs(name, group, address, ready):
         ready (Optional[int]): ready token
 
     Returns:
-        Any: SBS data
+        hat.sbs.Data: SBS data
 
     """
     return {'name': name,

@@ -16,11 +16,11 @@ Python types according to following translation table:
     +----------+----------------+
     | Bytes    | bytes          |
     +----------+----------------+
-    | Array    | List[Any]      |
+    | Array    | List[Data]     |
     +----------+----------------+
-    | Tuple    | Dict[str,Any]  |
+    | Tuple    | Dict[str,Data] |
     +----------+----------------+
-    | Union    | Tuple[str,Any] |
+    | Union    | Tuple[str,Data]|
     +----------+----------------+
 
 SBS Tuple and Union types without elements are translated to ``None``.
@@ -57,11 +57,18 @@ Attributes:
 """
 
 import pathlib
+import typing
 
 from hat.sbs.repository import Repository
 
 
-__all__ = ['Repository']
+__all__ = ['Repository', 'Data']
 
 
 default_schemas_sbs_path = pathlib.Path(__file__).parent.parent / 'schemas_sbs'
+
+
+Data = typing.Union[bool, int, float, str, bytes,
+                    typing.List['Data'],
+                    typing.Dict[str, 'Data'],
+                    typing.Tuple[str, 'Data']]
