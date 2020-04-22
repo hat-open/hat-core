@@ -29,7 +29,7 @@ class Repository:
         Args:
             module_name (Optional[str]): module name
             type_name (str): type name
-            value (Any): value
+            value (serializer.Data): value
 
         Returns:
             bytes
@@ -47,7 +47,7 @@ class Repository:
             data (Union[bytes,bytearray,memoryview]): data
 
         Returns:
-            Any
+            serializer.Data
 
         """
         ref = serializer.Ref(module_name, type_name)

@@ -47,6 +47,11 @@ Float = FloatType()
 String = StringType()
 Bytes = BytesType()
 
+Data = typing.Union[bool, int, float, str, bytes,
+                    typing.List['Data'],
+                    typing.Dict[str, 'Data'],
+                    typing.Tuple[str, 'Data']]
+
 
 def encode(refs, t, value):
     """Encode value.
@@ -54,7 +59,7 @@ def encode(refs, t, value):
     Args:
         refs (Dict[Ref,Type]): type references
         t (Type): SBS type
-        value (Any): value
+        value (Data): value
 
     Returns:
         bytes
@@ -90,7 +95,7 @@ def decode(refs, t, data):
         data (Union[bytes,bytearray,memoryview]): data
 
     Returns:
-        Tuple[Any,Union[bytes,bytearray,memoryview]]
+        Tuple[Data,Union[bytes,bytearray,memoryview]]
 
     """
     while isinstance(t, Ref) and t in refs:

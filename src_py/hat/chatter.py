@@ -38,7 +38,7 @@ Msg = util.namedtuple(['Msg', "Received message"],
 Data = util.namedtuple(['Data', "Message data"],
                        ['module', "Optional[str]: SBS module name"],
                        ['type', "str: SBS type name"],
-                       ['data', "Any: data"])
+                       ['data', "sbs.Data: data"])
 
 
 Conversation = util.namedtuple(['Conversation', "Conversation"],
