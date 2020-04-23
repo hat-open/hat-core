@@ -5,4 +5,5 @@ Components
     :maxdepth: 1
 
     orchestrator
+    monitor
 
