@@ -1,0 +1,23 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://monitor/client.yaml#"
+title: Monitor client
+description: Monitor client's configuration
+type: object
+required:
+    - name
+    - group
+    - monitor_address
+    - component_address
+properties:
+    name:
+        type: string
+    group:
+        type: string
+    monitor_address:
+        type: string
+    component_address:
+        type:
+            - string
+            - "null"
+...

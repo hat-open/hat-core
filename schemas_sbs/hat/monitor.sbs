@@ -1,0 +1,40 @@
+module HatMonitor
+
+MsgClient = Tuple {
+    name:       String
+    group:      String
+    address:    Maybe(String)
+    ready:      Maybe(Integer)
+}
+
+MsgServer = Tuple {
+    cid:        Integer
+    mid:        Integer
+    components: Array(ComponentInfo)
+}
+
+MsgSlave = Tuple {
+    components: Array(ComponentInfo)
+}
+
+MsgMaster = Tuple {
+    mid:        Integer
+    components: Array(ComponentInfo)
+}
+
+MsgSetRank = Tuple {
+    cid:        Integer
+    mid:        Integer
+    rank:       Integer
+}
+
+ComponentInfo = Tuple {
+    cid:        Integer
+    mid:        Integer
+    name:       String
+    group:      String
+    address:    Maybe(String)
+    rank:       Integer
+    blessing:   Maybe(Integer)
+    ready:      Maybe(Integer)
+}

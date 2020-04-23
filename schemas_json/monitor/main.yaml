@@ -1,0 +1,84 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://monitor/main.yaml#"
+title: Monitor Server
+description: Monitor Server's configuration
+type: object
+required:
+    - type
+    - log
+    - server
+    - master
+    - ui
+properties:
+    type:
+        enum:
+            - monitor
+        description: configuration type identification
+    version:
+        type: string
+        description: component version
+    log:
+        "$ref": "hat://logging.yaml#"
+    server:
+        "$ref": "hat://monitor/main.yaml#/definitions/server"
+    master:
+        "$ref": "hat://monitor/main.yaml#/definitions/master"
+    ui:
+        "$ref": "hat://monitor/main.yaml#/definitions/ui"
+definitions:
+    server:
+        title: Local monitor server
+        type: object
+        required:
+            - address
+            - default_rank
+        properties:
+            address:
+                title: Listening address
+                type: string
+                default: "tcp+sbs://localhost:23010"
+            default_rank:
+                type: integer
+    master:
+        title: Master interface
+        type: object
+        required:
+            - address
+            - parents
+            - default_algorithm
+            - group_algorithms
+        properties:
+            address:
+                title: Listening address
+                type: string
+                default: "tcp+sbs://localhost:23011"
+            parents:
+                title: parent addresses
+                type: array
+                items:
+                    type: string
+            default_algorithm:
+                "$ref": "hat://monitor/main.yaml#/definitions/algorithm"
+            group_algorithms:
+                description: |
+                    keys represent group names
+                type: object
+                patternProperties:
+                    "(.)+":
+                        "$ref": "hat://monitor/main.yaml#/definitions/algorithm"
+    ui:
+        title: UI Web Server
+        type: object
+        required:
+            - address
+        properties:
+            address:
+                title: UI address
+                type: string
+                default: "http://localhost:23022"
+    algorithm:
+        enum:
+            - BLESS_ALL
+            - BLESS_ONE
+...
