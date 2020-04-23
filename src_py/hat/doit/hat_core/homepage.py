@@ -116,7 +116,9 @@ class Page:
     def components(self):
         return [
             {'title': 'hat-orchestrator',
-             'description': 'Simple cross-platform daemon/service manager'}
+             'description': 'Simple cross-platform daemon/service manager'},
+            {'title': 'hat-monitor',
+             'description': 'Redundancy and service discovery server'}
         ]
 
     @property
@@ -171,7 +173,9 @@ class Page:
                 {'name': 'hat-drivers',
                  'docs': 'docs/libraries/drivers/index.html'},
                 {'name': 'hat-orchestrator',
-                 'docs': 'docs/components/orchestrator.html'}]
+                 'docs': 'docs/components/orchestrator.html'},
+                {'name': 'hat-monitor',
+                 'docs': 'docs/libraries/components/monitor.html'}]
 
     @property
     def javascript_packages(self):

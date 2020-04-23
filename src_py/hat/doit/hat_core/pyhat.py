@@ -19,7 +19,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_duktape',
            'task_pyhat_sqlite3',
            'task_pyhat_drivers',
-           'task_pyhat_orchestrator']
+           'task_pyhat_orchestrator',
+           'task_pyhat_monitor']
 
 
 build_dir = Path('build/pyhat')
@@ -190,6 +191,38 @@ def task_pyhat_orchestrator():
                       'hat-juggler'],
         mappings=mappings,
         console_scripts=['hat-orchestrator = hat.orchestartor.main:main'],
+        task_dep=['jshat_app'])
+
+
+def task_pyhat_monitor():
+    """PyHat - build hat-monitor"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-monitor')
+        jshat_build = Path('build/jshat/app/monitor')
+        for i in (src_py_dir / 'hat/monitor').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        for i in (src_json_dir / 'monitor').rglob('*.yaml'):
+            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        for i in jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/monitor/server/ui'
+                              / i.relative_to(jshat_build))
+        schemas_sbs_monitor = src_sbs_dir / 'hat/monitor.sbs'
+        yield schemas_sbs_monitor, (dst_dir / 'hat/schemas_sbs'
+                                    / schemas_sbs_monitor.relative_to(
+                                        src_sbs_dir))
+
+    return _get_task_build(
+        name='hat-monitor',
+        description='Hat Monitor Server and client',
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-sbs',
+                      'hat-chatter',
+                      'hat-juggler'],
+        mappings=mappings,
+        console_scripts=['hat-monitor = hat.monitor.server.main:main'],
         task_dep=['jshat_app'])
 
 

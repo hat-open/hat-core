@@ -17,6 +17,7 @@ __all__ = ['task_dist',
            'task_dist_pyhat_sqlite3',
            'task_dist_pyhat_drivers',
            'task_dist_pyhat_orchestrator',
+           'task_dist_pyhat_monitor',
            'task_dist_jshat_util',
            'task_dist_jshat_renderer',
            'task_dist_jshat_future',
@@ -40,6 +41,7 @@ def task_dist():
                          'dist_pyhat_sqlite3',
                          'dist_pyhat_drivers',
                          'dist_pyhat_orchestrator',
+                         'dist_pyhat_monitor',
                          'dist_jshat_util',
                          'dist_jshat_renderer',
                          'dist_jshat_future',
@@ -98,6 +100,11 @@ def task_dist_pyhat_drivers():
 def task_dist_pyhat_orchestrator():
     """Dist - create pyhat hat-orchestrator distribution"""
     return _get_task_dist_pyhat('hat-orchestrator', 'pyhat_orchestrator')
+
+
+def task_dist_pyhat_monitor():
+    """Dist - create pyhat hat-monitor distribution"""
+    return _get_task_dist_pyhat('hat-monitor', 'pyhat_monitor')
 
 
 def task_dist_jshat_util():

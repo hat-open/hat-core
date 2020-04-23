@@ -88,6 +88,11 @@ where ``package-name`` is one of following:
 
         Simple cross-platform daemon/service manager
 
+    * `hat-monitor <https://pypi.org/project/hat-monitor>`_
+      (`monitor docs <https://core.hat-open.com/docs/components/monitor.html>`_)
+
+        Redundancy and service discovery server
+
 
 JavaScript packages
 '''''''''''''''''''
