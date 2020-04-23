@@ -22,7 +22,7 @@ jobs:
           - name: doit homepage
             run: doit homepage
           - name: create CNAME
-            if: github.repository == "hat-open/hat-core"
+            if: github.repository == 'hat-open/hat-core'
             run: |
                  echo "core.hat-open.com" > build/homepage/CNAME
           - name: deploy
