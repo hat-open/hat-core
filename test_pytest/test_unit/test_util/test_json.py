@@ -41,8 +41,9 @@ def test_jsonpatch():
      [{'op': 'replace', 'path': '/a', 'value': {}}]),
     ({'a': False}, {'a': None},
      [{'op': 'replace', 'path': '/a', 'value': None}]),
+    # TODO should we consider 1 and 1.0 to be equal
     ({'a': 1.0}, {'a': 1},
-     []),
+     [{'op': 'replace', 'path': '/a', 'value': 1.0}]),
     ({'a': ""}, {'a': []},
      [{'op': 'replace', 'path': '/a', 'value': []}]),
     ({'a': {}}, {'a': {}},
