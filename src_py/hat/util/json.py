@@ -331,33 +331,35 @@ class SchemaRepository:
                 self._data[k].update(v)
 
 
-def _monkeypatch_jsonpatch():
-    """Monkeypatch jsonpatch.
+# check upstream changes in jsonpatch and validate performance inpact
 
-    Patch incorrect value comparison between ``bool`` and numeric values when
-    diffing json serializable data.
+# def _monkeypatch_jsonpatch():
+#     """Monkeypatch jsonpatch.
 
-    Comparing `False` to `0` or `0.0`; and `True` to `1` or `1.0` incorrectly
-    results in no change.
+#     Patch incorrect value comparison between ``bool`` and numeric values when
+#     diffing json serializable data.
 
-    """
-    def _compare_values(self, path, key, src, dst):
+#     Comparing `False` to `0` or `0.0`; and `True` to `1` or `1.0` incorrectly
+#     results in no change.
 
-        if isinstance(src, jsonpatch.MutableMapping) and \
-                isinstance(dst, jsonpatch.MutableMapping):
-            self._compare_dicts(jsonpatch._path_join(path, key), src, dst)
+#     """
+#     def _compare_values(self, path, key, src, dst):
 
-        elif isinstance(src, jsonpatch.MutableSequence) and \
-                isinstance(dst, jsonpatch.MutableSequence):
-            self._compare_lists(jsonpatch._path_join(path, key), src, dst)
+#         if isinstance(src, jsonpatch.MutableMapping) and \
+#                 isinstance(dst, jsonpatch.MutableMapping):
+#             self._compare_dicts(jsonpatch._path_join(path, key), src, dst)
 
-        elif isinstance(src, bool) == isinstance(dst, bool) and src == dst:
-            pass
+#         elif isinstance(src, jsonpatch.MutableSequence) and \
+#                 isinstance(dst, jsonpatch.MutableSequence):
+#             self._compare_lists(jsonpatch._path_join(path, key), src, dst)
 
-        else:
-            self._item_replaced(path, key, dst)
+#         elif isinstance(src, bool) == isinstance(dst, bool) and src == dst:
+#             pass
 
-    jsonpatch.DiffBuilder._compare_values = _compare_values
+#         else:
+#             self._item_replaced(path, key, dst)
+
+#     jsonpatch.DiffBuilder._compare_values = _compare_values
 
 
-_monkeypatch_jsonpatch()
+# _monkeypatch_jsonpatch()

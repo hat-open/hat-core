@@ -1,7 +1,5 @@
-import importlib
 import itertools
 
-import jsonpatch
 import pytest
 
 from hat.util import json
@@ -25,15 +23,9 @@ def test_json_equals(params, is_equal):
         assert json.equals(a, b) == is_equal
 
 
-def test_monkeypatch_jsonpatch_vs_vanila():
+def test_jsonpatch():
     x = {'a': 0}
     y = {'a': False}
-
-    importlib.reload(jsonpatch)
-    patch = jsonpatch.make_patch(x, y)
-    assert patch.patch == []
-
-    importlib.reload(json)
     diff = json.diff(x, y)
     assert diff == [{'op': 'replace', 'path': '/a', 'value': False}]
 
