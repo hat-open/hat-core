@@ -21,7 +21,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_drivers',
            'task_pyhat_orchestrator',
            'task_pyhat_monitor',
-           'task_pyhat_event']
+           'task_pyhat_event',
+           'task_pyhat_gateway']
 
 
 build_dir = Path('build/pyhat')
@@ -251,6 +252,29 @@ def task_pyhat_event():
                       'hat-monitor'],
         mappings=mappings,
         console_scripts=['hat-event = hat.event.server.main:main'])
+
+
+def task_pyhat_gateway():
+    """PyHat - build hat-gateway"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-gateway')
+        for i in (src_py_dir / 'hat/gateway').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        for i in (src_json_dir / 'gateway').rglob('*.yaml'):
+            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+
+    return _get_task_build(
+        name='hat-gateway',
+        description='Hat remote communication device gateway',
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-json',
+                      'hat-sbs',
+                      'hat-chatter',
+                      'hat-monitor',
+                      'hat-event'],
+        mappings=mappings,
+        console_scripts=['hat-gateway = hat.gateway.main:main'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,

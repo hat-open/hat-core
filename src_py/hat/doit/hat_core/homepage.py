@@ -120,7 +120,9 @@ class Page:
             {'title': 'hat-monitor',
              'description': 'Redundancy and service discovery server'},
             {'title': 'hat-event',
-             'description': 'Event pub/sub communication and storage'}
+             'description': 'Event pub/sub communication and storage'},
+            {'title': 'hat-gateway',
+             'description': 'Remote communication device gateway'}
         ]
 
     @property
@@ -179,7 +181,9 @@ class Page:
                 {'name': 'hat-monitor',
                  'docs': 'docs/components/monitor.html'},
                 {'name': 'hat-event',
-                 'docs': 'docs/components/event/index.html'}]
+                 'docs': 'docs/components/event/index.html'},
+                {'name': 'hat-gateway',
+                 'docs': 'docs/components/gateway/index.html'}]
 
     @property
     def javascript_packages(self):

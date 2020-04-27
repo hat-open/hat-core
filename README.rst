@@ -98,6 +98,11 @@ where ``package-name`` is one of following:
 
         Event pub/sub communication and storage
 
+    * `hat-gateway <https://pypi.org/project/hat-gateway>`_
+      (`gateway docs <https://core.hat-open.com/docs/components/gateway.html>`_)
+
+        Remote communication device gateway
+
 
 JavaScript packages
 '''''''''''''''''''
