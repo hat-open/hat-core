@@ -7,4 +7,5 @@ Components
     orchestrator
     monitor
     event/index
+    gateway/index
 
