@@ -1,0 +1,17 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "test://modules/remote.yaml#"
+type: object
+required:
+    - subscriptions
+    - address
+properties:
+    subscriptions:
+        type: array
+        items:
+            type: array
+            items:
+                type: string
+    address:
+        type: string
+...

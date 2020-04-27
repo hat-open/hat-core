@@ -1,0 +1,7 @@
+module TestRemoteModule
+
+ModuleCreate = None
+ModuleClose = None
+SessionCreate = None
+SessionClose = None
+Process = None
