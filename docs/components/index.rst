@@ -6,4 +6,5 @@ Components
 
     orchestrator
     monitor
+    event/index
 
