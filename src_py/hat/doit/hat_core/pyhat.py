@@ -20,7 +20,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_sqlite3',
            'task_pyhat_drivers',
            'task_pyhat_orchestrator',
-           'task_pyhat_monitor']
+           'task_pyhat_monitor',
+           'task_pyhat_event']
 
 
 build_dir = Path('build/pyhat')
@@ -224,6 +225,32 @@ def task_pyhat_monitor():
         mappings=mappings,
         console_scripts=['hat-monitor = hat.monitor.server.main:main'],
         task_dep=['jshat_app'])
+
+
+def task_pyhat_event():
+    """PyHat - build hat-event"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-event')
+        for i in (src_py_dir / 'hat/event').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        for i in (src_json_dir / 'event').rglob('*.yaml'):
+            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        schemas_sbs_event = src_sbs_dir / 'hat/event.sbs'
+        yield schemas_sbs_event, (dst_dir / 'hat/schemas_sbs'
+                                  / schemas_sbs_event.relative_to(
+                                        src_sbs_dir))
+
+    return _get_task_build(
+        name='hat-event',
+        description='Hat Event Server and client',
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-sbs',
+                      'hat-chatter',
+                      'hat-sqlite3',
+                      'hat-monitor'],
+        mappings=mappings,
+        console_scripts=['hat-event = hat.event.server.main:main'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,

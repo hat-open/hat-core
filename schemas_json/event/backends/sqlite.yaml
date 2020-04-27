@@ -1,0 +1,18 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://event/backends/sqlite.yaml#"
+title: Sqlite backend
+description: Sqlite backend configuration
+type: object
+required:
+    - db_path
+    - query_pool_size
+properties:
+    db_path:
+        type: string
+        description: path to sqlite database file
+    query_pool_size:
+        type: integer
+        description: |
+            number of connections in a pool used for querying
+...

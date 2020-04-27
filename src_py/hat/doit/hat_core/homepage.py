@@ -118,7 +118,9 @@ class Page:
             {'title': 'hat-orchestrator',
              'description': 'Simple cross-platform daemon/service manager'},
             {'title': 'hat-monitor',
-             'description': 'Redundancy and service discovery server'}
+             'description': 'Redundancy and service discovery server'},
+            {'title': 'hat-event',
+             'description': 'Event pub/sub communication and storage'}
         ]
 
     @property
@@ -175,7 +177,9 @@ class Page:
                 {'name': 'hat-orchestrator',
                  'docs': 'docs/components/orchestrator.html'},
                 {'name': 'hat-monitor',
-                 'docs': 'docs/libraries/components/monitor.html'}]
+                 'docs': 'docs/components/monitor.html'},
+                {'name': 'hat-event',
+                 'docs': 'docs/components/event/index.html'}]
 
     @property
     def javascript_packages(self):

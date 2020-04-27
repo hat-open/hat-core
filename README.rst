@@ -93,6 +93,11 @@ where ``package-name`` is one of following:
 
         Redundancy and service discovery server
 
+    * `hat-event <https://pypi.org/project/hat-event>`_
+      (`event docs <https://core.hat-open.com/docs/components/event.html>`_)
+
+        Event pub/sub communication and storage
+
 
 JavaScript packages
 '''''''''''''''''''
