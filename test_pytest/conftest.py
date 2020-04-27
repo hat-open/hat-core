@@ -1,13 +1,22 @@
 from pathlib import Path
+import asyncio
 import contextlib
-import pytest
 import socket
+
+import pytest
 
 from hat import duktape
 from hat import sbs
 from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
 from hat.util import aio
 from hat.util import json
+
+
+@pytest.fixture(scope='session')
+def event_loop():
+    loop = asyncio.get_event_loop()
+    yield loop
+    loop.close()
 
 
 def pytest_configure(config):

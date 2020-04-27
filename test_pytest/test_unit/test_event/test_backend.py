@@ -1,7 +1,6 @@
 import pytest
 import importlib
 import itertools
-import asyncio
 
 import hat.sbs
 import hat.event.common
@@ -45,13 +44,6 @@ def conf_factory(tmpdir_factory, request):
                  'query_pool_size': 10}}[request.param]
 
     return f
-
-
-@pytest.yield_fixture(scope="module")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.mark.asyncio
