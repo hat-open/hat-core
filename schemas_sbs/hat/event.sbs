@@ -1,0 +1,72 @@
+module HatEvent
+
+MsgSubscribe = Array(EventType)
+
+MsgNotify = Array(Event)
+
+MsgRegisterReq = Array(RegisterEvent)
+
+MsgRegisterRes = Array(Union {
+    event:    Event
+    failure:  None
+})
+
+MsgQueryReq = QueryData
+
+MsgQueryRes = Array(Event)
+
+Timestamp = Tuple {
+    s:   Integer
+    us:  Integer
+}
+
+EventId = Tuple {
+    server:    Integer
+    instance:  Integer
+}
+
+Order = Union {
+    descending:  None
+    ascending:   None
+}
+
+OrderBy = Union {
+    timestamp:        None
+    sourceTimestamp:  None
+}
+
+EventType = Array(String)
+
+EventPayload = Union {
+    binary:  Bytes
+    json:    String
+    sbs:     Hat.Data
+}
+
+Event = Tuple {
+    id:               EventId
+    type:             EventType
+    timestamp:        Timestamp
+    sourceTimestamp:  Maybe(Timestamp)
+    payload:          Maybe(EventPayload)
+}
+
+RegisterEvent = Tuple {
+    type:             EventType
+    sourceTimestamp:  Maybe(Timestamp)
+    payload:          Maybe(EventPayload)
+}
+
+QueryData = Tuple {
+    ids:                Maybe(Array(EventId))
+    types:              Maybe(Array(EventType))
+    tFrom:              Maybe(Timestamp)
+    tTo:                Maybe(Timestamp)
+    sourceTFrom:        Maybe(Timestamp)
+    sourceTTo:          Maybe(Timestamp)
+    payload:            Maybe(EventPayload)
+    order:              Order
+    orderBy:            OrderBy
+    uniqueType:         Boolean
+    maxResults:         Maybe(Integer)
+}
