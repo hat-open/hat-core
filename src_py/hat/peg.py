@@ -105,8 +105,8 @@ def walk_ast(node, actions, default_action=None):
     are callables that should be called for appropriate node. Each callable
     receives matched node and list of results from recursively applying
     this function on child nodes. For nodes which name doesn't match any
-    action, default action is used. If default action is not defined,
-    callable ``lambda node, children: None`` is assumed.
+    action, default action is used. If default action is not defined and node
+    name doesn't match action, result is None and recursion is stopped.
 
     Args:
         actions (Dict[str,Callable[[Node,List[Any]],Any]]): actions
@@ -114,8 +114,9 @@ def walk_ast(node, actions, default_action=None):
             default action
 
     """
-    default_action = default_action or (lambda n, c: None)
     action = actions.get(node.name, default_action)
+    if not action:
+        return
     children = [walk_ast(i, actions, default_action)
                 if isinstance(i, Node) else i
                 for i in node.value]
