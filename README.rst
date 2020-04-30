@@ -94,14 +94,19 @@ where ``package-name`` is one of following:
         Redundancy and service discovery server
 
     * `hat-event <https://pypi.org/project/hat-event>`_
-      (`event docs <https://core.hat-open.com/docs/components/event.html>`_)
+      (`event docs <https://core.hat-open.com/docs/components/event/index.html>`_)
 
         Event pub/sub communication and storage
 
     * `hat-gateway <https://pypi.org/project/hat-gateway>`_
-      (`gateway docs <https://core.hat-open.com/docs/components/gateway.html>`_)
+      (`gateway docs <https://core.hat-open.com/docs/components/gateway/index.html>`_)
 
         Remote communication device gateway
+
+    * `hat-gui <https://pypi.org/project/hat-gui>`_
+      (`gui docs <https://core.hat-open.com/docs/components/gui/index.html>`_)
+
+        GUI server
 
 
 JavaScript packages

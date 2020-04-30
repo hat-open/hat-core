@@ -22,7 +22,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_orchestrator',
            'task_pyhat_monitor',
            'task_pyhat_event',
-           'task_pyhat_gateway']
+           'task_pyhat_gateway',
+           'task_pyhat_gui']
 
 
 build_dir = Path('build/pyhat')
@@ -275,6 +276,43 @@ def task_pyhat_gateway():
                       'hat-event'],
         mappings=mappings,
         console_scripts=['hat-gateway = hat.gateway.main:main'])
+
+
+def task_pyhat_gui():
+    """PyHat - build hat-gui"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-gui')
+        jshat_app_build = Path('build/jshat/app/gui')
+        jshat_view_build = Path('build/jshat/view')
+        for i in (src_py_dir / 'hat/gui').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        for i in (src_json_dir / 'gui').rglob('*.yaml'):
+            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        for i in jshat_app_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/gui/ui'
+                              / i.relative_to(jshat_app_build))
+        for i in jshat_view_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/gui/views'
+                              / i.relative_to(jshat_view_build))
+
+    return _get_task_build(
+        name='hat-gui',
+        description='Hat GUI server',
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-sbs',
+                      'hat-chatter',
+                      'hat-monitor',
+                      'hat-event'
+                      'hat-juggler'],
+        mappings=mappings,
+        console_scripts=['hat-gui = hat.gui.main:main'],
+        task_dep=['jshat_app',
+                  'jshat_view'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,

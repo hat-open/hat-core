@@ -122,7 +122,9 @@ class Page:
             {'title': 'hat-event',
              'description': 'Event pub/sub communication and storage'},
             {'title': 'hat-gateway',
-             'description': 'Remote communication device gateway'}
+             'description': 'Remote communication device gateway'},
+            {'title': 'hat-gui',
+             'description': 'GUI server'}
         ]
 
     @property
@@ -183,7 +185,9 @@ class Page:
                 {'name': 'hat-event',
                  'docs': 'docs/components/event/index.html'},
                 {'name': 'hat-gateway',
-                 'docs': 'docs/components/gateway/index.html'}]
+                 'docs': 'docs/components/gateway/index.html'},
+                {'name': 'hat-gui',
+                 'docs': 'docs/components/gui/index.html'}]
 
     @property
     def javascript_packages(self):
