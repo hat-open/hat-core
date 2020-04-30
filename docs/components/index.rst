@@ -8,4 +8,4 @@ Components
     monitor
     event/index
     gateway/index
-
+    gui/index
