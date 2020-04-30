@@ -1,0 +1,147 @@
+import abc
+import typing
+
+from hat.util import json
+
+
+AdapterConf = json.Data
+
+CreateAdapter = typing.Callable[[AdapterConf, 'AdapterEventClient'],
+                                typing.Awaitable['Adapter']]
+
+
+class Adapter(abc.ABC):
+    """Adapter interface
+
+    Adapters are implemented as python modules which are dynamically imported.
+    Each adapter instance has configuration which must include `module` -
+    python module identifier. It is expected that this module implements:
+
+        * json_schema_id (Optional[str]): JSON schema id
+        * event_type_prefix (Optional[hat.event.common.EventType]):
+            event type prefix
+        * create (Callable[[json.Data,AdapterEventClient],Adapter]):
+            coroutine responsible for creating adapter
+
+    If module defines JSON schema id, it will be used for aditional
+    validation of module's configuration.
+
+    Event type prefix is used for filtering events that can be obtained
+    by calling :meth:`AdapterEventClient.receive`. It can not contain
+    subscription wildchars. If it is None, adapter will not receive any
+    event notifications.
+
+    `create` coroutine is called with adapter instance configuration and
+    adapter event client.
+
+    """
+
+    @property
+    @abc.abstractmethod
+    def closed(self):
+        """asyncio.Future: closed future"""
+
+    @abc.abstractmethod
+    async def async_close(self):
+        """Async close"""
+
+    @abc.abstractmethod
+    async def create_session(self, client):
+        """Create new adapter session
+
+        Args:
+            client (AdapterSessionClient): adapter session client
+
+        Returns:
+            AdapterSession
+
+        """
+
+
+class AdapterSession(abc.ABC):
+    """Adapter's single client session"""
+
+    @property
+    @abc.abstractmethod
+    def closed(self):
+        """asyncio.Future: closed future"""
+
+    @abc.abstractmethod
+    async def async_close(self):
+        """Async close"""
+
+
+class AdapterSessionClient(abc.ABC):
+    """Adapter's session client represents single juggler connection"""
+
+    @property
+    def user(self):
+        """str: user identifier"""
+
+    @property
+    def roles(self):
+        """List[str]: user roles"""
+
+    @property
+    def local_data(self):
+        """json.Data: json serializable local data"""
+
+    @property
+    def remote_data(self):
+        """json.Data: json serializable remote data"""
+
+    def register_change_cb(self, cb):
+        """Register remote data change callback
+
+        Args:
+            cb (Callable[[],None]): change callback
+
+        Returns:
+            util.RegisterCallbackHandle
+
+        """
+
+    def set_local_data(self, data):
+        """Set local data
+
+        Args:
+            data (json.Data): json serializable local data
+
+        """
+
+    async def send(self, msg):
+        """Send message
+
+        Args:
+            msg (json.Data): json serializable message
+
+        """
+
+    async def receive(self):
+        """Receive message
+
+        Returns:
+            json.Data: json serializable message
+
+        """
+
+
+class AdapterEventClient(abc.ABC):
+    """Adapters interface to event client
+
+    Received event notifications include only those that start with
+    `event_type_prefix` as defined by adapter implementation.
+
+    """
+
+    async def receive(self):
+        """See :meth:`hat.event.client.Client.receive`"""
+
+    def register(self, events):
+        """See :meth:`hat.event.client.Client.register`"""
+
+    async def register_with_response(self, events):
+        """See :meth:`hat.event.client.Client.register_with_response`"""
+
+    async def query(self, data):
+        """See :meth:`hat.event.client.Client.query`"""
