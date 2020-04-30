@@ -124,7 +124,9 @@ class Page:
             {'title': 'hat-gateway',
              'description': 'Remote communication device gateway'},
             {'title': 'hat-gui',
-             'description': 'GUI server'}
+             'description': 'GUI server'},
+            {'title': 'hat-translator',
+             'description': 'Configuration transformation interface'}
         ]
 
     @property
@@ -187,7 +189,9 @@ class Page:
                 {'name': 'hat-gateway',
                  'docs': 'docs/components/gateway/index.html'},
                 {'name': 'hat-gui',
-                 'docs': 'docs/components/gui/index.html'}]
+                 'docs': 'docs/components/gui/index.html'},
+                {'name': 'hat-translator',
+                 'docs': 'docs/components/translator.html'}]
 
     @property
     def javascript_packages(self):

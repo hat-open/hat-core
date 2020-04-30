@@ -108,6 +108,11 @@ where ``package-name`` is one of following:
 
         GUI server
 
+    * `hat-translator <https://pypi.org/project/hat-translator>`_
+      (`translator docs <https://core.hat-open.com/docs/components/translator.html>`_)
+
+        Configuration transformation interface
+
 
 JavaScript packages
 '''''''''''''''''''

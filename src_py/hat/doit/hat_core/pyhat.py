@@ -23,7 +23,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_monitor',
            'task_pyhat_event',
            'task_pyhat_gateway',
-           'task_pyhat_gui']
+           'task_pyhat_gui',
+           'task_pyhat_translator']
 
 
 build_dir = Path('build/pyhat')
@@ -269,7 +270,6 @@ def task_pyhat_gateway():
         description='Hat remote communication device gateway',
         dependencies=['appdirs',
                       'hat-util',
-                      'hat-json',
                       'hat-sbs',
                       'hat-chatter',
                       'hat-monitor',
@@ -313,6 +313,21 @@ def task_pyhat_gui():
         console_scripts=['hat-gui = hat.gui.main:main'],
         task_dep=['jshat_app',
                   'jshat_view'])
+
+
+def task_pyhat_translator():
+    """PyHat - build hat-translator"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-translator')
+        for i in (src_py_dir / 'hat/translator').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+
+    return _get_task_build(
+        name='hat-translator',
+        description='Hat configuration transformation interface',
+        dependencies=['hat-util'],
+        mappings=mappings,
+        console_scripts=['hat-translator = hat.translator.main:main'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,
