@@ -42,4 +42,6 @@ function view(name, entry) {
 }
 
 
-module.exports = [];
+module.exports = [
+    view('login', '.' + path.sep + path.join('src_js', '@hat-core', 'gui', 'views', 'login', 'index'))
+];

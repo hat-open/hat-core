@@ -1,0 +1,35 @@
+@import '../../common/color';
+@import '../../common/shadow';
+
+
+html, body, input, textarea, select, button {
+    font-family: 'Roboto';
+}
+
+html, body {
+    font-size: 10pt;
+    margin: 0px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login {
+    @include shadow-4dp;
+    margin-top: 100px;
+    background-color: $color-grey-50;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+
+    .grid {
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: auto 150px;
+        grid-gap: 5px 10px;
+        align-items: center;
+    }
+}
