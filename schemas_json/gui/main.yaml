@@ -1,0 +1,137 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://gui/main.yaml#"
+title: GUI Server
+description: GUI Server's configuration
+type: object
+required:
+    - type
+    - log
+    - monitor
+    - event_server_group
+    - adapters
+    - views
+    - server
+properties:
+    type:
+        enum:
+            - gui
+        description: configuration type identification
+    version:
+        type: string
+        description: component version
+    log:
+        "$ref": "hat://logging.yaml#"
+    monitor:
+        "$ref": "hat://monitor/client.yaml#"
+    event_server_group:
+        type: string
+    adapters:
+        "$ref": "hat://gui/main.yaml#/definitions/adapters"
+    views:
+        "$ref": "hat://gui/main.yaml#/definitions/views"
+    server:
+        "$ref": "hat://gui/main.yaml#/definitions/server"
+definitions:
+    adapters:
+        type: array
+        items:
+            "$ref": "hat://gui/main.yaml#/definitions/adapter"
+    views:
+        type: array
+        items:
+            "$ref": "hat://gui/main.yaml#/definitions/view"
+    server:
+        type: object
+        required:
+            - address
+            - initial_view
+            - roles
+            - users
+        properties:
+            address:
+                type: string
+                default: "http://localhost:23023"
+            initial_view:
+                type: string
+            roles:
+                type: array
+                items:
+                    "$ref": "hat://gui/main.yaml#/definitions/role"
+            users:
+                type: array
+                items:
+                    "$ref": "hat://gui/main.yaml#/definitions/user"
+    view:
+        type: object
+        required:
+            - name
+            - view_path
+            - conf_path
+        properties:
+            name:
+                type: string
+            view_path:
+                type: string
+            conf_path:
+                type:
+                    - string
+                    - "null"
+    adapter:
+        type: object
+        required:
+            - name
+            - module
+        properties:
+            name:
+                type: string
+            module:
+                type: string
+    user:
+        type: object
+        required:
+            - name
+            - password
+            - roles
+        properties:
+            name:
+                type: string
+            password:
+                type: object
+                required:
+                    - hash
+                    - salt
+                properties:
+                    hash:
+                        type: string
+                        description: |
+                            SHA-256 (salt + password) hash encoded as hex string
+                    salt:
+                        type: string
+                        decription: |
+                            unique salt used for generating hash encoded as
+                            hex string
+            roles:
+                type: array
+                description: |
+                    user can use all adapters associated with all roles and
+                    is provided with view associated with first role from this
+                    list
+                items:
+                    type: string
+    role:
+        type: object
+        required:
+            - name
+            - view
+            - adapters
+        properties:
+            name:
+                type: string
+            view:
+                type: string
+            adapters:
+                type: array
+                items:
+                    type: string
+...
