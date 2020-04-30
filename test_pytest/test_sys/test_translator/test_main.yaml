@@ -1,0 +1,9 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "test://test_main.yaml#"
+definitions:
+    t1:
+        type: integer
+    t2:
+        type: string
+...
