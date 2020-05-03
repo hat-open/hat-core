@@ -1,11 +1,19 @@
 """Common gateway interfaces"""
 
+from pathlib import Path
 import abc
 import typing
 
 from hat.util import json
 import hat.event.common
+import hat.monitor.common
 
+
+json_schema_repo = json.SchemaRepository(
+    json.json_schema_repo,
+    hat.monitor.common.json_schema_repo,
+    json.SchemaRepository.from_json(Path(__file__).parent /
+                                    'json_schema_repo.json'))
 
 DeviceConf = json.Data
 

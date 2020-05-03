@@ -17,6 +17,7 @@ from hat.doit.hat_core.jshat.lib import *  # NOQA
 from hat.doit.hat_core.jshat.view import *  # NOQA
 from hat.doit.hat_core.pyhat import *  # NOQA
 from hat.doit.hat_core.pymod import *  # NOQA
+from hat.doit.hat_core.schemas import *  # NOQA
 from hat.doit.hat_core.test import *  # NOQA
 from hat.doit.hat_core.vm import *  # NOQA
 import hat.doit.hat_core.cache.tools
@@ -34,6 +35,7 @@ import hat.doit.hat_core.jshat.lib
 import hat.doit.hat_core.jshat.view
 import hat.doit.hat_core.pyhat
 import hat.doit.hat_core.pymod
+import hat.doit.hat_core.schemas
 import hat.doit.hat_core.test
 import hat.doit.hat_core.vm
 
@@ -54,6 +56,7 @@ __all__ = (['task_clean_all'] +
            hat.doit.hat_core.jshat.view.__all__ +
            hat.doit.hat_core.pyhat.__all__ +
            hat.doit.hat_core.pymod.__all__ +
+           hat.doit.hat_core.schemas.__all__ +
            hat.doit.hat_core.test.__all__ +
            hat.doit.hat_core.vm.__all__)
 

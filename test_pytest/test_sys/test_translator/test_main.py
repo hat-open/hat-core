@@ -41,8 +41,6 @@ def run_translator(request):
                     else None)
         p = subprocess.run(
             ['python', '-m', 'hat.translator',
-             '--json-schemas-path',
-             str(json.default_schemas_json_path),
              action,
              '--format', format.name.lower(),
              '--module', 'test_sys.test_translator.test_main',

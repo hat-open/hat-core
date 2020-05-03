@@ -31,8 +31,7 @@ def main():
 
     args = _create_parser().parse_args()
     conf = json.decode_file(args.conf)
-    json_schema_repo = json.SchemaRepository(args.schemas_json_path)
-    json_schema_repo.validate('hat://monitor/main.yaml#', conf)
+    common.json_schema_repo.validate('hat://monitor/main.yaml#', conf)
 
     logging.config.dictConfig(conf['log'])
 
@@ -72,11 +71,6 @@ def _create_parser():
              "(default $XDG_CONFIG_HOME/hat/monitor.yaml)")
 
     dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--json-schemas-path', metavar='path', dest='schemas_json_path',
-        default=json.default_schemas_json_path,
-        action=util.EnvPathArgParseAction,
-        help="override json schemas directory path")
     dev_args.add_argument(
         '--sbs-schemas-path', metavar='path', dest='schemas_sbs_path',
         default=sbs.default_schemas_sbs_path,

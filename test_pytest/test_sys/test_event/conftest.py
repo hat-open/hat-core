@@ -16,7 +16,6 @@ class EventServerProcess(Process):
         super().__init__([
             'python', '-m', 'hat.event.server',
             '--conf', str(conf_path),
-            '--json-schemas-path', str(json.default_schemas_json_path),
             '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--additional-json-schemas-path',
             str(Path(__file__).parent / 'modules/remote.yaml')
@@ -71,7 +70,6 @@ def monitor_process(tmp_path, monitor_conf, monitor_port):
     json.encode_file(monitor_conf, conf_path)
     args = ['python', '-m', 'hat.monitor.server',
             '--conf', str(conf_path),
-            '--json-schemas-path', str(json.default_schemas_json_path),
             '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--ui-path', str(tmp_path)]
     with Process(args) as p:

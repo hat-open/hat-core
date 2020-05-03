@@ -85,7 +85,6 @@ def run_orchestrator_subprocess(conf, conf_folder_path):
     return psutil.Popen(
         ['python', '-m', 'hat.orchestrator',
          '--conf', str(conf_path),
-         '--json-schemas-path', str(json.default_schemas_json_path),
          '--ui-path', str(conf_folder_path)],
         creationflags=creationflags)
 

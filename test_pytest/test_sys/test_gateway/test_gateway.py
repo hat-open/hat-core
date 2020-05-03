@@ -116,7 +116,6 @@ def monitor_process(tmp_path, monitor_conf, monitor_port):
     json.encode_file(monitor_conf, conf_path)
     with Process(['python', '-m', 'hat.monitor.server',
                   '--conf', str(conf_path),
-                  '--json-schemas-path', str(json.default_schemas_json_path),
                   '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
                   '--ui-path', str(tmp_path)]) as p:
         wait_until(p.listens_on, monitor_port)
@@ -169,8 +168,6 @@ def run_event_server(tmp_path, event_conf):
 
     proc = Process(['python', '-m', 'hat.event.server',
                     '--conf', str(conf_path),
-                    '--json-schemas-path', str(
-                        json.default_schemas_json_path),
                     '--sbs-schemas-path', str(
                         sbs.default_schemas_sbs_path)])
     return proc
@@ -232,8 +229,6 @@ def create_gateway(tmp_path):
         json.encode_file(gateway_conf, conf_path)
         proc = Process(['python', '-m', 'hat.gateway',
                         '--conf', str(conf_path),
-                        '--json-schemas-path', str(
-                           json.default_schemas_json_path),
                         '--sbs-schemas-path', str(
                            sbs.default_schemas_sbs_path)],
                        ignore_stderr=ignore_stderr)

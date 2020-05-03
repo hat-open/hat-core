@@ -23,7 +23,7 @@ def main():
     args = _create_parser().parse_args()
 
     json_schema_repo = json.SchemaRepository(
-        args.schemas_json_path, *args.additional_json_schemas_paths)
+        json.json_schema_repo, *args.additional_json_schemas_paths)
     translators = []
     for module in itertools.chain(builtin_translators, args.module_names):
         translators += importlib.import_module(module).translators
@@ -90,12 +90,6 @@ def _create_parser():
         'list', help='list available translations')
     add_global_arguments(list_parser)
 
-    dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--json-schemas-path', metavar='path', dest='schemas_json_path',
-        default=json.default_schemas_json_path,
-        action=util.EnvPathArgParseAction,
-        help="override json schemas directory path")
     return parser
 
 

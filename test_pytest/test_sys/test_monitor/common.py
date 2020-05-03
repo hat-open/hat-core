@@ -55,7 +55,6 @@ def run_monitor_subprocess(conf, conf_folder_path):
                      if sys.platform == 'win32' else 0)
     return psutil.Popen(
         ['python', '-m', 'hat.monitor.server.main', '--conf', str(conf_path),
-         '--json-schemas-path', json.default_schemas_json_path,
          '--sbs-schemas-path', sbs.default_schemas_sbs_path,
          '--ui-path', ''],
         creationflags=creationflags)

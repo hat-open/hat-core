@@ -216,7 +216,6 @@ def monitor_process(tmp_path, monitor_conf, monitor_port):
         yaml.dump(monitor_conf, f)
     args = ['python', '-m', 'hat.monitor.server',
             '--conf', str(conf_path),
-            '--json-schemas-path', str(json.default_schemas_json_path),
             '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--ui-path', str(tmp_path)]
     with Process(args) as p:
@@ -259,8 +258,6 @@ def run_event_server(conf_path, event_conf, ignore_stderr=False):
 
     proc = Process(['python', '-m', 'hat.event.server',
                     '--conf', str(conf_path),
-                    '--json-schemas-path', str(
-                        json.default_schemas_json_path),
                     '--sbs-schemas-path', str(
                         sbs.default_schemas_sbs_path)],
                    ignore_stderr=ignore_stderr)
@@ -344,7 +341,6 @@ def run_gui_nowait(conf_path, ui_path, gui_conf, ignore_stderr=False):
         yaml.dump(gui_conf, f)
     args = ['python', '-m', 'hat.gui',
             '--conf', str(conf_path),
-            '--json-schemas-path', str(json.default_schemas_json_path),
             '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--ui-path', ui_path]
     return Process(args, ignore_stderr=ignore_stderr)

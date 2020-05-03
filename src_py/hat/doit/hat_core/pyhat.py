@@ -42,11 +42,11 @@ def task_pyhat_util():
     """PyHat - build hat-util"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-util')
+        json_schema_repo = src_py_dir / 'hat/util/json_schema_repo.json'
         for i in (src_py_dir / 'hat/util').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        src_json = src_json_dir / 'logging.yaml'
-        yield src_json, (dst_dir / 'hat/schemas_json'
-                                 / src_json.relative_to(src_json_dir))
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
 
     return _get_task_build(name='hat-util',
                            description='Hat utility modules',
@@ -158,11 +158,11 @@ def task_pyhat_drivers():
     """PyHat - build hat-drivers"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-drivers')
+        json_schema_repo = src_py_dir / 'hat/drivers/json_schema_repo.json'
         for i in (src_py_dir / 'hat/drivers').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        for i in (src_json_dir / 'drivers').rglob('*.yaml'):
-            yield i, (dst_dir / 'hat/schemas_json'
-                              / i.relative_to(src_json_dir))
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
 
     return _get_task_build(name='hat-drivers',
                            description='Hat communication drivers',
@@ -175,12 +175,13 @@ def task_pyhat_orchestrator():
     """PyHat - build hat-orchestrator"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-orchestrator')
+        json_schema_repo = (src_py_dir /
+                            'hat/orchestrator/json_schema_repo.json')
         jshat_build = Path('build/jshat/app/orchestrator')
-        src_json = src_json_dir / 'orchestrator.yaml'
         for i in (src_py_dir / 'hat/orchestrator').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        yield src_json, (dst_dir / 'hat/schemas_json'
-                                 / src_json.relative_to(src_json_dir))
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
         for i in jshat_build.rglob('*'):
             if i.is_dir():
                 continue
@@ -202,11 +203,12 @@ def task_pyhat_monitor():
     """PyHat - build hat-monitor"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-monitor')
+        json_schema_repo = src_py_dir / 'hat/monitor/json_schema_repo.json'
         jshat_build = Path('build/jshat/app/monitor')
         for i in (src_py_dir / 'hat/monitor').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        for i in (src_json_dir / 'monitor').rglob('*.yaml'):
-            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
         for i in jshat_build.rglob('*'):
             if i.is_dir():
                 continue
@@ -234,10 +236,11 @@ def task_pyhat_event():
     """PyHat - build hat-event"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-event')
+        json_schema_repo = src_py_dir / 'hat/event/json_schema_repo.json'
         for i in (src_py_dir / 'hat/event').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        for i in (src_json_dir / 'event').rglob('*.yaml'):
-            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
         schemas_sbs_event = src_sbs_dir / 'hat/event.sbs'
         yield schemas_sbs_event, (dst_dir / 'hat/schemas_sbs'
                                   / schemas_sbs_event.relative_to(
@@ -260,10 +263,11 @@ def task_pyhat_gateway():
     """PyHat - build hat-gateway"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-gateway')
+        json_schema_repo = src_py_dir / 'hat/gateway/json_schema_repo.json'
         for i in (src_py_dir / 'hat/gateway').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        for i in (src_json_dir / 'gateway').rglob('*.yaml'):
-            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
 
     return _get_task_build(
         name='hat-gateway',
@@ -282,12 +286,13 @@ def task_pyhat_gui():
     """PyHat - build hat-gui"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-gui')
+        json_schema_repo = src_py_dir / 'hat/gui/json_schema_repo.json'
         jshat_app_build = Path('build/jshat/app/gui')
         jshat_view_build = Path('build/jshat/view')
         for i in (src_py_dir / 'hat/gui').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        for i in (src_json_dir / 'gui').rglob('*.yaml'):
-            yield i, dst_dir / 'hat/schemas_json' / i.relative_to(src_json_dir)
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
         for i in jshat_app_build.rglob('*'):
             if i.is_dir():
                 continue

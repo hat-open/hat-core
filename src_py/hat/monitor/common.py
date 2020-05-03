@@ -1,8 +1,17 @@
 """Common functionality shared between clients and monitor server"""
 
+from pathlib import Path
+
 from hat import chatter
 from hat import sbs
 from hat import util
+from hat.util import json
+
+
+json_schema_repo = json.SchemaRepository(
+    json.json_schema_repo,
+    json.SchemaRepository.from_json(Path(__file__).parent /
+                                    'json_schema_repo.json'))
 
 
 ComponentInfo = util.namedtuple(

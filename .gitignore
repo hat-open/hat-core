@@ -6,3 +6,4 @@ __pycache__
 /node_modules
 /yarn-error.log
 /src_py/hat/_sqlite3.*
+/src_py/**/json_schema_repo.json

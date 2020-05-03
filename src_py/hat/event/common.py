@@ -1,5 +1,6 @@
 """Common functionality shared between clients and event server"""
 
+from pathlib import Path
 import datetime
 import enum
 import struct
@@ -9,6 +10,14 @@ from hat import chatter
 from hat import sbs
 from hat import util
 from hat.util import json
+import hat.monitor.common
+
+
+json_schema_repo = json.SchemaRepository(
+    json.json_schema_repo,
+    hat.monitor.common.json_schema_repo,
+    json.SchemaRepository.from_json(Path(__file__).parent /
+                                    'json_schema_repo.json'))
 
 
 Order = util.extend_enum_doc(enum.Enum('Order', [

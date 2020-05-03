@@ -9,7 +9,6 @@ from hat import duktape
 from hat import sbs
 from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
 from hat.util import aio
-from hat.util import json
 
 
 @pytest.fixture(scope='session')
@@ -23,7 +22,6 @@ def pytest_configure(config):
     aio.init_asyncio()
 
     root_path = Path(__file__).parent.parent
-    json.default_schemas_json_path = root_path / 'schemas_json'
     sbs.default_schemas_sbs_path = root_path / 'schemas_sbs'
     duktape.default_duktape_path = (Path(__file__).parent.parent /
                                     duktape_lib_path)

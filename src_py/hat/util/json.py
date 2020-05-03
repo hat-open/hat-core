@@ -1,9 +1,7 @@
 """JSON data manipulation and validation
 
 Attributes:
-    default_schemas_json_path (pathlib.Path):
-        Default path to schemas_json directory.
-    Data: JSON data type identifier.
+    Data (Type): JSON data type identifier.
 
 """
 
@@ -20,9 +18,6 @@ import jsonschema.validators
 import yaml
 
 from hat import util
-
-
-default_schemas_json_path = pathlib.Path(__file__).parent / 'schemas_json'
 
 
 Data = typing.Union[None, bool, int, float, str,
@@ -284,12 +279,14 @@ class SchemaRepository:
         exported by using :meth:`SchemaRepository.to_json`.
 
         Args:
-            data (Data): repository data
+            data (Union[pathlib.PurePath,Data]): repository data
 
         Returns:
             SchemaRepository
 
         """
+        if isinstance(data, pathlib.PurePath):
+            data = decode_file(data)
         repo = SchemaRepository()
         repo._data = data
         return repo
@@ -329,6 +326,14 @@ class SchemaRepository:
                 self._data[k] = v
             else:
                 self._data[k].update(v)
+
+
+_json_schema_repo_path = (pathlib.Path(__file__).parent /
+                          'json_schema_repo.json')
+
+json_schema_repo = (SchemaRepository.from_json(_json_schema_repo_path)
+                    if _json_schema_repo_path.exists()
+                    else SchemaRepository())
 
 
 # check upstream changes in jsonpatch and validate performance inpact

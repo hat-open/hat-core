@@ -23,6 +23,7 @@ from hat.util import aio
 from hat.util import json
 import hat.event.client
 import hat.event.common
+import hat.gateway.common
 import hat.gateway.engine
 import hat.monitor.client
 import hat.monitor.common
@@ -39,7 +40,8 @@ def main():
     args = _create_parser().parse_args()
     conf = json.decode_file(args.conf)
     json_schema_repo = json.SchemaRepository(
-        args.schemas_json_path, *args.additional_json_schemas_paths)
+        hat.gateway.common.json_schema_repo,
+        *args.additional_json_schemas_paths)
     json_schema_repo.validate('hat://gateway/main.yaml#', conf)
     for device_conf in conf['devices']:
         module = importlib.import_module(device_conf['module'])
@@ -129,11 +131,6 @@ def _create_parser():
         help="additional json schemas paths")
 
     dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--json-schemas-path', metavar='path', dest='schemas_json_path',
-        default=json.default_schemas_json_path,
-        action=util.EnvPathArgParseAction,
-        help="override json schemas directory path")
     dev_args.add_argument(
         '--sbs-schemas-path', metavar='path', dest='schemas_sbs_path',
         default=sbs.default_schemas_sbs_path,

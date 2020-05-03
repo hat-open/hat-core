@@ -20,13 +20,16 @@ user_conf_dir = Path(appdirs.user_config_dir('hat'))
 default_ui_path = package_path / 'ui'
 default_conf_path = user_conf_dir / 'orchestrator.yaml'
 
+json_schema_repo = json.SchemaRepository(
+    json.json_schema_repo,
+    json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
+
 
 def main():
     aio.init_asyncio()
 
     args = _create_parser().parse_args()
     conf = json.decode_file(args.conf)
-    json_schema_repo = json.SchemaRepository(args.schemas_json_path)
     json_schema_repo.validate('hat://orchestrator.yaml#', conf)
 
     logging.config.dictConfig(conf['log'])
@@ -64,11 +67,6 @@ def _create_parser():
              "(default $XDG_CONFIG_HOME/hat/orchestrator.yaml)")
 
     dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--json-schemas-path', metavar='path', dest='schemas_json_path',
-        default=json.default_schemas_json_path,
-        action=util.EnvPathArgParseAction,
-        help="override json schemas directory path")
     dev_args.add_argument(
         '--ui-path', metavar='path', dest='ui_path',
         default=default_ui_path,
