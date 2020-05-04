@@ -28,8 +28,7 @@ from hat.util import aio
 mlog = logging.getLogger(__name__)
 
 
-sbs_repo = sbs.Repository.from_json(Path(__file__).parent /
-                                    'chatter_sbs_repo.json')
+sbs_repo = sbs.Repository.from_json(Path(__file__).parent / 'sbs_repo.json')
 
 
 Msg = util.namedtuple(['Msg', "Received message"],

@@ -98,7 +98,7 @@ def task_schemas_sbs_chatter():
     """Schemas - generate hat-chatter SBS repository data"""
     return _get_task_sbs([schemas_sbs_dir / 'hat.sbs',
                           schemas_sbs_dir / 'hat/ping.sbs'],
-                         [src_py_dir / 'hat/chatter_sbs_repo.json'])
+                         [src_py_dir / 'hat/chatter/sbs_repo.json'])
 
 
 def task_schemas_sbs_monitor():

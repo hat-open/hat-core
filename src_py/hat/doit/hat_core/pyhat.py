@@ -87,9 +87,9 @@ def task_pyhat_chatter():
     """PyHat - build hat-chatter"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-chatter')
-        src_py = src_py_dir / 'hat/chatter.py'
-        sbs_repo = src_py_dir / 'hat/chatter_sbs_repo.json'
-        yield src_py, dst_dir / src_py.relative_to(src_py_dir)
+        sbs_repo = src_py_dir / 'hat/chatter/sbs_repo.json'
+        for i in (src_py_dir / 'hat/chatter').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
         yield sbs_repo, dst_dir / sbs_repo.relative_to(src_py_dir)
 
     return _get_task_build(name='hat-chatter',
