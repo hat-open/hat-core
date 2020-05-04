@@ -79,11 +79,11 @@ def _resolve_type(modules_dict, module, ast_type, mappings):
     return _resolve_ref(modules_dict, ref, args)
 
 
-_builtin_refs = {serializer.Ref(None, 'Boolean'): serializer.Boolean,
-                 serializer.Ref(None, 'Integer'): serializer.Integer,
-                 serializer.Ref(None, 'Float'): serializer.Float,
-                 serializer.Ref(None, 'String'): serializer.String,
-                 serializer.Ref(None, 'Bytes'): serializer.Bytes,
+_builtin_refs = {serializer.Ref(None, 'Boolean'): serializer.BooleanType(),
+                 serializer.Ref(None, 'Integer'): serializer.IntegerType(),
+                 serializer.Ref(None, 'Float'): serializer.FloatType(),
+                 serializer.Ref(None, 'String'): serializer.StringType(),
+                 serializer.Ref(None, 'Bytes'): serializer.BytesType(),
                  serializer.Ref(None, 'None'): serializer.TupleType([])}
 
 

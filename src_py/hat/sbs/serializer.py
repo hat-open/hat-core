@@ -41,12 +41,6 @@ Type = typing.Union[Ref,
                     TupleType,
                     UnionType]
 
-Boolean = BooleanType()
-Integer = IntegerType()
-Float = FloatType()
-String = StringType()
-Bytes = BytesType()
-
 Data = typing.Union[bool, int, float, str, bytes,
                     typing.List['Data'],
                     typing.Dict[str, 'Data'],

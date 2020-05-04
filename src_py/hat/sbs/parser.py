@@ -40,6 +40,58 @@ def parse(schema):
     return hat.peg.walk_ast(ast, _actions)
 
 
+def module_to_json(module):
+    """Create JSON data representation of module definition
+
+    Args:
+        module (AstModule): module definition
+
+    Returns:
+        hat.util.json.Data
+
+    """
+    return {'name': module.name,
+            'type_defs': {k: {'name': v.name,
+                              'args': v.args,
+                              'type': _type_to_json(v.type)}
+                          for k, v in module.type_defs.items()}}
+
+
+def module_from_json(data):
+    """Create module definition from JSON data
+
+    Args:
+        data (hat.util.json.Data): JSON data
+
+    Returns:
+        AstModule
+
+    """
+    return AstModule(name=data['name'],
+                     type_defs={k: AstTypeDef(name=v['name'],
+                                              args=v['args'],
+                                              type=_type_from_json(v['type']))
+                                for k, v in data['type_defs'].items()})
+
+
+def _type_to_json(t):
+    return {'module': t.module,
+            'name': t.name,
+            'entries': [{'name': i.name,
+                         'type': _type_to_json(i.type)}
+                        for i in t.entries],
+            'args': [_type_to_json(i) for i in t.args]}
+
+
+def _type_from_json(data):
+    return AstType(module=data['module'],
+                   name=data['name'],
+                   entries=[AstEntry(name=i['name'],
+                                     type=_type_from_json(i['type']))
+                            for i in data['entries']],
+                   args=[_type_from_json(i) for i in data['args']])
+
+
 _grammar = hat.peg.Grammar(r'''
     Module          <- OWS 'module' MWS Identifier TypeDefinitions OWS EOF
     TypeDefinitions <- (MWS TypeDefinition (MWS TypeDefinition)*)?
