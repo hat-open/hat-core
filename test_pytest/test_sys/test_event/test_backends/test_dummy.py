@@ -14,8 +14,8 @@ def server(create_event_server):
 
 
 @pytest.fixture
-async def client(sbs_repo, server):
-    client = await hat.event.client.connect(sbs_repo, server.address)
+async def client(server):
+    client = await hat.event.client.connect(server.address)
     yield client
     await client.async_close()
 

@@ -13,7 +13,6 @@ import random
 import string
 
 from hat import juggler
-from hat import sbs
 from hat import util
 from hat.util import aio
 from hat.util import json
@@ -174,7 +173,6 @@ class Client:
 @pytest.mark.asyncio
 async def event_client(event_address):
     client = await hat.event.client.connect(
-        hat.event.common.create_sbs_repo(),
         event_address,
         subscriptions=[['*']])
 
@@ -216,7 +214,6 @@ def monitor_process(tmp_path, monitor_conf, monitor_port):
         yaml.dump(monitor_conf, f)
     args = ['python', '-m', 'hat.monitor.server',
             '--conf', str(conf_path),
-            '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--ui-path', str(tmp_path)]
     with Process(args) as p:
         wait_until(p.listens_on, monitor_port, timeout=listens_port_timeout)
@@ -257,9 +254,7 @@ def run_event_server(conf_path, event_conf, ignore_stderr=False):
         yaml.dump(event_conf, f)
 
     proc = Process(['python', '-m', 'hat.event.server',
-                    '--conf', str(conf_path),
-                    '--sbs-schemas-path', str(
-                        sbs.default_schemas_sbs_path)],
+                    '--conf', str(conf_path)],
                    ignore_stderr=ignore_stderr)
     return proc
 
@@ -341,7 +336,6 @@ def run_gui_nowait(conf_path, ui_path, gui_conf, ignore_stderr=False):
         yaml.dump(gui_conf, f)
     args = ['python', '-m', 'hat.gui',
             '--conf', str(conf_path),
-            '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--ui-path', ui_path]
     return Process(args, ignore_stderr=ignore_stderr)
 

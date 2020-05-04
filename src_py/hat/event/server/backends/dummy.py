@@ -17,12 +17,11 @@ from hat.util import aio
 json_schema_id = None
 
 
-async def create(conf, sbs_repo):
+async def create(conf):
     """Create DummyBackend
 
     Args:
         conf (hat.json.Data): configuration
-        sbs_repo (hat.sbs.Repository): event SBS repository
 
     Returns:
         DummyBackend

@@ -14,18 +14,13 @@ from hat.util import aio
 import test_unit.test_gui.mock
 
 
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return hat.event.common.create_sbs_repo()
-
-
 @pytest.fixture
 def event_server_port(unused_tcp_port_factory):
     return unused_tcp_port_factory()
 
 
 @pytest.fixture
-async def event_server(event_server_port, sbs_repo):
+async def event_server(event_server_port):
     conf = {
         'backend_engine': {
             'server_id': 1,
@@ -35,19 +30,18 @@ async def event_server(event_server_port, sbs_repo):
         'communication': {
             'address': f'tcp+sbs://127.0.0.1:{event_server_port}'}}
     async with aio.Group() as group:
-        group.spawn(hat.event.server.main.run, conf, sbs_repo, None)
+        group.spawn(hat.event.server.main.run, conf, None)
         await asyncio.sleep(0.01)  # Wait for event server to start
         yield
 
 
 @pytest.fixture
-async def event_client_factory(event_server, event_server_port, sbs_repo):
+async def event_client_factory(event_server, event_server_port):
     clients = []
 
     async def factory(subscriptions=None):
         address = f'tcp+sbs://127.0.0.1:{event_server_port}'
-        client = await hat.event.client.connect(sbs_repo, address,
-                                                subscriptions)
+        client = await hat.event.client.connect(address, subscriptions)
         clients.append(client)
         return client
 

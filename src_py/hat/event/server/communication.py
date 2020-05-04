@@ -18,16 +18,12 @@ mlog = logging.getLogger(__name__)
 _source_id = 0
 
 
-async def create(conf, sbs_repo, engine):
+async def create(conf, engine):
     """Create communication
-
-    `sbs_repo` is instance of event SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     Args:
         conf (hat.json.Data): configuration defined by
             ``hat://event/main.yaml#/definitions/communication``
-        sbs_repo (hat.sbs.Repository): event SBS repository
         engine (hat.event.module_engine.ModuleEngine): module engine
 
     Returns:
@@ -42,7 +38,7 @@ async def create(conf, sbs_repo, engine):
     comm._subs_registry = common.SubscriptionRegistry()
 
     chatter_server = await chatter.listen(
-        sbs_repo=sbs_repo,
+        sbs_repo=common.sbs_repo,
         address=conf['address'],
         on_connection_cb=lambda conn: comm._async_group.spawn(
             comm._connection_loop, conn))

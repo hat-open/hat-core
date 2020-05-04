@@ -10,11 +10,6 @@ from hat.util import aio
 from test_unit.test_monitor import common
 
 
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return hat.monitor.common.create_sbs_repo()
-
-
 @pytest.fixture
 def server_port(unused_tcp_port_factory):
     return unused_tcp_port_factory()
@@ -37,12 +32,12 @@ def client_conf(server_port):
 
 
 @pytest.mark.asyncio
-async def test_client_connect_disconnect(sbs_repo, server_conf, client_conf):
+async def test_client_connect_disconnect(server_conf, client_conf):
     components_queue = aio.Queue()
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
     server.register_change_cb(
         lambda: components_queue.put_nowait(server.components))
-    client = await hat.monitor.client.connect(client_conf, sbs_repo)
+    client = await hat.monitor.client.connect(client_conf)
     components = await components_queue.get()
     assert len(components) == 1
     c = components[0]
@@ -61,12 +56,12 @@ async def test_client_connect_disconnect(sbs_repo, server_conf, client_conf):
 
 
 @pytest.mark.asyncio
-async def test_client_set_ready(sbs_repo, server_conf, client_conf):
+async def test_client_set_ready(server_conf, client_conf):
     components_queue = aio.Queue()
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
     server.register_change_cb(
         lambda: components_queue.put_nowait(server.components))
-    client = await hat.monitor.client.connect(client_conf, sbs_repo)
+    client = await hat.monitor.client.connect(client_conf)
     assert (await components_queue.get())[0].ready is None
     client.set_ready(5)
     assert (await components_queue.get())[0].ready == 5
@@ -83,12 +78,12 @@ async def test_client_set_ready(sbs_repo, server_conf, client_conf):
 
 
 @pytest.mark.asyncio
-async def test_server_set_rank(sbs_repo, server_conf, client_conf):
+async def test_server_set_rank(server_conf, client_conf):
     components_queue = aio.Queue()
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
     server.register_change_cb(
         lambda: components_queue.put_nowait(server.components))
-    client = await hat.monitor.client.connect(client_conf, sbs_repo)
+    client = await hat.monitor.client.connect(client_conf)
     c = (await components_queue.get())[0]
     assert c.rank == 1
     server.set_rank(c.cid, c.mid, 2)
@@ -102,19 +97,19 @@ async def test_server_set_rank(sbs_repo, server_conf, client_conf):
 
 
 @pytest.mark.asyncio
-async def test_server_set_rank_nonexistent(sbs_repo, server_conf):
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+async def test_server_set_rank_nonexistent(server_conf):
+    server = await hat.monitor.server.server.create(server_conf)
     server.set_rank(1, server.mid, 2)
     await server.async_close()
     assert server.closed.done()
 
 
 @pytest.mark.asyncio
-async def test_server_rank_cache(sbs_repo, server_conf, client_conf):
+async def test_server_rank_cache(server_conf, client_conf):
 
     async def client_connect_info_queue():
         info_queue = aio.Queue()
-        client = await hat.monitor.client.connect(client_conf, sbs_repo)
+        client = await hat.monitor.client.connect(client_conf)
         client.register_change_cb(lambda: info_queue.put_nowait(client.info))
         return client, info_queue
 
@@ -124,7 +119,7 @@ async def test_server_rank_cache(sbs_repo, server_conf, client_conf):
             info = await info_queue.get()
         return info
 
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
     client, info_queue = await client_connect_info_queue()
     info = await get_info_until_not_none(info_queue)
     assert info.rank == 1
@@ -169,13 +164,13 @@ async def test_server_rank_cache(sbs_repo, server_conf, client_conf):
 
 
 @pytest.mark.asyncio
-async def test_server_set_master_mid_component(sbs_repo, server_conf):
+async def test_server_set_master_mid_component(server_conf):
     c1 = ComponentInfo(cid=1, mid=10, name='c1', group='g1', address=None,
                        rank=1, blessing=None, ready=None)
     c2 = ComponentInfo(cid=2, mid=11, name='c2', group='g2', address='1.2.3.4',
                        rank=2, blessing=3, ready=3)
     server_change_queue = aio.Queue()
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
     server.register_change_cb(lambda: server_change_queue.put_nowait((None)))
     assert server.mid == 0 and server.components == []
     master = common.create_master(mid=5, components=[c1, c2])
@@ -196,8 +191,8 @@ async def test_server_set_master_mid_component(sbs_repo, server_conf):
 
 
 @pytest.mark.asyncio
-async def test_server_master_set_rank(sbs_repo, server_conf):
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+async def test_server_master_set_rank(server_conf):
+    server = await hat.monitor.server.server.create(server_conf)
     master = common.create_master()
     server.set_master(master)
     server.set_rank(1, 0, 10)
@@ -209,12 +204,12 @@ async def test_server_master_set_rank(sbs_repo, server_conf):
 
 
 @pytest.mark.asyncio
-async def test_client_server_master(sbs_repo, server_conf, client_conf):
+async def test_client_server_master(server_conf, client_conf):
     c2 = ComponentInfo(cid=2, mid=1, name='c2', group='g2', address='1.2.3.4',
                        rank=2, blessing=3, ready=3)
     client_change_queue = aio.Queue()
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
-    client = await hat.monitor.client.connect(client_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
+    client = await hat.monitor.client.connect(client_conf)
     client.register_change_cb(lambda: client_change_queue.put_nowait(None))
     master = common.create_master(mid=1, components=[])
 

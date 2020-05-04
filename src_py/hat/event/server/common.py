@@ -4,7 +4,6 @@ import abc
 import enum
 import typing
 
-from hat import sbs
 from hat import util
 from hat.event.common import *  # NOQA
 from hat.util import json
@@ -62,9 +61,7 @@ SessionChanges = util.namedtuple(
 
 BackendConf = json.Data
 
-CreateBackend = typing.Callable[
-    [BackendConf, sbs.Repository],
-    typing.Awaitable['Backend']]
+CreateBackend = typing.Callable[[BackendConf], typing.Awaitable['Backend']]
 
 
 class Backend(abc.ABC):
@@ -78,9 +75,6 @@ class Backend(abc.ABC):
 
     If module defines JSON schema id, it will be used for aditional
     validation of backend's configuration.
-
-    SBS repository passed to `create` contains definitions received as result
-    of calling :func:`common.create_sbs_repo`.
 
     """
 

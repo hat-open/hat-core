@@ -5,16 +5,12 @@ import importlib
 from hat.event.server import common
 
 
-async def create(conf, sbs_repo):
+async def create(conf):
     """Create backend engine
-
-    `sbs_repo` is instance of event SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     Args:
         conf (hat.json.Data): configuration defined by
             ``hat://event/main.yaml#/definitions/backend_engine``
-        sbs_repo (hat.sbs.Repository): event SBS repository
 
     Returns:
         BackendEngine
@@ -22,7 +18,7 @@ async def create(conf, sbs_repo):
     """
     backend_conf = conf['backend']
     backend_module = importlib.import_module(backend_conf['module'])
-    backend = await backend_module.create(backend_conf, sbs_repo)
+    backend = await backend_module.create(backend_conf)
 
     engine = BackendEngine()
     engine._server_id = conf['server_id']

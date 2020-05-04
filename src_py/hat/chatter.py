@@ -8,9 +8,11 @@ services).
 
 Attributes:
     mlog (logging.Logger): module logger
+    sbs_repo (sbs.Repository): chatter message definition SBS repository
 
 """
 
+from pathlib import Path
 import asyncio
 import contextlib
 import logging
@@ -24,6 +26,10 @@ from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)
+
+
+sbs_repo = sbs.Repository.from_json(Path(__file__).parent /
+                                    'chatter_sbs_repo.json')
 
 
 Msg = util.namedtuple(['Msg', "Received message"],
@@ -51,32 +57,12 @@ class ConnectionClosedError(Exception):
     """Error signaling closed connection"""
 
 
-def create_sbs_repo(data_sbs_repo, schemas_sbs_path=None):
-    """Create chatter SBS repository
-
-    This function creates new SBS repository containing all chatter message
-    definitions and aditional message data definitions.
-
-    Args:
-        data_sbs_repo (hat.sbs.Repository): message data SBS repository
-        schemas_sbs_path (Optional[pathlib.Path]): alternative schemas_sbs path
-
-    Returns:
-        hat.sbs.Repository
-
-    """
-    schemas_sbs_path = schemas_sbs_path or sbs.default_schemas_sbs_path
-    return sbs.Repository(schemas_sbs_path / 'hat.sbs',
-                          schemas_sbs_path / 'hat/ping.sbs',
-                          data_sbs_repo)
-
-
 async def connect(sbs_repo, address, *, pem_file=None, ping_timeout=20,
                   connect_timeout=5, queue_maxsize=0):
     """Connect to remote server
 
-    `sbs_repo` should contain all definitions required for parsing chatter
-    messages and message data. See :func:`create_sbs_repo`.
+    `sbs_repo` should include `hat.chatter.sbs_repo` and aditional message data
+    definitions.
 
     Address is string formatted as `<scheme>://<host>:<port>` where
 

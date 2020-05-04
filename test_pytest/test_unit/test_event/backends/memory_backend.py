@@ -5,7 +5,7 @@ import hat.event.common
 import hat.event.server.common
 
 
-async def create(conf, sbs_repo):
+async def create(conf):
     backend = MemoryBackend()
     backend._async_group = aio.Group()
     backend._mappings = {}

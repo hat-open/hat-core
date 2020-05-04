@@ -10,13 +10,11 @@ connection is signaled with :meth:`Client.closed`.
 
 Example of low-level interface usage::
 
-    sbs_repo = hat.monitor.common.create_sbs_repo()
     client = await hat.monitor.client.connect({
         'name': 'client1',
         'group': 'group1',
         'monitor_address': 'tcp+sbs://127.0.0.1:23010',
-        'component_address': None},
-        sbs_repo)
+        'component_address': None})
     assert client.info in client.components
     try:
         await client.closed
@@ -39,13 +37,11 @@ Example of high-level interface usage::
         await asyncio.sleep(10)
         return 13
 
-    sbs_repo = hat.monitor.common.create_sbs_repo()
     res = await hat.monitor.client.run_component(
         conf={'name': 'client',
               'group': 'test clients',
               'monitor_address': 'tcp+sbs://127.0.0.1:23010',
               'component_address': None},
-        sbs_repo=sbs_repo,
         async_run_cb=monitor_async_run)
     assert res == 13
 
@@ -66,18 +62,14 @@ from hat.util import aio
 mlog = logging.getLogger(__name__)
 
 
-async def connect(conf, sbs_repo):
+async def connect(conf):
     """Connect to local monitor server
-
-    `sbs_repo` is instance of monitor SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     Connection is established once chatter communication is established.
 
     Args:
         conf (hat.json.Data): configuration as defined by
             ``hat://monitor/client.yaml#``
-        sbs_repo (hat.sbs.Repository): monitor SBS repository
 
     Returns:
         Client
@@ -93,7 +85,8 @@ async def connect(conf, sbs_repo):
     client._change_cbs = util.CallbackRegistry()
     client._async_group = aio.Group()
 
-    client._conn = await chatter.connect(sbs_repo, conf['monitor_address'])
+    client._conn = await chatter.connect(common.sbs_repo,
+                                         conf['monitor_address'])
     client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
     mlog.debug("connected to local monitor server %s", conf['monitor_address'])
     client._async_group.spawn(client._receive_loop)
@@ -183,11 +176,8 @@ class Client:
             self._async_group.close()
 
 
-async def run_component(conf, sbs_repo, async_run_cb):
+async def run_component(conf, async_run_cb):
     """Run component
-
-    `sbs_repo` is instance of monitor SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     This method opens new connection to Monitor server and starts client's
     loop which manages blessing/ready states.
@@ -207,14 +197,13 @@ async def run_component(conf, sbs_repo, async_run_cb):
     Args:
         conf (hat.json.Data): configuration as defined by
             ``hat://monitor/client.yaml#``
-        sbs_repo (hat.sbs.Repository): monitor SBS repository
         async_run_cb (Callable[[Client],None]): run callback
 
     Returns:
         Any
 
     """
-    client = await connect(conf, sbs_repo)
+    client = await connect(conf)
     try:
         while True:
             await _wait_until_blessed_and_ready(client)

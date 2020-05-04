@@ -2,7 +2,6 @@ import pytest
 import importlib
 import itertools
 
-import hat.sbs
 import hat.event.common
 import hat.event.server.common
 
@@ -51,8 +50,7 @@ def conf_factory(tmpdir_factory, request):
 async def backend_with_events(conf_factory, event_loop,
                               backend_events_factory):
     conf = conf_factory()
-    backend = await importlib.import_module(conf['module']).create(
-            conf, hat.event.common.create_sbs_repo())
+    backend = await importlib.import_module(conf['module']).create(conf)
 
     reg_events = []
     for ts in [ts0, ts1, ts2]:
@@ -68,8 +66,7 @@ async def backend_with_events(conf_factory, event_loop,
 @pytest.fixture(scope="function")
 async def backend(conf_factory, event_loop):
     conf = conf_factory()
-    backend = await importlib.import_module(conf['module']).create(
-            conf, hat.event.common.create_sbs_repo())
+    backend = await importlib.import_module(conf['module']).create(conf)
     yield backend
     await backend.async_close()
 
@@ -79,12 +76,10 @@ async def backend(conf_factory, event_loop):
 async def backend_memory_backend(conf_factory, event_loop,
                                  backend_events_factory):
     conf = conf_factory()
-    backend = await importlib.import_module(conf['module']).create(
-            conf, hat.event.common.create_sbs_repo())
+    backend = await importlib.import_module(conf['module']).create(conf)
     memory_backend = await importlib.import_module(
         'test_unit.test_event.backends.memory_backend').create(
-        {'module': 'test_unit.test_event.backends.memory_backend'},
-        hat.sbs.Repository())
+        {'module': 'test_unit.test_event.backends.memory_backend'})
 
     backend_events = []
     ts = ts_gen(hat.event.common.now())
@@ -318,15 +313,13 @@ async def test_unique_source_ts(backend, backend_events_factory):
 @pytest.mark.asyncio
 async def test_persistence(conf_factory, backend_events_factory):
     conf = conf_factory()
-    backend = await importlib.import_module(conf['module']).create(
-        conf, hat.event.common.create_sbs_repo())
+    backend = await importlib.import_module(conf['module']).create(conf)
     events = backend_events_factory(timestamp=ts0)
     await register(backend, events)
 
     await backend.async_close()
 
-    backend = await importlib.import_module(conf['module']).create(
-        conf, hat.event.common.create_sbs_repo())
+    backend = await importlib.import_module(conf['module']).create(conf)
     query_res = await backend.query(hat.event.server.common.BackendQueryData())
     assert all(e in query_res for e in events)
     assert len(query_res) == len(events)
@@ -337,8 +330,7 @@ async def test_persistence(conf_factory, backend_events_factory):
 @pytest.mark.asyncio
 async def test_dummy(backend_events_factory):
     conf = {'module': 'hat.event.server.backends.dummy'}
-    backend = await importlib.import_module(conf['module']).create(
-        conf, hat.sbs.Repository())
+    backend = await importlib.import_module(conf['module']).create(conf)
 
     backend_events = backend_events_factory(server_id=1)
     await register(backend, backend_events)

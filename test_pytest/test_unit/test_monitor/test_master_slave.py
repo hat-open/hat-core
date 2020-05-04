@@ -17,11 +17,6 @@ def short_timeout(monkeypatch):
     monkeypatch.setattr(module, 'connected_timeout', 0.01)
 
 
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return hat.monitor.common.create_sbs_repo()
-
-
 @pytest.fixture
 async def async_group():
     group = aio.Group()
@@ -29,7 +24,7 @@ async def async_group():
     await group.async_close()
 
 
-def create_master_queue(sbs_repo, async_group, address, parents,
+def create_master_queue(async_group, address, parents,
                         default_algorithm='BLESS_ALL',
                         group_algorithms={}):
     conf = {'address': address,
@@ -37,12 +32,12 @@ def create_master_queue(sbs_repo, async_group, address, parents,
             'default_algorithm': default_algorithm,
             'group_algorithms': group_algorithms}
     queue = aio.Queue()
-    async_group.spawn(hat.monitor.server.master.run, conf, sbs_repo,
+    async_group.spawn(hat.monitor.server.master.run, conf,
                       lambda master: queue.put_nowait(master))
     return queue
 
 
-async def create_monitor_group(sbs_repo, server_address, master_address,
+async def create_monitor_group(server_address, master_address,
                                master_parents,
                                default_algorithm='BLESS_ALL',
                                group_algorithms={}):
@@ -54,12 +49,11 @@ async def create_monitor_group(sbs_repo, server_address, master_address,
                    'group_algorithms': group_algorithms}
 
     group = aio.Group()
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
 
     async def run():
         master_run_future = group.spawn(hat.monitor.server.master.run,
-                                        master_conf, sbs_repo,
-                                        server.set_master)
+                                        master_conf, server.set_master)
         try:
             await asyncio.wait([server.closed, master_run_future],
                                return_when=asyncio.FIRST_COMPLETED)
@@ -94,7 +88,7 @@ async def wait_client(client, is_master, components_count):
 
 @pytest.mark.parametrize("master_count", [1, 2, 5])
 @pytest.mark.asyncio
-async def test_connect(sbs_repo, short_timeout, async_group,
+async def test_connect(short_timeout, async_group,
                        unused_tcp_port_factory, master_count):
     address_group_queue_cache = collections.deque()
 
@@ -102,7 +96,7 @@ async def test_connect(sbs_repo, short_timeout, async_group,
         addresses = [address for address, _, _ in address_group_queue_cache]
         address = create_address(unused_tcp_port_factory)
         group = async_group.create_subgroup()
-        queue = create_master_queue(sbs_repo, group, address, addresses)
+        queue = create_master_queue(group, address, addresses)
 
         master = await asyncio.wait_for(wait_master(queue, i == 0), 0.1)
         if i == 0:
@@ -124,7 +118,7 @@ async def test_connect(sbs_repo, short_timeout, async_group,
 @pytest.mark.parametrize("monitor_count", [1, 2, 5])
 @pytest.mark.parametrize("client_count", [1, 2, 5])
 @pytest.mark.asyncio
-async def test_clients(sbs_repo, short_timeout, async_group,
+async def test_clients(short_timeout, async_group,
                        unused_tcp_port_factory, monitor_count, client_count):
 
     monitors = collections.deque()
@@ -132,8 +126,7 @@ async def test_clients(sbs_repo, short_timeout, async_group,
     for i in range(monitor_count):
         server_address = create_address(unused_tcp_port_factory)
         master_address = create_address(unused_tcp_port_factory)
-        group = await create_monitor_group(sbs_repo, server_address,
-                                           master_address,
+        group = await create_monitor_group(server_address, master_address,
                                            [i for i, _, __ in monitors])
         clients = []
         for j in range(client_count):
@@ -141,7 +134,7 @@ async def test_clients(sbs_repo, short_timeout, async_group,
                            'group': 'group1',
                            'monitor_address': server_address,
                            'component_address': None}
-            client = await hat.monitor.client.connect(client_conf, sbs_repo)
+            client = await hat.monitor.client.connect(client_conf)
             clients.append(client)
 
         monitors.append((master_address, group, clients))

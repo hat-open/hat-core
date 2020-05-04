@@ -5,7 +5,6 @@ import hat.monitor.common
 import hat.monitor.server.main
 import hat.monitor.client
 
-from hat import sbs
 from hat.util import aio
 
 from test_unit.test_monitor import common
@@ -13,11 +12,6 @@ from test_unit.test_monitor import common
 
 class MockError(Exception):
     pass
-
-
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return sbs.Repository(hat.monitor.common.create_sbs_repo())
 
 
 @pytest.fixture
@@ -28,8 +22,7 @@ async def async_group():
 
 
 @pytest.fixture
-async def monitor_server_factory(sbs_repo, async_group, tmpdir,
-                                 unused_tcp_port_factory):
+async def monitor_server_factory(async_group, tmpdir, unused_tcp_port_factory):
 
     async def f(parents=[], rank=1, algorithm='BLESS_ALL'):
         group = async_group.create_subgroup()
@@ -46,7 +39,7 @@ async def monitor_server_factory(sbs_repo, async_group, tmpdir,
             'ui': {
                 'address': f'http://127.0.0.1:{unused_tcp_port_factory()}'}}
         group.spawn(hat.monitor.server.main.async_main, monitor_server_conf,
-                    sbs_repo, tmpdir)
+                    tmpdir)
         await asyncio.sleep(0.01)  # Wait for monitor server to start listening
         return group, address
 
@@ -54,7 +47,7 @@ async def monitor_server_factory(sbs_repo, async_group, tmpdir,
 
 
 @pytest.mark.asyncio
-async def test_run_component(sbs_repo, async_group, unused_tcp_port_factory):
+async def test_run_component(async_group, unused_tcp_port_factory):
 
     running_queue = aio.Queue()
 
@@ -69,7 +62,7 @@ async def test_run_component(sbs_repo, async_group, unused_tcp_port_factory):
     address = f'tcp+sbs://localhost:{unused_tcp_port_factory()}'
     server_conf = {'address': address,
                    'default_rank': 1}
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+    server = await hat.monitor.server.server.create(server_conf)
     master = common.create_master()
     server.set_master(master)
 
@@ -77,8 +70,7 @@ async def test_run_component(sbs_repo, async_group, unused_tcp_port_factory):
                    'group': 'client',
                    'monitor_address': address,
                    'component_address': None}
-    async_group.spawn(hat.monitor.client.run_component, client_conf, sbs_repo,
-                      run_cb)
+    async_group.spawn(hat.monitor.client.run_component, client_conf, run_cb)
 
     assert running_queue.empty()
 
@@ -126,8 +118,7 @@ async def test_run_component(sbs_repo, async_group, unused_tcp_port_factory):
 
 
 @pytest.mark.asyncio
-async def test_run_component_result(sbs_repo, async_group,
-                                    monitor_server_factory):
+async def test_run_component_result(async_group, monitor_server_factory):
 
     async def run_cb(_):
         return 'test'
@@ -139,14 +130,13 @@ async def test_run_component_result(sbs_repo, async_group,
                    'monitor_address': address,
                    'component_address': None}
     future = async_group.spawn(hat.monitor.client.run_component, client_conf,
-                               sbs_repo, run_cb)
+                               run_cb)
 
     assert (await future) == 'test'
 
 
 @pytest.mark.asyncio
-async def test_run_component_exception(sbs_repo, async_group,
-                                       monitor_server_factory):
+async def test_run_component_exception(async_group, monitor_server_factory):
 
     async def run_cb(_):
         raise MockError()
@@ -158,15 +148,14 @@ async def test_run_component_exception(sbs_repo, async_group,
                    'monitor_address': address,
                    'component_address': None}
     future = async_group.spawn(hat.monitor.client.run_component, client_conf,
-                               sbs_repo, run_cb)
+                               run_cb)
 
     with pytest.raises(MockError):
         await future
 
 
 @pytest.mark.asyncio
-async def test_components_run_serial(sbs_repo, async_group,
-                                     monitor_server_factory):
+async def test_components_run_serial(async_group, monitor_server_factory):
 
     async def run_cb(_):
         return
@@ -179,4 +168,4 @@ async def test_components_run_serial(sbs_repo, async_group,
                    'component_address': None}
 
     for i in range(3):
-        await hat.monitor.client.run_component(client_conf, sbs_repo, run_cb)
+        await hat.monitor.client.run_component(client_conf, run_cb)

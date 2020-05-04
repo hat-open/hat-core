@@ -3,7 +3,6 @@ import sys
 import psutil
 import signal
 
-from hat import sbs
 from hat import util
 from hat.util import aio
 from hat.util import json
@@ -55,7 +54,6 @@ def run_monitor_subprocess(conf, conf_folder_path):
                      if sys.platform == 'win32' else 0)
     return psutil.Popen(
         ['python', '-m', 'hat.monitor.server.main', '--conf', str(conf_path),
-         '--sbs-schemas-path', sbs.default_schemas_sbs_path,
          '--ui-path', ''],
         creationflags=creationflags)
 
@@ -75,7 +73,7 @@ def stop_process(process):
         process.kill()
 
 
-async def create_component_client(sbs_repo, name, group, monitor_port,
+async def create_component_client(name, group, monitor_port,
                                   component_address):
     component = MockComponent()
 
@@ -86,8 +84,7 @@ async def create_component_client(sbs_repo, name, group, monitor_port,
         'component_address': component_address}
     component._queue = aio.Queue()
 
-    component._client = await hat.monitor.client.connect(component._conf,
-                                                         sbs_repo)
+    component._client = await hat.monitor.client.connect(component._conf)
     component._client.register_change_cb(component._state_change_cb)
 
     return component

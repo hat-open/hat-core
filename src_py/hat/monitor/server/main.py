@@ -9,7 +9,6 @@ import sys
 
 import appdirs
 
-from hat import sbs
 from hat import util
 from hat.monitor import common
 from hat.util import aio
@@ -35,18 +34,15 @@ def main():
 
     logging.config.dictConfig(conf['log'])
 
-    sbs_repo = common.create_sbs_repo(args.schemas_sbs_path)
-
     with contextlib.suppress(asyncio.CancelledError):
-        aio.run_asyncio(async_main(conf, sbs_repo, args.ui_path))
+        aio.run_asyncio(async_main(conf, args.ui_path))
 
 
-async def async_main(conf, sbs_repo, ui_path):
+async def async_main(conf, ui_path):
     async_group = aio.Group()
-    server = await hat.monitor.server.server.create(conf['server'], sbs_repo)
+    server = await hat.monitor.server.server.create(conf['server'])
     master_run_future = async_group.spawn(
-        hat.monitor.server.master.run, conf['master'], sbs_repo,
-        server.set_master)
+        hat.monitor.server.master.run, conf['master'], server.set_master)
     ui = None
     try:
         ui = await hat.monitor.server.ui.create(conf['ui'], ui_path, server)
@@ -71,11 +67,6 @@ def _create_parser():
              "(default $XDG_CONFIG_HOME/hat/monitor.yaml)")
 
     dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--sbs-schemas-path', metavar='path', dest='schemas_sbs_path',
-        default=sbs.default_schemas_sbs_path,
-        action=util.EnvPathArgParseAction,
-        help="override sbs schemas directory path")
     dev_args.add_argument(
         '--ui-path', metavar='path', dest='ui_path',
         default=default_ui_path,

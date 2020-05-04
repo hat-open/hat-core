@@ -20,7 +20,7 @@ def sbs_repo():
 
         Data = Integer
     """)
-    return chatter.create_sbs_repo(data_sbs_repo)
+    return sbs.Repository(chatter.sbs_repo, data_sbs_repo)
 
 
 @pytest.mark.asyncio

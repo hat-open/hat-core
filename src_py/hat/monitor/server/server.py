@@ -19,16 +19,12 @@ mlog = logging.getLogger(__name__)
 _last_cid = 0
 
 
-async def create(conf, sbs_repo):
+async def create(conf):
     """Create local monitor server
-
-    `sbs_repo` is instance of monitor SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     Args:
         conf (hat.json.Data): configuration defined by
             ``hat://monitor/main.yaml#/definitions/server``
-        sbs_repo (hat.sbs.Repository): monitor SBS repository
 
     Returns:
         Server
@@ -46,7 +42,7 @@ async def create(conf, sbs_repo):
     server._connections = {}
     server._local_components = []
     chatter_server = await chatter.listen(
-        sbs_repo=sbs_repo,
+        sbs_repo=common.sbs_repo,
         address=conf['address'],
         on_connection_cb=lambda conn: server._async_group.spawn(
             server._connection_loop, conn))

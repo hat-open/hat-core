@@ -9,7 +9,6 @@ import sys
 
 import appdirs
 
-from hat import sbs
 from hat import util
 from hat.gui import common
 from hat.util import aio
@@ -48,51 +47,31 @@ def main():
 
     logging.config.dictConfig(conf['log'])
 
-    sbs_repo = create_sbs_repo(args.schemas_sbs_path)
-
     with contextlib.suppress(asyncio.CancelledError):
-        aio.run_asyncio(
-            async_main(conf, args.ui_path, json_schema_repo, sbs_repo))
+        aio.run_asyncio(async_main(conf, args.ui_path, json_schema_repo))
 
 
-def create_sbs_repo(schemas_sbs_path):
-    """Create gui SBS repository
-
-    Args:
-        schemas_sbs_path (pathlib.Path): schemas_sbs path
-
-    Returns:
-        sbs.Repository
-
-    """
-    return sbs.Repository(
-        hat.monitor.common.create_sbs_repo(schemas_sbs_path),
-        hat.event.common.create_sbs_repo(schemas_sbs_path))
-
-
-async def async_main(conf, ui_path, json_schema_repo, sbs_repo):
+async def async_main(conf, ui_path, json_schema_repo):
     """Async main
 
     Args:
         conf (json.Data): configuration defined by ``hat://gui/main.yaml#``
         ui_path (pathlib.Path): web ui directory path
         json_schema_repo (json.SchemaRepository): json schema repository
-        sbs_repo (hat.sbs.Repository): gui SBS repository
 
     """
     run_cb = functools.partial(run_with_monitor, conf, ui_path,
-                               json_schema_repo, sbs_repo)
-    await hat.monitor.client.run_component(conf['monitor'], sbs_repo, run_cb)
+                               json_schema_repo)
+    await hat.monitor.client.run_component(conf['monitor'], run_cb)
 
 
-async def run_with_monitor(conf, ui_path, json_schema_repo, sbs_repo, monitor):
+async def run_with_monitor(conf, ui_path, json_schema_repo, monitor):
     """Run with monitor client
 
     Args:
         conf (json.Data): configuration defined by ``hat://gui/main.yaml#``
         ui_path (pathlib.Path): web ui directory path
         json_schema_repo (json.SchemaRepository): json schema repository
-        sbs_repo (hat.sbs.Repository): gui SBS repository
         monitor (hat.monitor.client.Client): monitor client
 
     """
@@ -104,8 +83,7 @@ async def run_with_monitor(conf, ui_path, json_schema_repo, sbs_repo, monitor):
 
     run_cb = functools.partial(run_with_event, conf, ui_path, json_schema_repo)
     await hat.event.client.run_client(
-        sbs_repo, monitor, conf['event_server_group'], run_cb,
-        list(subscriptions))
+        monitor, conf['event_server_group'], run_cb, list(subscriptions))
 
 
 async def run_with_event(conf, ui_path, json_schema_repo, client):
@@ -243,11 +221,6 @@ def create_parser():
         help="additional json schemas paths")
 
     dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--sbs-schemas-path', metavar='path', dest='schemas_sbs_path',
-        default=sbs.default_schemas_sbs_path,
-        action=util.EnvPathArgParseAction,
-        help="override sbs schemas directory path")
     dev_args.add_argument(
         '--ui-path', metavar='path', dest='ui_path',
         default=default_ui_path,

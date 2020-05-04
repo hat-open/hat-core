@@ -2,12 +2,6 @@ import pytest
 import time
 
 import test_sys.test_monitor.common
-import hat.monitor.common
-
-
-@pytest.fixture
-def sbs_repo():
-    return hat.monitor.common.create_sbs_repo()
 
 
 @pytest.fixture
@@ -83,13 +77,13 @@ def revived_monitor_factory(tmp_path):
 
 
 @pytest.fixture
-async def component_factory(sbs_repo):
+async def component_factory():
     components = []
 
     async def create_component(name, group, server_info,
                                component_address=None):
         component = await test_sys.test_monitor.common.create_component_client(
-            sbs_repo, name, group, server_info.monitor_port, component_address)
+            name, group, server_info.monitor_port, component_address)
 
         components.append(component)
         return component

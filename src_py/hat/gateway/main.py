@@ -17,7 +17,6 @@ import sys
 
 import appdirs
 
-from hat import sbs
 from hat import util
 from hat.util import aio
 from hat.util import json
@@ -51,51 +50,32 @@ def main():
 
     logging.config.dictConfig(conf['log'])
 
-    sbs_repo = create_sbs_repo(args.schemas_sbs_path)
-
     with contextlib.suppress(asyncio.CancelledError):
-        aio.run_asyncio(async_main(conf, sbs_repo))
+        aio.run_asyncio(async_main(conf))
 
 
-def create_sbs_repo(schemas_sbs_path):
-    """Create gateway SBS repository
-
-    Args:
-        schemas_sbs_path (pathlib.Path): schemas_sbs path
-
-    Returns:
-        sbs.Repository
-
-    """
-    return sbs.Repository(
-        hat.monitor.common.create_sbs_repo(schemas_sbs_path),
-        hat.event.common.create_sbs_repo(schemas_sbs_path))
-
-
-async def async_main(conf, sbs_repo):
+async def async_main(conf):
     """Async main
 
     Args:
         conf (json.Data): configuration defined by ``hat://gateway/main.yaml#``
-        sbs_repo (hat.sbs.Repository): gateway SBS repository
 
     """
-    run_cb = functools.partial(run_with_monitor, conf, sbs_repo)
-    await hat.monitor.client.run_component(conf['monitor'], sbs_repo, run_cb)
+    run_cb = functools.partial(run_with_monitor, conf)
+    await hat.monitor.client.run_component(conf['monitor'], run_cb)
 
 
-async def run_with_monitor(conf, sbs_repo, monitor):
+async def run_with_monitor(conf, monitor):
     """Run with monitor client
 
     Args:
         conf (json.Data): configuration defined by ``hat://gateway/main.yaml#``
-        sbs_repo (hat.sbs.Repository): gateway SBS repository
         monitor (hat.monitor.client.Client): monitor client
 
     """
     run_cb = functools.partial(run_with_event, conf)
     await hat.event.client.run_client(
-        sbs_repo, monitor, conf['event_server_group'], run_cb,
+        monitor, conf['event_server_group'], run_cb,
         [['gateway', conf['gateway_name'], '?', '?', 'system', '*']])
 
 
@@ -129,13 +109,6 @@ def _create_parser():
         dest='additional_json_schemas_paths', nargs='*', default=[],
         action=util.EnvPathArgParseAction,
         help="additional json schemas paths")
-
-    dev_args = parser.add_argument_group('development arguments')
-    dev_args.add_argument(
-        '--sbs-schemas-path', metavar='path', dest='schemas_sbs_path',
-        default=sbs.default_schemas_sbs_path,
-        action=util.EnvPathArgParseAction,
-        help="override sbs schemas directory path")
     return parser
 
 

@@ -46,7 +46,7 @@ async def test_create_module(create_event_server, remote_msgs,
 
 
 @pytest.mark.asyncio
-async def test_create_session(sbs_repo, create_event_server, remote_msgs,
+async def test_create_session(create_event_server, remote_msgs,
                               mock_module_conf):
     backend_conf = {'module': 'hat.event.server.backends.dummy'}
     modules_conf = [mock_module_conf]
@@ -58,7 +58,7 @@ async def test_create_session(sbs_repo, create_event_server, remote_msgs,
 
         srv.wait_active(1)
 
-        client = await hat.event.client.connect(sbs_repo, srv.address)
+        client = await hat.event.client.connect(srv.address)
         client.register([hat.event.common.RegisterEvent(['a'], None, None)])
 
         msg = await asyncio.wait_for(remote_msgs.get(), 1)

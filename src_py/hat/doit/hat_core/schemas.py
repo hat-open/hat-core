@@ -1,27 +1,34 @@
 from pathlib import Path
 
+from hat import sbs
 from hat.util import json
 
 
 __all__ = ['task_schemas',
            'task_schemas_json',
+           'task_schemas_sbs',
            'task_schemas_json_util',
            'task_schemas_json_drivers',
            'task_schemas_json_orchestrator',
            'task_schemas_json_monitor',
            'task_schemas_json_event',
            'task_schemas_json_gateway',
-           'task_schemas_json_gui']
+           'task_schemas_json_gui',
+           'task_schemas_sbs_chatter',
+           'task_schemas_sbs_monitor',
+           'task_schemas_sbs_event']
 
 
 schemas_json_dir = Path('schemas_json')
+schemas_sbs_dir = Path('schemas_sbs')
 src_py_dir = Path('src_py')
 
 
 def task_schemas():
-    """Schemas - generate schema repository data"""
+    """Schemas - generate repository data"""
     return {'actions': None,
-            'task_dep': ['schemas_json']}
+            'task_dep': ['schemas_json',
+                         'schemas_sbs']}
 
 
 def task_schemas_json():
@@ -34,6 +41,14 @@ def task_schemas_json():
                          'schemas_json_event',
                          'schemas_json_gateway',
                          'schemas_json_gui']}
+
+
+def task_schemas_sbs():
+    """Schemas - generate SBS repository data"""
+    return {'actions': None,
+            'task_dep': ['schemas_sbs_chatter',
+                         'schemas_sbs_monitor',
+                         'schemas_sbs_event']}
 
 
 def task_schemas_json_util():
@@ -79,10 +94,42 @@ def task_schemas_json_gui():
                           [src_py_dir / 'hat/gui/json_schema_repo.json'])
 
 
+def task_schemas_sbs_chatter():
+    """Schemas - generate hat-chatter SBS repository data"""
+    return _get_task_sbs([schemas_sbs_dir / 'hat.sbs',
+                          schemas_sbs_dir / 'hat/ping.sbs'],
+                         [src_py_dir / 'hat/chatter_sbs_repo.json'])
+
+
+def task_schemas_sbs_monitor():
+    """Schemas - generate hat-monitor SBS repository data"""
+    return _get_task_sbs([schemas_sbs_dir / 'hat/monitor.sbs'],
+                         [src_py_dir / 'hat/monitor/sbs_repo.json'])
+
+
+def task_schemas_sbs_event():
+    """Schemas - generate hat-event SBS repository data"""
+    return _get_task_sbs([schemas_sbs_dir / 'hat/event.sbs'],
+                         [src_py_dir / 'hat/event/sbs_repo.json'])
+
+
 def _get_task_json(src_paths, dst_paths):
 
     def generate():
         repo = json.SchemaRepository(*src_paths)
+        data = repo.to_json()
+        for dst_path in dst_paths:
+            json.encode_file(data, dst_path, indent=None)
+
+    return {'actions': [generate],
+            'file_dep': src_paths,
+            'targets': dst_paths}
+
+
+def _get_task_sbs(src_paths, dst_paths):
+
+    def generate():
+        repo = sbs.Repository(*src_paths)
         data = repo.to_json()
         for dst_path in dst_paths:
             json.encode_file(data, dst_path, indent=None)

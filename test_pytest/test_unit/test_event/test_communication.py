@@ -12,11 +12,6 @@ from hat.util import aio
 from test_unit.test_event import common
 
 
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return hat.event.server.common.create_sbs_repo()
-
-
 @pytest.fixture
 def comm_conf(unused_tcp_port_factory):
     return {
@@ -52,17 +47,16 @@ def register_events():
 
 
 @pytest.mark.asyncio
-async def test_client_connect_disconnect(sbs_repo, comm_conf):
+async def test_client_connect_disconnect(comm_conf):
 
     with pytest.raises(Exception):
-        await hat.event.client.connect(sbs_repo, comm_conf['address'])
+        await hat.event.client.connect(comm_conf['address'])
 
     engine = common.create_module_engine()
-    comm = await hat.event.server.communication.create(comm_conf, sbs_repo,
-                                                       engine)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
     assert not comm.closed.done()
 
-    client = await hat.event.client.connect(sbs_repo, comm_conf['address'])
+    client = await hat.event.client.connect(comm_conf['address'])
     assert not client.closed.done()
 
     await client.async_close()
@@ -73,11 +67,11 @@ async def test_client_connect_disconnect(sbs_repo, comm_conf):
     assert comm.closed.done()
 
     with pytest.raises(Exception):
-        await hat.event.client.connect(sbs_repo, comm_conf['address'])
+        await hat.event.client.connect(comm_conf['address'])
 
 
 @pytest.mark.asyncio
-async def test_srv_comm_close(sbs_repo, comm_conf, register_events):
+async def test_srv_comm_close(comm_conf, register_events):
     comm_register = asyncio.Event()
     comm_query = asyncio.Event()
 
@@ -89,11 +83,10 @@ async def test_srv_comm_close(sbs_repo, comm_conf, register_events):
     engine = common.create_module_engine(
         register_cb=functools.partial(unresponsive_cb, comm_register),
         query_cb=functools.partial(unresponsive_cb, comm_query))
-    comm = await hat.event.server.communication.create(comm_conf, sbs_repo,
-                                                       engine)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
     assert not comm.closed.done()
 
-    client = await hat.event.client.connect(sbs_repo, comm_conf['address'])
+    client = await hat.event.client.connect(comm_conf['address'])
     assert not client.closed.done()
 
     async with aio.Group() as group:
@@ -146,7 +139,7 @@ async def test_srv_comm_close(sbs_repo, comm_conf, register_events):
     [['a'], ['a', 'b'], ['a', 'b', 'c']],
     ['', '', '']])
 @pytest.mark.asyncio
-async def test_subscribe(sbs_repo, comm_conf, subscriptions):
+async def test_subscribe(comm_conf, subscriptions):
     event_types = [
         [],
         ['a'],
@@ -157,10 +150,9 @@ async def test_subscribe(sbs_repo, comm_conf, subscriptions):
         ['', '', '']]
 
     engine = common.create_module_engine()
-    comm = await hat.event.server.communication.create(comm_conf, sbs_repo,
-                                                       engine)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
 
-    client = await hat.event.client.connect(sbs_repo, comm_conf['address'],
+    client = await hat.event.client.connect(comm_conf['address'],
                                             subscriptions=subscriptions)
 
     await asyncio.sleep(0.01)  # allow server to receive `Subscribe` message
@@ -190,7 +182,7 @@ async def test_subscribe(sbs_repo, comm_conf, subscriptions):
 
 
 @pytest.mark.asyncio
-async def test_register(sbs_repo, comm_conf, register_events):
+async def test_register(comm_conf, register_events):
 
     def register_cb(events):
         register_queue.put_nowait(events)
@@ -198,10 +190,9 @@ async def test_register(sbs_repo, comm_conf, register_events):
 
     register_queue = aio.Queue()
     engine = common.create_module_engine(register_cb=register_cb)
-    comm = await hat.event.server.communication.create(comm_conf, sbs_repo,
-                                                       engine)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
 
-    client = await hat.event.client.connect(sbs_repo, comm_conf['address'],
+    client = await hat.event.client.connect(comm_conf['address'],
                                             subscriptions=['*'])
 
     client.register(register_events)
@@ -222,7 +213,7 @@ async def test_register(sbs_repo, comm_conf, register_events):
 
 
 @pytest.mark.asyncio
-async def test_register_with_response(sbs_repo, comm_conf, register_events):
+async def test_register_with_response(comm_conf, register_events):
 
     def register_cb(events):
         register_queue.put_nowait(events)
@@ -230,10 +221,9 @@ async def test_register_with_response(sbs_repo, comm_conf, register_events):
 
     register_queue = aio.Queue()
     engine = common.create_module_engine(register_cb=register_cb)
-    comm = await hat.event.server.communication.create(comm_conf, sbs_repo,
-                                                       engine)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
 
-    client = await hat.event.client.connect(sbs_repo, comm_conf['address'],
+    client = await hat.event.client.connect(comm_conf['address'],
                                             subscriptions=['*'])
 
     client_events = await client.register_with_response(register_events)
@@ -256,7 +246,7 @@ async def test_register_with_response(sbs_repo, comm_conf, register_events):
 
 
 @pytest.mark.asyncio
-async def test_query(sbs_repo, comm_conf):
+async def test_query(comm_conf):
 
     def query_cb(data):
         query_queue.put_nowait(data)
@@ -272,9 +262,8 @@ async def test_query(sbs_repo, comm_conf):
     query_queue = aio.Queue()
 
     engine = common.create_module_engine(query_cb=query_cb)
-    comm = await hat.event.server.communication.create(comm_conf, sbs_repo,
-                                                       engine)
-    client = await hat.event.client.connect(sbs_repo, comm_conf['address'])
+    comm = await hat.event.server.communication.create(comm_conf, engine)
+    client = await hat.event.client.connect(comm_conf['address'])
 
     events = await client.query(mock_query)
     query_data = await query_queue.get()

@@ -10,18 +10,11 @@ import hat.event.common
 import hat.event.server.communication
 
 from hat.util import aio
-from hat import sbs
 from test_unit.test_event import common
 
 
 class MockError(Exception):
     pass
-
-
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return sbs.Repository(hat.event.common.create_sbs_repo(),
-                          hat.monitor.common.create_sbs_repo())
 
 
 @pytest.fixture
@@ -38,8 +31,7 @@ async def async_group():
 
 
 @pytest.fixture
-async def monitor_server(sbs_repo, async_group, unused_tcp_port_factory,
-                         tmpdir):
+async def monitor_server(async_group, unused_tcp_port_factory, tmpdir):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}'
     monitor_server_conf = {
         'server': {
@@ -53,14 +45,13 @@ async def monitor_server(sbs_repo, async_group, unused_tcp_port_factory,
         'ui': {
             'address': f'http://127.0.0.1:{unused_tcp_port_factory()}'}}
     async_group.spawn(hat.monitor.server.main.async_main, monitor_server_conf,
-                      sbs_repo, tmpdir)
+                      tmpdir)
     await asyncio.sleep(0.01)  # Wait for monitor server to start listening
     return address
 
 
 @pytest.fixture
-def event_server_factory(sbs_repo, async_group, monitor_server,
-                         unused_tcp_port_factory):
+def event_server_factory(async_group, monitor_server, unused_tcp_port_factory):
     i = 0
 
     def f():
@@ -72,20 +63,19 @@ def event_server_factory(sbs_repo, async_group, monitor_server,
                              'component_address': event_server_addr}
         i += 1
         group = async_group.create_subgroup()
-        run_cb = functools.partial(event_server_run_cb, sbs_repo,
-                                   event_server_addr)
+        run_cb = functools.partial(event_server_run_cb, event_server_addr)
         future = group.spawn(hat.monitor.client.run_component,
-                             event_server_conf, sbs_repo, run_cb)
+                             event_server_conf, run_cb)
         return group, future
 
     return f
 
 
-async def event_server_run_cb(sbs_repo, address, monitor_client):
+async def event_server_run_cb(address, monitor_client):
     conf = {'address': address}
     engine = common.create_module_engine(register_cb=lambda events: [
         common.process_event_to_event(i) for i in events])
-    comm = await hat.event.server.communication.create(conf, sbs_repo, engine)
+    comm = await hat.event.server.communication.create(conf, engine)
     try:
         await asyncio.wait([engine.closed, comm.closed],
                            return_when=asyncio.FIRST_COMPLETED)
@@ -95,7 +85,7 @@ async def event_server_run_cb(sbs_repo, address, monitor_client):
 
 
 @pytest.fixture
-def client_factory(sbs_repo, async_group, monitor_server):
+def client_factory(async_group, monitor_server):
     i = 0
 
     def f(run_cb):
@@ -106,17 +96,17 @@ def client_factory(sbs_repo, async_group, monitor_server):
                              'component_address': None}
         i += 1
         group = async_group.create_subgroup()
-        wrapped_run_cb = functools.partial(client_run_cb, sbs_repo,
-                                           'event_server', run_cb)
+        wrapped_run_cb = functools.partial(client_run_cb, 'event_server',
+                                           run_cb)
         future = group.spawn(hat.monitor.client.run_component,
-                             event_client_conf, sbs_repo, wrapped_run_cb)
+                             event_client_conf, wrapped_run_cb)
         return group, future
 
     return f
 
 
-async def client_run_cb(sbs_repo, server_group, run_cb, monitor_client):
-    return await hat.event.client.run_client(sbs_repo, monitor_client,
+async def client_run_cb(server_group, run_cb, monitor_client):
+    return await hat.event.client.run_client(monitor_client,
                                              server_group, run_cb)
 
 
@@ -228,7 +218,7 @@ async def test_run_client_cancel_cb(event_server_factory, client_factory,
 
 @pytest.mark.asyncio
 async def test_run_client_change_while_connecting(
-        sbs_repo, async_group, unused_tcp_port_factory, monitor_server,
+        async_group, unused_tcp_port_factory, monitor_server,
         event_server_factory, client_factory, short_client_reconnect_delay):
 
     async def run_decoy_cb(_):
@@ -246,7 +236,7 @@ async def test_run_client_change_while_connecting(
                   'component_address': decoy_address}
 
     await async_group.spawn(hat.monitor.client.run_component, decoy_conf,
-                            sbs_repo, run_decoy_cb)
+                            run_decoy_cb)
 
     event_server_factory()
 

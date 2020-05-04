@@ -91,11 +91,13 @@ async def test_ui_incorrect_cid_mid(cluster_factory):
 @pytest.mark.asyncio
 async def test_component_malformed_message(monitor_factory):
     monitor = monitor_factory()
-    sbs_repo = hat.chatter.create_sbs_repo(hat.sbs.Repository("""
-        module Test
+    sbs_repo = hat.sbs.Repository(
+        hat.chatter.sbs_repo,
+        hat.sbs.Repository("""
+            module Test
 
-        T = String
-    """))
+            T = String
+        """))
 
     incorrect_component_client = await hat.chatter.connect(
         sbs_repo, f'tcp+sbs://localhost:{monitor.monitor_port}')

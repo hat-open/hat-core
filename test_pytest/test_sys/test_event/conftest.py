@@ -4,8 +4,6 @@ from pathlib import Path
 import pytest
 
 from hat.util import json
-from hat import sbs
-import hat.event.common
 
 from test_sys.test_event.process import Process
 
@@ -16,7 +14,6 @@ class EventServerProcess(Process):
         super().__init__([
             'python', '-m', 'hat.event.server',
             '--conf', str(conf_path),
-            '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--additional-json-schemas-path',
             str(Path(__file__).parent / 'modules/remote.yaml')
         ], stderr=(subprocess.DEVNULL if ignore_stderr else None))
@@ -31,11 +28,6 @@ class EventServerProcess(Process):
 
     def wait_active(self, timeout):
         self.wait_connection(self._local_port, timeout)
-
-
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return hat.event.common.create_sbs_repo()
 
 
 @pytest.fixture
@@ -70,7 +62,6 @@ def monitor_process(tmp_path, monitor_conf, monitor_port):
     json.encode_file(monitor_conf, conf_path)
     args = ['python', '-m', 'hat.monitor.server',
             '--conf', str(conf_path),
-            '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
             '--ui-path', str(tmp_path)]
     with Process(args) as p:
         p.wait_connection(monitor_port, 5)

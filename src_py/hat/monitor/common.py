@@ -8,10 +8,15 @@ from hat import util
 from hat.util import json
 
 
+package_path = Path(__file__).parent
+
 json_schema_repo = json.SchemaRepository(
     json.json_schema_repo,
-    json.SchemaRepository.from_json(Path(__file__).parent /
-                                    'json_schema_repo.json'))
+    json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
+
+sbs_repo = sbs.Repository(
+    chatter.sbs_repo,
+    sbs.Repository.from_json(package_path / 'sbs_repo.json'))
 
 
 ComponentInfo = util.namedtuple(
@@ -24,25 +29,6 @@ ComponentInfo = util.namedtuple(
     ['rank', "int: component rank"],
     ['blessing', "Optional[int]: blessing token"],
     ['ready', "Optional[int]: ready token"])
-
-
-def create_sbs_repo(schemas_sbs_path=None):
-    """Create monitor SBS repository
-
-    Created SBS repository contains chatter message definitions with monitor
-    message data definitions.
-
-    Args:
-        schemas_sbs_path (Optional[pathlib.Path]): alternative schemas_sbs path
-
-    Returns:
-        hat.sbs.Repository
-
-    """
-    schemas_sbs_path = schemas_sbs_path or sbs.default_schemas_sbs_path
-    return chatter.create_sbs_repo(
-        sbs.Repository(schemas_sbs_path / 'hat/monitor.sbs'),
-        schemas_sbs_path=schemas_sbs_path)
 
 
 def component_info_to_sbs(info):

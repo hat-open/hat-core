@@ -88,13 +88,9 @@ def task_pyhat_chatter():
     def mappings():
         dst_dir = _get_build_dst_dir('hat-chatter')
         src_py = src_py_dir / 'hat/chatter.py'
+        sbs_repo = src_py_dir / 'hat/chatter_sbs_repo.json'
         yield src_py, dst_dir / src_py.relative_to(src_py_dir)
-        schemas_sbs_hat = src_sbs_dir / 'hat.sbs'
-        yield schemas_sbs_hat, (dst_dir / 'hat/schemas_sbs'
-                                / schemas_sbs_hat.relative_to(src_sbs_dir))
-        schemas_sbs_ping = src_sbs_dir / 'hat/ping.sbs'
-        yield schemas_sbs_ping, (dst_dir / 'hat/schemas_sbs'
-                                 / schemas_sbs_ping.relative_to(src_sbs_dir))
+        yield sbs_repo, dst_dir / sbs_repo.relative_to(src_py_dir)
 
     return _get_task_build(name='hat-chatter',
                            description='Hat Chatter protocol',
@@ -204,20 +200,18 @@ def task_pyhat_monitor():
     def mappings():
         dst_dir = _get_build_dst_dir('hat-monitor')
         json_schema_repo = src_py_dir / 'hat/monitor/json_schema_repo.json'
+        sbs_repo = src_py_dir / 'hat/monitor/sbs_repo.json'
         jshat_build = Path('build/jshat/app/monitor')
         for i in (src_py_dir / 'hat/monitor').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         yield json_schema_repo, (dst_dir /
                                  json_schema_repo.relative_to(src_py_dir))
+        yield sbs_repo, dst_dir / sbs_repo.relative_to(src_py_dir)
         for i in jshat_build.rglob('*'):
             if i.is_dir():
                 continue
             yield i, (dst_dir / 'hat/monitor/server/ui'
                               / i.relative_to(jshat_build))
-        schemas_sbs_monitor = src_sbs_dir / 'hat/monitor.sbs'
-        yield schemas_sbs_monitor, (dst_dir / 'hat/schemas_sbs'
-                                    / schemas_sbs_monitor.relative_to(
-                                        src_sbs_dir))
 
     return _get_task_build(
         name='hat-monitor',
@@ -237,14 +231,12 @@ def task_pyhat_event():
     def mappings():
         dst_dir = _get_build_dst_dir('hat-event')
         json_schema_repo = src_py_dir / 'hat/event/json_schema_repo.json'
+        sbs_repo = src_py_dir / 'hat/event/sbs_repo.json'
         for i in (src_py_dir / 'hat/event').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         yield json_schema_repo, (dst_dir /
                                  json_schema_repo.relative_to(src_py_dir))
-        schemas_sbs_event = src_sbs_dir / 'hat/event.sbs'
-        yield schemas_sbs_event, (dst_dir / 'hat/schemas_sbs'
-                                  / schemas_sbs_event.relative_to(
-                                        src_sbs_dir))
+        yield sbs_repo, dst_dir / sbs_repo.relative_to(src_py_dir)
 
     return _get_task_build(
         name='hat-event',

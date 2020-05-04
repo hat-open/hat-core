@@ -84,11 +84,8 @@ mlog = logging.getLogger(__name__)
 reconnect_delay = 0.5
 
 
-async def connect(sbs_repo, address, subscriptions=None, **kwargs):
+async def connect(address, subscriptions=None, **kwargs):
     """Connect to event server
-
-    `sbs_repo` is instance of event SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     For address format see :func:`hat.chatter.connect`.
 
@@ -103,7 +100,6 @@ async def connect(sbs_repo, address, subscriptions=None, **kwargs):
     events and will not receive server's notifications.
 
     Args:
-        sbs_repo (hat.sbs.Repository): event SBS repository
         address (str): event server's address
         subscriptions (Optional[List[common.EventType]]): subscriptions
         kwargs: additional arguments passed to :func:`hat.chatter.connect`
@@ -117,7 +113,7 @@ async def connect(sbs_repo, address, subscriptions=None, **kwargs):
     client._conv_futures = {}
     client._event_queue = aio.Queue()
 
-    client._conn = await chatter.connect(sbs_repo, address, **kwargs)
+    client._conn = await chatter.connect(common.sbs_repo, address, **kwargs)
     client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
     if subscriptions:
         client._conn.send(chatter.Data(module='HatEvent',
@@ -258,12 +254,9 @@ class Client:
         mlog.error('exception in receive loop: %s', exc, exc_info=exc)
 
 
-async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
+async def run_client(monitor_client, server_group, async_run_cb,
                      subscriptions=None):
     """Continuously communicate with currently active Event Server
-
-    `sbs_repo` is instance of event SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     This function tries to establish active connection with Event Server.
     Once this connection is established, `async_run_cb` is called with
@@ -295,7 +288,6 @@ async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
         review conditions when `run_client` finishes execution
 
     Args:
-        sbs_repo (hat.sbs.Repository): event SBS repository
         monitor_client (hat.monitor.client.Client): monitor client
         server_group (str): event server's component group
         async_run_cb (Callable[[Client],None]): run callback
@@ -330,7 +322,7 @@ async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
 
             async with group.create_subgroup() as subgroup:
                 connect_and_run_future = subgroup.spawn(
-                    _connect_and_run_loop, sbs_repo, subgroup, address,
+                    _connect_and_run_loop, subgroup, address,
                     subscriptions, async_run_cb)
                 address_change.clear()
                 wait_futures = [connect_and_run_future,
@@ -344,13 +336,13 @@ async def run_client(sbs_repo, monitor_client, server_group, async_run_cb,
                     return connect_and_run_future.result()
 
 
-async def _connect_and_run_loop(sbs_repo, group, address, subscriptions,
+async def _connect_and_run_loop(group, address, subscriptions,
                                 async_run_cb):
     while True:
         client = None
         while not client:
             try:
-                client = await connect(sbs_repo, address, subscriptions)
+                client = await connect(address, subscriptions)
             except asyncio.CancelledError:
                 raise
             except Exception as e:

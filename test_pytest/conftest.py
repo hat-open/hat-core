@@ -6,7 +6,6 @@ import socket
 import pytest
 
 from hat import duktape
-from hat import sbs
 from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
 from hat.util import aio
 
@@ -21,8 +20,6 @@ def event_loop():
 def pytest_configure(config):
     aio.init_asyncio()
 
-    root_path = Path(__file__).parent.parent
-    sbs.default_schemas_sbs_path = root_path / 'schemas_sbs'
     duktape.default_duktape_path = (Path(__file__).parent.parent /
                                     duktape_lib_path)
 

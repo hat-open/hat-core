@@ -1,7 +1,6 @@
 import pytest
 
 import hat.event.server
-import hat.sbs
 
 from test_unit.test_event import common
 import test_unit.test_event.backends.memory_backend
@@ -35,7 +34,7 @@ async def backend_engine_backend(backend_engine_conf):
     with common.get_return_values(
             test_unit.test_event.backends.memory_backend.create) as backend:
         backend_engine = await hat.event.server.backend_engine.create(
-            backend_engine_conf, hat.sbs.Repository())
+            backend_engine_conf)
         backend = backend[0]
 
     yield backend_engine, backend

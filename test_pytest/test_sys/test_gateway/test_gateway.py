@@ -9,7 +9,6 @@ import asyncio
 
 from hat import util
 from hat.util import json
-from hat import sbs
 import hat.event.client
 import hat.event.common
 
@@ -116,7 +115,6 @@ def monitor_process(tmp_path, monitor_conf, monitor_port):
     json.encode_file(monitor_conf, conf_path)
     with Process(['python', '-m', 'hat.monitor.server',
                   '--conf', str(conf_path),
-                  '--sbs-schemas-path', str(sbs.default_schemas_sbs_path),
                   '--ui-path', str(tmp_path)]) as p:
         wait_until(p.listens_on, monitor_port)
         yield p
@@ -147,7 +145,6 @@ def event_conf(event_server_address, monitor_address, tmp_path):
 
 async def run_event_client(event_server_address, gateway_conf):
     return await hat.event.client.connect(
-        hat.event.common.create_sbs_repo(),
         event_server_address,
         subscriptions=[['gateway', gateway_conf['gateway_name'], '*']])
 
@@ -167,9 +164,7 @@ def run_event_server(tmp_path, event_conf):
     json.encode_file(event_conf, conf_path)
 
     proc = Process(['python', '-m', 'hat.event.server',
-                    '--conf', str(conf_path),
-                    '--sbs-schemas-path', str(
-                        sbs.default_schemas_sbs_path)])
+                    '--conf', str(conf_path)])
     return proc
 
 
@@ -228,9 +223,7 @@ def create_gateway(tmp_path):
         conf_path = tmp_path / 'gateway.yaml'
         json.encode_file(gateway_conf, conf_path)
         proc = Process(['python', '-m', 'hat.gateway',
-                        '--conf', str(conf_path),
-                        '--sbs-schemas-path', str(
-                           sbs.default_schemas_sbs_path)],
+                        '--conf', str(conf_path)],
                        ignore_stderr=ignore_stderr)
         wait_until(proc.is_running)
         return proc

@@ -43,20 +43,18 @@ _db_structure = """
 """
 
 
-async def create(conf, sbs_repo):
+async def create(conf):
     """Create SqliteBackend
 
     Args:
         conf (json.Data):
             configuration defined by ``hat://event/backends/sqlite.yaml#``
-        sbs_repo (hat.sbs.Repository): event SBS repository
 
     Returns:
         SqliteBackend
 
     """
     backend = SqliteBackend()
-    backend._sbs_repo = sbs_repo
     backend._async_group = aio.Group()
     backend._last_instance_ids = {}
     db_path = util.parse_env_path(conf['db_path'])
@@ -241,11 +239,11 @@ class SqliteBackend(common.Backend):
         ) for row in result]
 
     def _encode_payload(self, payload):
-        return self._sbs_repo.encode('HatEvent', 'EventPayload',
-                                     common.event_payload_to_sbs(payload))
+        return common.sbs_repo.encode('HatEvent', 'EventPayload',
+                                      common.event_payload_to_sbs(payload))
 
     def _decode_payload(self, payload):
-        return common.event_payload_from_sbs(self._sbs_repo.decode(
+        return common.event_payload_from_sbs(common.sbs_repo.decode(
             'HatEvent', 'EventPayload', payload))
 
 

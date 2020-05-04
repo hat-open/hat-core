@@ -10,11 +10,6 @@ import hat.monitor.server.master
 import hat.monitor.server.server
 
 
-@pytest.fixture(scope="session")
-def sbs_repo():
-    return hat.monitor.common.create_sbs_repo()
-
-
 @pytest.fixture
 def master_port(unused_tcp_port_factory):
     return unused_tcp_port_factory()
@@ -41,11 +36,11 @@ def server_conf(server_port):
 
 
 @pytest.fixture
-async def master(sbs_repo, master_conf):
+async def master(master_conf):
     group = aio.Group()
     queue = aio.Queue()
 
-    group.spawn(hat.monitor.server.master.run, master_conf, sbs_repo,
+    group.spawn(hat.monitor.server.master.run, master_conf,
                 lambda m: queue.put_nowait(m))
     master = await queue.get()
     assert master is not None
@@ -59,8 +54,8 @@ async def master(sbs_repo, master_conf):
 
 
 @pytest.fixture
-async def server(sbs_repo, server_conf, master):
-    server = await hat.monitor.server.server.create(server_conf, sbs_repo)
+async def server(server_conf, master):
+    server = await hat.monitor.server.server.create(server_conf)
     server.set_master(master)
 
     yield server
@@ -86,14 +81,13 @@ def get_components(master, server):
     return get_next
 
 
-async def create_client(sbs_repo, monitor_address, name='client',
+async def create_client(monitor_address, name='client',
                         group='group'):
     return await hat.monitor.client.connect({
         'name': name,
         'group': group,
         'monitor_address': monitor_address,
-        'component_address': None},
-        sbs_repo)
+        'component_address': None})
 
 
 @pytest.mark.asyncio
@@ -119,8 +113,8 @@ async def test_server_without_master(server):
 
 
 @pytest.mark.asyncio
-async def test_connect(sbs_repo, server_conf, get_components):
-    client = await create_client(sbs_repo, server_conf['address'])
+async def test_connect(server_conf, get_components):
+    client = await create_client(server_conf['address'])
 
     components = await get_components()
     assert len(components) == 1
@@ -133,13 +127,12 @@ async def test_connect(sbs_repo, server_conf, get_components):
 
 @pytest.mark.parametrize("client_count", [1, 2, 5])
 @pytest.mark.asyncio
-async def test_multiple_clients(sbs_repo, server_conf, get_components,
+async def test_multiple_clients(server_conf, get_components,
                                 client_count):
     clients = collections.deque()
 
     for i in range(client_count):
-        client = await create_client(sbs_repo, server_conf['address'],
-                                     name=f'client{i}')
+        client = await create_client(server_conf['address'], name=f'client{i}')
         clients.append(client)
         components = await get_components()
         assert len(components) == i + 1
@@ -152,8 +145,8 @@ async def test_multiple_clients(sbs_repo, server_conf, get_components,
 
 
 @pytest.mark.asyncio
-async def test_set_rank(sbs_repo, server_conf, server, get_components):
-    client = await create_client(sbs_repo, server_conf['address'])
+async def test_set_rank(server_conf, server, get_components):
+    client = await create_client(server_conf['address'])
 
     components = await get_components()
     assert len(components) == 1
@@ -171,7 +164,7 @@ async def test_set_rank(sbs_repo, server_conf, server, get_components):
     components = await get_components()
     assert components == []
 
-    client = await create_client(sbs_repo, server_conf['address'])
+    client = await create_client(server_conf['address'])
 
     components = await get_components()
     assert len(components) == 1
@@ -185,12 +178,11 @@ async def test_set_rank(sbs_repo, server_conf, server, get_components):
 
 @pytest.mark.parametrize("client_count", [1, 2, 5])
 @pytest.mark.asyncio
-async def test_bless_one(sbs_repo, server_conf, get_components, client_count):
+async def test_bless_one(server_conf, get_components, client_count):
     clients = []
 
     for i in range(client_count):
-        client = await create_client(sbs_repo,
-                                     server_conf['address'],
+        client = await create_client(server_conf['address'],
                                      name=f'client{i}',
                                      group='bless_one_group')
         clients.append(client)
@@ -204,12 +196,11 @@ async def test_bless_one(sbs_repo, server_conf, get_components, client_count):
 
 @pytest.mark.parametrize("client_count", [1, 2, 5])
 @pytest.mark.asyncio
-async def test_bless_all(sbs_repo, server_conf, get_components, client_count):
+async def test_bless_all(server_conf, get_components, client_count):
     clients = []
 
     for i in range(client_count):
-        client = await create_client(sbs_repo,
-                                     server_conf['address'],
+        client = await create_client(server_conf['address'],
                                      name=f'client{i}',
                                      group='bless_all_group')
         clients.append(client)
@@ -221,9 +212,8 @@ async def test_bless_all(sbs_repo, server_conf, get_components, client_count):
 
 
 @pytest.mark.asyncio
-async def test_change_blessing_with_rank(sbs_repo, server_conf, server,
-                                         get_components):
-    client1 = await create_client(sbs_repo, server_conf['address'],
+async def test_change_blessing_with_rank(server_conf, server, get_components):
+    client1 = await create_client(server_conf['address'],
                                   name='c1',
                                   group='bless_one_group')
 
@@ -232,7 +222,7 @@ async def test_change_blessing_with_rank(sbs_repo, server_conf, server,
     assert c1.rank == 1
     assert c1.blessing is not None
 
-    client2 = await create_client(sbs_repo, server_conf['address'],
+    client2 = await create_client(server_conf['address'],
                                   name='c2',
                                   group='bless_one_group')
 
@@ -259,9 +249,9 @@ async def test_change_blessing_with_rank(sbs_repo, server_conf, server,
 
 
 @pytest.mark.asyncio
-async def test_rank_not_changing(sbs_repo, server_conf, server,
+async def test_rank_not_changing(server_conf, server,
                                  get_components):
-    client1 = await create_client(sbs_repo, server_conf['address'],
+    client1 = await create_client(server_conf['address'],
                                   name='c1',
                                   group='bless_one_group')
 
@@ -269,7 +259,7 @@ async def test_rank_not_changing(sbs_repo, server_conf, server,
     new_c1 = util.first(components, lambda c: c.name == 'c1')
     assert new_c1.rank is not None
 
-    client2 = await create_client(sbs_repo, server_conf['address'],
+    client2 = await create_client(server_conf['address'],
                                   name='c2',
                                   group='bless_one_group')
 

@@ -13,11 +13,16 @@ from hat.util import json
 import hat.monitor.common
 
 
+package_path = Path(__file__).parent
+
 json_schema_repo = json.SchemaRepository(
     json.json_schema_repo,
     hat.monitor.common.json_schema_repo,
-    json.SchemaRepository.from_json(Path(__file__).parent /
-                                    'json_schema_repo.json'))
+    json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
+
+sbs_repo = sbs.Repository(
+    chatter.sbs_repo,
+    sbs.Repository.from_json(package_path / 'sbs_repo.json'))
 
 
 Order = util.extend_enum_doc(enum.Enum('Order', [
@@ -87,26 +92,6 @@ QueryData = util.namedtuple(
     ['order_by', 'OrderBy: order by', OrderBy.TIMESTAMP],
     ['unique_type', 'bool: unique type flag', False],
     ['max_results', 'Optional[int]: maximum results', None])
-
-
-def create_sbs_repo(schemas_sbs_path=None):
-    """Create event SBS repository
-
-    Created SBS repository contains chatter message definitions with event
-    message data and payload definitions.
-
-    Args:
-        schemas_sbs_path (Optional[pathlib.Path]): alternative schemas_sbs path
-
-    Returns:
-        hat.sbs.Repository
-
-    """
-    schemas_sbs_path = schemas_sbs_path or sbs.default_schemas_sbs_path
-    return chatter.create_sbs_repo(
-        sbs.Repository(schemas_sbs_path / 'hat/event.sbs',
-                       schemas_sbs_path / 'hat.sbs'),
-        schemas_sbs_path=schemas_sbs_path)
 
 
 def matches_query_type(event_type, query_type):

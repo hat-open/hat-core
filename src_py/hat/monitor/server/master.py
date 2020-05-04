@@ -36,11 +36,8 @@ connected_timeout = 2
 _last_mid = 0
 
 
-async def run(conf, sbs_repo, master_change_cb):
+async def run(conf, master_change_cb):
     """Run connect to master loop
-
-    `sbs_repo` is instance of monitor SBS repository which should be created
-    with :func:`common.create_sbs_repo`.
 
     This method runs indefinitely trying to establish connection with parent
     master monitor. Based on connection availability, `master_change_cb`
@@ -51,27 +48,25 @@ async def run(conf, sbs_repo, master_change_cb):
     Args:
         conf (hat.json.Data): configuration defined by
             ``hat://monitor/main.yaml#/definitions/master``
-        sbs_repo (hat.sbs.Repository): monitor SBS repository
         master_change_cb (Callable[[Optional[Master]],None]):
             master change callback
 
     """
     local_master_group = None
     remote_master = None
-    listener = await _create_listener(sbs_repo, conf['address'])
+    listener = await _create_listener(conf['address'])
     try:
         if not conf['parents']:
             await _run_local_master(conf, listener, master_change_cb)
             return
         while True:
             remote_master = await _connect_remote_with_timeout(
-                sbs_repo, conf['parents'], connected_timeout)
+                conf['parents'], connected_timeout)
             if not remote_master:
                 local_master_group = aio.Group()
                 local_master_group.spawn(_run_local_master, conf,
                                          listener, master_change_cb)
-                remote_master = await _connect_remote_loop(sbs_repo,
-                                                           conf['parents'])
+                remote_master = await _connect_remote_loop(conf['parents'])
             if local_master_group:
                 await local_master_group.async_close()
                 local_master_group = None
@@ -97,7 +92,7 @@ async def _run_local_master(conf, listener, master_change_cb):
         master_change_cb(None)
 
 
-async def _connect_remote_loop(sbs_repo, parents):
+async def _connect_remote_loop(parents):
     loop_counter = 0
     while True:
         if loop_counter >= connect_retry_count:
@@ -105,7 +100,7 @@ async def _connect_remote_loop(sbs_repo, parents):
             loop_counter = 0
         for parent in parents:
             try:
-                return await _create_remote_master(sbs_repo, parent)
+                return await _create_remote_master(parent)
             except asyncio.CancelledError:
                 raise
             except Exception as e:
@@ -115,22 +110,22 @@ async def _connect_remote_loop(sbs_repo, parents):
         loop_counter += 1
 
 
-async def _connect_remote_with_timeout(sbs_repo, parents, timeout):
+async def _connect_remote_with_timeout(parents, timeout):
     try:
-        return await asyncio.wait_for(_connect_remote_loop(sbs_repo, parents),
+        return await asyncio.wait_for(_connect_remote_loop(parents),
                                       connected_timeout)
     except asyncio.TimeoutError:
         return
 
 
-async def _create_listener(sbs_repo, address):
+async def _create_listener(address):
     listener = _Listener()
     listener._cbs = set()
     listener._connection_cbs = util.CallbackRegistry()
     listener._async_group = aio.Group(
         lambda e: mlog.error("error in listener: %s", e, exc_info=e))
     chatter_server = await chatter.listen(
-        sbs_repo, address, listener._on_connection)
+        common.sbs_repo, address, listener._on_connection)
     listener._async_group.spawn(aio.call_on_cancel, chatter_server.async_close)
     return listener
 
@@ -349,7 +344,7 @@ class LocalMaster(Master):
                    e, exc_info=e)
 
 
-async def _create_remote_master(sbs_repo, parent_address):
+async def _create_remote_master(parent_address):
     master = RemoteMaster()
     master._async_group = aio.Group(exception_cb=master._on_exception)
     master._change_cbs = util.CallbackRegistry()
@@ -357,7 +352,7 @@ async def _create_remote_master(sbs_repo, parent_address):
     master._mid = None
     master._components = []
     master._parent_address = parent_address
-    master._conn = await chatter.connect(sbs_repo, parent_address)
+    master._conn = await chatter.connect(common.sbs_repo, parent_address)
     msg_master = await master._conn.receive()
     master._process_msg_master(msg_master)
     master._async_group.spawn(aio.call_on_cancel, master._conn.async_close)

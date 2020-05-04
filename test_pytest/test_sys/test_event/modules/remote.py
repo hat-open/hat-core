@@ -1,29 +1,21 @@
+from pathlib import Path
 import asyncio
 import contextlib
-from pathlib import Path
 
-from hat.util import aio
-from hat import sbs
 from hat import chatter
+from hat import sbs
+from hat.util import aio
 import hat.event.server.common
 
 
 json_schema_id = "test://modules/remote.yaml#"
 
 
-# TODO
-def create_sbs_repo():
-    parent_path = Path(__file__).parent
-    schemas_sbs_path = parent_path / '../../../../schemas_sbs'
-    return sbs.Repository(schemas_sbs_path / 'hat.sbs',
-                          schemas_sbs_path / 'hat/ping.sbs',
-                          parent_path / 'remote.sbs')
+sbs_repo = sbs.Repository(chatter.sbs_repo,
+                          Path(__file__).parent / 'remote.sbs')
 
 
 async def create(conf, engine):
-    # TODO
-    sbs_repo = create_sbs_repo()
-
     module = RemoteModule()
     module._subscriptions = conf['subscriptions']
     module._async_group = aio.Group()
@@ -78,9 +70,6 @@ async def create_server(address):
 
     def connection_cb(conn):
         server._async_group.spawn(_connection_read_loop, conn, server._queue)
-
-    # TODO
-    sbs_repo = create_sbs_repo()
 
     server = Server()
     server._queue = aio.Queue()
