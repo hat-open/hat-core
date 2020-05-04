@@ -404,15 +404,18 @@ export const filter = curry((fn, arr) => arr.filter(fn));
 export const append = curry((val, arr) => arr.concat([val]));
 
 /**
- * Reduce `arr` values by appling function `fn`
+ * Reduce `ao` values by applying function `fn`
  * (curried function)
  * @function
  * @param {Function} fn
  * @param {Any} val initial accumulator value
- * @param {Array} arr
+ * @param {Array|Object} ao
  * @return {Any} reduced value
  */
-export const reduce = curry((fn, val, arr) => arr.reduce(fn, val));
+export const reduce = curry((fn, val, ao) => isArray(ao) ?
+    ao.reduce(fn, val) :
+    pipe(toPairs,
+         x => x.reduce((a, [k, v], i) => fn(a, [k, v], i), val))(ao));
 
 /**
  * Merge two objects
