@@ -19,7 +19,7 @@ sqlite3_src_dir = src_dir / '_sqlite3'
 sqlite3_dst_dir = dst_dir / '_sqlite3'
 sqlite3_lib_path = (sqlite3_dst_dir / '_sqlite3').with_suffix(
     '.pyd' if sys.platform == 'win32' else '.so')
-sqlite3_mod_path = Path('src_py/hat') / sqlite3_lib_path.name
+sqlite3_mod_path = Path('src_py/hat/sqlite3') / sqlite3_lib_path.name
 
 sqlite3_cpp_flags = ['-DMODULE_NAME="_sqlite3"']
 sqlite3_cc_flags = ['-fPIC']

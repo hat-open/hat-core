@@ -1,4 +1,5 @@
 from pathlib import Path
+import itertools
 
 from hat.doit import common
 
@@ -63,9 +64,20 @@ __all__ = (['task_clean_all'] +
 
 build_dir = Path('build')
 dist_dir = Path('dist')
+src_py_dir = Path('src_py')
 
 
 def task_clean_all():
     """Clean all"""
-    return {'actions': [(common.rm_rf, [build_dir,
-                                        dist_dir])]}
+
+    def clean():
+        src_py_patterns = ['*.so',
+                           '*.pyd',
+                           'json_schema_repo.json',
+                           'sbs_repo.json']
+        targets = [build_dir, dist_dir,
+                   *itertools.chain.from_iterable(src_py_dir.rglob(i)
+                                                  for i in src_py_patterns)]
+        common.rm_rf(*targets)
+
+    return {'actions': [clean]}

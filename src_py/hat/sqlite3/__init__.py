@@ -25,7 +25,7 @@ import time
 import collections.abc
 
 # HAT modification
-from hat._sqlite3 import *  # NOQA
+from hat.sqlite3._sqlite3 import *  # NOQA
 
 paramstyle = "qmark"
 
