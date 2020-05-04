@@ -370,18 +370,18 @@ export const pick = curry((arr, obj) => {
 });
 
 /**
- * Change `arr` by appling function `fn` to it's elements
+ * Change `ao` by applying function `fn` to it's elements
  * (curried function)
  * @function
  * @param {Function} fn
- * @param {Array} arr
- * @return {Array} modified `arr`
+ * @param {Array|Object} ao
+ * @return {Array|Object} modified `ao`
  */
-export const map = curry((fn, arr) => isArray(arr) ?
-    arr.map(fn) :
+export const map = curry((fn, ao) => isArray(ao) ?
+    ao.map(fn) :
     pipe(toPairs,
          x => x.map(([k, v]) => [k, fn(v)]),
-         fromPairs)(arr));
+         fromPairs)(ao));
 
 /**
  * Change `arr` to contain only elements for which function `fn` returns `true`
