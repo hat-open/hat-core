@@ -7,7 +7,7 @@ import sys
 import packaging.version
 
 from hat.doit import common
-from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
+from hat.doit.hat_core.duktape import src_py_lib_path as duktape_lib_path
 from hat.doit.hat_core.pymod import sqlite3_mod_path
 
 
@@ -117,17 +117,16 @@ def task_pyhat_duktape():
     """PyHat - build hat-duktape"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-duktape')
-        src_py = src_py_dir / 'hat/duktape.py'
-        dst_py = dst_dir / src_py.relative_to(src_py_dir)
-        yield src_py, dst_py
-        yield duktape_lib_path, dst_py.parent / duktape_lib_path.name
+        for i in (src_py_dir / 'hat/duktape').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        yield duktape_lib_path, (dst_dir /
+                                 duktape_lib_path.relative_to(src_py_dir))
 
     return _get_task_build(name='hat-duktape',
                            description='Hat Python Duktape JS wrapper',
                            dependencies=[],
                            mappings=mappings,
-                           platform_specific=True,
-                           task_dep=['duktape'])
+                           platform_specific=True)
 
 
 def task_pyhat_sqlite3():

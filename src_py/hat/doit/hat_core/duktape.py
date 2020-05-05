@@ -4,8 +4,7 @@ from hat.doit import c
 from hat.doit import common
 
 
-__all__ = ['task_duktape_clean',
-           'task_duktape',
+__all__ = ['task_duktape',
            'task_duktape_lib',
            'task_duktape_obj',
            'task_duktape_dep']
@@ -13,17 +12,15 @@ __all__ = ['task_duktape_clean',
 
 src_dir = Path('src_c/duktape')
 dst_dir = Path('build/duktape')
+src_py_dir = Path('src_py')
 lib_path = (dst_dir / 'duktape').with_suffix(c.lib_suffix)
-
-
-def task_duktape_clean():
-    """Duktape - clean"""
-    return {'actions': [(common.rm_rf, [dst_dir])]}
+src_py_lib_path = src_py_dir / 'hat/duktape' / lib_path.name
 
 
 def task_duktape():
     """Duktape - build"""
-    return {'actions': None,
+    return {'actions': [(common.cp_r, [lib_path, src_py_lib_path])],
+            'targets': [src_py_lib_path],
             'file_dep': [lib_path]}
 
 
