@@ -78,6 +78,11 @@ where ``package-name`` is one of following:
 
         Hat specific sqlite3 build
 
+    * `hat-asn1 <https://pypi.org/project/hat-asn1>`_
+      (`asn1 docs <https://core.hat-open.com/docs/libraries/asn1.html>`_)
+
+        ASN.1 parser and encoder
+
     * `hat-drivers <https://pypi.org/project/hat-drivers>`_
       (`drivers docs <https://core.hat-open.com/docs/libraries/drivers/index.html>`_)
 

@@ -146,6 +146,8 @@ class Page:
              'description': 'Python Duktape JS wrapper'},
             {'title': 'hat-sqlite3',
              'description': 'Hat specific sqlite3 build'},
+            {'title': 'hat-asn1',
+             'description': 'ASN.1 parser and encoder'},
             {'title': 'hat-drivers',
              'description': 'Communication drivers'}
         ]
@@ -178,6 +180,8 @@ class Page:
                 {'name': 'hat-duktape',
                  'docs': 'docs/libraries/duktape.html'},
                 {'name': 'hat-sqlite3'},
+                {'name': 'hat-asn1',
+                 'docs': 'docs/libraries/asn1.html'},
                 {'name': 'hat-drivers',
                  'docs': 'docs/libraries/drivers/index.html'},
                 {'name': 'hat-orchestrator',

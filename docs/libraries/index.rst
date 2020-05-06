@@ -10,4 +10,5 @@ Libraries
     chatter
     juggler
     duktape
+    asn1
     drivers/index

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from hat import asn1
 import hat.doit.docs
 
 
@@ -7,15 +8,18 @@ __all__ = ['task_docs',
            'task_docs_html',
            'task_docs_latex',
            'task_docs_pdf',
-           'task_docs_jshat']
+           'task_docs_jshat',
+           'task_docs_asn1']
 
 
 src_dir = Path('docs')
 dst_dir = Path('build/docs')
+asn1_dir = Path('schemas_asn1')
 html_dst_dir = dst_dir / 'html'
 latex_dst_dir = dst_dir / 'latex'
 pdf_dst_dir = dst_dir / 'pdf'
 jshat_dst_dir = dst_dir / 'jshat'
+asn1_dst_dir = dst_dir / 'asn1'
 
 
 def task_docs():
@@ -23,7 +27,8 @@ def task_docs():
     return {'actions': None,
             'task_dep': ['docs_html',
                          'docs_pdf',
-                         'docs_jshat']}
+                         'docs_jshat',
+                         'docs_asn1']}
 
 
 def task_docs_html():
@@ -56,3 +61,16 @@ def task_docs_jshat():
     """Docs - build jshat documentation"""
     return {'actions': ['yarn run --silent docs'],
             'task_dep': ['jshat_deps']}
+
+
+def task_docs_asn1():
+    """Docs - build asn1 documentation"""
+
+    def build():
+        repo = asn1.Repository(asn1_dir)
+        doc = repo.generate_html_doc()
+        asn1_dst_dir.mkdir(parents=True, exist_ok=True)
+        with open(asn1_dst_dir / 'doc.html', 'w', encoding='utf-8') as f:
+            f.write(doc)
+
+    return {'actions': [build]}

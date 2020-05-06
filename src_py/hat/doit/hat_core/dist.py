@@ -15,6 +15,7 @@ __all__ = ['task_dist',
            'task_dist_pyhat_juggler',
            'task_dist_pyhat_duktape',
            'task_dist_pyhat_sqlite3',
+           'task_dist_pyhat_asn1',
            'task_dist_pyhat_drivers',
            'task_dist_pyhat_orchestrator',
            'task_dist_pyhat_monitor',
@@ -43,6 +44,7 @@ def task_dist():
                          'dist_pyhat_juggler',
                          'dist_pyhat_duktape',
                          'dist_pyhat_sqlite3',
+                         'dist_pyhat_asn1',
                          'dist_pyhat_drivers',
                          'dist_pyhat_orchestrator',
                          'dist_pyhat_monitor',
@@ -98,6 +100,11 @@ def task_dist_pyhat_duktape():
 def task_dist_pyhat_sqlite3():
     """Dist - create pyhat hat-sqlite3 distribution"""
     return _get_task_dist_pyhat('hat-sqlite3', 'pyhat_sqlite3')
+
+
+def task_dist_pyhat_asn1():
+    """Dist - create pyhat hat-asn1 distribution"""
+    return _get_task_dist_pyhat('hat-asn1', 'pyhat_asn1')
 
 
 def task_dist_pyhat_drivers():

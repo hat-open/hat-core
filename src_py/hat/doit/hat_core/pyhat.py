@@ -18,6 +18,7 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_juggler',
            'task_pyhat_duktape',
            'task_pyhat_sqlite3',
+           'task_pyhat_asn1',
            'task_pyhat_drivers',
            'task_pyhat_orchestrator',
            'task_pyhat_monitor',
@@ -145,6 +146,20 @@ def task_pyhat_sqlite3():
                            platform_specific=True)
 
 
+def task_pyhat_asn1():
+    """PyHat - build hat-asn1"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-asn1')
+        for i in (src_py_dir / 'hat/asn1').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+
+    return _get_task_build(name='hat-asn1',
+                           description='Hat ASN.1 parser and encoder',
+                           dependencies=['hat-util',
+                                         'hat-peg'],
+                           mappings=mappings)
+
+
 def task_pyhat_drivers():
     """PyHat - build hat-drivers"""
     def mappings():
@@ -158,7 +173,8 @@ def task_pyhat_drivers():
     return _get_task_build(name='hat-drivers',
                            description='Hat communication drivers',
                            dependencies=['pyserial',
-                                         'hat-util'],
+                                         'hat-util',
+                                         'hat-asn1'],
                            mappings=mappings)
 
 
