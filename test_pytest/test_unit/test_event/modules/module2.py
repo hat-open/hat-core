@@ -9,6 +9,7 @@ async def create(conf, engine):
     module._engine = engine
     module._source = hat.event.server.common.Source(
         type=hat.event.server.common.SourceType.MODULE,
+        name='Module2',
         id=2)
     module.session_queue = aio.Queue()
     return module

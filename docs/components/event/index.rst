@@ -336,10 +336,20 @@ Communication associates connection with information received as part of
 connection's last subscribe message. This subscription is used as a filter for
 selecting subset of event notifications which are sent to associated connection.
 
-.. todo::
+Communication module is responsible for registering events each time new
+chatter connection is established and existing chatter connection is closed:
 
-    add additional system events generated internal by communication (e.g.
-    client connected / disconnected)
+    * 'event', 'communication', 'connected'
+
+        * `source timestamp` - None
+
+        * `payload` - None
+
+    * 'event', 'communication', 'disconnected'
+
+        * `source timestamp` - None
+
+        * `payload` - None
 
 
 Module engine

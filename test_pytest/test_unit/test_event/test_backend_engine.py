@@ -48,6 +48,7 @@ async def create_process_events_mock(reg_events, backend_engine):
     ret = []
     source = hat.event.server.common.Source(
         type=hat.event.server.common.SourceType.COMMUNICATION,
+        name=None,
         id=0)
 
     last_event_id = await backend_engine.get_last_event_id()

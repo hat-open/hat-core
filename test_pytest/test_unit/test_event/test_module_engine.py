@@ -26,6 +26,7 @@ def module_engine_conf():
 def source_comm():
     return hat.event.server.common.Source(
         type=hat.event.server.common.SourceType.COMMUNICATION,
+        name=None,
         id=0)
 
 

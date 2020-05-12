@@ -1,6 +1,22 @@
 Event definitions
 =================
 
+Event server
+------------
+
+* 'event', 'communication', 'connected'
+
+    * `source timestamp` - None
+
+    * `payload` - None
+
+* 'event', 'communication', 'disconnected'
+
+    * `source timestamp` - None
+
+    * `payload` - None
+
+
 Gateway
 -------
 

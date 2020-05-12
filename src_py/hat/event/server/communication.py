@@ -63,6 +63,7 @@ class Communication:
         _source_id += 1
         self._connection_ids[conn] = _source_id
         try:
+            await self._register_communication_event(_source_id, 'connected')
             while True:
                 msg = await conn.receive()
                 if msg.data.module != 'HatEvent' or msg.data.type not in [
@@ -72,9 +73,24 @@ class Communication:
         except chatter.ConnectionClosedError:
             mlog.debug('connection %s closed', _source_id)
         finally:
-            self._subs_registry.remove(conn)
-            await conn.async_close()
-            del self._connection_ids[conn]
+            await aio.uncancellable(self._close_connection(conn))
+
+    async def _close_connection(self, conn):
+        self._subs_registry.remove(conn)
+        await conn.async_close()
+        source_id = self._connection_ids.pop(conn)
+        await self._register_communication_event(source_id, 'disconnected')
+
+    async def _register_communication_event(self, source_id, status):
+        source = common.Source(type=common.SourceType.COMMUNICATION,
+                               name=None,
+                               id=source_id)
+        reg_event = common.RegisterEvent(
+            event_type=['event', 'communication', status],
+            source_timestamp=None,
+            payload=None)
+        proc_event = self._engine.create_process_event(source, reg_event)
+        await self._engine.register([proc_event])
 
     async def _run_engine(self):
         try:
@@ -96,6 +112,7 @@ class Communication:
     def _process_register_request(self, msg, conn):
         proc_events = [self._engine.create_process_event(
             source=common.Source(type=common.SourceType.COMMUNICATION,
+                                 name=None,
                                  id=self._connection_ids[conn]),
             event=common.register_event_from_sbs(i)) for i in msg.data.data]
         self._async_group.spawn(self._register_request_response,

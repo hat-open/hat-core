@@ -41,6 +41,7 @@ SourceType = util.extend_enum_doc(enum.Enum('SourceType', [
 Source = util.namedtuple(
     'Source',
     ['type', 'SourceType: source type'],
+    ['name', 'Optional[str]: source name (module name)'],
     ['id', 'int: identifier'])
 
 
