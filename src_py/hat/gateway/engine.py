@@ -177,9 +177,8 @@ class DeviceProxy:
         self._device_event_client = _DeviceEventClient(
             self._client, self._async_group.create_subgroup())
         self._device = await device_module.create(
-            conf=conf,
-            client=self._device_event_client,
-            event_type_prefix=[*self._device_identifier_prefix, 'gateway'])
+            conf, self._device_event_client,
+            [*self._device_identifier_prefix, 'gateway'])
         self._register_device_running_event(True)
 
     async def _destroy_device(self):

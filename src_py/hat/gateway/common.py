@@ -34,7 +34,7 @@ class Device(abc.ABC):
         * json_schema_id (Optional[str]): JSON schema id
         * create (CreateDevice): creating new device instance
 
-    If module defines JSON schema id, it will be used for aditional
+    If module defines JSON schema id, it will be used for additional
     validation of device configuration.
 
     """
@@ -75,7 +75,7 @@ class DeviceEventClient(abc.ABC):
         """Register device events
 
         Each `DeviceRegisterEvent` from `events` is paired with results
-        `DeviceEvent` if new event was successfuly created or `None` is new
+        `DeviceEvent` if new event was successfully created or `None` is new
         event could not be created.
 
         Args:
