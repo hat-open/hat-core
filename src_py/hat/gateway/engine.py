@@ -35,7 +35,7 @@ async def create_engine(conf, client):
 
     devices = conf['devices']
     if len(set([d['name'] for d in devices])) != len(devices):
-        raise Exception(f"gateway configured with duplicate device names")
+        raise Exception("gateway configured with duplicate device names")
 
     engine._async_group = aio.Group()
     create_proxy_tasks = {
@@ -294,7 +294,7 @@ class _DeviceEventClient(hat.gateway.common.DeviceEventClient):
         return await self._async_group.spawn(self._client.query, data)
 
     def _exception_cb(self, e):
-        mlog.error(f'uncaught exception in device event client: %s', e,
+        mlog.error('uncaught exception in device event client: %s', e,
                    exc_info=e)
 
 

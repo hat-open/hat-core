@@ -160,7 +160,7 @@ async def event_client(event_server_address, gateway_conf):
 
 
 def run_event_server(tmp_path, event_conf):
-    conf_path = tmp_path / f'event.yaml'
+    conf_path = tmp_path / 'event.yaml'
     json.encode_file(event_conf, conf_path)
 
     proc = Process(['python', '-m', 'hat.event.server',

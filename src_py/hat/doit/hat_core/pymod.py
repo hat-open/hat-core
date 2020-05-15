@@ -32,7 +32,7 @@ elif sys.platform == 'darwin':
     python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
     conf_path = f"lib/python{python_version}/config-{python_version}-darwin/"
     sqlite3_ld_flags += [f"-L{python_dir / conf_path}",
-                         f"-lpython3.8"]
+                         "-lpython3.8"]
 elif sys.platform == 'win32':
     python_dir = Path(sys.executable).parent
     sqlite3_cpp_flags += [f"-I{python_dir / 'include'}"]

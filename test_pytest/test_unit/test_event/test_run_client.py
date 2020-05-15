@@ -230,7 +230,7 @@ async def test_run_client_change_while_connecting(
     _, client_future = client_factory(run_cb)
 
     decoy_address = f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}'
-    decoy_conf = {'name': f'decoy',
+    decoy_conf = {'name': 'decoy',
                   'group': 'event_server',
                   'monitor_address': monitor_server,
                   'component_address': decoy_address}

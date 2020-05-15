@@ -150,7 +150,7 @@ class Backend(abc.ABC):
 ModuleConf = json.Data
 
 CreateModule = typing.Callable[
-    [ModuleConf, 'hat.event.module_engine.ModuleEngine'],
+    [ModuleConf, 'hat.event.module_engine.ModuleEngine'],  # NOQA
     typing.Awaitable['Module']]
 
 
