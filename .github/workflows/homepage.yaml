@@ -3,14 +3,18 @@ on:
     push:
         branches:
             - master
+env:
+    CPP: gcc
+    CC: gcc
+    LD: gcc
 jobs:
     homepage:
         runs-on: ubuntu-latest
         steps:
           - name: checkout repository
             uses: actions/checkout@v2
-          - name: install sassc
-            run: sudo apt-get install -q -y sassc
+          - name: install ubuntu requirements
+            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
           - name: install python
             uses: actions/setup-python@v1
             with:

@@ -16,19 +16,19 @@ jobs:
         steps:
           - name: checkout repository
             uses: actions/checkout@v2
+          - name: install requirements.github.ubuntu.txt
+            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
           - name: install python
             uses: actions/setup-python@v1
             with:
                 python-version: 3.8
-          - name: install requirements.github.ubuntu.txt
-            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
           - name: install requirements.pip.txt
             run: |
                 python -m pip install --upgrade pip
                 pip install -r requirements.pip.txt
           - name: doit check
             run: doit check
-          - name: doit test
+          - name: doit test test_unit
             run: doit test test_unit
     dist:
         needs: test
@@ -42,8 +42,6 @@ jobs:
             uses: actions/setup-python@v1
             with:
                 python-version: 3.8
-          - name: install ubuntu requirements
-            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
           - name: install requirements.pip.txt
             run: |
                 python -m pip install --upgrade pip
