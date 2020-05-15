@@ -3,7 +3,7 @@ appdirs == 1.4.3
 cryptography == 2.9.2
 docutils == 0.16
 doit == 0.32.0
-flake8 == 3.7.9
+flake8 == 3.8.1
 jsonpatch == 1.25
 jsonschema == 3.2.0
 mako == 1.1.2
