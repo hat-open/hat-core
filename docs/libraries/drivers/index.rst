@@ -12,3 +12,8 @@ Available communication drivers:
    serial
    udp
    tpkt
+   cotp
+   cosp
+   copp
+   acse
+   mms

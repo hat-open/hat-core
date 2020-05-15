@@ -48,6 +48,7 @@ import enum
 import pathlib
 
 from hat import util
+from hat.util import json
 from hat.asn1 import ber
 from hat.asn1 import common
 from hat.asn1 import doc
@@ -113,6 +114,13 @@ class Encoder:
     def __init__(self, encoding, repository):
         self._encoding = encoding
         self._repository = repository
+
+    @property
+    def syntax_name(self):
+        """ObjectIdentifier: encoder syntax name"""
+        if self._encoding == Encoding.BER:
+            return ber.syntax_name
+        raise ValueError('invalid encoding')
 
     def encode(self, module, name, value):
         """Encode value to data
@@ -252,12 +260,14 @@ class Repository:
         """Create repository from JSON data representation
 
         Args:
-            data (hat.util.json.Data): data
+            data (Union[pathlib.PurePath,json.Data]): repository data
 
         Returns:
             Repository
 
         """
+        if isinstance(data, pathlib.PurePath):
+            data = json.decode_file(data)
         repo = Repository()
         repo._refs = {common.type_from_json(k): common.type_from_json(v)
                       for k, v in data}
@@ -266,7 +276,7 @@ class Repository:
         """Represent repository as JSON data
 
         Returns:
-            hat.util.json.Data
+            json.Data
 
         """
         return [[common.type_to_json(k), common.type_to_json(v)]

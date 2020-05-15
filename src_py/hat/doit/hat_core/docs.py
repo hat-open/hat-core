@@ -37,7 +37,10 @@ def task_docs_html():
                             hat.doit.docs.SphinxOutputType.HTML,
                             src_dir,
                             html_dst_dir])],
-            'task_dep': ['cache_tools_plantuml']}
+            'task_dep': ['cache_tools_plantuml',
+                         'duktape',
+                         'pymod',
+                         'schemas']}
 
 
 def task_docs_latex():
@@ -46,7 +49,10 @@ def task_docs_latex():
                             hat.doit.docs.SphinxOutputType.LATEX,
                             src_dir,
                             latex_dst_dir])],
-            'task_dep': ['cache_tools_plantuml']}
+            'task_dep': ['cache_tools_plantuml',
+                         'duktape',
+                         'pymod',
+                         'schemas']}
 
 
 def task_docs_pdf():

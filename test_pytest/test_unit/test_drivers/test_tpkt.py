@@ -26,7 +26,8 @@ async def test_connect_listen(addr):
     assert conn1.info.local_addr == conn2.info.remote_addr
     assert conn1.info.remote_addr == conn2.info.local_addr
 
-    await asyncio.gather(conn2.async_close(), srv.async_close())
+    await asyncio.gather(conn1.async_close(), conn2.async_close(),
+                         srv.async_close())
 
     assert srv.closed.done()
     assert conn1.closed.done()

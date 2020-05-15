@@ -74,7 +74,8 @@ def task_clean_all():
         src_py_patterns = ['*.so',
                            '*.pyd',
                            'json_schema_repo.json',
-                           'sbs_repo.json']
+                           'sbs_repo.json',
+                           'asn1_repo.json']
         targets = [build_dir, dist_dir,
                    *itertools.chain.from_iterable(src_py_dir.rglob(i)
                                                   for i in src_py_patterns)]

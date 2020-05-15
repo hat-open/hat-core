@@ -9,12 +9,16 @@ import asyncio
 import contextlib
 import itertools
 import logging
+import typing
 
 from hat import util
 from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)
+
+
+Data = typing.Union[bytes, bytearray, memoryview]
 
 
 Address = util.namedtuple(
@@ -27,6 +31,9 @@ ConnectionInfo = util.namedtuple(
     'ConnectionInfo',
     ['local_addr', "Address: local address"],
     ['remote_addr', "Address: remote address"])
+
+
+ConnectionCb = aio.AsyncCallable[['Connection'], None]
 
 
 async def connect(addr):
@@ -51,26 +58,28 @@ async def listen(connection_cb, addr=Address('0.0.0.0', 102)):
     """Create new TPKT listening server
 
     Args:
-        connection_cb (Callable[[Connection],None]): new connection callback
+        connection_cb (ConnectionCb): new connection callback
         addr (Address): local listening address
 
     Returns:
         Server
 
     """
-
     def on_connection(reader, writer):
+        group.spawn(on_connection_async, reader, writer)
+
+    async def on_connection_async(reader, writer):
         try:
             try:
-                conn = _create_connection(reader, writer, group)
-            except Exception as e:
-                group.spawn(_asyncio_async_close, writer)
-                raise e
+                conn = _create_connection(reader, writer)
+            except Exception:
+                await aio.uncancellable(_asyncio_async_close(writer))
+                raise
             try:
-                connection_cb(conn)
-            except Exception as e:
-                group.spawn(conn.async_close)
-                raise e
+                await aio.call(connection_cb, conn)
+            except BaseException:
+                await aio.uncancellable(conn.async_close())
+                raise
         except Exception as e:
             mlog.error("error creating new incomming connection: %s", e,
                        exc_info=e)
@@ -98,7 +107,7 @@ class Server:
 
     @property
     def addresses(self):
-        """List[Tuple[str,int]]: listening (IP address, TCP port) pairs"""
+        """List[Address]: listening addresses"""
         return self._addresses
 
     @property
@@ -109,13 +118,13 @@ class Server:
     async def async_close(self):
         """Close listening socket
 
-        Calling this method closes all active established connections
+        Calling this method doesn't close active incomming connections
 
         """
         await self._group.async_close()
 
 
-def _create_connection(reader, writer, parent_group=None):
+def _create_connection(reader, writer):
     sockname = writer.get_extra_info('sockname')
     peername = writer.get_extra_info('peername')
     info = ConnectionInfo(local_addr=Address(sockname[0], sockname[1]),
@@ -125,11 +134,9 @@ def _create_connection(reader, writer, parent_group=None):
     conn._reader = reader
     conn._writer = writer
     conn._info = info
-    conn._group = (parent_group.create_subgroup() if parent_group
-                   else aio.Group())
-    conn._group.spawn(aio.call_on_cancel, _asyncio_async_close,
-                      writer, flush=True)
-
+    conn._read_queue = aio.Queue()
+    conn._group = aio.Group()
+    conn._group.spawn(conn._read_loop)
     return conn
 
 
@@ -158,26 +165,16 @@ class Connection:
         """Read data
 
         Returns:
-            bytes
+            Data
 
         """
-        header = await self._reader.readexactly(4)
-        if header[0] != 3:
-            raise Exception(f"invalid vrsn number - expected 3 but "
-                            f"received {header[0]}")
-        packet_length = (header[2] << 8) | header[3]
-        if packet_length < 7:
-            raise Exception(f"invalid packet length - expected greater than 7 "
-                            f"but received {packet_length}")
-        data_length = packet_length - 4
-        data = await self._reader.readexactly(data_length)
-        return data
+        return await self._read_queue.get()
 
     def write(self, data):
         """Write data
 
         Args:
-            data (bytes): data
+            data (Data): data
 
         """
         data_len = len(data)
@@ -189,6 +186,27 @@ class Connection:
         self._writer.write(bytes(itertools.chain(
             [3, 0, packet_length >> 8, packet_length & 0xFF],
             data)))
+
+    async def _read_loop(self):
+        try:
+            while True:
+                header = await self._reader.readexactly(4)
+                if header[0] != 3:
+                    raise Exception(f"invalid vrsn number "
+                                    f"(received {header[0]})")
+                packet_length = (header[2] << 8) | header[3]
+                if packet_length < 7:
+                    raise Exception(f"invalid packet length "
+                                    f"(received {packet_length})")
+                data_length = packet_length - 4
+                data = await self._reader.readexactly(data_length)
+                await self._read_queue.put(data)
+        except Exception as e:
+            mlog.error("error while reading: %s", e, exc_info=e)
+        finally:
+            self._group.close()
+            self._read_queue.close()
+            await aio.uncancellable(_asyncio_async_close(self._writer, True))
 
 
 async def _asyncio_async_close(x, flush=False):

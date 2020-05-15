@@ -7,6 +7,7 @@ Attributes:
 
 import asyncio
 import collections
+import collections.abc
 import concurrent.futures
 import contextlib
 import inspect
@@ -14,6 +15,7 @@ import itertools
 import logging
 import signal
 import sys
+import typing
 
 
 mlog = logging.getLogger(__name__)
@@ -74,6 +76,23 @@ async def uncancellable(f, raise_cancel=True):
     return task.result()
 
 
+class _AsyncCallableType(type(typing.Callable), _root=True):
+
+    def __init__(self):
+        super().__init__(origin=collections.abc.Callable,
+                         params=(..., typing.Optional[typing.Awaitable]),
+                         special=True)
+
+    def __getitem__(self, params):
+        if len(params) == 2:
+            params = (params[0], typing.Union[params[1],
+                                              typing.Awaitable[params[1]]])
+        return super().__getitem__(params)
+
+
+AsyncCallable = _AsyncCallableType()
+
+
 async def call(fn, *args, **kwargs):
     """Call a function or a coroutine.
 
@@ -81,7 +100,7 @@ async def call(fn, *args, **kwargs):
     awaited.
 
     Args:
-        fn (Callable): function or coroutine
+        fn (AsyncCallable): function or coroutine
         args: additional function arguments
         kwargs: additional function keyword arguments
 
@@ -102,7 +121,7 @@ async def call_on_cancel(fn, *args, **kwargs):
     coroutine, it is awaited.
 
     Args:
-        fn (Callable): function or coroutine
+        fn (AsyncCallable): function or coroutine
         args: additional function arguments
         kwargs: additional function keyword arguments
 
