@@ -108,7 +108,8 @@ async def adapter_factory(monkeypatch, event_client_factory):
 
 @pytest.mark.asyncio
 async def test_event_receive(event_client_factory, adapter_factory):
-    client = await event_client_factory([['*']])
+    client = await event_client_factory([['hat', '*'],
+                                         ['should', '*']])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -143,7 +144,8 @@ async def test_event_receive(event_client_factory, adapter_factory):
 
 @pytest.mark.asyncio
 async def test_event_register(event_client_factory, adapter_factory):
-    client = await event_client_factory([['*']])
+    client = await event_client_factory([['hat', '*'],
+                                         ['should', '*']])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -181,7 +183,8 @@ async def test_event_register(event_client_factory, adapter_factory):
 @pytest.mark.asyncio
 async def test_event_register_with_response(event_client_factory,
                                             adapter_factory):
-    client = await event_client_factory([['*']])
+    client = await event_client_factory([['hat', '*'],
+                                         ['1', '2']])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -213,7 +216,8 @@ async def test_event_register_with_response(event_client_factory,
 
 @pytest.mark.asyncio
 async def test_event_query(event_client_factory, adapter_factory):
-    client = await event_client_factory([['*']])
+    client = await event_client_factory([['hat', '*'],
+                                         ['1', '2']])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
