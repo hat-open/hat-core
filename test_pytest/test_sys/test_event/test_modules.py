@@ -59,7 +59,8 @@ async def test_create_session(create_event_server, remote_msgs,
         srv.wait_active(1)
 
         client = await hat.event.client.connect(srv.address)
-        client.register([hat.event.common.RegisterEvent(['a'], None, None)])
+        # further assertions are based on communication connected/disconnected
+        # events registered by communication
 
         msg = await asyncio.wait_for(remote_msgs.get(), 1)
         assert msg == 'SessionCreate'
@@ -71,6 +72,15 @@ async def test_create_session(create_event_server, remote_msgs,
         assert msg == 'SessionClose'
 
         await client.async_close()
+
+        msg = await asyncio.wait_for(remote_msgs.get(), 1)
+        assert msg == 'SessionCreate'
+
+        msg = await asyncio.wait_for(remote_msgs.get(), 1)
+        assert msg == 'Process'
+
+        msg = await asyncio.wait_for(remote_msgs.get(), 1)
+        assert msg == 'SessionClose'
 
     msg = await asyncio.wait_for(remote_msgs.get(), 1)
     assert msg == 'ModuleClose'

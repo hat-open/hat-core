@@ -25,7 +25,8 @@ async def client(server):
 @pytest.mark.asyncio
 async def test_empty(client):
     result = await client.query(common.QueryData(event_types=[['*']]))
-    assert result == []
+    assert len(result) == 1
+    assert result[0].event_type == ['event', 'communication', 'connected']
 
 
 @pytest.mark.parametrize("register_count", [1, 2, 5])
@@ -38,7 +39,7 @@ async def test_multiple_writes(client, register_count, register_size):
              for _ in range(register_size)])
         assert len(resp) == register_size
 
-        result = await client.query(common.QueryData(event_types=[['*']]))
+        result = await client.query(common.QueryData(event_types=[['a']]))
         assert len(result) == (i + 1) * register_size
 
 
@@ -51,7 +52,7 @@ async def test_multiple_writes(client, register_count, register_size):
 async def test_payload(client, payload_type, payload_data):
     resp = await client.register_with_response([common.RegisterEvent(
         ['a'], None, common.EventPayload(payload_type, payload_data))])
-    result = await client.query(common.QueryData(event_types=[['*']]))
+    result = await client.query(common.QueryData(event_types=[['a']]))
 
     assert resp == result
     assert len(result) == 1
