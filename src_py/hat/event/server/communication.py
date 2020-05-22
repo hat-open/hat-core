@@ -127,11 +127,13 @@ class Communication:
         events = await self._engine.register(process_events)
         if msg.last:
             return
-        conn.send(chatter.Data(module='HatEvent',
-                               type='MsgRegisterRes',
-                               data=[('event', common.event_to_sbs(event))
-                                     if event else ('failure', None)
-                                     for event in events]),
+        events_dict = {e.event_id: e for e in events}
+        conn.send(chatter.Data(
+            module='HatEvent',
+            type='MsgRegisterRes',
+            data=[('event', common.event_to_sbs(events_dict[e.event_id]))
+                  if e.event_id in events_dict else ('failure', None)
+                  for e in process_events]),
                   conv=msg.conv)
 
     async def _query_request_response(self, query, conn, msg):

@@ -48,6 +48,36 @@ async def test_register(create_event_server):
 
 
 @pytest.mark.asyncio
+async def test_register_with_response(create_event_server):
+    backend_conf = {'module': 'hat.event.server.backends.dummy'}
+    modules_conf = [{'module': 'test_sys.test_event.modules.copier',
+                     'subscriptions': [['*']]}]
+
+    register_events = [common.RegisterEvent(
+        event_type=[f'a{i}'],
+        source_timestamp=common.now(),
+        payload=common.EventPayload(
+            type=common.EventPayloadType.BINARY,
+            data=b'123')) for i in range(10)]
+
+    with create_event_server(backend_conf, modules_conf) as srv:
+        srv.wait_active(5)
+
+        client = await hat.event.client.connect(srv.address)
+
+        resp = await client.register_with_response(register_events)
+
+        assert(len(resp) == 10)
+        for reg_event, event in zip(register_events, resp):
+            assert reg_event.event_type == event.event_type
+            assert reg_event.source_timestamp == event.source_timestamp
+            assert reg_event.payload == event.payload
+        assert all(resp[0].timestamp == e.timestamp for e in resp)
+
+        await client.async_close()
+
+
+@pytest.mark.asyncio
 async def test_subscribe(create_event_server):
     backend_conf = {'module': 'hat.event.server.backends.dummy'}
     modules_conf = []
