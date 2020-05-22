@@ -283,3 +283,41 @@ async def test_query(comm_conf):
     await client.async_close()
     await comm.async_close()
     await engine.async_close()
+
+
+@pytest.mark.asyncio
+async def test_communication_event(comm_conf):
+
+    def register_cb(events):
+        register_queue.put_nowait(events)
+        return [common.process_event_to_event(i) for i in events]
+
+    register_queue = aio.Queue()
+    engine = common.create_module_engine(register_cb=register_cb)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
+    clients_count = 10
+
+    clients = []
+    for i in range(clients_count):
+        client = await hat.event.client.connect(comm_conf['address'])
+        clients.append(client)
+        events = await register_queue.get()
+        event = events[0]
+
+        assert event.event_type == ['event', 'communication', 'connected']
+        assert event.payload is None
+        assert event.source.id == i + 1
+
+    for i in reversed(range(clients_count)):
+        client = clients.pop()
+        await client.async_close()
+
+        events = await register_queue.get()
+        event = events[0]
+
+        assert event.event_type == ['event', 'communication', 'disconnected']
+        assert event.payload is None
+        assert event.source.id == i + 1
+
+    await comm.async_close()
+    await engine.async_close()
