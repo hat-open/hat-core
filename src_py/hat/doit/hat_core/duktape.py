@@ -12,6 +12,7 @@ __all__ = ['task_duktape',
 
 src_dir = Path('src_c/duktape')
 dst_dir = Path('build/duktape')
+src_paths = list(src_dir.rglob('*.c'))
 src_py_dir = Path('src_py')
 lib_path = (dst_dir / 'duktape').with_suffix(c.lib_suffix)
 src_py_lib_path = src_py_dir / 'hat/duktape' / lib_path.name
@@ -26,14 +27,14 @@ def task_duktape():
 
 def task_duktape_lib():
     """Duktape - build dynamic library"""
-    return c.get_task_lib(src_dir, dst_dir, lib_path)
+    return c.get_task_lib(lib_path, src_paths, src_dir, dst_dir)
 
 
 def task_duktape_obj():
     """Duktape - build .o files"""
-    yield from c.get_task_objs(src_dir, dst_dir, cc_flags=['-fPIC'])
+    yield from c.get_task_objs(src_paths, src_dir, dst_dir, cc_flags=['-fPIC'])
 
 
 def task_duktape_dep():
     """Duktape - build .d files"""
-    yield from c.get_task_deps(src_dir, dst_dir)
+    yield from c.get_task_deps(src_paths, src_dir, dst_dir)

@@ -3,6 +3,7 @@ from pathlib import Path
 from hat import asn1
 from hat import sbs
 from hat.util import json
+import hat.sbs.generator
 
 
 __all__ = ['task_schemas',
@@ -16,6 +17,7 @@ __all__ = ['task_schemas',
            'task_schemas_json_event',
            'task_schemas_json_gateway',
            'task_schemas_json_gui',
+           'task_schemas_sbs_chat',
            'task_schemas_sbs_chatter',
            'task_schemas_sbs_monitor',
            'task_schemas_sbs_event',
@@ -53,7 +55,8 @@ def task_schemas_json():
 def task_schemas_sbs():
     """Schemas - generate SBS repository data"""
     return {'actions': None,
-            'task_dep': ['schemas_sbs_chatter',
+            'task_dep': ['schemas_sbs_chat',
+                         'schemas_sbs_chatter',
                          'schemas_sbs_monitor',
                          'schemas_sbs_event']}
 
@@ -107,6 +110,23 @@ def task_schemas_json_gui():
     """Schemas - generate hat-gui JSON schema repository data"""
     return _get_task_json([*(schemas_json_dir / 'gui').rglob('*.yaml')],
                           [src_py_dir / 'hat/gui/json_schema_repo.json'])
+
+
+def task_schemas_sbs_chat():
+    """Schemas - generate CHat SBS .c and .h repository files"""
+    src_paths = list(schemas_sbs_dir.rglob('*.sbs'))
+    dst_dir = Path('src_c/hat')
+    file_name = 'sbs_defs'
+    dst_paths = [dst_dir / f'{file_name}.c',
+                 dst_dir / f'{file_name}.h']
+
+    def generate():
+        repo = sbs.Repository(*src_paths)
+        hat.sbs.generator.generate_c(repo, dst_dir, file_name)
+
+    return {'actions': [generate],
+            'file_dep': src_paths,
+            'targets': dst_paths}
 
 
 def task_schemas_sbs_chatter():

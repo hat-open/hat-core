@@ -18,54 +18,56 @@ cc = os.environ.get('CC', 'cc')
 ld = os.environ.get('LD', 'cc')
 
 
-def get_task_lib(src_dir, dep_dir, lib, *, ld=ld, ld_flags=[], libs=[]):
-    objs = [_get_obj_path(src_dir, dep_dir, src)
-            for src in src_dir.rglob('*.c')]
-    objs_str = list(map(str, objs))
+def get_task_lib(lib_path, src_paths, src_dir, dst_dir, *,
+                 ld=ld, ld_flags=[], libs=[]):
+    obj_paths = [_get_obj_path(src_path, src_dir, dst_dir)
+                 for src_path in src_paths]
     shared_flag = '-mdll' if sys.platform == 'win32' else '-shared'
-    return {'actions': [(common.mkdir_p, [lib.parent]),
-                        [ld] + objs_str + ['-o', str(lib), shared_flag] +
-                        ld_flags + libs],
-            'file_dep': objs,
-            'targets': [lib]}
+    return {'actions': [(common.mkdir_p, [lib_path.parent]),
+                        [ld, *[str(obj_path) for obj_path in obj_paths],
+                         '-o', str(lib_path), shared_flag, *ld_flags, *libs]],
+            'file_dep': obj_paths,
+            'targets': [lib_path]}
 
 
-def get_task_objs(src_dir, dep_dir, *, cc=cc, cpp_flags=[], cc_flags=[]):
-    for src in src_dir.rglob('*.c'):
-        dep = _get_dep_path(src_dir, dep_dir, src)
-        obj = _get_obj_path(src_dir, dep_dir, src)
-        headers = _parse_dep(dep)
-        yield {'name': str(obj),
-               'actions': [(common.mkdir_p, [obj.parent]),
-                           [cc] + cpp_flags + cc_flags +
-                           ['-c', '-o', str(obj), str(src)]],
-               'file_dep': [src, dep] + headers,
-               'targets': [obj]}
+def get_task_objs(src_paths, src_dir, dst_dir, *,
+                  cc=cc, cpp_flags=[], cc_flags=[]):
+    for src_path in src_paths:
+        dep_path = _get_dep_path(src_path, src_dir, dst_dir)
+        obj_path = _get_obj_path(src_path, src_dir, dst_dir)
+        header_paths = _parse_dep(dep_path)
+        yield {'name': str(obj_path),
+               'actions': [(common.mkdir_p, [obj_path.parent]),
+                           [cc, *cpp_flags, *cc_flags, '-c',
+                            '-o', str(obj_path), str(src_path)]],
+               'file_dep': [src_path, dep_path, *header_paths],
+               'targets': [obj_path]}
 
 
-def get_task_deps(src_dir, dep_dir, *, cpp=cpp, cpp_flags=[]):
-    for src in src_dir.rglob('*.c'):
-        dep = _get_dep_path(src_dir, dep_dir, src)
-        yield {'name': str(dep),
-               'actions': [(common.mkdir_p, [dep.parent]),
-                           [cpp] + cpp_flags +
-                           ['-MM', '-o', str(dep), str(src)]],
-               'file_dep': [src],
-               'targets': [dep]}
+def get_task_deps(src_paths, src_dir, dst_dir, *,
+                  cpp=cpp, cpp_flags=[]):
+    for src_path in src_paths:
+        dep_path = _get_dep_path(src_path, src_dir, dst_dir)
+        yield {'name': str(dep_path),
+               'actions': [(common.mkdir_p, [dep_path.parent]),
+                           [cpp, *cpp_flags, '-MM', '-o', str(dep_path),
+                            str(src_path)]],
+               'file_dep': [src_path],
+               'targets': [dep_path]}
 
 
-def _get_dep_path(src_dir, dep_dir, src):
-    return (dep_dir / src.relative_to(src_dir)).with_suffix('.d')
+def _get_dep_path(src_path, src_dir, dst_dir):
+    return (dst_dir / src_path.relative_to(src_dir)).with_suffix('.d')
 
 
-def _get_obj_path(src_dir, dep_dir, src):
-    return (dep_dir / src.relative_to(src_dir)).with_suffix('.o')
+def _get_obj_path(src_path, src_dir, dst_dir):
+    return (dst_dir / src_path.relative_to(src_dir)).with_suffix('.o')
 
 
-def _parse_dep(dep):
-    if not dep.exists():
+def _parse_dep(path):
+    if not path.exists():
         return []
-    with open(dep, 'r') as f:
+    with open(path, 'r') as f:
         content = f.readlines()
     content[0] = content[0][content[0].find(':')+1:]
     return list(itertools.chain.from_iterable(

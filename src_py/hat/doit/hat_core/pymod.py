@@ -12,11 +12,10 @@ __all__ = ['task_pymod',
            'task_pymod_sqlite3_dep']
 
 
-src_dir = Path('src_c/pymod')
-dst_dir = Path('build/pymod')
-
-sqlite3_src_dir = src_dir / '_sqlite3'
-sqlite3_dst_dir = dst_dir / '_sqlite3'
+sqlite3_src_dir = Path('src_c')
+sqlite3_dst_dir = Path('build/pymod/_sqlite3')
+sqlite3_src_paths = [*(sqlite3_src_dir / 'sqlite3').rglob('*.c'),
+                     *(sqlite3_src_dir / 'pymod/_sqlite3').rglob('*.c')]
 sqlite3_lib_path = (sqlite3_dst_dir / '_sqlite3').with_suffix(
     '.pyd' if sys.platform == 'win32' else '.so')
 sqlite3_mod_path = Path('src_py/hat/sqlite3') / sqlite3_lib_path.name
@@ -56,18 +55,20 @@ def task_pymod_sqlite3():
 
 def task_pymod_sqlite3_lib():
     """Python module - build sqlite3 dynamic library"""
-    return c.get_task_lib(sqlite3_src_dir, sqlite3_dst_dir, sqlite3_lib_path,
-                          ld_flags=sqlite3_ld_flags)
+    return c.get_task_lib(
+        sqlite3_lib_path, sqlite3_src_paths, sqlite3_src_dir, sqlite3_dst_dir,
+        ld_flags=sqlite3_ld_flags)
 
 
 def task_pymod_sqlite3_obj():
     """Python module - build sqlite3 .o files"""
-    yield from c.get_task_objs(sqlite3_src_dir, sqlite3_dst_dir,
-                               cpp_flags=sqlite3_cpp_flags,
-                               cc_flags=sqlite3_cc_flags)
+    yield from c.get_task_objs(
+        sqlite3_src_paths, sqlite3_src_dir, sqlite3_dst_dir,
+        cpp_flags=sqlite3_cpp_flags, cc_flags=sqlite3_cc_flags)
 
 
 def task_pymod_sqlite3_dep():
     """Python module - build sqlite3 .d files"""
-    yield from c.get_task_deps(sqlite3_src_dir, sqlite3_dst_dir,
-                               cpp_flags=sqlite3_cpp_flags)
+    yield from c.get_task_deps(
+        sqlite3_src_paths, sqlite3_src_dir, sqlite3_dst_dir,
+        cpp_flags=sqlite3_cpp_flags)

@@ -10,3 +10,4 @@ __pycache__
 /src_py/**/json_schema_repo.json
 /src_py/**/sbs_repo.json
 /src_py/**/asn1_repo.json
+/src_c/hat/sbs_defs.*

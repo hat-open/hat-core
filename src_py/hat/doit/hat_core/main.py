@@ -11,6 +11,7 @@ from hat.doit.hat_core.check import *  # NOQA
 from hat.doit.hat_core.dist import *  # NOQA
 from hat.doit.hat_core.docs import *  # NOQA
 from hat.doit.hat_core.duktape import *  # NOQA
+from hat.doit.hat_core.format import *  # NOQA
 from hat.doit.hat_core.homepage import *  # NOQA
 from hat.doit.hat_core.jshat.app import *  # NOQA
 from hat.doit.hat_core.jshat.deps import *  # NOQA
@@ -29,6 +30,7 @@ import hat.doit.hat_core.check
 import hat.doit.hat_core.dist
 import hat.doit.hat_core.docs
 import hat.doit.hat_core.duktape
+import hat.doit.hat_core.format
 import hat.doit.hat_core.homepage
 import hat.doit.hat_core.jshat.app
 import hat.doit.hat_core.jshat.deps
@@ -50,6 +52,7 @@ __all__ = (['task_clean_all'] +
            hat.doit.hat_core.dist.__all__ +
            hat.doit.hat_core.docs.__all__ +
            hat.doit.hat_core.duktape.__all__ +
+           hat.doit.hat_core.format.__all__ +
            hat.doit.hat_core.homepage.__all__ +
            hat.doit.hat_core.jshat.app.__all__ +
            hat.doit.hat_core.jshat.deps.__all__ +
@@ -65,6 +68,7 @@ __all__ = (['task_clean_all'] +
 build_dir = Path('build')
 dist_dir = Path('dist')
 src_py_dir = Path('src_py')
+src_c_dir = Path('src_c')
 
 
 def task_clean_all():
@@ -78,7 +82,8 @@ def task_clean_all():
                            'asn1_repo.json']
         targets = [build_dir, dist_dir,
                    *itertools.chain.from_iterable(src_py_dir.rglob(i)
-                                                  for i in src_py_patterns)]
+                                                  for i in src_py_patterns),
+                   *(src_c_dir / 'hat').glob('sbs_defs.*')]
         common.rm_rf(*targets)
 
     return {'actions': [clean]}
