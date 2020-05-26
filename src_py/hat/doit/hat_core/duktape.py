@@ -17,6 +17,8 @@ src_py_dir = Path('src_py')
 lib_path = (dst_dir / 'duktape').with_suffix(c.lib_suffix)
 src_py_lib_path = src_py_dir / 'hat/duktape' / lib_path.name
 
+cc_flags = ['-fPIC', '-O2']
+
 
 def task_duktape():
     """Duktape - build"""
@@ -32,7 +34,7 @@ def task_duktape_lib():
 
 def task_duktape_obj():
     """Duktape - build .o files"""
-    yield from c.get_task_objs(src_paths, src_dir, dst_dir, cc_flags=['-fPIC'])
+    yield from c.get_task_objs(src_paths, src_dir, dst_dir, cc_flags=cc_flags)
 
 
 def task_duktape_dep():

@@ -21,7 +21,7 @@ sqlite3_lib_path = (sqlite3_dst_dir / '_sqlite3').with_suffix(
 sqlite3_mod_path = Path('src_py/hat/sqlite3') / sqlite3_lib_path.name
 
 sqlite3_cpp_flags = ['-DMODULE_NAME="_sqlite3"']
-sqlite3_cc_flags = ['-fPIC']
+sqlite3_cc_flags = ['-fPIC', '-O2']
 sqlite3_ld_flags = []
 
 if sys.platform == 'linux':
