@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include "mem.h"
 
 #define HAT_SBS_SUCCESS 0
 #define HAT_SBS_ERROR -1
@@ -28,12 +29,6 @@ typedef enum {
     HAT_SBS_DEF_TYPE_BUILTIN,
     HAT_SBS_DEF_TYPE_USER
 } hat_sbs_def_type_t;
-
-typedef struct {
-    uint8_t *data;
-    size_t len;
-    size_t cap;
-} hat_sbs_buf_t;
 
 typedef struct hat_sbs_def_t {
     hat_sbs_def_type_t type;
@@ -84,7 +79,8 @@ typedef struct {
 
 typedef struct {
     hat_sbs_t base;
-    char *value;
+    uint8_t *value;
+    size_t len;
 } hat_sbs_string_t;
 
 typedef struct {
@@ -112,10 +108,11 @@ typedef struct {
 } hat_sbs_union_t;
 
 
-ssize_t hat_sbs_decode(hat_sbs_def_t *def, hat_sbs_buf_t *data,
-                       hat_sbs_buf_t *buf, hat_sbs_t **value);
-ssize_t hat_sbs_encode(hat_sbs_def_t *def, hat_sbs_t *value,
-                       hat_sbs_buf_t *data);
+ssize_t hat_sbs_decode(hat_mem_region_t *reg, hat_sbs_def_t *def, uint8_t *data,
+                       size_t data_len, hat_sbs_t **value, uint8_t **rest,
+                       size_t *rest_len);
+ssize_t hat_sbs_encode(hat_sbs_def_t *def, hat_sbs_t *value, uint8_t *data,
+                       size_t data_cap, size_t *data_len);
 
 #ifdef __cplusplus
 }
