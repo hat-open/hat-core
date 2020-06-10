@@ -230,6 +230,6 @@ class ModuleSession(abc.ABC):
             changes (SessionChanges): session changes
 
         Returns:
-            Optional[SessionChanges]
+            SessionChanges
 
         """

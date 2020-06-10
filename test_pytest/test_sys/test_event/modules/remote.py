@@ -64,6 +64,7 @@ class RemoteModuleSession(hat.event.server.common.ModuleSession):
     async def process(self, changes):
         self._module._send('Process', None)
         await asyncio.sleep(0)
+        return hat.event.server.common.SessionChanges([], [])
 
 
 async def create_server(address):
