@@ -3,6 +3,8 @@ import asyncio
 import functools
 import itertools
 import contextlib
+import sys
+import types
 
 from hat import util
 from hat.util import aio
@@ -42,6 +44,65 @@ def register_events():
                                            source_timestamp=None,
                                            payload=None)
             for et in event_types]
+
+
+@pytest.fixture
+def create_module():
+
+    @contextlib.contextmanager
+    def create_module(name, subscriptions=[['*']], process_cb=None):
+
+        if not process_cb:
+            empty_changes = hat.event.server.common.SessionChanges([], [])
+            process_cb = lambda _: empty_changes  # NOQA
+
+        async def create(conf, module_engine):
+            return Module()
+
+        class Module(hat.event.server.common.Module):
+
+            def __init__(self):
+                self._closed = asyncio.Future()
+
+            @property
+            def subscriptions(self):
+                return subscriptions
+
+            @property
+            def closed(self):
+                return asyncio.shield(self._closed)
+
+            async def async_close(self):
+                self._closed.set_result(True)
+
+            async def create_session(self):
+                return Session()
+
+        class Session(hat.event.server.common.ModuleSession):
+
+            def __init__(self):
+                self._closed = asyncio.Future()
+
+            @property
+            def closed(self):
+                return asyncio.shield(self._closed)
+
+            async def async_close(self, events):
+                self._closed.set_result(True)
+
+            async def process(self, changes):
+                return await aio.call(process_cb, changes)
+
+        module = types.ModuleType(name)
+        module.json_schema_id = None
+        module.create = create
+        sys.modules[name] = module
+        try:
+            yield
+        finally:
+            del sys.modules[name]
+
+    return create_module
 
 
 def assert_notified_changes(sessions, registered_events):
@@ -379,3 +440,51 @@ async def test_sessions(module_engine_conf, register_events, source_comm):
     assert all(s not in sessions1 for s in sessions2)
 
     await assert_closure(backend_engine, module_engine, modules)
+
+
+@pytest.mark.asyncio
+async def test_empty_changes(create_module):
+    module_name = 'TestEmptyChanges'
+    source = hat.event.server.common.Source(
+        type=hat.event.server.common.SourceType.COMMUNICATION,
+        name=None,
+        id=1)
+    changes = []
+
+    def process(c):
+        changes.append(c)
+        return hat.event.server.common.SessionChanges([], [])
+
+    with create_module(module_name,
+                       subscriptions=[['a', '*']],
+                       process_cb=process):
+        module_engine_conf = {'modules': [{'module': module_name}]}
+        backend_engine = common.create_backend_engine()
+        module_engine = await hat.event.server.module_engine.create(
+                module_engine_conf, backend_engine)
+
+        assert changes == []
+
+        await module_engine.register([])
+        assert changes == []
+
+        await module_engine.register([
+            module_engine.create_process_event(
+                source, hat.event.common.RegisterEvent(
+                    event_type=['b', 'c'],
+                    source_timestamp=None,
+                    payload=None))
+        ])
+        assert changes == []
+
+        await module_engine.register([
+            module_engine.create_process_event(
+                source, hat.event.common.RegisterEvent(
+                    event_type=['a', 'c'],
+                    source_timestamp=None,
+                    payload=None))
+        ])
+        assert len(changes) == 1
+
+        await module_engine.async_close()
+        await backend_engine.async_close()

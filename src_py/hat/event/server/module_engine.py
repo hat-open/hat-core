@@ -211,8 +211,11 @@ class _ModuleSession():
         return self._pending_changes.new or self._pending_changes.deleted
 
     async def process(self):
-        changes = await self._session.process(self._pending_changes)
-        self._pending_changes = common.SessionChanges(new=[], deleted=[])
+        if self._pending_changes != common.SessionChanges(new=[], deleted=[]):
+            changes = await self._session.process(self._pending_changes)
+            self._pending_changes = common.SessionChanges(new=[], deleted=[])
+        else:
+            changes = common.SessionChanges(new=[], deleted=[])
         return changes
 
     async def add_changes(self, changes):
