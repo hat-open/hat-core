@@ -227,7 +227,7 @@ class Repository:
     """ASN.1 type definition repository.
 
     Repository can be initialized with multiple arguments, which can be
-    instances of ``pathlib.PurePath`` or ``Repository``.
+    instances of ``pathlib.PurePath``, ``str`` or ``Repository``.
 
     If an argument is of type ``pathlib.PurePath``, and path points to file
     with a suffix '.asn', ASN.1 type definitions are decoded from the file.
@@ -236,12 +236,16 @@ class Repository:
     are added to the repository. Previously added type definitions with the
     same references are replaced.
 
+    If an argument is of type ``str``, it represents ASN.1 type definitions.
+    All decoded types are added to the repository. Previously added type
+    definitions with the same references are replaced.
+
     If an argument is of type ``Repository``, its data definitions are added to
     the new repository. Previously added type definitions with the
     same references are replaced.
 
     Args:
-        args (Union[pathlib.PurePath,Repository]): init arguments
+        args (Union[pathlib.PurePath,str,Repository]): init arguments
 
     """
 
@@ -250,6 +254,8 @@ class Repository:
         for arg in args:
             if isinstance(arg, pathlib.PurePath):
                 self._load_path(arg)
+            elif isinstance(arg, str):
+                self._parse_asn1_def(arg)
             elif isinstance(arg, Repository):
                 self._refs.update(arg._refs)
             else:
@@ -292,10 +298,13 @@ class Repository:
         return doc.generate_html(self._refs)
 
     def _load_path(self, path):
-        from hat.asn1 import parser
         paths = [path] if path.suffix == '.asn' else path.rglob('*.asn')
         for path in paths:
             with open(path, 'r', encoding='utf-8') as f:
                 asn1_def = f.read()
-            refs = parser.parse(asn1_def)
-            self._refs.update(refs)
+            self._parse_asn1_def(asn1_def)
+
+    def _parse_asn1_def(self, asn1_def):
+        from hat.asn1 import parser
+        refs = parser.parse(asn1_def)
+        self._refs.update(refs)
