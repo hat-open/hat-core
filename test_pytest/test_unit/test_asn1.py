@@ -27,6 +27,7 @@ def get_encoder(repository):
             green       (1),
             blue        (2)
         }
+    END
     """, [
         [['TypeRef', 'Abc', 'T1'], ['EnumeratedType']]]
 )])
@@ -43,9 +44,9 @@ def test_parse(asn1_def, refs_json):
         T4 ::= OCTET STRING
         T5 ::= NULL
         T6 ::= OBJECT IDENTIFIER
-        T7 ::= STRING
+        T7 ::= UTF8String
         T8 ::= EXTERNAL
-        T9 ::= EMBEDDEDPDV
+        T9 ::= EMBEDDED PDV
         T10 ::= CHOICE {
             item1   INTEGER,
             item2   BIT STRING,

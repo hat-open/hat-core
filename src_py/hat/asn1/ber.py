@@ -2,6 +2,7 @@ import collections
 import functools
 import itertools
 import math
+import typing
 
 from hat import util
 from hat.asn1 import common
@@ -189,7 +190,7 @@ def decode_value(refs, t, entity):
 
     if isinstance(t, common.SetType):
         value = {}
-        elements = set(entity.content.elements)
+        elements = list(entity.content.elements)
         for prop in t.elements:
             match = functools.partial(_match_type_entity, refs, prop.type)
             subentity = util.first(elements,  match)
@@ -197,7 +198,7 @@ def decode_value(refs, t, entity):
                 if prop.optional:
                     continue
                 raise ValueError(f'missing property {prop.name}')
-            value[prop.name] = subentity
+            value[prop.name] = decode_value(refs, prop.type, subentity)
             elements.remove(subentity)
         return value
 
@@ -209,7 +210,8 @@ def decode_value(refs, t, entity):
         elements = collections.deque(entity.content.elements)
         for prop in t.elements:
             if _match_type_entity(refs, prop.type, elements[0]):
-                value[prop.name] = elements.popleft()
+                value[prop.name] = decode_value(refs, prop.type,
+                                                elements.popleft())
             elif not prop.optional:
                 raise ValueError(f'missing property {prop.name}')
         return value
@@ -342,7 +344,7 @@ def decode_entity(data):
 
 def _encode_elements(refs, props, value):
     for prop in props:
-        if props.optional and props.name not in value:
+        if prop.optional and prop.name not in value:
             continue
         yield encode_value(refs, prop.type, value[prop.name])
 
@@ -491,7 +493,7 @@ def _encode_external(value):
     if isinstance(value.data, Entity):
         entity = Entity(common.ClassType.CONTEXT_SPECIFIC, 0,
                         ConstructedContent([value.data]))
-    elif isinstance(value.data, common.Data):
+    elif _is_data(value.data):
         entity = Entity(common.ClassType.CONTEXT_SPECIFIC, 1,
                         _encode_octetstring(value.data))
     else:
@@ -523,7 +525,9 @@ def _decode_external(content):
     else:
         raise ValueError('invalid external content')
 
-    return common.External(direct_ref, indirect_ref, data)
+    return common.External(data=data,
+                           direct_ref=direct_ref,
+                           indirect_ref=indirect_ref)
 
 
 def _encode_real(value):
@@ -537,11 +541,11 @@ def _decode_real(content):
 def _encode_embeddedpdv(value):
     if value.abstract is not None:
         if isinstance(value.abstract, int):
-            abstract_entity = Entity(common.ClassType.UNIVERSAL, 6,
-                                     _encode_objectidentifier(value.abstract))
-        else:
             abstract_entity = Entity(common.ClassType.UNIVERSAL, 2,
                                      _encode_integer(value.abstract))
+        else:
+            abstract_entity = Entity(common.ClassType.UNIVERSAL, 6,
+                                     _encode_objectidentifier(value.abstract))
 
     if value.transfer is not None:
         transfer_entity = Entity(common.ClassType.UNIVERSAL, 6,
@@ -562,8 +566,7 @@ def _encode_embeddedpdv(value):
     data_entity = Entity(common.ClassType.UNIVERSAL, 4,
                          _encode_octetstring(value.data))
 
-    return Entity(common.ClassType.UNIVERSAL, 16, ConstructedContent([
-        identification_entity, data_entity]))
+    return ConstructedContent([identification_entity, data_entity])
 
 
 def _decode_embeddedpdv(content):
@@ -574,21 +577,21 @@ def _decode_embeddedpdv(content):
         abstract_entity = identification_entity.content.elements[0]
         transfer_entity = identification_entity.content.elements[1]
         if abstract_entity.tag_number == 6:
-            abstract = _decode_objectidentifier(abstract_entity)
+            abstract = _decode_objectidentifier(abstract_entity.content)
         elif abstract_entity.tag_number == 2:
-            abstract = _decode_objectidentifier(abstract_entity)
+            abstract = _decode_integer(abstract_entity.cotent)
         else:
             raise ValueError('invalid content')
         if transfer_entity.tag_number != 6:
             raise ValueError('invalid content')
-        transfer = _decode_objectidentifier(transfer_entity)
+        transfer = _decode_objectidentifier(transfer_entity.content)
 
     else:
         if identification_entity.tag_number == 6:
             abstract = None
-            transfer = _decode_objectidentifier(identification_entity)
+            transfer = _decode_objectidentifier(identification_entity.content)
         elif identification_entity.tag_number == 2:
-            abstract = _decode_integer(identification_entity)
+            abstract = _decode_integer(identification_entity.content)
             transfer = None
         elif identification_entity.tag_number == 5:
             abstract = None
@@ -598,9 +601,11 @@ def _decode_embeddedpdv(content):
 
     if data_entity.tag_number != 4:
         raise ValueError('invalid content')
-    data = _decode_octetstring(data_entity)
+    data = _decode_octetstring(data_entity.content)
 
-    return common.EmbeddedPDV(abstract, transfer, data)
+    return common.EmbeddedPDV(abstract=abstract,
+                              transfer=transfer,
+                              data=data)
 
 
 def _encode_entity_length(length):
@@ -694,3 +699,7 @@ def _match_type_entity(refs, t, entity):
 def _uint_to_bebytes(x):
     bytes_len = max(math.ceil(x.bit_length() / 8), 1)
     return x.to_bytes(bytes_len, 'big')
+
+
+def _is_data(x):
+    return any(isinstance(x, i) for i in typing.get_args(common.Data))

@@ -167,7 +167,7 @@ class Encoder:
 
         """
         if self._encoding == Encoding.BER:
-            return ber.encode_value(self._repository.refs,
+            return ber.encode_value(self._repository._refs,
                                     common.TypeRef(module, name),
                                     value)
         raise ValueError('invalid encoding')
@@ -185,7 +185,7 @@ class Encoder:
 
         """
         if self._encoding == Encoding.BER:
-            return ber.decode_value(self._repository.refs,
+            return ber.decode_value(self._repository._refs,
                                     common.TypeRef(module, name),
                                     entity)
         raise ValueError('invalid encoding')
@@ -277,6 +277,7 @@ class Repository:
         repo = Repository()
         repo._refs = {common.type_from_json(k): common.type_from_json(v)
                       for k, v in data}
+        return repo
 
     def to_json(self):
         """Represent repository as JSON data
