@@ -1,6 +1,6 @@
 """Abstract Syntax Notation One
 
-Data mapping:
+Value mapping:
 
     +-----------------------+------------------+
     | ASN.1 type            | Python type      |
@@ -27,15 +27,15 @@ Data mapping:
     +-----------------------+------------------+
     | EmbeddedPDV           | EmbeddedPDV      |
     +-----------------------+------------------+
-    | Choice                | Tuple[str,Data]  |
+    | Choice                | Tuple[str,Value] |
     +-----------------------+------------------+
-    | Set                   | Dict[str,Data]   |
+    | Set                   | Dict[str,Value]  |
     +-----------------------+------------------+
-    | SetOf                 | Iterable[Data]   |
+    | SetOf                 | Iterable[Value]  |
     +-----------------------+------------------+
-    | Sequence              | Dict[str,Data]   |
+    | Sequence              | Dict[str,Value]  |
     +-----------------------+------------------+
-    | SequenceOf            | List[Data]       |
+    | SequenceOf            | List[Value]      |
     +-----------------------+------------------+
     | ABSTRACT-SYNTAX.&Type | Entity           |
     +-----------------------+------------------+
