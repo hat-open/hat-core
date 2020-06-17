@@ -128,9 +128,25 @@ _shared_files = {
     'package.json': Path('package.json'),
 
     'win10_sshd_config': r"""
+PermitUserEnvironment yes
 AuthorizedKeysFile .ssh/authorized_keys
 Subsystem sftp sftp-server.exe
 """,
+
+    'environment': "Path={}".format(';'.join([
+        r"C:\Windows\System32\OpenSSH",
+        r"C:\Python38",
+        r"C:\Python38\Scripts",
+        r"C:\msys64\mingw32\bin",
+        r"C:\msys64\usr\bin",
+        r"C:\Windows\system32",
+        r"C:\Windows",
+        r"C:\Windows\System32\Wbem",
+        r"C:\Windows\System32\WindowsPowerShell\v1.0",
+        r"C:\Program Files\dotnet",
+        r"C:\nodejs",
+        r"C:\Yarn\bin"
+    ])),
 
     'win10_init.ps1': r"""
 Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
@@ -142,6 +158,8 @@ $wc.DownloadFile("http://10.0.2.100/win10_sshd_config",
                  "c:\\Users\\User\\Downloads\\sshd_config")
 $wc.DownloadFile("http://10.0.2.100/authorized_keys",
                  "c:\\Users\\User\\Downloads\\authorized_keys")
+$wc.DownloadFile("http://10.0.2.100/environment",
+                 "c:\\Users\\User\\Downloads\\environment")
 $wc.DownloadFile("http://10.0.2.100/requirements.pip.txt",
                  "c:\\Users\\User\\Downloads\\requirements.pip.txt")
 $wc.DownloadFile("http://10.0.2.100/requirements.pacman.win.txt",
@@ -161,6 +179,7 @@ New-Item -ItemType Directory c:\ProgramData\ssh
 New-Item -ItemType Directory c:\Users\User\.ssh
 Copy-Item -Force -Path c:\Users\User\Downloads\sshd_config -Destination c:\ProgramData\ssh\
 Copy-Item -Force -Path c:\Users\User\Downloads\authorized_keys -Destination c:\Users\User\.ssh\
+Copy-Item -Force -Path c:\Users\User\Downloads\environment -Destination c:\Users\User\.ssh\
 Copy-Item -Force -Path c:\Users\User\Downloads\package.json -Destination c:\Users\User\
 
 Add-WindowsCapability -Online -Name OpenSSH.Server*
