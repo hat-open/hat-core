@@ -5,125 +5,8 @@ from hat import asn1
 from hat.util import json
 
 
-def get_encoder(repository):
-    return asn1.Encoder(asn1.Encoding.BER, repository)
-
-
-@pytest.mark.parametrize("asn1_def,refs_json", [("""
-    Abc DEFINITIONS ::= BEGIN
-    END""", []
-), (
-    """
-    Abc DEFINITIONS ::= BEGIN
-        T1 ::= BOOLEAN
-    END
-    """, [
-        [['TypeRef', 'Abc', 'T1'], ['BooleanType']]]
-), (
-    """
-    Abc DEFINITIONS ::= BEGIN
-        T1 ::= ENUMERATED {
-            red         (0),
-            green       (1),
-            blue        (2)
-        }
-    END
-    """, [
-        [['TypeRef', 'Abc', 'T1'], ['EnumeratedType']]]
-)])
-def test_parse(asn1_def, refs_json):
-    repo = asn1.Repository(asn1_def)
-    assert sorted(repo.to_json()) == sorted(refs_json)
-
-
-@pytest.mark.parametrize("asn1_def", ["""
-    Module DEFINITIONS ::= BEGIN
-        T1 ::= BOOLEAN
-        T2 ::= INTEGER
-        T3 ::= BIT STRING
-        T4 ::= OCTET STRING
-        T5 ::= NULL
-        T6 ::= OBJECT IDENTIFIER
-        T7 ::= UTF8String
-        T8 ::= EXTERNAL
-        T9 ::= EMBEDDED PDV
-        T10 ::= CHOICE {
-            item1   INTEGER,
-            item2   BIT STRING,
-            item3   NULL
-        }
-        T11 ::= SET {
-            item1   INTEGER,
-            item2   BIT STRING,
-            item3   NULL
-        }
-        T12 ::= SET OF INTEGER
-        T13 ::= SEQUENCE {
-            item1   INTEGER,
-            item2   INTEGER,
-            item3   BIT STRING
-        }
-        T14 ::= SEQUENCE OF INTEGER
-        T15 ::= SET {
-            item1   [APPLICATION 0] IMPLICIT INTEGER,
-            item2   [APPLICATION 1] IMPLICIT INTEGER,
-            item3   [APPLICATION 2] IMPLICIT INTEGER
-        }
-        T16 ::= SET {
-            item1   [0] INTEGER,
-            item2   [1] INTEGER,
-            item3   [2] INTEGER
-        }
-    END
-"""], ids=[''])
-@pytest.mark.parametrize("name,value", [
-    ('T1', True),
-    ('T2', 10),
-    ('T3', [True, True, False, True]),
-    ('T4', b'0123'),
-    ('T5', None),
-    ('T6', [1, 5, 3]),
-    ('T7', 'Foo bar'),
-    ('T8', asn1.External(data=b'0123', direct_ref=None, indirect_ref=None)),
-    ('T9', asn1.EmbeddedPDV(abstract=None, data=b'0123', transfer=None)),
-    ('T10', ('item2', [True, False, True])),
-    ('T11', {'item1': 10, 'item2': [True, False, True], 'item3': None}),
-    ('T12', [1, 2, 3, 4]),
-    ('T13', {'item1': 10, 'item2': 11, 'item3': [True, False, True]}),
-    ('T14', [1, 2, 3, 4]),
-    ('T15', {'item1': 10, 'item2': 11, 'item3': 12}),
-    ('T16', {'item1': 10, 'item2': 11, 'item3': 12})
-])
-def test_serialization(asn1_def, name, value):
-    encoder = get_encoder(asn1.Repository(asn1_def))
-
-    encoded_value = encoder.encode('Module', name, value)
-    decoded_value, remainder = encoder.decode('Module', name, encoded_value)
-
-    assert value == decoded_value
-    assert len(remainder) == 0
-
-
-@pytest.mark.parametrize("asn1_def", ["""
-    Module DEFINITIONS ::= BEGIN
-        T1 ::= REAL
-    END
-"""])
-@pytest.mark.parametrize("name,value", [
-    ('T1', 10.5)
-])
-def test_serialization_not_supported(asn1_def, name, value):
-    encoder = get_encoder(asn1.Repository(asn1_def))
-
-    with pytest.raises(NotImplementedError):
-        encoder.encode('Module', name, value)
-
-
-@pytest.mark.parametrize("oid1,oid2,expected", [
-    ([1, 2, 3], [1, 2, 3], True),
-])
-def test_is_oid_eq(oid1, oid2, expected):
-    assert asn1.is_oid_eq(oid1, oid2) is expected
+def get_encoder(repository, encoding):
+    return asn1.Encoder(encoding, repository)
 
 
 def test_init_repo_file(tmpdir):
@@ -182,3 +65,347 @@ def test_init_repo_json(tmp_path):
 
     assert sorted(repo_file.to_json()) == sorted(repo_str.to_json())
     assert sorted(repo_file.to_json()) == sorted(json_data)
+
+
+@pytest.mark.parametrize("asn1_def,refs_json", [(
+    """
+        Abc DEFINITIONS ::= BEGIN
+        END""", []
+    ), (
+        """
+        Abc DEFINITIONS ::= BEGIN
+            T1 ::= BOOLEAN
+        END
+        """, [
+            [['TypeRef', 'Abc', 'T1'], ['BooleanType']]]
+    ), (
+        """
+        Abc DEFINITIONS ::= BEGIN
+            T1 ::= ENUMERATED {
+                red         (0),
+                green       (1),
+                blue        (2)
+            }
+        END
+        """, [
+            [['TypeRef', 'Abc', 'T1'], ['EnumeratedType']]]
+    ), (
+        """
+        Module DEFINITIONS ::= BEGIN
+            T1 ::= SET {
+                item1 [0]                      INTEGER OPTIONAL,
+                item2 [1]                      UTF8String,
+                item3 [APPLICATION 1] IMPLICIT UTF8String
+            }
+        END
+        """, [
+            [['TypeRef', 'Module', 'T1'], ['SetType', [
+                ['item1', ['PrefixedType', ['IntegerType'], 'CONTEXT_SPECIFIC',
+                           0, False], True],
+                ['item2', ['PrefixedType', ['StringType', 'UTF8String'],
+                           'CONTEXT_SPECIFIC', 1, False], False],
+                ['item3', ['PrefixedType', ['StringType', 'UTF8String'],
+                           'APPLICATION', 1, True], False]]]]]
+    )
+])
+def test_parse(asn1_def, refs_json):
+    repo = asn1.Repository(asn1_def)
+    assert sorted(repo.to_json()) == sorted(refs_json)
+
+
+@pytest.mark.parametrize("asn1_def", ["""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= BOOLEAN
+        T2 ::= INTEGER
+        T3 ::= BIT STRING
+        T4 ::= OCTET STRING
+        T5 ::= NULL
+        T6 ::= OBJECT IDENTIFIER
+        T7 ::= UTF8String
+        T8 ::= ENUMERATED {
+            red     (0),
+            green   (1),
+            blue    (2)
+        }
+        T9 ::= EMBEDDED PDV
+    END
+"""], ids=[''])
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("name,value", [
+    ('T1', True),
+    ('T2', 10),
+    ('T3', [True, True, False, True]),
+    ('T4', b'0123'),
+    ('T5', None),
+    ('T6', [1, 5, 3]),
+    ('T6', [1, 5, 3, 7, 9, 2]),
+    ('T6', []),
+    ('T6', [128]),
+    ('T6', [530, 3, 1]),
+    ('T6', [0]),
+    ('T6', [0, 0]),
+    ('T7', 'Foo bar'),
+    ('T8', 1),
+    ('T9', asn1.EmbeddedPDV(data=b'0123', abstract=None, transfer=None)),
+])
+def test_serialization(asn1_def, encoding, name, value):
+    encoder = get_encoder(asn1.Repository(asn1_def), encoding)
+
+    encoded_value = encoder.encode('Module', name, value)
+    decoded_value, remainder = encoder.decode('Module', name, encoded_value)
+
+    assert value == decoded_value
+    assert len(remainder) == 0
+
+
+@pytest.mark.parametrize("asn1_def", ["""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= CHOICE {
+            item1   INTEGER,
+            item2   BIT STRING,
+            item3   NULL
+        }
+        T2 ::= SET {
+            item1   BOOLEAN,
+            item2   INTEGER,
+            item3   BIT STRING
+        }
+        T3 ::= SET OF INTEGER
+        T4 ::= SEQUENCE {
+            item1   OCTET STRING,
+            item2   NULL,
+            item3   OBJECT IDENTIFIER
+        }
+        T5 ::= SEQUENCE OF INTEGER
+        T6 ::= SET {
+            item1   [APPLICATION 0] IMPLICIT UTF8String,
+            item2   [APPLICATION 1] IMPLICIT ENUMERATED {
+                red     (0),
+                green   (1),
+                blue    (2)
+            },
+            item3   [APPLICATION 2] IMPLICIT EMBEDDED PDV
+        }
+        T7 ::= SET {
+            item1   [0] BOOLEAN,
+            item2   [1] EXTERNAL,
+            item3   [2] INTEGER
+        }
+
+        T8 ::= SET {
+            item1   T4,
+            item2   T6 OPTIONAL
+        }
+    END
+"""])
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("name,value", [
+    ('T1', ('item2', [True, False, True])),
+    ('T2', {'item1': True, 'item2': 100, 'item3': [True, False, True]}),
+    ('T3', [1, 2, 3, 4]),
+    ('T4', {'item1': b'0123', 'item2': None, 'item3': [1, 2, 3]}),
+    ('T5', [1, 2, 3, 4]),
+    ('T6', {'item1': 'foo', 'item2': 0,
+            'item3': asn1.EmbeddedPDV(None, None, b'0')}),
+    ('T7', {'item1': True,
+            'item2': asn1.External(b'0123', None, None),
+            'item3': 12}),
+    ('T8', {'item1': {'item1': b'0123', 'item2': None, 'item3': [1, 2, 3]},
+            'item2': {'item1': 'foo', 'item2': 0,
+                      'item3': asn1.EmbeddedPDV(None, None, b'0')}}),
+    ('T8', {'item1': {'item1': b'0123', 'item2': None, 'item3': [1, 2, 3]}}),
+])
+def test_serialization_composite(asn1_def, encoding, name, value):
+    encoder = get_encoder(asn1.Repository(asn1_def), encoding)
+
+    encoded_value = encoder.encode('Module', name, value)
+    decoded_value, remainder = encoder.decode('Module', name, encoded_value)
+
+    assert value == decoded_value
+    assert len(remainder) == 0
+
+
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("sequence_size", [1, 20, 50])
+def test_serialization_entity(encoding, sequence_size):
+    sequence_items = ', '.join([f'item{n} [APPLICATION {n}] OCTET STRING'
+                                for n in range(sequence_size)])
+    sequence_items = '{' + sequence_items + '}'
+    definition = f"""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= ABSTRACT-SYNTAX.&Type
+        T2 ::= SEQUENCE {sequence_items}
+    END"""
+    encoder = get_encoder(asn1.Repository(definition), encoding)
+
+    value = {f'item{n}': b'0123' for n in range(sequence_size)}
+    entity = encoder.encode_value('Module', 'T2', value)
+
+    encoded = encoder.encode('Module', 'T1', entity)
+    decoded_entity, rest = encoder.decode('Module', 'T1', encoded)
+    assert decoded_entity == entity
+    assert len(rest) == 0
+    decoded_value = encoder.decode_value('Module', 'T2', decoded_entity)
+    assert decoded_value == value
+
+
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("data_type", ["entity", "bytes", "bitstring"])
+@pytest.mark.parametrize("direct_ref", [None, [1, 5, 2, 3, 8]])
+@pytest.mark.parametrize("indirect_ref", [None, 11])
+def test_serialization_external(encoding, data_type, direct_ref, indirect_ref):
+    encoder = get_encoder(asn1.Repository("""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= EXTERNAL
+        T2 ::= BIT STRING
+    END"""), encoding)
+
+    bits = [True, False, False, True]
+    data = {
+        'entity': encoder.encode_value('Module', 'T2', bits),
+        'bytes': encoder.encode('Module', 'T2', bits),
+        'bitstring': bits
+    }[data_type]
+
+    external = asn1.External(data=data,
+                             direct_ref=direct_ref,
+                             indirect_ref=indirect_ref)
+    encoded = encoder.encode('Module', 'T1', external)
+    decoded, rest = encoder.decode('Module', 'T1', encoded)
+    assert decoded == external
+    assert len(rest) == 0
+
+
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("abstract", [None, 5, [1, 3, 8]])
+@pytest.mark.parametrize("transfer", [None, [1, 6, 3]])
+def test_serialization_embedded_pdv(encoding, abstract, transfer):
+    encoder = get_encoder(asn1.Repository("""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= EMBEDDED PDV
+        T2 ::= SEQUENCE OF INTEGER
+    END"""), encoding)
+
+    data = encoder.encode('Module', 'T2', [1, 2, 3, 9, 8, 7])
+
+    embedded_pdv = asn1.EmbeddedPDV(data=data,
+                                    abstract=abstract,
+                                    transfer=transfer)
+    encoded = encoder.encode('Module', 'T1', embedded_pdv)
+    decoded, rest = encoder.decode('Module', 'T1', encoded)
+    assert decoded == embedded_pdv
+    assert len(rest) == 0
+
+
+@pytest.mark.parametrize("asn1_def", ["""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= REAL
+    END
+"""])
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("name,value", [
+    ('T1', 10.5)
+])
+def test_serialization_not_supported(asn1_def, encoding, name, value):
+    encoder = get_encoder(asn1.Repository(asn1_def), encoding)
+
+    with pytest.raises(NotImplementedError):
+        encoder.encode('Module', name, value)
+
+
+@pytest.mark.parametrize("asn1_def", ["""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= CHOICE {
+            item1   INTEGER,
+            item2   BOOLEAN,
+            item3   BIT STRING
+        }
+        T2 ::= CHOICE {
+            item1   INTEGER,
+            item2   BOOLEAN
+        }
+        T3 ::= SET {
+            item1   INTEGER,
+            item2   BOOLEAN
+        }
+        T4 ::= SET {
+            item1   INTEGER,
+            item2   BOOLEAN,
+            item3   BIT STRING
+        }
+        T5 ::= SEQUENCE {
+            item1   INTEGER,
+            item2   BOOLEAN
+        }
+        T6 ::= SEQUENCE {
+            item1   INTEGER,
+            item2   BOOLEAN,
+            item3   BIT STRING
+        }
+        T7 ::= SEQUENCE {
+            item1   INTEGER,
+            item2   BOOLEAN,
+            xyz     UTF8String
+        }
+        T8 ::= SEQUENCE {
+            item1   INTEGER,
+            item2   BOOLEAN,
+            item3   BIT STRING
+        }
+    END
+"""], ids=[""])
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+@pytest.mark.parametrize("value,serialize_name,deserialize_name", [
+    (('item3', [True, False]), 'T1', 'T2'),
+    ({'item1': 1, 'item2': True}, 'T3', 'T4'),
+    ({'item1': 1, 'item2': True}, 'T5', 'T6'),
+    ({'item1': 1, 'item2': True, 'xyz': 'abc'}, 'T7', 'T8'),
+])
+def test_invalid_serialization(asn1_def, encoding, value, serialize_name,
+                               deserialize_name):
+    encoder = get_encoder(asn1.Repository(asn1_def), encoding)
+    encoded_value = encoder.encode('Module', serialize_name, value)
+    with pytest.raises(ValueError):
+        encoder.decode('Module', deserialize_name, encoded_value)
+
+
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+def test_constructed_as_octet_and_utf8_string(encoding):
+    encoder = get_encoder(asn1.Repository("""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= SEQUENCE OF OCTET STRING
+        T2 ::= OCTET STRING
+        T3 ::= UTF8String
+    END"""), encoding)
+
+    entity = encoder.encode_value('Module', 'T1', [b'foo', b'bar'])
+    assert encoder.decode_value('Module', 'T2', entity) == b'foobar'
+    assert encoder.decode_value('Module', 'T3', entity) == 'foobar'
+
+
+@pytest.mark.parametrize("encoding", list(asn1.Encoding))
+def test_constructed_as_bit_string(encoding):
+    encoder = get_encoder(asn1.Repository("""
+    Module DEFINITIONS ::= BEGIN
+        T1 ::= SEQUENCE OF OCTET STRING
+        T2 ::= BIT STRING
+    END"""), encoding)
+
+    entity = encoder.encode_value(
+        'Module', 'T1', [bytes([0, 5]), bytes([0, 15])])
+    assert encoder.decode_value('Module', 'T2', entity) == (
+        [False, False, False, False, False, True, False, True] +
+        [False, False, False, False, True, True, True, True])
+
+
+@pytest.mark.parametrize("oid1,oid2,expected", [
+    ([1, 2, 3], [1, 2, 3], True),
+    ([1, ('a', 2), 3], [1, 2, 3], True),
+    ([1, 2, 3], [1, 2, ('b', 3)], True),
+    ([('c', 1), 2, 3], [1, 2, ('d', 3)], True),
+    ([('e', 1), 2, 3], [('f', 1), 2, 3], True),
+    ([1, 2, 3], [1, 2], False),
+    ([1, 2, 3], [1, 4, 3], False),
+])
+def test_is_oid_eq(oid1, oid2, expected):
+    assert asn1.is_oid_eq(oid1, oid2) is expected
