@@ -398,7 +398,7 @@ def _decode_bitstring(content):
     if isinstance(content, ConstructedContent):
         bitstring = []
         for subentity in content.elements:
-            bitstring.extend(_decode_bitstring(subentity))
+            bitstring.extend(_decode_bitstring(subentity.content))
         return bitstring
 
     raise ValueError('invalid entity content')
@@ -413,8 +413,8 @@ def _decode_octetstring(content):
         return content.value
 
     if isinstance(content, ConstructedContent):
-        return bytes(itertools.chain.from_iterable(_decode_octetstring(i)
-                                                   for i in content.elements))
+        return bytes(itertools.chain.from_iterable(
+            _decode_octetstring(i.content) for i in content.elements))
 
     raise ValueError('invalid entity content')
 
@@ -425,12 +425,13 @@ def _encode_null():
 
 def _encode_objectidentifier(value):
     value = [i if isinstance(i, int) else i[1] for i in value]
-    if not value:
-        return PrimitiveContent(b'')
-    x = 40 * value[0]
-    if len(value) > 1:
-        x += value[1]
-    value = [x] + value[2:]
+    if len(value) < 2:
+        raise ValueError('invalid object identifier')
+    if value[0] > 2:
+        raise ValueError('invalid object identifier')
+    if value[0] < 2 and value[1] > 39:
+        raise ValueError('invalid object identifier')
+    value = [40 * value[0] + value[1], *value[2:]]
     content_bytes = []
     for id in value:
         id_bytes = collections.deque()
@@ -446,20 +447,21 @@ def _encode_objectidentifier(value):
 
 
 def _decode_objectidentifier(content):
-    first_byte = content.value[0]
-    ids = [int(first_byte / 40)]
-    if ids[0] < 2:
-        ids.append(first_byte % 40)
-    else:
-        ids[0] = 2
-        ids.append(first_byte - 80)
+    if len(content.value) < 1:
+        raise ValueError('invalid object identifier')
+    ids = []
     next_id = 0
-    for byte in content.value[1:]:
+    for byte in content.value:
         next_id <<= 7
         next_id |= (byte & 0x7F)
         if not (byte & 0x80):
             ids.append(next_id)
             next_id = 0
+    if len(ids) < 1:
+        raise ValueError('invalid object identifier')
+    first_id = min(ids[0] // 40, 2)
+    second_id = ids[0] % 40 if first_id < 2 else ids[0] - 2 * 40
+    ids = [first_id, second_id, *ids[1:]]
     return ids
 
 
@@ -472,7 +474,7 @@ def _decode_string(content):
         return str(content.value, encoding='utf-8')
 
     if isinstance(content, ConstructedContent):
-        return ''.join(_decode_string(i) for i in content.elements)
+        return ''.join(_decode_string(i.content) for i in content.elements)
 
     raise ValueError('invalid entity content')
 
@@ -543,9 +545,11 @@ def _encode_embeddedpdv(value):
         if isinstance(value.abstract, int):
             abstract_entity = Entity(common.ClassType.UNIVERSAL, 2,
                                      _encode_integer(value.abstract))
-        else:
+        elif value.transfer is not None:
             abstract_entity = Entity(common.ClassType.UNIVERSAL, 6,
                                      _encode_objectidentifier(value.abstract))
+        else:
+            raise ValueError()
 
     if value.transfer is not None:
         transfer_entity = Entity(common.ClassType.UNIVERSAL, 6,
@@ -579,7 +583,7 @@ def _decode_embeddedpdv(content):
         if abstract_entity.tag_number == 6:
             abstract = _decode_objectidentifier(abstract_entity.content)
         elif abstract_entity.tag_number == 2:
-            abstract = _decode_integer(abstract_entity.cotent)
+            abstract = _decode_integer(abstract_entity.content)
         else:
             raise ValueError('invalid content')
         if transfer_entity.tag_number != 6:

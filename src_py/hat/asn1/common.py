@@ -190,7 +190,7 @@ Real = float
 
 Enumerated = int
 
-
+# TODO: if abstract is ObjectIdentifier then transfer must be defined
 EmbeddedPDV = util.namedtuple(
     'EmbeddedPDV',
     ['abstract', 'Optional[Union[int,ObjectIdentifier]]'],
