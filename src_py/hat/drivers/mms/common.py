@@ -273,7 +273,10 @@ UnsignedData = util.namedtuple(
 UtcTimeData = util.namedtuple(
     'UtcTimeData',
     ['value', 'datetime.datetime'],
-    ['quality', 'int'])
+    ['leap_second', 'bool'],
+    ['clock_failure', 'bool'],
+    ['not_synchronized', 'bool'],
+    ['accuracy', 'Optional[int]: accurate fraction bits [0,24]'])
 
 
 VisibleStringData = util.namedtuple(

@@ -427,6 +427,8 @@ def _encode_data(data):
         return 'unsigned', data.value
 
     if isinstance(data, common.UtcTimeData):
+        if data.accuracy is not None and not (0 <= data.accuracy <= 24):
+            raise ValueError('invalid UtcTime accuracy')
         ts = data.value.timestamp()
         decimal = ts - int(ts)
         fraction = bytearray([0, 0, 0])
@@ -434,9 +436,13 @@ def _encode_data(data):
             if decimal >= 2 ** -i:
                 decimal -= 2 ** -i
                 fraction[i // 8] |= 1 << (7 - (i % 8))
+        quality = ((0x80 if data.leap_second else 0) |
+                   (0x40 if data.clock_failure else 0) |
+                   (0x20 if data.not_synchronized else 0) |
+                   (0x1F if data.accuracy is None else data.accuracy))
         utc_time = bytes([*struct.pack(">I", int(ts)),
                           *fraction,
-                          0xFF & data.quality])
+                          quality])
         return 'utc-time', utc_time
 
     if isinstance(data, common.VisibleStringData):
@@ -504,8 +510,17 @@ def _decode_data(data):
             if data[4 + i // 8] & (1 << (7 - (i % 8))):
                 ts += 2 ** -i
         t = datetime.datetime.fromtimestamp(ts, datetime.timezone.utc)
-        quality = data[7]
-        return common.UtcTimeData(t, quality)
+        leap_second = bool(0x80 & data[7])
+        clock_failure = bool(0x40 & data[7])
+        not_synchronized = bool(0x20 & data[7])
+        accuracy = 0x1F & data[7]
+        if accuracy > 24:
+            accuracy = None
+        return common.UtcTimeData(value=t,
+                                  leap_second=leap_second,
+                                  clock_failure=clock_failure,
+                                  not_synchronized=not_synchronized,
+                                  accuracy=accuracy)
 
     if name == 'visible-string':
         return common.VisibleStringData(data)
