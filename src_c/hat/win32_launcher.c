@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     GetModuleFileName(NULL, cmd, sizeof(cmd));
 
     size_t cmd_len = strlen(cmd);
-    while (cmd_len && cmd[cmd_len - 1] == '\\')
+    while (cmd_len && cmd[cmd_len - 1] != '\\')
         cmd_len -= 1;
     if (!cmd_len)
         return 1;
