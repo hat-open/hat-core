@@ -43,7 +43,7 @@ async def test_listen(server_factory):
 
 @pytest.mark.parametrize("connection_count", [1, 2, 10])
 @pytest.mark.asyncio
-async def test_connect(connection_count, server_factory):
+async def test_can_connect(connection_count, server_factory):
     server_connections = []
     client_connections = []
 
@@ -62,3 +62,51 @@ async def test_connect(connection_count, server_factory):
         assert len(server_connections) == connection_count
 
     await asyncio.wait([conn.async_close() for conn in client_connections])
+
+
+@pytest.mark.asyncio
+@pytest.mark.timeout(2)
+async def test_request_response(server_factory):
+    request = mms.StatusRequest()
+    response = mms.StatusResponse(logical=1, physical=1)
+    requests_received = []
+
+    async def connection_cb(_):
+        pass
+
+    async def server_req_cb(connection, request):
+        requests_received.append(request)
+        return response
+
+    async def client_req_cb(connection, request):
+        pass
+
+    async with server_factory(connection_cb, server_req_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(client_req_cb, address)
+        received_status = await conn.send_confirmed(request)
+
+    assert len(requests_received) == 1
+    assert requests_received == [request]
+    assert received_status == response
+
+
+@pytest.mark.asyncio
+async def test_unconfirmed(server_factory):
+    unconfirmed = mms.UnsolicitedStatusUnconfirmed(logical=1, physical=1)
+
+    async def connection_cb(connection):
+        connection.send_unconfirmed(unconfirmed)
+
+    async def server_req_cb(connection, request):
+        pass
+
+    async def client_req_cb(connection, request):
+        pass
+
+    async with server_factory(connection_cb, server_req_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(client_req_cb, address)
+        received_unconfirmed = await conn.receive_unconfirmed()
+
+    assert unconfirmed == received_unconfirmed
