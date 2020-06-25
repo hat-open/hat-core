@@ -128,7 +128,17 @@ def _act_SequenceOfType(n, c):
 
 
 def _act_ComponentTypeList(n, c):
-    return [i for i in c if i and i != ',' and i != '...']
+    extension = False
+    components = []
+    for i in c:
+        if i == '...':
+            extension = True
+        if not i or i == ',' or i == '...':
+            continue
+        if extension:
+            i = i._replace(optional=True)
+        components.append(i)
+    return components
 
 
 def _act_ComponentType(n, c):

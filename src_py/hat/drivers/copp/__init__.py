@@ -87,7 +87,7 @@ class SyntaxNames:
 
         """
         syntax_id, _ = util.first(self._syntax_names.items(),
-                                  lambda k, v: asn1.is_oid_eq(v, syntax_name))
+                                  lambda i: asn1.is_oid_eq(i[1], syntax_name))
         return syntax_id
 
 
@@ -206,7 +206,7 @@ class Server:
     @property
     def addresses(self):
         """List[Address]: listening addresses"""
-        return self._cotp_server.addresses
+        return self._cosp_server.addresses
 
     @property
     def closed(self):
@@ -435,4 +435,5 @@ def _encode(name, value):
 
 
 def _decode(name, data):
-    return _encoder.decode('ISO8823-PRESENTATION', name, memoryview(data))
+    res, _ = _encoder.decode('ISO8823-PRESENTATION', name, memoryview(data))
+    return res

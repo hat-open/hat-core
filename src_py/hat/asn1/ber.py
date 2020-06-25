@@ -209,7 +209,7 @@ def decode_value(refs, t, entity):
         value = {}
         elements = collections.deque(entity.content.elements)
         for prop in t.elements:
-            if _match_type_entity(refs, prop.type, elements[0]):
+            if elements and _match_type_entity(refs, prop.type, elements[0]):
                 value[prop.name] = decode_value(refs, prop.type,
                                                 elements.popleft())
             elif not prop.optional:

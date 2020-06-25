@@ -141,10 +141,10 @@ async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
         aarq_apdu = _decode(aarq_apdu_entity)
         if aarq_apdu[0] != 'aarq':
             raise Exception('not aarq message')
-        if 'direct_ref' in aarq_apdu[1]['user-information'][0]:
-            if not asn1.is_oid_eq(
-                    aarq_apdu[1]['user-information'][0]['direct_ref'],
-                    _encoder.syntax_name):
+        aarq_external = aarq_apdu[1]['user-information'][0]
+        if aarq_external.direct_ref is not None:
+            if not asn1.is_oid_eq(aarq_external.direct_ref,
+                                  _encoder.syntax_name):
                 raise Exception('invalid encoder identifier')
         _, called_ap_title = _get_ap_titles(aarq_apdu)
         _, called_ae_qualifier = _get_ae_qualifiers(aarq_apdu)
@@ -152,10 +152,9 @@ async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
             _get_ap_invocation_identifiers(aarq_apdu)
         _, called_ae_invocation_identifier = \
             _get_ae_invocation_identifiers(aarq_apdu)
-        aarq_user_data = (
-            syntax_names.get_name(
-                aarq_apdu[1]['user-information'][0]['indirect_ref']),
-            aarq_apdu[1]['user-information'][0]['data'])
+
+        aarq_user_data = (syntax_names.get_name(aarq_external.indirect_ref),
+                          aarq_external.data)
         user_validate_result = await aio.call(
             validate_cb, syntax_names, aarq_user_data)
         aare_apdu = _aare_apdu(syntax_names,
@@ -229,14 +228,14 @@ class Server:
 def _create_connection(copp_conn, aarq_apdu, aare_apdu,
                        local_ap_title, remote_ap_title,
                        local_ae_qualifier, remote_ae_qualifier):
+    aarq_external = aarq_apdu[1]['user-information'][0]
+    aare_external = aare_apdu[1]['user-information'][0]
     conn_req_user_data = (
-        copp_conn.syntax_names.get_name(
-            aarq_apdu[1]['user-information'][0]['indirect_ref']),
-        aarq_apdu[1]['user-information'][0]['data'])
+        copp_conn.syntax_names.get_name(aarq_external.indirect_ref),
+        aarq_external.data)
     conn_res_user_data = (
-        copp_conn.syntax_names.get_name(
-            aare_apdu[1]['user-information'][0]['indirect_ref']),
-        aare_apdu[1]['user-information'][0]['data'])
+        copp_conn.syntax_names.get_name(aare_external.indirect_ref),
+        aare_external.data)
 
     conn = Connection()
     conn._copp_conn = copp_conn

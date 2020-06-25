@@ -269,7 +269,7 @@ async def _create_incomming_connection(validate_cb, cotp_conn):
     cn_spdu_data = await cotp_conn.read()
     cn_spdu = _decode(memoryview(cn_spdu_data))
     _validate_connect_request(cn_spdu)
-    res_user_data = await aio.call(validate_cb, cn_spdu.params)
+    res_user_data = await aio.call(validate_cb, cn_spdu.user_data)
     ac_spdu = _Spdu(_SpduType.AC,
                     extended_spdus=False,
                     version_number=_params_version,
@@ -441,9 +441,9 @@ def _encode_param(buff, code, data):
 
 
 def _decode_param(data):
-    code = data[0]
+    code, data = data[0], data[1:]
     length, data = _decode_length(data)
-    return code, data[:length], data[:length]
+    return code, data[:length], data[length:]
 
 
 def _encode_length(buff, data):

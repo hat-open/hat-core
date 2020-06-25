@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 import pytest
 
@@ -9,13 +10,20 @@ def server_factory(unused_tcp_port_factory):
 
     @contextlib.asynccontextmanager
     async def factory(connection_cb, request_cb):
+        connections = []
+
+        async def on_connection(conn):
+            connections.append(conn)
+            await connection_cb(conn)
+
         server = await mms.listen(
-            connection_cb, request_cb,
+            on_connection, request_cb,
             addr=mms.Address('0.0.0.0', unused_tcp_port_factory()))
         try:
             yield server
         finally:
-            await server.async_close()
+            await asyncio.wait([server.async_close(),
+                                *(conn.async_close() for conn in connections)])
 
     return factory
 
@@ -36,10 +44,11 @@ async def test_listen(server_factory):
 @pytest.mark.parametrize("connection_count", [1, 2, 10])
 @pytest.mark.asyncio
 async def test_connect(connection_count, server_factory):
-    connections = []
+    server_connections = []
+    client_connections = []
 
     async def connection_cb(connection):
-        connections.append(connection)
+        server_connections.append(connection)
 
     async def request_cb(connection, request):
         return mms.Response.StatusResponse(logical=1, physical=1)
@@ -47,6 +56,9 @@ async def test_connect(connection_count, server_factory):
     async with server_factory(connection_cb, request_cb) as server:
         address = server.addresses[0]
         for _ in range(connection_count):
-            await mms.connect(request_cb, address)
+            conn = await mms.connect(request_cb, address)
+            client_connections.append(conn)
 
-        assert len(connections) == connection_count
+        assert len(server_connections) == connection_count
+
+    await asyncio.wait([conn.async_close() for conn in client_connections])
