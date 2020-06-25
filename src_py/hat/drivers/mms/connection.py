@@ -267,7 +267,7 @@ class Connection:
         try:
             while running:
                 syntax_name, entity = await self._acse_conn.read()
-                if syntax_name != _mms_syntax_name:
+                if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
                     continue
                 pdu = _decode(entity)
                 running = await self._process_pdu(pdu)
@@ -287,7 +287,7 @@ class Connection:
         elif name == 'confirmed-RequestPDU':
             invoke_id = data['invokeID']
             req = encoder.decode_request(data['service'])
-            res = await aio.call(self._request_cb, req)
+            res = await aio.call(self._request_cb, self, req)
             if isinstance(res, common.ErrorResponse):
                 res_pdu = 'confirmed-ErrorPDU', {
                     'invokeID': invoke_id,
@@ -297,7 +297,7 @@ class Connection:
                 res_pdu = 'confirmed-ResponsePDU', {
                     'invokeID': invoke_id,
                     'service': encoder.encode_response(res)}
-            res_data = _encode(res_pdu)
+            res_data = _mms_syntax_name, _encode(res_pdu)
             self._acse_conn.write(res_data)
             return True
 

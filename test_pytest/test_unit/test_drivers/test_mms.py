@@ -90,6 +90,8 @@ async def test_request_response(server_factory):
     assert requests_received == [request]
     assert received_status == response
 
+    await conn.async_close()
+
 
 @pytest.mark.asyncio
 async def test_unconfirmed(server_factory):

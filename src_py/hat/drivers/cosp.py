@@ -226,15 +226,15 @@ class Connection:
             while True:
                 spdu_data = await self._cotp_conn.read()
                 spdu = _decode(memoryview(spdu_data))
-                if spdu.spdu_type == _SpduType.DT:
+                if spdu.type == _SpduType.DT:
                     data.extend(spdu.data)
                     if spdu.end is None or spdu.end:
                         await self._read_queue.put(data)
                         data = bytearray()
-                elif spdu.spdu_type == _SpduType.FN:
+                elif spdu.type == _SpduType.FN:
                     self._close_spdu = _dn_spdu
                     break
-                elif spdu.spdu_type == _SpduType.AB:
+                elif spdu.type == _SpduType.AB:
                     self._close_spdu = None
                     break
                 else:
