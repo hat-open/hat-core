@@ -6,6 +6,7 @@ __pycache__
 /node_modules
 /yarn-error.log
 /src_py/**/*.so
+/src_py/**/*.dylib
 /src_py/**/*.pyd
 /src_py/**/json_schema_repo.json
 /src_py/**/sbs_repo.json
