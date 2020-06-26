@@ -80,6 +80,8 @@ def task_clean_all():
     def clean():
         src_py_patterns = ['*.so',
                            '*.pyd',
+                           '*.dylib',
+                           '*.dll',
                            'json_schema_repo.json',
                            'sbs_repo.json',
                            'asn1_repo.json']
