@@ -176,7 +176,7 @@ async def test_device_client(event_server, event_server_port,
         for i in device_confs:
             await set_enable(client, 'gateway 0', device_type, i['name'], True)
             device = await device_queue.get()
-            assert device.event_type_prefix == [*prefix, i['name'], 'gateway']
+            assert device.event_type_prefix == [*prefix, i['name']]
             devices[i['name']] = device
 
         # Test receive

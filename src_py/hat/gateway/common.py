@@ -37,6 +37,10 @@ class Device(abc.ABC):
     If module defines JSON schema id, it will be used for additional
     validation of device configuration.
 
+    `create` is called with device configuration, appropriate instance of
+    `DeviceEventClient` and event type prefix. Event type prefix is defined
+    as [``gateway``, `<gateway_name>`, `<device_type>`, `<device_name>`].
+
     """
 
     @property
