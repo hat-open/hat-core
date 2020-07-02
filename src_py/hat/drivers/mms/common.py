@@ -430,8 +430,8 @@ ObjectScope.register(DomainSpecificObjectScope)
 ObjectScope.register(VmdSpecificObjectScope)
 
 
-AddresVariableSpecification = util.namedtuple(
-    'AddresVariableSpecification',
+AddressVariableSpecification = util.namedtuple(
+    'AddressVariableSpecification',
     ['address', 'Union[int,str,hat.asn1.Data]'])
 
 
@@ -456,7 +456,7 @@ VariableDescriptionVariableSpecification = util.namedtuple(
 
 
 VariableSpecification = type('VariableSpecification', (abc.ABC, ), {})
-VariableSpecification.register(AddresVariableSpecification)
+VariableSpecification.register(AddressVariableSpecification)
 VariableSpecification.register(InvalidatedVariableSpecification)
 VariableSpecification.register(NameVariableSpecification)
 VariableSpecification.register(ScatteredAccessDescriptionVariableSpecification)
