@@ -189,20 +189,23 @@ async def test_request_client(server_factory):
                                              model='y',
                                              revision='z',
                                              syntaxes=None)
+    connected_clients = []
+    connection_cb_future = asyncio.Future()
 
     async def connection_cb(connection):
-        pass
+        connected_clients.append(
+            await connection.send_confirmed(mms.IdentifyRequest()))
+        connection_cb_future.set_result(True)
 
     async def server_req_cb(connection, request):
-        return await connection.send_confirmed(request)
+        pass
 
     async def client_req_cb(connection, request):
-        breakpoint()
         return expected_response
 
     async with server_factory(connection_cb, server_req_cb) as server:
         address = server.addresses[0]
-        conn = await mms.connect(client_req_cb, address)
-        response = await conn.send_confirmed(mms.IdentifyRequest())
+        await mms.connect(client_req_cb, address)
+        await connection_cb_future
 
-    assert response == expected_response
+    assert connected_clients == [expected_response]
