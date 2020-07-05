@@ -76,7 +76,7 @@ async def test_can_connect(connection_count, server_factory):
      mms.IdentifyResponse(vendor='a', model='b', revision='c', syntaxes=None)),
     (mms.IdentifyRequest(),
      mms.IdentifyResponse(vendor='a', model='b', revision='c',
-                          syntaxes=[[2, 1, 3], [3, 6, 5]])),
+                          syntaxes=[[2, 1, 3], [1, 2, 5]])),
     (mms.GetVariableAccessAttributesRequest(value='x'),
      mms.GetVariableAccessAttributesResponse(
         mms_deletable=True, type_description=mms.BooleanTypeDescription())),

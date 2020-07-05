@@ -32,8 +32,7 @@ def encode_request(req):
         if isinstance(req.value, common.ObjectName):
             service = 'name', _encode_object_name(req.value)
         else:
-            raise ValueError()
-            service = 'address', req.value
+            service = 'address', _encode_address(req.value)
         return 'getVariableAccessAttributes', service
 
     if isinstance(req, common.GetNamedVariableListAttributesRequest):
@@ -49,7 +48,7 @@ def encode_request(req):
         return 'read', {'variableAccessSpecification': specification}
 
     if isinstance(req, common.WriteRequest):
-        if isinstance(req.value, common.ObjectName):
+        if isinstance(req.specification, common.ObjectName):
             specification = ('variableListName',
                              _encode_object_name(req.specification))
         else:
@@ -99,16 +98,18 @@ def decode_request(req):
             object_class = common.ObjectClass.UNDEFINED
         object_scope = _decode_object_scope(data['objectScope'])
         continue_after = data.get('continueAfter')
-        return common.GetNameList(object_class, object_scope, continue_after)
+        return common.GetNameListRequest(object_class=object_class,
+                                         object_scope=object_scope,
+                                         continue_after=continue_after)
 
     if name == 'identify':
         return common.IdentifyRequest()
 
     if name == 'getVariableAccessAttributes':
         subname, subdata = data
-        if name == 'address':
-            value = subdata
-        elif name == 'name':
+        if subname == 'address':
+            value = _decode_address(subdata)
+        elif subname == 'name':
             value = _decode_object_name(subdata)
         else:
             raise ValueError()
@@ -745,7 +746,7 @@ def _decode_address(address):
 
 
 def _encode_variable_specification(var_spec):
-    if isinstance(var_spec, common.AddresVariableSpecification):
+    if isinstance(var_spec, common.AddressVariableSpecification):
         return 'address', _encode_address(var_spec.address)
 
     if isinstance(var_spec, common.InvalidatedVariableSpecification):
@@ -781,7 +782,7 @@ def _encode_variable_specification(var_spec):
 def _decode_variable_specification(var_spec):
     name, data = var_spec
     if name == 'address':
-        return common.AddresVariableSpecification(_decode_address(data))
+        return common.AddressVariableSpecification(_decode_address(data))
 
     if name == 'invalidated':
         return common.InvalidatedVariableSpecification()
