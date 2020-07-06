@@ -179,7 +179,7 @@ EventNotificationUnconfirmed = util.namedtuple(
     ['enrollment', 'ObjectName'],
     ['condition', 'ObjectName'],
     ['severity', 'int'],
-    ['time', 'Optional[Union[str,int]]'])
+    ['time', 'Optional[Union[Data,int]]'])
 
 
 InformationReportUnconfirmed = util.namedtuple(
@@ -237,7 +237,7 @@ FloatingPointData = util.namedtuple(
 
 GeneralizedTimeData = util.namedtuple(
     'GeneralizedTimeData',
-    ['value', 'asn1.Value'])
+    ['value', 'str'])
 
 
 IntegerData = util.namedtuple(
@@ -316,7 +316,7 @@ BcdTypeDescription = util.namedtuple(
 
 BinaryTimeTypeDescription = util.namedtuple(
     'BinaryTimeTypeDescription',
-    ['xyz', 'int'])
+    ['xyz', 'bool'])
 
 
 BitStringTypeDescription = util.namedtuple(

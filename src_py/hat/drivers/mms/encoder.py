@@ -298,12 +298,12 @@ def encode_unconfirmed(unconfirmed):
 
     """
     if isinstance(unconfirmed, common.EventNotificationUnconfirmed):
-        if isinstance(unconfirmed.time, str):
-            transition_time = 'timeOfDay', unconfirmed.time
+        if unconfirmed.time is None:
+            transition_time = 'undefined', None
         elif isinstance(unconfirmed.time, int):
             transition_time = 'timeSequenceIdentifier', unconfirmed.time
         else:
-            transition_time = 'undefined', None
+            transition_time = 'timeOfDay', unconfirmed.time
         return 'eventNotification', {
             'eventEnrollmentName': _encode_object_name(unconfirmed.enrollment),
             'eventConditionName': _encode_object_name(unconfirmed.condition),
@@ -384,14 +384,14 @@ def _encode_data(data):
 
     if isinstance(data, common.BinaryTimeData):
         epoch = datetime.datetime(1984, 1, 1, tzinfo=datetime.timezone.utc)
-        delta = data - epoch
+        delta = data.value - epoch
         binary_time = [0xFF & (delta.seconds >> 24),
                        0xFF & (delta.seconds >> 16),
                        0xFF & (delta.seconds >> 8),
                        0xFF & delta.seconds,
                        0xFF & (delta.days >> 8),
                        0xFF & delta.days]
-        return 'binary-time', binary_time
+        return 'binary-time', bytes(binary_time)
 
     if isinstance(data, common.BitStringData):
         return 'bit-string', data.value

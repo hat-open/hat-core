@@ -91,10 +91,12 @@ def _act_TypeWithConstraint(n, c):
 def _act_CharacterStringType(n, c):
     return {'BMPString': common.StringType.BMPString,
             'GeneralString': common.StringType.GeneralString,
+            'GeneralizedTime': common.StringType.GeneralizedTime,
             'GraphicString': common.StringType.GraphicString,
             'IA5String': common.StringType.IA5String,
             'ISO646String': common.StringType.VisibleString,
             'NumericString': common.StringType.NumericString,
+            'ObjectDescriptor': common.StringType.ObjectDescriptor,
             'PrintableString': common.StringType.PrintableString,
             'TeletexString': common.StringType.T61String,
             'T61String': common.StringType.T61String,
@@ -454,6 +456,7 @@ CharacterStringType              <- RestrictedCharacterStringType
                                   / UnrestrictedCharacterStringType
 RestrictedCharacterStringType    <- 'BMPString' OS
                                   / 'GeneralString' OS
+                                  / 'GeneralizedTime' OS
                                   / 'GraphicString' OS
                                   / 'IA5String' OS
                                   / 'ISO646String' OS
