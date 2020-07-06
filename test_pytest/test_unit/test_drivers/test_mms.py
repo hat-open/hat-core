@@ -1,6 +1,8 @@
 import asyncio
 import contextlib
+from datetime import datetime, timezone
 import pytest
+import math
 
 from hat.drivers import mms
 
@@ -64,45 +66,81 @@ async def test_can_connect(connection_count, server_factory):
 
 
 @pytest.mark.asyncio
-@pytest.mark.timeout(10)
-@pytest.mark.parametrize("req,resp", [
-    (mms.StatusRequest(), mms.StatusResponse(logical=1, physical=1)),
-    (mms.GetNameListRequest(object_class=mms.ObjectClass.NAMED_VARIABLE,
-                            object_scope=mms.VmdSpecificObjectScope(),
-                            continue_after=None),
-     mms.GetNameListResponse(identifiers=['a', 'b', 'c'],
-                             more_follows=False)),
-    (mms.IdentifyRequest(),
-     mms.IdentifyResponse(vendor='a', model='b', revision='c', syntaxes=None)),
-    (mms.IdentifyRequest(),
-     mms.IdentifyResponse(vendor='a', model='b', revision='c',
-                          syntaxes=[[2, 1, 3], [1, 2, 5]])),
-    (mms.GetVariableAccessAttributesRequest(value='x'),
-     mms.GetVariableAccessAttributesResponse(
-        mms_deletable=True, type_description=mms.BooleanTypeDescription())),
-    (mms.GetVariableAccessAttributesRequest(
-        value=mms.VmdSpecificObjectName(identifier='x')),
-     mms.GetVariableAccessAttributesResponse(
-        mms_deletable=True, type_description=mms.BooleanTypeDescription())),
-    (mms.ReadRequest(value=mms.VmdSpecificObjectName(identifier='x')),
-     mms.ReadResponse(results=[mms.BooleanData(value=True)])),
-    (mms.ReadRequest(value=mms.VmdSpecificObjectName(identifier='x')),
-     mms.ReadResponse(results=[mms.DataAccessError.INVALID_ADDRESS])),
-    (mms.WriteRequest(specification=mms.VmdSpecificObjectName(identifier='x'),
-                      data=[mms.BooleanData(value=True)]),
-     mms.WriteResponse(results=[mms.DataAccessError.INVALID_ADDRESS])),
-    (mms.DefineNamedVariableListRequest(
-        name=mms.VmdSpecificObjectName(identifier='x'),
-        specification=[mms.NameVariableSpecification(
-            name=mms.VmdSpecificObjectName(identifier='x'))]),
-     mms.DefineNamedVariableListResponse()),
-    (mms.DeleteNamedVariableListRequest(
-        names=[mms.VmdSpecificObjectName(identifier='x')]),
-     mms.DeleteNamedVariableListResponse(matched=0, deleted=0)),
-    (mms.DeleteNamedVariableListRequest(
-        names=[mms.VmdSpecificObjectName(identifier='x')]),
-     mms.ErrorResponse(error_class=mms.ErrorClass.RESOURCE, value=0))
-])
+@pytest.mark.timeout(2)
+@pytest.mark.parametrize("req,resp", [(
+        mms.StatusRequest(),
+        mms.StatusResponse(logical=1, physical=1)
+    ), (
+        mms.GetNameListRequest(object_class=mms.ObjectClass.NAMED_VARIABLE,
+                               object_scope=mms.VmdSpecificObjectScope(),
+                               continue_after='123'),
+        mms.GetNameListResponse(identifiers=['a', 'b', 'c'],
+                                more_follows=False)
+    ), (
+        mms.GetNameListRequest(object_class=mms.ObjectClass.NAMED_VARIABLE,
+                               object_scope=mms.AaSpecificObjectScope(),
+                               continue_after='123'),
+        mms.GetNameListResponse(identifiers=['a', 'b', 'c'],
+                                more_follows=False)
+    ), (
+        mms.GetNameListRequest(
+            object_class=mms.ObjectClass.NAMED_VARIABLE,
+            object_scope=mms.DomainSpecificObjectScope(identifier='1234'),
+            continue_after='123'),
+        mms.GetNameListResponse(identifiers=['a', 'b', 'c'],
+                                more_follows=False)
+    ), (
+        mms.IdentifyRequest(),
+        mms.IdentifyResponse(vendor='a', model='b', revision='c',
+                             syntaxes=None)
+    ), (
+        mms.IdentifyRequest(),
+        mms.IdentifyResponse(vendor='a', model='b', revision='c',
+                             syntaxes=[[2, 1, 3], [1, 2, 5]])
+    ), (
+        mms.GetVariableAccessAttributesRequest(value='x'),
+        mms.GetVariableAccessAttributesResponse(
+            mms_deletable=True, type_description=mms.BooleanTypeDescription())
+    ), (
+        mms.GetNamedVariableListAttributesRequest(
+            value=mms.VmdSpecificObjectName(identifier='x')),
+        mms.GetNamedVariableListAttributesResponse(
+            mms_deletable=True,
+            specification=[
+                mms.NameVariableSpecification(
+                    name=mms.DomainSpecificObjectName(domain_id='abc',
+                                                      item_id='xyuz'))])
+    ), (
+        mms.GetVariableAccessAttributesRequest(
+            value=mms.VmdSpecificObjectName(identifier='x')),
+        mms.GetVariableAccessAttributesResponse(
+            mms_deletable=True, type_description=mms.BooleanTypeDescription())
+    ), (
+        mms.ReadRequest(value=mms.VmdSpecificObjectName(identifier='x')),
+        mms.ReadResponse(results=[mms.BooleanData(value=True)])
+    ), (
+        mms.ReadRequest(value=mms.VmdSpecificObjectName(identifier='x')),
+        mms.ReadResponse(results=[mms.DataAccessError.INVALID_ADDRESS])
+    ), (
+        mms.WriteRequest(
+            specification=mms.VmdSpecificObjectName(identifier='x'),
+            data=[mms.BooleanData(value=True)]),
+        mms.WriteResponse(results=[mms.DataAccessError.INVALID_ADDRESS])
+    ), (
+        mms.DefineNamedVariableListRequest(
+            name=mms.VmdSpecificObjectName(identifier='x'),
+            specification=[mms.NameVariableSpecification(
+                name=mms.VmdSpecificObjectName(identifier='b'))]),
+        mms.DefineNamedVariableListResponse()
+    ), (
+        mms.DeleteNamedVariableListRequest(
+            names=[mms.VmdSpecificObjectName(identifier='x')]),
+        mms.DeleteNamedVariableListResponse(matched=0, deleted=0)
+    ), (
+        mms.DeleteNamedVariableListRequest(
+            names=[mms.VmdSpecificObjectName(identifier='x')]),
+        mms.ErrorResponse(error_class=mms.ErrorClass.RESOURCE, value=0)
+)])
 async def test_request_response(server_factory, req, resp):
     request = req
     response = resp
@@ -122,12 +160,11 @@ async def test_request_response(server_factory, req, resp):
         address = server.addresses[0]
         conn = await mms.connect(client_req_cb, address)
         received_status = await conn.send_confirmed(request)
+        await conn.async_close()
 
     assert len(requests_received) == 1
     assert requests_received == [request]
     assert received_status == response
-
-    await conn.async_close()
 
 
 @pytest.mark.asyncio
@@ -139,12 +176,12 @@ async def test_request_response(server_factory, req, resp):
         condition=mms.AaSpecificObjectName(identifier='y'),
         severity=0,
         time=None),
-    # mms.EventNotificationUnconfirmed(
-    #     enrollment=mms.DomainSpecificObjectName(domain_id='x',
-    #                                             item_id='y'),
-    #     condition=mms.VmdSpecificObjectName(identifier='y'),
-    #     severity=0,
-    #     time='2020-7-2T12:00:00.000Z'),
+    mms.EventNotificationUnconfirmed(
+        enrollment=mms.DomainSpecificObjectName(domain_id='x',
+                                                item_id='y'),
+        condition=mms.VmdSpecificObjectName(identifier='y'),
+        severity=0,
+        time='2020-7-2T12:00:00.000Z'),
     mms.InformationReportUnconfirmed(
         specification=mms.VmdSpecificObjectName(identifier='x'),
         data=[]),
@@ -157,7 +194,10 @@ async def test_request_response(server_factory, req, resp):
             mms.ScatteredAccessDescriptionVariableSpecification(
                 specifications=[mms.InvalidatedVariableSpecification()]),
             mms.VariableDescriptionVariableSpecification(
-                address=10, type_specification=mms.BooleanTypeDescription())],
+                address=10, type_specification=mms.BooleanTypeDescription()),
+            mms.VariableDescriptionVariableSpecification(
+                address=10,
+                type_specification=mms.VmdSpecificObjectName('x'))],
         data=[mms.ArrayData(elements=[mms.BooleanData(value=True),
                                       mms.BooleanData(value=False),
                                       mms.BooleanData(value=True)])])
@@ -177,6 +217,7 @@ async def test_unconfirmed(server_factory, msg):
         address = server.addresses[0]
         conn = await mms.connect(client_req_cb, address)
         received_unconfirmed = await conn.receive_unconfirmed()
+        await conn.async_close()
 
     assert msg == received_unconfirmed
 
@@ -209,3 +250,107 @@ async def test_request_client(server_factory):
         await connection_cb_future
 
     assert connected_clients == [expected_response]
+
+
+@pytest.mark.asyncio
+@pytest.mark.timeout(2)
+@pytest.mark.parametrize("type_description", [
+    mms.ArrayTypeDescription(number_of_elements=10,
+                             element_type=mms.VmdSpecificObjectName('x')),
+    mms.BcdTypeDescription(xyz=1213),
+    mms.BinaryTimeTypeDescription(xyz=1213),
+    mms.BitStringTypeDescription(xyz=1213),
+    mms.BooleanTypeDescription(),
+    mms.FloatingPointTypeDescription(format_width=12, exponent_width=10),
+    mms.GeneralizedTimeTypeDescription(),
+    mms.IntegerTypeDescription(xyz=345),
+    mms.MmsStringTypeDescription(xyz=123),
+    mms.ObjIdTypeDescription(),
+    mms.OctetStringTypeDescription(xyz=1231),
+    mms.StructureTypeDescription(components=[
+        ('1', mms.ObjIdTypeDescription()),
+        (None, mms.BooleanTypeDescription()),
+        (None, mms.VmdSpecificObjectName('x')),
+    ]),
+    mms.UnsignedTypeDescription(xyz=21412),
+    mms.UtcTimeTypeDescription(),
+    mms.VisibleStringTypeDescription(xyz=5542),
+])
+async def test_type_description_serialization(server_factory,
+                                              type_description):
+    read_request = mms.GetVariableAccessAttributesRequest(value='x')
+    expected_response = mms.GetVariableAccessAttributesResponse(
+        mms_deletable=True, type_description=type_description)
+
+    async def connection_cb(connection):
+        pass
+
+    async def server_req_cb(connection, request):
+        assert request == read_request
+        return expected_response
+
+    async def client_req_cb(connection, request):
+        pass
+
+    async with server_factory(connection_cb, server_req_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(client_req_cb, address)
+        read_response = await conn.send_confirmed(read_request)
+        await conn.async_close()
+
+    assert read_response == expected_response
+
+
+@pytest.mark.asyncio
+@pytest.mark.timeout(2)
+@pytest.mark.parametrize("data", [
+    [mms.BcdData(10)],
+    [mms.ArrayData([mms.BcdData(11), mms.BcdData(12)])],
+    [mms.BinaryTimeData(datetime.now(timezone.utc))],
+    [mms.BitStringData([True, False, True])],
+    [mms.BooleanData(True)],
+    [mms.BooleanArrayData([True, False])],
+    [mms.FloatingPointData(1.34)],
+    [mms.GeneralizedTimeData([True, False, True])],
+    [mms.IntegerData(100)],
+    [mms.MmsStringData('abcxyz')],
+    [mms.ObjIdData([0, 1, 1, 4, 1203])],
+    [mms.OctetStringData(b'34104332')],
+    [mms.StructureData([mms.MmsStringData('xyz'),
+                        mms.IntegerData(321412)])],
+    [mms.UnsignedData(123)],
+    [mms.UtcTimeData(value=datetime.now(timezone.utc),
+                     leap_second=False,
+                     clock_failure=False,
+                     not_synchronized=False,
+                     accuracy=None)],
+    [mms.VisibleStringData('123')],
+])
+async def test_data_serialization(server_factory, data):
+    read_request = mms.ReadRequest(mms.AaSpecificObjectName('x'))
+    expected_response = mms.ReadResponse(data)
+
+    async def connection_cb(connection):
+        pass
+
+    async def server_req_cb(connection, request):
+        assert request == read_request
+        return expected_response
+
+    async def client_req_cb(connection, request):
+        pass
+
+    async with server_factory(connection_cb, server_req_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(client_req_cb, address)
+        read_response = await conn.send_confirmed(read_request)
+        await conn.async_close()
+
+    assert isinstance(read_response, mms.ReadResponse)
+    for received_data, expected_data in zip(read_response.results,
+                                            expected_response.results):
+        if isinstance(received_data, mms.FloatingPointData):
+            assert isinstance(data[0], mms.FloatingPointData)
+            assert math.isclose(received_data.value, data[0].value)
+        else:
+            assert received_data == expected_data
