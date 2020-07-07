@@ -118,6 +118,11 @@ where ``package-name`` is one of following:
 
         Configuration transformation interface
 
+    * `hat-syslog <https://pypi.org/project/hat-syslog>`_
+      (`syslog docs <https://core.hat-open.com/docs/components/syslog.html>`_)
+
+        Syslog server and logging handler
+
 
 JavaScript packages
 '''''''''''''''''''
