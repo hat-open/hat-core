@@ -23,6 +23,7 @@ __all__ = ['task_dist',
            'task_dist_pyhat_gateway',
            'task_dist_pyhat_gui',
            'task_dist_pyhat_translator',
+           'task_dist_pyhat_syslog',
            'task_dist_jshat_util',
            'task_dist_jshat_renderer',
            'task_dist_jshat_future',
@@ -52,6 +53,7 @@ def task_dist():
                          'dist_pyhat_gateway',
                          'dist_pyhat_gui',
                          'dist_pyhat_translator',
+                         'dist_pyhat_syslog',
                          'dist_jshat_util',
                          'dist_jshat_renderer',
                          'dist_jshat_future',
@@ -140,6 +142,11 @@ def task_dist_pyhat_gui():
 def task_dist_pyhat_translator():
     """Dist - create pyhat hat-translator distribution"""
     return _get_task_dist_pyhat('hat-translator', 'pyhat_translator')
+
+
+def task_dist_pyhat_syslog():
+    """Dist - create pyhat hat-syslog distribution"""
+    return _get_task_dist_pyhat('hat-syslog', 'pyhat_syslog')
 
 
 def task_dist_jshat_util():

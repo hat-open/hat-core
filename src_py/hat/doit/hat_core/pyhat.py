@@ -25,7 +25,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_event',
            'task_pyhat_gateway',
            'task_pyhat_gui',
-           'task_pyhat_translator']
+           'task_pyhat_translator',
+           'task_pyhat_syslog']
 
 
 build_dir = Path('build/pyhat')
@@ -341,6 +342,35 @@ def task_pyhat_translator():
         dependencies=['hat-util'],
         mappings=mappings,
         console_scripts=['hat-translator = hat.translator.main:main'])
+
+
+def task_pyhat_syslog():
+    """PyHat - build hat-syslog"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-syslog')
+        json_schema_repo = (src_py_dir /
+                            'hat/syslog/json_schema_repo.json')
+        jshat_build = Path('build/jshat/app/syslog')
+        for i in (src_py_dir / 'hat/syslog').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
+        for i in jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/syslog/server/ui'
+                              / i.relative_to(jshat_build))
+
+    return _get_task_build(
+        name='hat-syslog',
+        description='Hat Syslog',
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-juggler',
+                      'hat-sqlite3'],
+        mappings=mappings,
+        console_scripts=['hat-syslog = hat.syslog.server.main:main'],
+        task_dep=['jshat_app'])
 
 
 def _get_task_build(name, description, dependencies, mappings, *,

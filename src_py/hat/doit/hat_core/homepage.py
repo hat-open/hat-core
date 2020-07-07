@@ -126,7 +126,9 @@ class Page:
             {'title': 'hat-gui',
              'description': 'GUI server'},
             {'title': 'hat-translator',
-             'description': 'Configuration transformation interface'}
+             'description': 'Configuration transformation interface'},
+            {'title': 'hat-syslog',
+             'description': 'Syslog server'}
         ]
 
     @property
@@ -195,7 +197,9 @@ class Page:
                 {'name': 'hat-gui',
                  'docs': 'docs/components/gui/index.html'},
                 {'name': 'hat-translator',
-                 'docs': 'docs/components/translator.html'}]
+                 'docs': 'docs/components/translator.html'},
+                {'name': 'hat-syslog',
+                 'docs': 'docs/components/syslog.html'}]
 
     @property
     def javascript_packages(self):

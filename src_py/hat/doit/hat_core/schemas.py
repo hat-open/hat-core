@@ -17,6 +17,7 @@ __all__ = ['task_schemas',
            'task_schemas_json_event',
            'task_schemas_json_gateway',
            'task_schemas_json_gui',
+           'task_schemas_json_syslog',
            'task_schemas_sbs_chat',
            'task_schemas_sbs_chatter',
            'task_schemas_sbs_monitor',
@@ -49,7 +50,8 @@ def task_schemas_json():
                          'schemas_json_monitor',
                          'schemas_json_event',
                          'schemas_json_gateway',
-                         'schemas_json_gui']}
+                         'schemas_json_gui',
+                         'schemas_json_syslog']}
 
 
 def task_schemas_sbs():
@@ -110,6 +112,12 @@ def task_schemas_json_gui():
     """Schemas - generate hat-gui JSON schema repository data"""
     return _get_task_json([*(schemas_json_dir / 'gui').rglob('*.yaml')],
                           [src_py_dir / 'hat/gui/json_schema_repo.json'])
+
+
+def task_schemas_json_syslog():
+    """Schemas - generate hat-syslog JSON schema repository data"""
+    return _get_task_json([schemas_json_dir / 'syslog.yaml'],
+                          [src_py_dir / 'hat/syslog/json_schema_repo.json'])
 
 
 def task_schemas_sbs_chat():

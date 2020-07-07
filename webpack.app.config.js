@@ -44,5 +44,6 @@ function app(name, entry) {
 module.exports = [
     app('orchestrator', '.' + path.sep + path.join('src_js', '@hat-core', 'orchestrator', 'main')),
     app('monitor', '.' + path.sep + path.join('src_js', '@hat-core', 'monitor', 'main')),
-    app('gui', '.' + path.sep + path.join('src_js', '@hat-core', 'gui', 'main'))
+    app('gui', '.' + path.sep + path.join('src_js', '@hat-core', 'gui', 'main')),
+    app('syslog', '.' + path.sep + path.join('src_js', '@hat-core', 'syslog', 'main'))
 ];
