@@ -4,6 +4,7 @@ Components
 .. toctree::
     :maxdepth: 1
 
+    syslog
     translator
     orchestrator
     monitor
