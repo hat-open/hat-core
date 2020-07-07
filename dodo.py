@@ -17,4 +17,4 @@ else:
     os.environ['PYTHONPATH'] = src_py_path
 
 
-from hat.doit.hat_core.main import *  # NOQA
+from hat.doit.hat_core import *  # NOQA
