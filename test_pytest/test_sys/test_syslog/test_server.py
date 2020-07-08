@@ -113,7 +113,7 @@ async def test_archive(conf, db_path, server, logger):
     assert db_path.exists()
     assert len(list(db_path.parent.glob(f'{db_path.name}.*'))) == 0
 
-    for i in range(conf['db_high_size'] - 1):
+    for i in range(conf['db_high_size']):
         logger.debug(f'msg{i}')
         await asyncio.sleep(0.01)
 

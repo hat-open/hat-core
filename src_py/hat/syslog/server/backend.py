@@ -189,7 +189,7 @@ class Backend:
 
         if self._conf.high_size <= 0:
             return
-        if self._last_id - self._first_id + 1 < self._conf.high_size:
+        if self._last_id - self._first_id + 1 <= self._conf.high_size:
             return
 
         mlog.debug("database cleanup starting...")

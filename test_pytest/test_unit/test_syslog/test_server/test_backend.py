@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 import datetime
 import socket
@@ -236,23 +237,28 @@ async def test_archive(conf_db, message_factory, short_register_delay,
         await backend.register(ts_now(), message_factory())
         entries = await change_queue.get() + entries
 
+    # wait for posible background db cleanup
+    await asyncio.sleep(0.1)
+
     assert backend.last_id == conf_db.high_size
     assert backend.first_id == 1
-    assert len([i for i in conf_db.path.parent.glob('*.*')]) == 1
+    result = await backend.query(server_common.Filter())
+    assert len(result) == conf_db.high_size
+    count = len(list(conf_db.path.parent.glob(f'{conf_db.path.name}.*')))
+    assert count == 0
 
     await backend.register(ts_now(), message_factory())
-    assert not await change_queue.get()
-    assert backend.first_id == backend.last_id - conf_db.low_size + 1
-    assert len(await backend.query(server_common.Filter())) == conf_db.low_size
-
-    num_db_files = len([i for i in conf_db.path.parent.glob('*.*')
-                        if 'syslog.db-journal' not in i.name])
-    assert num_db_files == (2 if enable_archive else 1)
-
     entries = await change_queue.get() + entries
-    entries_left_in_db = await backend.query(server_common.Filter())
-    assert len(entries_left_in_db) == conf_db.low_size + 1
+
+    # wait for expected background db cleanup
+    await asyncio.sleep(0.1)
+
+    assert backend.first_id == backend.last_id - conf_db.low_size + 1
     assert backend.last_id == conf_db.high_size + 1
+    result = await backend.query(server_common.Filter())
+    assert len(result) == conf_db.low_size
+    count = len(list(conf_db.path.parent.glob(f'{conf_db.path.name}.*')))
+    assert count == (1 if enable_archive else 0)
 
     await backend.async_close()
     assert backend.closed.done()
@@ -265,8 +271,9 @@ async def test_archive(conf_db, message_factory, short_register_delay,
         assert not backend.closed.done()
 
         entries_archived = await backend.query(server_common.Filter())
-        assert len(entries_archived) == conf_db.high_size - conf_db.low_size
-        assert entries_left_in_db + entries_archived == entries
+        assert len(entries_archived) == (conf_db.high_size -
+                                         conf_db.low_size + 1)
+        assert result + entries_archived == entries
 
         await backend.async_close()
         assert backend.closed.done()

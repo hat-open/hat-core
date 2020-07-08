@@ -81,8 +81,7 @@ async def _run_client(async_group, backend, conn):
 
 async def _change_loop(async_group, backend, conn, change_queue):
     try:
-        filter_json = common.filter_to_json(
-            common.Filter(max_results=max_results_limit))
+        filter_json = _sanitize_filter(conn.remote_data)
         first_id = backend.first_id
         last_id = backend.last_id
         filter_changed = True
@@ -91,6 +90,8 @@ async def _change_loop(async_group, backend, conn, change_queue):
         while True:
             if filter_changed:
                 filter = common.filter_from_json(filter_json)
+                while not change_queue.empty():
+                    change_queue.get_nowait()
                 entries = await backend.query(filter)
                 entries_json = [common.entry_to_json(entry)
                                 for entry in entries]

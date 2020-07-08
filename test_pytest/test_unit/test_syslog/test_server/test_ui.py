@@ -275,12 +275,12 @@ async def test_get_static_files(backend_ui, conf_ui):
             assert resp.status == 404
 
 
-@pytest.mark.parametrize("client_cont", [1, 3])
+@pytest.mark.parametrize("client_cont", [1])
 @pytest.mark.asyncio
 async def test_connect_disconnect(backend_ui, conf_ui, message_factory,
                                   short_sync_local_delay, client_cont):
     backend, ui = backend_ui
-    message_count = 50
+    message_count = 3
     async with aio.Group() as group:
         for _ in range(message_count):
             group.spawn(backend.register, ts_now(), message_factory())
