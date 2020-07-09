@@ -96,9 +96,10 @@ async def _change_loop(async_group, backend, conn, change_queue):
                 entries_json = [common.entry_to_json(entry)
                                 for entry in entries]
             elif new_entries_json:
-                new_entries_json = [i for i in new_entries_json
-                                    if _match_entry(filter_json, i)]
-                entries_json = new_entries_json + entries_json
+                previous_id = entries_json[0]['id'] if entries_json else 0
+                entries_json = [*_filter_entries(filter_json, previous_id,
+                                                 new_entries_json),
+                                *entries_json]
                 entries_json = entries_json[:filter.max_results]
 
             conn.set_local_data({'filter': filter_json,
@@ -129,38 +130,41 @@ def _sanitize_filter(filter_json):
     return filter_json
 
 
-def _match_entry(filter_json, entry_json):
-    if (filter_json['last_id'] is not None
-            and entry_json['id'] > filter_json['last_id']):
-        return False
-    if (filter_json['entry_timestamp_from'] is not None
-            and entry_json['timestamp'] < filter_json['entry_timestamp_from']):
-        return False
-    if (filter_json['entry_timestamp_to'] is not None
-            and entry_json['timestamp'] > filter_json['entry_timestamp_to']):
-        return False
-    if (filter_json['facility'] is not None and
-            entry_json['msg']['facility'] != filter_json['facility']):
-        return False
-    if (filter_json['severity'] is not None and
-            entry_json['msg']['severity'] != filter_json['severity']):
-        return False
-    if not _match_str_filter(filter_json['hostname'],
-                             entry_json['msg']['hostname']):
-        return False
-    if not _match_str_filter(filter_json['app_name'],
-                             entry_json['msg']['app_name']):
-        return False
-    if not _match_str_filter(filter_json['procid'],
-                             entry_json['msg']['procid']):
-        return False
-    if not _match_str_filter(filter_json['msgid'],
-                             entry_json['msg']['msgid']):
-        return False
-    if not _match_str_filter(filter_json['msg'],
-                             entry_json['msg']['msg']):
-        return False
-    return True
+def _filter_entries(filter_json, previous_id, entries_json):
+    for i in entries_json:
+        if i['id'] <= previous_id:
+            continue
+        if (filter_json['last_id'] is not None
+                and i['id'] > filter_json['last_id']):
+            continue
+        if (filter_json['entry_timestamp_from'] is not None
+                and i['timestamp'] < filter_json['entry_timestamp_from']):
+            continue
+        if (filter_json['entry_timestamp_to'] is not None
+                and i['timestamp'] > filter_json['entry_timestamp_to']):
+            continue
+        if (filter_json['facility'] is not None and
+                i['msg']['facility'] != filter_json['facility']):
+            continue
+        if (filter_json['severity'] is not None and
+                i['msg']['severity'] != filter_json['severity']):
+            continue
+        if not _match_str_filter(filter_json['hostname'],
+                                 i['msg']['hostname']):
+            continue
+        if not _match_str_filter(filter_json['app_name'],
+                                 i['msg']['app_name']):
+            continue
+        if not _match_str_filter(filter_json['procid'],
+                                 i['msg']['procid']):
+            continue
+        if not _match_str_filter(filter_json['msgid'],
+                                 i['msg']['msgid']):
+            continue
+        if not _match_str_filter(filter_json['msg'],
+                                 i['msg']['msg']):
+            continue
+        yield i
 
 
 def _match_str_filter(filter, value):
