@@ -1,0 +1,57 @@
+@import 'shadow';
+
+
+.svg-page {
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+
+    &.panning {
+        cursor: all-scroll;
+    }
+
+    & > .zoom-in, & > .zoom-out, & > .zoom-reset {
+        @include shadow-2dp;
+        position: absolute;
+        right: 20px;
+        border: 2px solid $color-grey-500;
+        background-color: $color-grey-50;
+        height: 30px;
+        width: 30px;
+        cursor: default;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $color-grey-700;
+
+        &:hover {
+            @include shadow-4dp;
+            background-color: $color-grey-100;
+            border-color: $color-grey-600;
+            color: $color-grey-900;
+            z-index: 2;
+        }
+
+        &:active {
+            @include shadow-2dp;
+        }
+    }
+
+    & > .zoom-in {
+        top: 20px;
+        font-size: 12pt;
+        border-radius: 5px 5px 0 0;
+    }
+
+    & > .zoom-out {
+        top: 50px;
+        font-size: 12pt;
+        border-radius: 0 0 5px 5px;
+    }
+
+    & > .zoom-reset {
+        top: 90px;
+        font-size: 14pt;
+        border-radius: 5px;
+    }
+}

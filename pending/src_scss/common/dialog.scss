@@ -1,0 +1,74 @@
+@import 'fonts/fontawesome';
+@import 'color';
+@import 'shadow';
+
+
+body > div.dialog {
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .border {
+        @include shadow-4dp();
+        border: 1px solid $color-grey-500;
+        background: white;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+
+            .header {
+                display: flex;
+                border-bottom: 1px solid $color-grey-200;
+                background-color: $color-grey-200;
+
+                & > * {
+                    padding: 5px;
+                }
+
+                .title {
+                    flex-grow: 1;
+                    color: $color-grey-600;
+                    font-weight: 700;
+                }
+
+                .close {
+                    @extend .fa;
+                    @extend .fa-times;
+                }
+            }
+
+            .message {
+                flex-grow: 1;
+                padding: 10px;
+            }
+
+            .input {
+                padding: 2px 10px;
+
+                input {
+                    width: 100%;
+                }
+            }
+
+            .buttons {
+                display: flex;
+                justify-content: flex-end;
+                padding: 15px 5px 5px 5px;
+
+                & > * {
+                    margin-left: 2px;
+                    padding: 5px;
+                }
+            }
+        }
+    }
+}

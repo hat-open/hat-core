@@ -1,0 +1,16 @@
+cask
+doxygen
+gcc49
+git
+graphviz
+homebrew/versions/freetds091
+jansson
+libffi
+libuv
+llvm
+openssl
+python3
+socat
+sqlite
+unixodbc
+yarn

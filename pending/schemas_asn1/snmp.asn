@@ -1,0 +1,163 @@
+SNMP DEFINITIONS ::= BEGIN
+
+ObjectName ::= OBJECT IDENTIFIER
+
+NotificationName ::= OBJECT IDENTIFIER
+
+ObjectSyntax ::= CHOICE {
+    simple            SimpleSyntax,
+    application-wide  ApplicationSyntax
+}
+
+SimpleSyntax ::= CHOICE {
+    integer   INTEGER,
+    string    OCTET STRING,
+    objectId  OBJECT IDENTIFIER,
+    empty     NULL               -- v1
+}
+
+ApplicationSyntax ::= CHOICE {
+    ipAddress   IpAddress,
+    counter     Counter32,
+    unsigned    Unsigned32,      -- Gauge(v1)
+    timeTicks   TimeTicks,
+    arbitrary   Opaque,
+    bigCounter  Counter64
+}
+
+IpAddress ::= [APPLICATION 0] IMPLICIT OCTET STRING (SIZE (4))
+
+Counter32 ::= [APPLICATION 1] IMPLICIT INTEGER (0..4294967295)
+
+Unsigned32 ::= [APPLICATION 2] IMPLICIT INTEGER (0..4294967295)
+
+TimeTicks ::= [APPLICATION 3] IMPLICIT INTEGER (0..4294967295)
+
+Opaque ::= [APPLICATION 4] IMPLICIT OCTET STRING
+
+Counter64 ::= [APPLICATION 6] IMPLICIT INTEGER (0..18446744073709551615)
+
+MessageV1 ::= SEQUENCE {
+    version    INTEGER { version-1(0) },
+    community  OCTET STRING,
+    data       PDUs
+}
+
+MessageV2C ::= SEQUENCE {
+    version    INTEGER { version-2(1) },
+    community  OCTET STRING,
+    data       PDUs
+}
+
+MessageV3 ::= SEQUENCE {
+    version                  INTEGER { version-3(3) },
+    msgGlobalData            SEQUENCE {
+        msgID                    INTEGER (0..2147483647),
+        msgMaxSize               INTEGER (484..2147483647),
+        msgFlags                 OCTET STRING (SIZE(1)),
+        msgSecurityModel         INTEGER (1..2147483647)
+    },
+    msgSecurityParameters    OCTET STRING,
+    msgData                  CHOICE {
+        plaintext                ScopedPDU,
+        encryptedPDU             OCTET STRING
+    }
+}
+
+ScopedPDU ::= SEQUENCE {
+    contextEngineID  OCTET STRING,
+    contextName      OCTET STRING,
+    data             PDUs
+}
+
+PDUs ::= CHOICE {
+    get-request       GetRequest-PDU,
+    get-next-request  GetNextRequest-PDU,
+    get-bulk-request  GetBulkRequest-PDU,  -- v2
+    response          Response-PDU,        -- GetResponse(v1)
+    set-request       SetRequest-PDU,
+    trap              Trap-PDU,            -- v1
+    inform-request    InformRequest-PDU,   -- v2
+    snmpV2-trap       SNMPv2-Trap-PDU,     -- v2
+    report            Report-PDU           -- v2
+}
+
+GetRequest-PDU ::= [0] IMPLICIT PDU
+
+GetNextRequest-PDU ::= [1] IMPLICIT PDU
+
+Response-PDU ::= [2] IMPLICIT PDU
+
+SetRequest-PDU ::= [3] IMPLICIT PDU
+
+Trap-PDU ::= [4] IMPLICIT SEQUENCE {
+    enterprise         [5] OBJECT IDENTIFIER,
+    agent-addr         IpAddress,
+    generic-trap INTEGER {
+        coldStart(0),
+        warmStart(1),
+        linkDown(2),
+        linkUp(3),
+        authenticationFailure(4),
+        egpNeighborLoss(5),
+        enterpriseSpecific(6)
+    },
+    specific-trap      INTEGER,
+    time-stamp         TimeTicks,
+    variable-bindings  VarBindList
+}
+
+GetBulkRequest-PDU ::= [5] IMPLICIT SEQUENCE {
+    request-id         INTEGER,
+    non-repeaters      INTEGER,
+    max-repetitions    INTEGER,
+    variable-bindings  VarBindList
+}
+
+InformRequest-PDU ::= [6] IMPLICIT PDU
+
+SNMPv2-Trap-PDU ::= [7] IMPLICIT PDU
+
+Report-PDU ::= [8] IMPLICIT PDU
+
+PDU ::= SEQUENCE {
+    request-id         INTEGER,
+    error-status       INTEGER {
+        noError(0),
+        tooBig(1),
+        noSuchName(2),
+        badValue(3),
+        readOnly(4),
+        genErr(5),
+        noAccess(6),              -- v2
+        wrongType(7),             -- v2
+        wrongLength(8),           -- v2
+        wrongEncoding(9),         -- v2
+        wrongValue(10),           -- v2
+        noCreation(11),           -- v2
+        inconsistentValue(12),    -- v2
+        resourceUnavailable(13),  -- v2
+        commitFailed(14),         -- v2
+        undoFailed(15),           -- v2
+        authorizationError(16),   -- v2
+        notWritable(17),          -- v2
+        inconsistentName(18)      -- v2
+    },
+    error-index        INTEGER,
+    variable-bindings  VarBindList
+}
+
+VarBind ::= SEQUENCE {
+    name  ObjectName,
+    data  CHOICE {
+        value           ObjectSyntax,
+        unSpecified     NULL,               -- v2
+        noSuchObject    [0] IMPLICIT NULL,  -- v2
+        noSuchInstance  [1] IMPLICIT NULL,  -- v2
+        endOfMibView    [2] IMPLICIT NULL   -- v2
+    }
+}
+
+VarBindList ::= SEQUENCE OF VarBind
+
+END
