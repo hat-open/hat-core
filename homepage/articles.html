@@ -1,0 +1,16 @@
+<%inherit file="_main.html"/>
+
+<div class="group">
+    <div class="title">Articles</div>
+    <div class="body">
+        <ul>
+            % for article in page.get_articles():
+            <li>
+                <a href="${article['link']}">${article['title']}</a><br>
+                Author: ${article['author']}<br>
+                Date: ${article['date']}
+            </li>
+            % endfor
+        </ul>
+    </div>
+</div>

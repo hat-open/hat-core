@@ -1,0 +1,4 @@
+Chatter communication protocol
+==============================
+
+TODO

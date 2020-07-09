@@ -1,7 +1,9 @@
 from pathlib import Path
+import xml.etree.ElementTree
 
 from hat.doit import common
 from hat.doit import tmpl
+from hat.doit.hat_core.articles import dst_dir as articles_src_dir
 from hat.doit.hat_core.docs import html_dst_dir as docs_src_dir
 
 
@@ -9,12 +11,14 @@ __all__ = ['task_homepage',
            'task_homepage_pages',
            'task_homepage_static',
            'task_homepage_sass',
-           'task_homepage_docs']
+           'task_homepage_docs',
+           'task_homepage_articles']
 
 
 src_dir = Path('homepage')
 dst_dir = Path('build/homepage')
 docs_dst_dir = dst_dir / 'docs'
+articles_dst_dir = dst_dir / 'articles'
 
 
 def task_homepage():
@@ -23,7 +27,8 @@ def task_homepage():
             'task_dep': ['homepage_pages',
                          'homepage_static',
                          'homepage_sass',
-                         'homepage_docs']}
+                         'homepage_docs',
+                         'homepage_articles']}
 
 
 def task_homepage_pages():
@@ -35,7 +40,8 @@ def task_homepage_pages():
         page = Page(name)
         yield {'name': str(page.dst_path),
                'actions': [page.build],
-               'targets': [page.dst_path]}
+               'targets': [page.dst_path],
+               'task_dep': ['homepage_articles']}
 
 
 def task_homepage_static():
@@ -71,6 +77,13 @@ def task_homepage_docs():
             'task_dep': ['docs_html']}
 
 
+def task_homepage_articles():
+    """Homepage - copy articles"""
+    return {'actions': [(common.rm_rf, [articles_dst_dir]),
+                        (common.cp_r, [articles_src_dir, articles_dst_dir])],
+            'task_dep': ['articles']}
+
+
 class Page:
 
     def __init__(self, name):
@@ -92,23 +105,22 @@ class Page:
     def title(self):
         return {
             'index': 'About',
-            'download': 'Download'
+            'download': 'Download',
+            'articles': 'Articles'
         }.get(self._name)
 
     @property
     def links(self):
         return [
-            {'icon': 'fa-home',
-             'label': 'About',
+            {'label': 'About',
              'path': 'index.html'},
-            {'icon': 'fa-download',
-             'label': 'Download',
+            {'label': 'Download',
              'path': 'download.html'},
-            {'icon': 'fa-book',
-             'label': 'Documentation',
+            {'label': 'Articles',
+             'path': 'articles.html'},
+            {'label': 'Documentation',
              'path': 'docs/index.html'},
-            {'icon': 'fa-github',
-             'label': 'Source',
+            {'label': 'Source',
              'path': 'https://github.com/hat-open/hat-core'}
         ]
 
@@ -169,44 +181,46 @@ class Page:
 
     @property
     def python_packages(self):
-        return [{'name': 'hat-util',
-                 'docs': 'docs/libraries/util.html'},
-                {'name': 'hat-peg',
-                 'docs': 'docs/libraries/peg.html'},
-                {'name': 'hat-sbs',
-                 'docs': 'docs/libraries/sbs.html'},
-                {'name': 'hat-chatter',
-                 'docs': 'docs/libraries/chatter.html'},
-                {'name': 'hat-juggler',
-                 'docs': 'docs/libraries/juggler.html'},
-                {'name': 'hat-duktape',
-                 'docs': 'docs/libraries/duktape.html'},
-                {'name': 'hat-sqlite3'},
-                {'name': 'hat-asn1',
-                 'docs': 'docs/libraries/asn1.html'},
-                {'name': 'hat-drivers',
-                 'docs': 'docs/libraries/drivers/index.html'},
-                {'name': 'hat-orchestrator',
-                 'docs': 'docs/components/orchestrator.html'},
-                {'name': 'hat-monitor',
-                 'docs': 'docs/components/monitor.html'},
-                {'name': 'hat-event',
-                 'docs': 'docs/components/event/index.html'},
-                {'name': 'hat-gateway',
-                 'docs': 'docs/components/gateway/index.html'},
-                {'name': 'hat-gui',
-                 'docs': 'docs/components/gui/index.html'},
-                {'name': 'hat-translator',
-                 'docs': 'docs/components/translator.html'},
-                {'name': 'hat-syslog',
-                 'docs': 'docs/components/syslog.html'}]
+        return ['hat-util',
+                'hat-peg',
+                'hat-sbs',
+                'hat-chatter',
+                'hat-juggler',
+                'hat-duktape',
+                'hat-sqlite3',
+                'hat-asn1',
+                'hat-drivers',
+                'hat-orchestrator',
+                'hat-monitor',
+                'hat-event',
+                'hat-gateway',
+                'hat-gui',
+                'hat-translator',
+                'hat-syslog']
 
     @property
     def javascript_packages(self):
-        return [{'name': '@hat-core/util'},
-                {'name': '@hat-core/renderer'},
-                {'name': '@hat-core/future'},
-                {'name': '@hat-core/juggler'}]
+        return ['@hat-core/util',
+                '@hat-core/renderer',
+                '@hat-core/future',
+                '@hat-core/juggler']
+
+    def get_articles(self):
+        ns = {'xhtml': 'http://www.w3.org/1999/xhtml'}
+        for i in sorted(articles_dst_dir.glob('*.html')):
+            root = xml.etree.ElementTree.parse(str(i)).getroot()
+            title_tag = root.find("./xhtml:head/xhtml:title", ns)
+            author_tag = root.find("./xhtml:head/xhtml:meta[@name='author']",
+                                   ns)
+            date_tag = root.find("./xhtml:head/xhtml:meta[@name='date']", ns)
+            title = title_tag.text
+            author = (author_tag.get('content')
+                      if author_tag is not None else None)
+            date = date_tag.get('content') if date_tag is not None else None
+            yield {'link': f'articles/{i.name}',
+                   'title': title,
+                   'author': author,
+                   'date': date}
 
     def build(self):
         tmpl.mako_build(src_dir, self.src_path, self.dst_path, {'page': self})

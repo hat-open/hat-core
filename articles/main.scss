@@ -1,0 +1,41 @@
+@import '../src_scss/common/color';
+@import '../src_scss/common/shadow';
+
+@import url('html4css1.css');
+
+$page-width: 800px;
+
+html, body {
+    font-size: 11pt;
+    margin: 0px;
+    font-family: Segoe UI, Helvetica, Arial, sans-serif;
+}
+
+code, pre {
+    font-family: Consolas, Liberation Mono, Menlo, monospace;
+}
+
+.title {
+    padding: 10px;
+    font-size: 2.5em;
+    background-color: $color-grey-100;
+}
+
+.section {
+
+    & > h1 {
+        border-bottom: 2px solid black;
+    }
+
+    & > pre {
+        padding: 6px;
+    }
+}
+
+.document {
+    @include shadow-4dp;
+    width: $page-width;
+    margin: 10px auto;
+    background-color: white;
+    padding: 10px 30px;
+}

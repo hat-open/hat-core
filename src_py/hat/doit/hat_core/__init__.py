@@ -3,6 +3,7 @@ import itertools
 
 from hat.doit import common
 
+from hat.doit.hat_core.articles import *  # NOQA
 from hat.doit.hat_core.cache import *  # NOQA
 from hat.doit.hat_core.check import *  # NOQA
 from hat.doit.hat_core.dist import *  # NOQA
@@ -17,6 +18,7 @@ from hat.doit.hat_core.schemas import *  # NOQA
 from hat.doit.hat_core.test import *  # NOQA
 from hat.doit.hat_core.vm import *  # NOQA
 from hat.doit.hat_core.win32_launcher import *  # NOQA
+from hat.doit.hat_core import articles
 from hat.doit.hat_core import cache
 from hat.doit.hat_core import check
 from hat.doit.hat_core import dist
@@ -34,6 +36,7 @@ from hat.doit.hat_core import win32_launcher
 
 
 __all__ = (['task_clean_all'] +
+           articles.__all__ +
            cache.__all__ +
            check.__all__ +
            dist.__all__ +

@@ -13,10 +13,7 @@
         </div>
         <div id="navigation">
             % for i in page.links:
-                <a href="${i['path']}">
-                    <span class="fa ${i['icon']}"></span>
-                    ${i['label']}
-                </a>
+                <a href="${i['path']}">${i['label']}</a>
             % endfor
         </div>
         <div id="page" class="page-${page.name}">

@@ -1,40 +1,42 @@
 <%inherit file="_main.html"/>
 
-<div class="group">
-    <div class="title">Python packages</div>
-    <div class="body">
-        Python packages require Python 3.8 or newer and can be installed
-        with <code>pip</code>.
-        <pre>$ pip install &lt;package&gt;</pre>
-        where <i>&lt;package&gt;</i> is one of:
-        <ul>
-        % for package in page.python_packages:
-            <li>
-                <a href="https://pypi.org/project/${package['name']}">${package['name']}</a>
-                % if 'docs' in package:
-                    (<a href="${package['docs']}">docs</a>)
-                % endif
-            </li>
-        % endfor
-        </ul>
-    </div>
-</div>
+<div class="content">
 
-<div class="group">
-    <div class="title">JavaScript packages</div>
-    <div class="body">
-        JavaScript packages can be installed with <code>npm</code>.
-        <pre>$ npm install &lt;package_url&gt;</pre>
-        Available packages:
-        <ul>
-        % for package in page.javascript_packages:
-            <li>
-                <a href="https://www.npmjs.com/package/${package['name']}">${package['name']}</a>
-                % if 'docs' in package:
-                    (<a href="${package['docs']}">docs</a>)
-                % endif
-            </li>
-        % endfor
-        </ul>
+    <div class="group">
+        <div class="title">Python packages</div>
+        <div class="body">
+            Python packages require Python 3.8 or newer and can be installed
+            with <code>pip</code>.
+            <pre>$ pip install &lt;package&gt;</pre>
+            where <i>&lt;package&gt;</i> is one of:
+            <ul>
+            % for package in page.python_packages:
+                <li>
+                    <a href="https://pypi.org/project/${package}">
+                        ${package}
+                    </a>
+                </li>
+            % endfor
+            </ul>
+        </div>
     </div>
+
+    <div class="group">
+        <div class="title">JavaScript packages</div>
+        <div class="body">
+            JavaScript packages can be installed with <code>npm</code>.
+            <pre>$ npm install &lt;package&gt;</pre>
+            where <i>&lt;package&gt;</i> is one of:
+            <ul>
+            % for package in page.javascript_packages:
+                <li>
+                    <a href="https://www.npmjs.com/package/${package}">
+                        ${package}
+                    </a>
+                </li>
+            % endfor
+            </ul>
+        </div>
+    </div>
+
 </div>

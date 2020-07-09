@@ -1,21 +1,17 @@
 @import '../src_scss/common/color';
 @import '../src_scss/common/shadow';
 
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
-
-$page-width: 960px;
+$page-width: 800px;
 
 html, body {
     font-size: 12pt;
     margin: 0px;
-    font-family: Roboto;
     background-color: $color-grey-100;
+    font-family: Segoe UI, Helvetica, Arial, sans-serif;
 }
 
 code, pre {
-    font-family: 'Roboto Mono';
+    font-family: Consolas, Liberation Mono, Menlo, monospace;
 }
 
 pre {
@@ -94,7 +90,7 @@ pre {
     }
 }
 
-.page-index {
+.page-index, .page-download {
     & > .warning {
         @include shadow-4dp;
         padding: 10px;
@@ -106,20 +102,34 @@ pre {
         margin-top: 10px;
         align-items: stretch;
 
-        & > * {
-            flex-basis: 33%;
-        }
-
         ul {
             margin-block-start: 0px;
             margin-block-end: 0px;
             padding-inline-start: 20px;
 
             li {
+                margin-bottom: 3px;
+
                 .title {
                     font-weight: 600;
                 }
             }
+        }
+    }
+}
+
+.page-index {
+    & > .content {
+        & > * {
+            flex-basis: 33%;
+        }
+    }
+}
+
+.page-download {
+    & > .content {
+        & > * {
+            flex-basis: 50%;
         }
     }
 }
