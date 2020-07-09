@@ -25,6 +25,7 @@ def task_jshat_lib_util():
 
     return _get_task_lib(name='@hat-core/util',
                          desc='Hat utility module',
+                         readme_path=Path('README.hat-core.util.rst'),
                          mappings=mappings)
 
 
@@ -38,6 +39,7 @@ def task_jshat_lib_renderer():
     version = _get_version()
     return _get_task_lib(name='@hat-core/renderer',
                          desc='Hat virtual DOM renderer',
+                         readme_path=Path('README.rst'),
                          mappings=mappings,
                          deps={'snabbdom': '*',
                                '@hat-core/util': f'~{version}'})
@@ -52,6 +54,7 @@ def task_jshat_lib_future():
 
     return _get_task_lib(name='@hat-core/future',
                          desc='Hat async future implementation',
+                         readme_path=Path('README.rst'),
                          mappings=mappings)
 
 
@@ -65,20 +68,21 @@ def task_jshat_lib_juggler():
     version = _get_version()
     return _get_task_lib(name='@hat-core/juggler',
                          desc='Hat juggler client library',
+                         readme_path=Path('README.rst'),
                          mappings=mappings,
                          deps={'jiff': '*',
                                '@hat-core/util': f'~{version}'})
 
 
-def _get_task_lib(name, desc, mappings, deps={}):
+def _get_task_lib(name, desc, readme_path, mappings, deps={}):
     dst_dir = _get_dst_dir(name)
-    src_paths = ['README.rst', *(src_path for src_path, _ in mappings())]
-    package_path = dst_dir / 'package.json'
-    readme_path = dst_dir / 'README.md'
-    dst_paths = [package_path, readme_path,
+    src_paths = [readme_path, *(src_path for src_path, _ in mappings())]
+    dst_package_path = dst_dir / 'package.json'
+    dst_readme_path = dst_dir / 'README.md'
+    dst_paths = [dst_package_path, dst_readme_path,
                  *(dst_path for _, dst_path in mappings())]
     return {'actions': [(common.mkdir_p, [dst_dir]),
-                        f'pandoc README.rst -o {readme_path}',
+                        f'pandoc {readme_path} -o {dst_readme_path}',
                         (_copy_files, [mappings]),
                         (_create_package_json, [name, desc, deps])],
             'file_dep': src_paths,

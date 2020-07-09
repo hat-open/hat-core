@@ -61,8 +61,10 @@ SessionChanges = util.namedtuple(
 
 
 BackendConf = json.Data
+"""Backend configuration"""
 
 CreateBackend = typing.Callable[[BackendConf], typing.Awaitable['Backend']]
+"""Create backend callable"""
 
 
 class Backend(abc.ABC):

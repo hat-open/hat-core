@@ -18,9 +18,11 @@ mlog = logging.getLogger(__name__)
 
 
 Data = tpkt.Data
+"""Data"""
 
 
 Address = tpkt.Address
+"""Address"""
 
 
 ConnectionInfo = util.namedtuple(
@@ -32,6 +34,7 @@ ConnectionInfo = util.namedtuple(
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
+"""Connection callback"""
 
 
 async def connect(addr, local_tsel=None, remote_tsel=None):

@@ -19,6 +19,7 @@ mlog = logging.getLogger(__name__)
 
 
 Data = typing.Union[bytes, bytearray, memoryview]
+"""Data"""
 
 
 Address = util.namedtuple(
@@ -34,6 +35,7 @@ ConnectionInfo = util.namedtuple(
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
+"""Connection callback"""
 
 
 async def connect(addr):

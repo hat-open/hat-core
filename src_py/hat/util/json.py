@@ -1,9 +1,4 @@
-"""JSON data manipulation and validation
-
-Attributes:
-    Data (Type): JSON data type identifier.
-
-"""
+"""JSON data manipulation and validation"""
 
 import enum
 import io
@@ -23,6 +18,8 @@ from hat import util
 Data = typing.Union[None, bool, int, float, str,
                     typing.List['Data'],
                     typing.Dict[str, 'Data']]
+"""JSON data type identifier."""
+
 
 Format = util.extend_enum_doc(enum.Enum('Format', ['JSON', 'YAML']))
 

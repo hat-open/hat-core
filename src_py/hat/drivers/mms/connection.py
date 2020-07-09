@@ -16,15 +16,19 @@ mlog = logging.getLogger(__name__)
 
 
 Address = acse.Address
+"""Address"""
 
 
 ConnectionInfo = acse.ConnectionInfo
+"""Connection info"""
 
 
 RequestCb = aio.AsyncCallable[['Connection', common.Request], common.Response]
+"""Request callback"""
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
+"""Connection callback"""
 
 
 async def connect(request_cb, addr,

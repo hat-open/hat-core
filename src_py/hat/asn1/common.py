@@ -46,6 +46,7 @@ Type = typing.Union[TypeRef,
                     'EntityType',
                     'UnsupportedType',
                     'PrefixedType']
+"""Type"""
 
 
 BooleanType = util.namedtuple('BooleanType')
@@ -136,6 +137,7 @@ PrefixedType = util.namedtuple(
 
 
 Data = typing.Union[bytes, bytearray, memoryview]
+"""Data"""
 
 
 Value = typing.Union['Boolean',
@@ -155,27 +157,35 @@ Value = typing.Union['Boolean',
                      'Sequence',
                      'SequenceOf',
                      'Entity']
+"""Value"""
 
 
 Boolean = bool
+"""Boolean"""
 
 
 Integer = int
+"""Integer"""
 
 
 BitString = typing.List[bool]
+"""Bit string"""
 
 
 OctetString = bytes
+"""Octet string"""
 
 
 Null = None
+"""Null"""
 
 
 ObjectIdentifier = typing.List[typing.Union[int, typing.Tuple[str, int]]]
+"""Object identifier"""
 
 
 String = str
+"""String"""
 
 
 External = util.namedtuple(
@@ -186,9 +196,11 @@ External = util.namedtuple(
 
 
 Real = float
+"""Real"""
 
 
 Enumerated = int
+"""Enumerated"""
 
 # TODO: if abstract is ObjectIdentifier then transfer must be defined
 EmbeddedPDV = util.namedtuple(
@@ -199,18 +211,23 @@ EmbeddedPDV = util.namedtuple(
 
 
 Choice = typing.Tuple[str, Value]
+"""Choice"""
 
 
 Set = typing.Dict[str, Value]
+"""Set"""
 
 
 SetOf = typing.Iterable[Value]
+"""Set of"""
 
 
 Sequence = typing.Dict[str, Value]
+"""Sequence"""
 
 
 SequenceOf = typing.List[Value]
+"""Sequence of"""
 
 
 class Entity(abc.ABC):

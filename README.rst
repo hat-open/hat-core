@@ -45,32 +45,26 @@ Python packages require Python 3.8 and can be installed with `pip`::
 where ``package-name`` is one of following:
 
     * `hat-util <https://pypi.org/project/hat-util>`_
-      (`util docs <https://core.hat-open.com/docs/libraries/util.html>`_)
 
         Utility module
 
     * `hat-peg <https://pypi.org/project/hat-peg>`_
-      (`peg docs <https://core.hat-open.com/docs/libraries/peg.html>`_)
 
         Parsing expression grammar
 
     * `hat-sbs <https://pypi.org/project/hat-sbs>`_
-      (`sbs docs <https://core.hat-open.com/docs/libraries/sbs.html>`_)
 
         Chatter communication protocol
 
     * `hat-chatter <https://pypi.org/project/hat-chatter>`_
-      (`chatter docs <https://core.hat-open.com/docs/libraries/chatter.html>`_)
 
         Simple binary serialization
 
     * `hat-juggler <https://pypi.org/project/hat-juggler>`_
-      (`juggler docs <https://core.hat-open.com/docs/libraries/juggler.html>`_)
 
         Juggler communication protocol
 
     * `hat-duktape <https://pypi.org/project/hat-duktape>`_
-      (`duktape docs <https://core.hat-open.com/docs/libraries/duktape.html>`_)
 
         Python Duktape JS wrapper
 
@@ -79,47 +73,38 @@ where ``package-name`` is one of following:
         Hat specific sqlite3 build
 
     * `hat-asn1 <https://pypi.org/project/hat-asn1>`_
-      (`asn1 docs <https://core.hat-open.com/docs/libraries/asn1.html>`_)
 
         ASN.1 parser and encoder
 
     * `hat-drivers <https://pypi.org/project/hat-drivers>`_
-      (`drivers docs <https://core.hat-open.com/docs/libraries/drivers/index.html>`_)
 
         Communication drivers
 
     * `hat-orchestrator <https://pypi.org/project/hat-orchestrator>`_
-      (`orchestrator docs <https://core.hat-open.com/docs/components/orchestrator.html>`_)
 
         Simple cross-platform daemon/service manager
 
     * `hat-monitor <https://pypi.org/project/hat-monitor>`_
-      (`monitor docs <https://core.hat-open.com/docs/components/monitor.html>`_)
 
         Redundancy and service discovery server
 
     * `hat-event <https://pypi.org/project/hat-event>`_
-      (`event docs <https://core.hat-open.com/docs/components/event/index.html>`_)
 
         Event pub/sub communication and storage
 
     * `hat-gateway <https://pypi.org/project/hat-gateway>`_
-      (`gateway docs <https://core.hat-open.com/docs/components/gateway/index.html>`_)
 
         Remote communication device gateway
 
     * `hat-gui <https://pypi.org/project/hat-gui>`_
-      (`gui docs <https://core.hat-open.com/docs/components/gui/index.html>`_)
 
         GUI server
 
     * `hat-translator <https://pypi.org/project/hat-translator>`_
-      (`translator docs <https://core.hat-open.com/docs/components/translator.html>`_)
 
         Configuration transformation interface
 
     * `hat-syslog <https://pypi.org/project/hat-syslog>`_
-      (`syslog docs <https://core.hat-open.com/docs/components/syslog.html>`_)
 
         Syslog server and logging handler
 

@@ -4,7 +4,7 @@ Libraries
 .. toctree::
     :maxdepth: 1
 
-    util
+    util/index
     peg
     sbs
     chatter

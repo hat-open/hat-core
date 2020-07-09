@@ -19,9 +19,11 @@ mlog = logging.getLogger(__name__)
 
 
 IdentifiedEntity = typing.Tuple[asn1.ObjectIdentifier, asn1.Entity]
+"""Identified entity"""
 
 
 Address = cosp.Address
+"""Address"""
 
 
 ConnectionInfo = util.namedtuple(
@@ -37,13 +39,16 @@ ConnectionInfo = util.namedtuple(
 
 
 ValidateResult = typing.Optional[IdentifiedEntity]
+"""Validate result"""
 
 
 ValidateCb = aio.AsyncCallable[['SyntaxNames', IdentifiedEntity],
                                ValidateResult]
+"""Validate callback"""
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
+"""Connection callback"""
 
 
 _encoder = asn1.Encoder(asn1.Encoding.BER,

@@ -19,9 +19,11 @@ mlog = logging.getLogger(__name__)
 
 
 Data = cotp.Data
+"""Data"""
 
 
 Address = cotp.Address
+"""Address"""
 
 
 ConnectionInfo = util.namedtuple(
@@ -35,12 +37,15 @@ ConnectionInfo = util.namedtuple(
 
 
 ValidateResult = typing.Optional[Data]
+"""Validate result"""
 
 
 ValidateCb = aio.AsyncCallable[[Data], ValidateResult]
+"""Validate callback"""
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
+"""Connection callback"""
 
 
 async def connect(addr, local_tsel=None, remote_tsel=None,

@@ -16,12 +16,15 @@ json_schema_repo = json.SchemaRepository(
                                     'json_schema_repo.json'))
 
 DeviceConf = json.Data
+"""Device configuration"""
 
 EventTypePrefix = hat.event.common.EventType
+"""Event type prefix"""
 
 CreateDevice = typing.Callable[
     [DeviceConf, 'DeviceEventClient', EventTypePrefix],
     typing.Awaitable['Device']]
+"""Create device callable"""
 
 
 class Device(abc.ABC):

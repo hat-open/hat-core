@@ -14,12 +14,15 @@ mlog = logging.getLogger(__name__)
 
 
 IdentifiedEntity = copp.IdentifiedEntity
+"""Identified entity"""
 
 
 Address = copp.Address
+"""Address"""
 
 
 SyntaxNames = copp.SyntaxNames
+"""Syntax names"""
 
 
 ConnectionInfo = util.namedtuple(
@@ -39,12 +42,15 @@ ConnectionInfo = util.namedtuple(
 
 
 ValidateResult = typing.Optional[IdentifiedEntity]
+"""Validate result"""
 
 
 ValidateCb = aio.AsyncCallable[[SyntaxNames, IdentifiedEntity], ValidateResult]
+"""Validate callback"""
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
+"""Connection callback"""
 
 
 _acse_syntax_name = [('joint-iso-itu-t', 2),

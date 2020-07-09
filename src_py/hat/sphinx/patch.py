@@ -1,7 +1,6 @@
 """Sphinx patches"""
 
 import asyncio
-import itertools
 import sphinx.addnodes
 
 
@@ -16,26 +15,17 @@ def _autodoc_process_docstring(app, what, name, obj, options, lines):
         lines.insert(0, "**COROUTINE**")
 
 
-def _pending_xref__find_modname(node):
-    if node.parent is None:
-        return
-    for i in reversed(list(itertools.takewhile(
-            lambda x: x != node, node.parent))):
-        if i.tagname != 'index':
-            continue
-        try:
-            entries = i.attributes['entries'][0]
-            if entries[0] == 'single' and entries[1].endswith(' (module)'):
-                return entries[1].split(' ')[0]
-        except Exception:
-            pass
-    return _pending_xref__find_modname(node.parent)
-
-
 def _pending_xref__get(self, key, failobj=None):
     result = super(type(self), self).get(key, failobj)
     if result is None and key == 'py:module':
-        return _pending_xref__find_modname(self)
+        node = self
+        while node and not node.attributes.get('ids'):
+            node = node.parent
+        if node:
+            prefix = 'module-'
+            for i in node.attributes['ids']:
+                if i.startswith(prefix):
+                    return i[len(prefix):]
     return result
 
 

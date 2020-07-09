@@ -1,9 +1,4 @@
-"""Translator definition
-
-Attributes:
-    Translate (Type): translate function type
-
-"""
+"""Translator definition"""
 
 import typing
 
@@ -12,6 +7,8 @@ from hat.util import json
 
 
 Translate = typing.Callable[[json.Data], json.Data]
+"""Translate function type"""
+
 
 Translator = util.namedtuple(
     ['Translator', """Translator definition

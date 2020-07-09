@@ -52,6 +52,7 @@ def task_pyhat_util():
 
     return _get_task_build(name='hat-util',
                            description='Hat utility modules',
+                           readme_path=Path('README.hat-util.rst'),
                            dependencies=['pyyaml',
                                          'jsonschema',
                                          'jsonpatch'],
@@ -67,6 +68,7 @@ def task_pyhat_peg():
 
     return _get_task_build(name='hat-peg',
                            description='Hat PEG parser',
+                           readme_path=Path('README.rst'),
                            dependencies=['hat-util'],
                            mappings=mappings)
 
@@ -80,6 +82,7 @@ def task_pyhat_sbs():
 
     return _get_task_build(name='hat-sbs',
                            description='Hat simple binary serializer',
+                           readme_path=Path('README.rst'),
                            dependencies=['hat-util',
                                          'hat-peg'],
                            mappings=mappings)
@@ -96,6 +99,7 @@ def task_pyhat_chatter():
 
     return _get_task_build(name='hat-chatter',
                            description='Hat Chatter protocol',
+                           readme_path=Path('README.rst'),
                            dependencies=['hat-util',
                                          'hat-sbs'],
                            mappings=mappings)
@@ -110,6 +114,7 @@ def task_pyhat_juggler():
 
     return _get_task_build(name='hat-juggler',
                            description='Hat Juggler protocol',
+                           readme_path=Path('README.rst'),
                            dependencies=['aiohttp',
                                          'hat-util'],
                            mappings=mappings)
@@ -126,6 +131,7 @@ def task_pyhat_duktape():
 
     return _get_task_build(name='hat-duktape',
                            description='Hat Python Duktape JS wrapper',
+                           readme_path=Path('README.rst'),
                            dependencies=[],
                            mappings=mappings,
                            platform_specific=True)
@@ -142,6 +148,7 @@ def task_pyhat_sqlite3():
 
     return _get_task_build(name='hat-sqlite3',
                            description='Hat Sqlite3 build',
+                           readme_path=Path('README.rst'),
                            dependencies=[],
                            mappings=mappings,
                            platform_specific=True)
@@ -156,6 +163,7 @@ def task_pyhat_asn1():
 
     return _get_task_build(name='hat-asn1',
                            description='Hat ASN.1 parser and encoder',
+                           readme_path=Path('README.rst'),
                            dependencies=['hat-util',
                                          'hat-peg'],
                            mappings=mappings)
@@ -178,6 +186,7 @@ def task_pyhat_drivers():
 
     return _get_task_build(name='hat-drivers',
                            description='Hat communication drivers',
+                           readme_path=Path('README.rst'),
                            dependencies=['pyserial',
                                          'hat-util',
                                          'hat-asn1'],
@@ -204,6 +213,7 @@ def task_pyhat_orchestrator():
     return _get_task_build(
         name='hat-orchestrator',
         description='Hat Orchestrator',
+        readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-juggler'],
@@ -233,6 +243,7 @@ def task_pyhat_monitor():
     return _get_task_build(
         name='hat-monitor',
         description='Hat Monitor Server and client',
+        readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-sbs',
@@ -258,6 +269,7 @@ def task_pyhat_event():
     return _get_task_build(
         name='hat-event',
         description='Hat Event Server and client',
+        readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-sbs',
@@ -281,6 +293,7 @@ def task_pyhat_gateway():
     return _get_task_build(
         name='hat-gateway',
         description='Hat remote communication device gateway',
+        readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-sbs',
@@ -316,6 +329,7 @@ def task_pyhat_gui():
     return _get_task_build(
         name='hat-gui',
         description='Hat GUI server',
+        readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-sbs',
@@ -339,6 +353,7 @@ def task_pyhat_translator():
     return _get_task_build(
         name='hat-translator',
         description='Hat configuration transformation interface',
+        readme_path=Path('README.rst'),
         dependencies=['hat-util'],
         mappings=mappings,
         console_scripts=['hat-translator = hat.translator.main:main'])
@@ -364,6 +379,7 @@ def task_pyhat_syslog():
     return _get_task_build(
         name='hat-syslog',
         description='Hat Syslog',
+        readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-juggler',
@@ -373,7 +389,7 @@ def task_pyhat_syslog():
         task_dep=['jshat_app'])
 
 
-def _get_task_build(name, description, dependencies, mappings, *,
+def _get_task_build(name, description, readme_path, dependencies, mappings, *,
                     console_scripts=[], gui_scripts=[],
                     platform_specific=False, task_dep=[]):
     dst_dir = _get_build_dst_dir(name)
@@ -385,8 +401,9 @@ def _get_task_build(name, description, dependencies, mappings, *,
                         (_copy_files, [mappings]),
                         (_create_manifest, [manifest_path, mappings]),
                         (_create_setup_py, [setup_path, name, description,
-                                            dependencies, console_scripts,
-                                            gui_scripts, platform_specific])],
+                                            readme_path, dependencies,
+                                            console_scripts, gui_scripts,
+                                            platform_specific])],
             'file_dep': src_paths,
             'targets': dst_paths,
             'task_dep': task_dep}
@@ -403,11 +420,11 @@ def _copy_files(mappings):
         shutil.copyfile(str(src_path), str(dst_path))
 
 
-def _create_setup_py(path, name, description, dependencies, console_scripts,
-                     gui_scripts, platform_specific):
+def _create_setup_py(path, name, description, readme_path, dependencies,
+                     console_scripts, gui_scripts, platform_specific):
     plat_name = _get_plat_name() if platform_specific else 'any'
     version = _get_version()
-    readme = _get_readme()
+    readme = _get_readme(readme_path)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(f"from setuptools import setup\n\n\n"
                 f"readme = r\"\"\"\n{readme}\n\"\"\"\n\n"
@@ -468,6 +485,6 @@ def _get_version():
     return version.public
 
 
-def _get_readme():
-    with open('README.rst', encoding='utf-8') as f:
+def _get_readme(readme_path):
+    with open(readme_path, encoding='utf-8') as f:
         return f.read().strip()

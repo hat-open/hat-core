@@ -48,6 +48,7 @@ EventId = util.namedtuple(
 
 
 EventType = typing.List[str]
+"""Event type"""
 
 
 EventPayload = util.namedtuple(

@@ -84,6 +84,7 @@ from hat import util
 
 
 Data = typing.Union[str, bytes]
+"""Data"""
 
 
 Node = util.namedtuple(
