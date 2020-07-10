@@ -21,17 +21,19 @@ import typing
 mlog = logging.getLogger(__name__)
 
 
-async def first(xs, fn=lambda _: True, default=None):
+T = typing.TypeVar('T')
+
+
+async def first(xs: typing.AsyncIterable[T],
+                fn: typing.Callable[[T], bool] = lambda _: True,
+                default: typing.Optional[T] = None) -> typing.Optional[T]:
     """Return the first element from async iterable that satisfies
     predicate `fn`, or `default` if no such element exists.
 
     Args:
-        xs (AsyncIterable[Any]): async collection
-        fn (Callable[[Any],bool]): predicate
-        default (Any): default
-
-    Returns:
-        Any
+        xs: async collection
+        fn: predicate
+        default: default value
 
     """
     async for i in xs:
@@ -40,7 +42,8 @@ async def first(xs, fn=lambda _: True, default=None):
     return default
 
 
-async def uncancellable(f, raise_cancel=True):
+async def uncancellable(f: asyncio.Future,
+                        raise_cancel: bool = True) -> typing.Any:
     """Uncancellable execution of a Future.
 
     Future is shielded and its execution cannot be interrupted.
@@ -54,11 +57,11 @@ async def uncancellable(f, raise_cancel=True):
         caution.
 
     Args:
-        f (asyncio.Future): future
-        raise_cancel (bool): raise CancelledError flag
+        f: future
+        raise_cancel: raise CancelledError flag
 
     Returns:
-        Any: result
+        future's result
 
     """
     exception = None
@@ -91,16 +94,17 @@ class _AsyncCallableType(type(typing.Callable), _root=True):
 
 
 AsyncCallable = _AsyncCallableType()
+"""Async callable"""
 
 
-async def call(fn, *args, **kwargs):
+async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """Call a function or a coroutine.
 
     Call a `fn` with `args` and `kwargs`. If `fn` is a coroutine, it is
     awaited.
 
     Args:
-        fn (AsyncCallable): function or coroutine
+        fn: function or coroutine
         args: additional function arguments
         kwargs: additional function keyword arguments
 
@@ -114,14 +118,14 @@ async def call(fn, *args, **kwargs):
     return result
 
 
-async def call_on_cancel(fn, *args, **kwargs):
+async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """Call a function or a coroutine when canceled.
 
     When canceled, `fn` is called with `args` and `kwargs`. If `fn` is a
     coroutine, it is awaited.
 
     Args:
-        fn (AsyncCallable): function or coroutine
+        fn: function or coroutine
         args: additional function arguments
         kwargs: additional function keyword arguments
 
@@ -134,8 +138,10 @@ async def call_on_cancel(fn, *args, **kwargs):
     return await call(fn, *args, *kwargs)
 
 
-def create_executor(*args, executor_cls=concurrent.futures.ThreadPoolExecutor,
-                    loop=None):
+def create_executor(*args: typing.Any,
+                    executor_cls: typing.Type = concurrent.futures.ThreadPoolExecutor,  # NOQA
+                    loop: typing.Optional[asyncio.AbstractEventLoop] = None
+                    ) -> typing.Coroutine:
     """Create :meth:`asyncio.loop.run_in_executor` wrapper.
 
     Returns a coroutine that takes a function and its arguments, executes the
@@ -143,9 +149,9 @@ def create_executor(*args, executor_cls=concurrent.futures.ThreadPoolExecutor,
     returns the result.
 
     Args:
-        args (Any): executor args
-        executor_cls (Type): executor class
-        loop (Optional[asyncio.AbstractEventLoop]): asyncio loop
+        args: executor args
+        executor_cls: executor class
+        loop: asyncio loop
 
     Returns:
         Coroutine[[Callable,...],Any]: executor coroutine
@@ -177,7 +183,7 @@ def init_asyncio():
                 asyncio.WindowsProactorEventLoopPolicy())
 
 
-def run_asyncio(future):
+def run_asyncio(future: typing.Awaitable) -> typing.Any:
     """Run asyncio loop until the `future` is completed and return the result.
 
     SIGINT and SIGTERM handlers are temporarily overridden. Instead of raising
@@ -188,10 +194,10 @@ def run_asyncio(future):
     asyncio loop gets periodically woken up (every 0.5 seconds).
 
     Args:
-        future (Awaitable): future or coroutine
+        future: future or coroutine
 
     Returns:
-        Any: result
+        future's result
 
     """
     loop = asyncio.get_event_loop()
@@ -254,11 +260,11 @@ class Queue:
     If `maxsize` is less than or equal to zero, the queue size is infinite.
 
     Args:
-        maxsize (int): maximum number of items in the queue
+        maxsize: maximum number of items in the queue
 
     """
 
-    def __init__(self, maxsize=0):
+    def __init__(self, maxsize: int = 0):
         self._maxsize = maxsize
         self._queue = collections.deque()
         self._getters = collections.deque()
@@ -283,26 +289,26 @@ class Queue:
         return len(self._queue)
 
     @property
-    def maxsize(self):
-        """int: Maximum number of items in the queue."""
+    def maxsize(self) -> int:
+        """Maximum number of items in the queue."""
         return self._maxsize
 
     @property
-    def closed(self):
-        """asyncio.Future: Closed future."""
+    def closed(self) -> asyncio.Future:
+        """Closed future."""
         return asyncio.shield(self._closed)
 
-    def empty(self):
-        """bool: `True` if queue is empty, `False` otherwise."""
+    def empty(self) -> bool:
+        """`True` if queue is empty, `False` otherwise."""
         return not self._queue
 
-    def full(self):
-        """bool: `True` if queue is full, `False` otherwise."""
+    def full(self) -> bool:
+        """`True` if queue is full, `False` otherwise."""
         return (len(self._queue) >= self._maxsize if self._maxsize > 0
                 else False)
 
-    def qsize(self):
-        """int: Number of items currently in the queue."""
+    def qsize(self) -> int:
+        """Number of items currently in the queue."""
         return len(self._queue)
 
     def close(self):
@@ -313,12 +319,9 @@ class Queue:
         self._wakeup_all(self._putters)
         self._wakeup_next(self._getters)
 
-    def get_nowait(self):
+    def get_nowait(self) -> typing.Any:
         """Return an item if one is immediately available, else raise
         :exc:`QueueEmptyError`.
-
-        Returns:
-            Any
 
         Raises:
             QueueEmptyError
@@ -330,13 +333,10 @@ class Queue:
         self._wakeup_next(self._putters)
         return item
 
-    def put_nowait(self, item):
+    def put_nowait(self, item: typing.Any):
         """Put an item into the queue without blocking.
 
         If no free slot is immediately available, raise :exc:`QueueFullError`.
-
-        Args:
-            item (Any): item
 
         Raises:
             QueueFullError
@@ -349,13 +349,10 @@ class Queue:
         self._queue.append(item)
         self._wakeup_next(self._getters)
 
-    async def get(self):
+    async def get(self) -> typing.Any:
         """Remove and return an item from the queue.
 
         If queue is empty, wait until an item is available.
-
-        Returns:
-            Any
 
         Raises:
             QueueClosedError
@@ -379,14 +376,11 @@ class Queue:
                 raise
         return self.get_nowait()
 
-    async def put(self, item):
+    async def put(self, item: typing.Any):
         """Put an item into the queue.
 
         If the queue is full, wait until a free slot is available before adding
         the item.
-
-        Args:
-            item (Any): item
 
         Raises:
             QueueClosedError
@@ -406,13 +400,10 @@ class Queue:
                 raise
         return self.put_nowait(item)
 
-    async def get_until_empty(self):
+    async def get_until_empty(self) -> typing.Any:
         """Empty the queue and return the last item.
 
         If queue is empty, wait until at least one item is available.
-
-        Returns:
-            Any
 
         Raises:
             QueueClosedError
@@ -423,12 +414,9 @@ class Queue:
             item = self.get_nowait()
         return item
 
-    def get_nowait_until_empty(self):
+    def get_nowait_until_empty(self) -> typing.Any:
         """Empty the queue and return the last item if at least one
         item is immediately available, else raise :exc:`QueueEmptyError`.
-
-        Returns:
-            Any
 
         Raises:
             QueueEmptyError
@@ -469,12 +457,15 @@ class Group:
     WARNING.
 
     Args:
-        exception_cb (Optional[Callable[[Exception],None]]): exception handler
-        loop (Optional[asyncio.AbstractEventLoop]): asyncio loop
+        exception_cb: exception handler
+        loop: asyncio loop
 
     """
 
-    def __init__(self, exception_cb=None, *, loop=None):
+    def __init__(self,
+                 exception_cb: typing.Optional[typing.Callable[[Exception], None]] = None,  # NOQA
+                 *,
+                 loop: typing.Optional[asyncio.AbstractEventLoop] = None):
         self._exception_cb = exception_cb
         self._loop = loop or asyncio.get_event_loop()
         self._closing = asyncio.Future()
@@ -485,32 +476,27 @@ class Group:
         self._children = set()
 
     @property
-    def is_open(self):
-        """bool: `True` if group is not closing or closed, `False` otherwise.
-
-        """
+    def is_open(self) -> bool:
+        """`True` if group is not closing or closed, `False` otherwise."""
         return not self._closing.done()
 
     @property
-    def closing(self):
-        """asyncio.Future: Closing Future."""
+    def closing(self) -> asyncio.Future:
+        """Closing Future."""
         return asyncio.shield(self._closing)
 
     @property
-    def closed(self):
-        """asyncio.Future: Closed Future."""
+    def closed(self) -> asyncio.Future:
+        """Closed Future."""
         return asyncio.shield(self._closed)
 
-    def create_subgroup(self):
+    def create_subgroup(self) -> 'Group':
         """Create new Group as a child of this Group. Return the new Group.
 
         When a parent Group gets closed, all of its children are closed.
         Closing of a subgroup has no effect on the parent Group.
 
         Subgroup inherits exception handler from its parent.
-
-        Returns:
-            Group
 
         """
         if self._closing.done():
@@ -520,18 +506,12 @@ class Group:
         self._children.add(child)
         return child
 
-    def wrap(self, future):
+    def wrap(self, future: asyncio.Future) -> asyncio.Task:
         """Wrap the Future into a Task and schedule its execution. Return the
         Task object.
 
         Resulting task is shielded and can be canceled only with
         :meth:`Group.async_close`.
-
-        Args:
-            future (asyncio.Future): future
-
-        Returns:
-            asyncio.Task
 
         """
         if self._closing.done():
@@ -541,7 +521,8 @@ class Group:
         task.add_done_callback(self._on_task_done)
         return asyncio.shield(task)
 
-    def spawn(self, fn, *args, **kwargs):
+    def spawn(self, fn: typing.Callable[..., typing.Awaitable],
+              *args, **kwargs) -> asyncio.Task:
         """Wrap the result of a `fn` into a Task and schedule its execution.
         Return the Task object.
 
@@ -550,12 +531,9 @@ class Group:
         :meth:`Group.async_close`.
 
         Args:
-            fn (Callable[[...],Awaitable]): function
+            fn: function
             args: function arguments
             kwargs: function keyword arguments
-
-        Returns:
-            asyncio.Task
 
         """
         if self._closing.done():
@@ -563,7 +541,7 @@ class Group:
         future = fn(*args, **kwargs)
         return self.wrap(future)
 
-    def close(self, cancel=True):
+    def close(self, cancel: bool = True):
         """Schedule Group closing.
 
         Closing Future is set immediately. All subgroups are closed, and all
@@ -571,7 +549,7 @@ class Group:
         and execution of all tasks is completed, closed Future is set.
 
         Args:
-            cancel (bool): cancel running tasks
+            cancel: cancel running tasks
 
         """
         for child in list(self._children):
@@ -593,11 +571,11 @@ class Group:
         else:
             self._on_closed()
 
-    async def async_close(self, cancel=True):
+    async def async_close(self, cancel: bool = True):
         """Close Group and wait until closed Future is completed.
 
         Args:
-            cancel (bool): cancel running tasks
+            cancel: cancel running tasks
 
         """
         self.close(cancel)

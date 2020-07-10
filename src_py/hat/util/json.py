@@ -12,8 +12,6 @@ import jsonpatch
 import jsonschema.validators
 import yaml
 
-from hat import util
-
 
 Data = typing.Union[None, bool, int, float, str,
                     typing.List['Data'],
@@ -21,23 +19,17 @@ Data = typing.Union[None, bool, int, float, str,
 """JSON data type identifier."""
 
 
-Format = util.extend_enum_doc(enum.Enum('Format', ['JSON', 'YAML']))
+Format = enum.Enum('Format', ['JSON', 'YAML'])
+"""Encoding format"""
 
 
-def equals(a, b):
+def equals(a: Data, b: Data) -> bool:
     """Equality comparison of json serializable data.
 
     Tests for equality of data according to JSON format. Notably, ``bool``
     values are not considered equal to numeric values in any case. This is
     different from default equality comparison, which considers `False`
     equal to `0` and `0.0`; and `True` equal to `1` and `1.0`.
-
-    Args:
-        a (Data): data
-        b (Data): data
-
-    Returns:
-        bool
 
     """
     if isinstance(a, bool) != isinstance(b, bool):
@@ -53,44 +45,25 @@ def equals(a, b):
         return True
 
 
-def diff(src, dst):
-    """Generate JSON Patch diff.
-
-    Args:
-        src (Data): data
-        dst (Data): data
-
-    Returns:
-        Data
-
-    """
+def diff(src: Data, dst: Data) -> Data:
+    """Generate JSON Patch diff."""
     return jsonpatch.JsonPatch.from_diff(src, dst).patch
 
 
-def patch(data, diff):
-    """Apply JSON Patch diff.
-
-    Args:
-        data (Data): data
-        diff (Data): diff
-
-    Returns:
-        Data
-
-    """
+def patch(data: Data, diff: Data) -> Data:
+    """Apply JSON Patch diff."""
     return jsonpatch.apply_patch(data, diff)
 
 
-def encode(data, format=Format.JSON, indent=None):
+def encode(data: Data,
+           format: Format = Format.JSON,
+           indent: typing.Optional[int] = None) -> str:
     """Encode JSON data.
 
     Args:
-        data (Data): JSON data
-        format (Format): encoding format
-        indent (Optional[int]): indentation size
-
-    Returns:
-        str
+        data: JSON data
+        format: encoding format
+        indent: indentation size
 
     """
     if format == Format.JSON:
@@ -104,15 +77,12 @@ def encode(data, format=Format.JSON, indent=None):
     raise ValueError()
 
 
-def decode(data_str, format=Format.JSON):
+def decode(data_str: str, format: Format = Format.JSON) -> Data:
     """Decode JSON data.
 
     Args:
-        data_str (str): encoded JSON data
-        format (Format): encoding format
-
-    Returns:
-        Data
+        data_str: encoded JSON data
+        format: encoding format
 
     """
     if format == Format.JSON:
@@ -126,16 +96,19 @@ def decode(data_str, format=Format.JSON):
     raise ValueError()
 
 
-def encode_file(data, path, format=None, indent=4):
+def encode_file(data: Data,
+                path: pathlib.PurePath,
+                format: typing.Optional[Format] = None,
+                indent: typing.Optional[int] = 4):
     """Encode JSON data to file.
 
     If format is `None`, encoding format is derived from path suffix.
 
     Args:
-        data (Data): JSON data
-        path (pathlib.PurePath): file path
-        format (Optional[Format]): encoding format
-        indent (Optional[int]): indentation size
+        data: JSON data
+        path: file path
+        format: encoding format
+        indent: indentation size
 
     """
     if format is None:
@@ -160,17 +133,15 @@ def encode_file(data, path, format=None, indent=4):
             raise ValueError()
 
 
-def decode_file(path, format=None):
+def decode_file(path: pathlib.PurePath,
+                format: typing.Optional[Format] = None) -> Data:
     """Decode JSON data from file.
 
     If format is `None`, encoding format is derived from path suffix.
 
     Args:
-        path (pathlib.PurePath): file path
-        format (Optional[Format]): encoding format
-
-    Returns:
-        Data
+        path: file path
+        format: encoding format
 
     """
     if format is None:
@@ -216,12 +187,11 @@ class SchemaRepository:
     the new repository. Previously added schemas with the same `id` are
     replaced.
 
-    Args:
-        args (Union[pathlib.PurePath,Data,SchemaRepository]): init arguments
-
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args: typing.Union[pathlib.PurePath,
+                                           Data,
+                                           'SchemaRepository']):
         self._data = {}
         for arg in args:
             if isinstance(arg, pathlib.PurePath):
@@ -231,12 +201,12 @@ class SchemaRepository:
             else:
                 self._load_schema(arg)
 
-    def validate(self, schema_id, data):
+    def validate(self, schema_id: str, data: Data):
         """Validate data against JSON schema.
 
         Args:
-            schema_id (str): JSON schema identifier
-            data (Data): data to be validated
+            schema_id: JSON schema identifier
+            data: data to be validated
 
         Raises:
             jsonschema.ValidationError
@@ -254,21 +224,19 @@ class SchemaRepository:
             schema=resolver.resolve_fragment(resolver.referrer, uri.fragment),
             resolver=resolver)
 
-    def to_json(self):
+    def to_json(self) -> Data:
         """Export repository content as json serializable data.
 
         Entire repository content is exported as json serializable data.
         New repository can be created from the exported content by using
         :meth:`SchemaRepository.from_json`.
 
-        Returns:
-            Data
-
         """
         return self._data
 
     @staticmethod
-    def from_json(data):
+    def from_json(data: typing.Union[pathlib.PurePath,
+                                     Data]) -> 'SchemaRepository':
         """Create new repository from content exported as json serializable
         data.
 
@@ -276,10 +244,7 @@ class SchemaRepository:
         exported by using :meth:`SchemaRepository.to_json`.
 
         Args:
-            data (Union[pathlib.PurePath,Data]): repository data
-
-        Returns:
-            SchemaRepository
+            data: repository data
 
         """
         if isinstance(data, pathlib.PurePath):

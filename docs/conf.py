@@ -51,6 +51,7 @@ autodoc_default_options = {'members': True,
                            'member-order': 'bysource',
                            'undoc-members': True,
                            'show-inheritance': True}
+autodoc_typehints = 'description'
 
 plot_include_source = False
 plot_html_show_source_link = False

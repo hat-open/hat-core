@@ -3,29 +3,38 @@
 import argparse
 import collections
 import contextlib
+import enum
 import logging.handlers
 import os
 import pathlib
 import sys
+import typing
 
 
-def first(xs, fn=lambda _: True, default=None):
+T = typing.TypeVar('T')
+
+
+def first(xs: typing.Iterable[T],
+          fn: typing.Callable[[T], bool] = lambda _: True,
+          default: typing.Optional[T] = None) -> typing.Optional[T]:
     """Return the first element from iterable that satisfies predicate `fn`,
     or `default` if no such element exists.
 
     Args:
-        xs (Iterable[Any]): collection
-        fn (Callable[[Any],bool]): predicate
-        default (Any): default
-
-    Returns:
-        Any
+        xs: collection
+        fn: predicate
+        default: default value
 
     """
     return next((i for i in xs if fn(i)), default)
 
 
-def namedtuple(name, *field_props):
+def namedtuple(name: typing.Union[str, typing.Tuple[str, str]],
+               *field_props: typing.Iterable[typing.Union[
+                    str,
+                    typing.Tuple[str, str],
+                    typing.Tuple[str, str, typing.Any]
+               ]]) -> typing.Type[collections.namedtuple]:
     """Create a documented Type[collections.namedtuple]`.
 
     The `name` can be a string; or a tuple containing name and documentation.
@@ -35,13 +44,8 @@ def namedtuple(name, *field_props):
     of field name, documentation and default value.
 
     Args:
-        name (Union[str,Tuple[str,str]]):
-            tuple name with optional documentation
-        field_props (Iterable[Union[str,Tuple[str,str],Tuple[str,str,Any]]]):
-            tuple field properties
-
-    Returns:
-        Type[collections.namedtuple]
+        name: tuple name with optional documentation
+        field_props: tuple field properties
 
     """
     field_props = [(i, None) if isinstance(i, str) else list(i)
@@ -66,16 +70,9 @@ def namedtuple(name, *field_props):
     return cls
 
 
-def extend_enum_doc(cls, description=None):
-    """Extend enumeration documentation with a list of all members.
-
-    Args:
-        cls (enum.EnumMeta): enumeration class
-
-    Returns:
-        enum.EnumMeta
-
-    """
+def extend_enum_doc(cls: enum.EnumMeta,
+                    description: str = None) -> enum.EnumMeta:
+    """Extend enumeration documentation with a list of all members."""
     doc = description or cls.__doc__
     cls.__doc__ = doc + "\n\n" + "\n".join("* " + i.name for i in cls)
     return cls
@@ -106,23 +103,21 @@ class CallbackRegistry:
     exception is reraised and no subsequent callback is notified.
 
     Args:
-        exception_cb (Optional[Callable[[Exception],None]]): exception handler
+        exception_cb: exception handler
 
     """
 
-    def __init__(self, exception_cb=None):
+    def __init__(self,
+                 exception_cb: typing.Optional[typing.Callable[[Exception], None]] = None):  # NOQA
         self._exception_cb = exception_cb
         self._cbs = []
 
-    def register(self, cb):
+    def register(self, cb: typing.Callable) -> RegisterCallbackHandle:
         """Register a callback. A handle for registration canceling is
         returned.
 
         Args:
-            cb (Callable): callback
-
-        Returns:
-            RegisterCallbackHandle
+            cb: callback
 
         """
         self._cbs.append(cb)
@@ -140,16 +135,13 @@ class CallbackRegistry:
                     raise
 
 
-def parse_url_query(query):
+def parse_url_query(query: str) -> typing.Dict[str, str]:
     """Parse url query string.
 
     Returns a dictionary of field names and their values.
 
     Args:
-        query (str): url query string
-
-    Returns:
-        Dict[str,str]
+        query: url query string
 
     """
     ret = {}
@@ -163,18 +155,12 @@ def parse_url_query(query):
     return ret
 
 
-def parse_env_path(path):
+def parse_env_path(path: os.PathLike) -> pathlib.Path:
     """Parse path with environment variables.
 
     Parse file path and replace all file path segments equal to ``$<name>``
     with value of ``<name>`` environment variable. If environment variable is
     not set, segments are replaced with ``.``.
-
-    Args:
-        path (os.PathLike): file path
-
-    Returns:
-        pathlib.Path
 
     """
     path = pathlib.Path(path)

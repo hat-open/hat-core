@@ -2,6 +2,7 @@
 
 import asyncio
 import sphinx.addnodes
+import sphinx.domains.python
 
 
 def setup(app):
@@ -29,4 +30,11 @@ def _pending_xref__get(self, key, failobj=None):
     return result
 
 
-sphinx.addnodes.pending_xref.get = _pending_xref__get
+def _PythonDomain__resolve_xref(*args, **kwargs):
+    return None
+
+
+# sphinx.addnodes.pending_xref.get = _pending_xref__get
+
+# TODO: disable reference resolving until "multiple targets" fixed
+sphinx.domains.python.PythonDomain.resolve_xref = _PythonDomain__resolve_xref
