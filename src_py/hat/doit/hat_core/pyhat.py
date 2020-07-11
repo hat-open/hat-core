@@ -335,7 +335,7 @@ def task_pyhat_gui():
                       'hat-sbs',
                       'hat-chatter',
                       'hat-monitor',
-                      'hat-event'
+                      'hat-event',
                       'hat-juggler'],
         mappings=mappings,
         console_scripts=['hat-gui = hat.gui.main:main'],
