@@ -28,13 +28,14 @@ def main():
         output = act_list(module_names=args.module_names)
 
     elif args.action == 'translate':
+        json_schema_repo = json.SchemaRepository(
+            json.json_schema_repo, *args.additional_json_schemas_paths)
         input_conf = json.decode(sys.stdin.read(), format=json_format)
-        output = act_translate(
-            module_names=args.module_names,
-            additional_json_schemas_paths=args.additional_json_schemas_paths,
-            input_type=args.input_type,
-            output_type=args.output_type,
-            input_conf=input_conf)
+        output = act_translate(module_names=args.module_names,
+                               json_schema_repo=json_schema_repo,
+                               input_type=args.input_type,
+                               output_type=args.output_type,
+                               input_conf=input_conf)
 
     else:
         raise NotImplementedError()
@@ -58,15 +59,14 @@ def act_list(module_names):
             for trans in translators]
 
 
-def act_translate(module_names, additional_json_schemas_paths, input_type,
+def act_translate(module_names, json_schema_repo, input_type,
                   output_type, input_conf):
     """Translate action
 
     Args:
         module_names (List[str]): python module names with translator
             definitions
-        additional_json_schemas_paths (List[pathlib.Path]):
-            additional json schemas paths
+        json_schema_repo (json.SchemaRepository): json schemas repository
         input_type (str): input configuration type identifier
         output_type (str): output configuration type identifier
         input_conf (json.Data): input configuration
@@ -75,8 +75,6 @@ def act_translate(module_names, additional_json_schemas_paths, input_type,
         json.Data
 
     """
-    json_schema_repo = json.SchemaRepository(
-        json.json_schema_repo, *additional_json_schemas_paths)
     translators = _get_translators(module_names)
     trans = util.first(translators[::-1],
                        lambda i: i.input_type == input_type and
