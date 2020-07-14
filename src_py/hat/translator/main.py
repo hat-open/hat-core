@@ -21,39 +21,81 @@ builtin_translators = []
 def main():
     """Main"""
     args = _create_parser().parse_args()
-
-    json_schema_repo = json.SchemaRepository(
-        json.json_schema_repo, *args.additional_json_schemas_paths)
-    translators = []
-    for module in itertools.chain(builtin_translators, args.module_names):
-        translators += importlib.import_module(module).translators
-    format = {'yaml': json.Format.YAML,
-              'json': json.Format.JSON}[args.format]
+    json_format = {'yaml': json.Format.YAML,
+                   'json': json.Format.JSON}[args.format]
 
     if args.action == 'list':
-        output = [_translator_to_json(trans) for trans in translators]
+        output = act_list(module_names=args.module_names)
 
     elif args.action == 'translate':
-        trans = util.first(translators[::-1],
-                           lambda i: i.input_type == args.input_type and
-                           i.output_type == args.output_type)
-        if not trans:
-            raise Exception('translator not found')
-        input_conf = json.decode(sys.stdin.read(), format=format)
-        if trans.input_schema:
-            json_schema_repo.validate(trans.input_schema, input_conf)
-        output = trans.translate(input_conf)
-        if trans.output_schema:
-            json_schema_repo.validate(trans.output_schema, output)
+        input_conf = json.decode(sys.stdin.read(), format=json_format)
+        output = act_translate(
+            module_names=args.module_names,
+            additional_json_schemas_paths=args.additional_json_schemas_paths,
+            input_type=args.input_type,
+            output_type=args.output_type,
+            input_conf=input_conf)
 
     else:
         raise NotImplementedError()
 
-    print(json.encode(output, format=format, indent=4))
+    print(json.encode(output, format=json_format, indent=4))
 
 
-def _translator_to_json(trans):
-    return {k: v for k, v in trans._asdict().items() if k != 'translate'}
+def act_list(module_names):
+    """List action
+
+    Args:
+        module_names (List[str]): python module names with translator
+            definitions
+
+    Returns:
+        json.Data
+
+    """
+    translators = _get_translators(module_names)
+    return [{k: v for k, v in trans._asdict().items() if k != 'translate'}
+            for trans in translators]
+
+
+def act_translate(module_names, additional_json_schemas_paths, input_type,
+                  output_type, input_conf):
+    """Translate action
+
+    Args:
+        module_names (List[str]): python module names with translator
+            definitions
+        additional_json_schemas_paths (List[pathlib.Path]):
+            additional json schemas paths
+        input_type (str): input configuration type identifier
+        output_type (str): output configuration type identifier
+        input_conf (json.Data): input configuration
+
+    Returns:
+        json.Data
+
+    """
+    json_schema_repo = json.SchemaRepository(
+        json.json_schema_repo, *additional_json_schemas_paths)
+    translators = _get_translators(module_names)
+    trans = util.first(translators[::-1],
+                       lambda i: i.input_type == input_type and
+                       i.output_type == output_type)
+    if not trans:
+        raise Exception('translator not found')
+    if trans.input_schema:
+        json_schema_repo.validate(trans.input_schema, input_conf)
+    output = trans.translate(input_conf)
+    if trans.output_schema:
+        json_schema_repo.validate(trans.output_schema, output)
+    return output
+
+
+def _get_translators(module_names):
+    translators = []
+    for module in itertools.chain(builtin_translators, module_names):
+        translators += importlib.import_module(module).translators
+    return translators
 
 
 def _create_parser():
