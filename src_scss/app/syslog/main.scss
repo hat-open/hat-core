@@ -147,7 +147,6 @@ html, body {
             }
 
             & > .timestamps {
-                display: flex;
                 align-items: center;
 
                 & > .timestamp-filter {
@@ -627,7 +626,7 @@ html, body {
 
     & > .snackbars {
         z-index: 2;
-        
+
         position: absolute;
         left: 50%;
         transform: translate(-50%);
