@@ -126,19 +126,19 @@ function header() {
             ((filter.getGlobalLast() === null && filter.getGlobalFirst() === null) ?  [] : ['div.buttons',
                 ['div.navigation-button', {
                     class: {
-                        disabled: filter.navigateBackDisabled(),
+                        disabled: filter.navigatePreviousDisabled(),
                     },
                     on: {
-                        click: filter.navigateBackDisabled() ? ev => ev : () => filter.navigateFirst()
+                        click: filter.navigatePreviousDisabled() ? ev => ev : () => filter.navigateFirst()
                     }},
                     ['span.fa.fa-angle-double-left']
                 ],
                 ['div.navigation-button', {
                     class: {
-                        disabled: filter.navigateBackDisabled()
+                        disabled: filter.navigatePreviousDisabled()
                     },
                     on: {
-                        click: filter.navigateBackDisabled() ? ev => ev : () => filter.navigatePrevious()
+                        click: filter.navigatePreviousDisabled() ? ev => ev : () => filter.navigatePrevious()
                     }},
                     ['span.fa.fa-angle-left'],
                 ],
@@ -301,32 +301,36 @@ function tableVt() {
                 on: {
                     keydown: ev => {
                         const currentSelected = details.getSelectedEntry();
-                        if (!currentSelected) {
-                            return;
-                        }
                         const tableRows = ev.target.children;
                         const selectedRowIndex = table.getEntries().findIndex(e => e == currentSelected);
-                        if (ev.key == 'ArrowDown') {
-                            const rowElement = tableRows[selectedRowIndex + 1];
-                            if (rowElement)
-                                rowElement.scrollIntoView({block: 'nearest'});
-                            details.selectPreviousEntry();
-                            ev.preventDefault();
-                        } else if (ev.key == 'ArrowUp') {
-                            const rowElement = tableRows[selectedRowIndex - 3];
-                            if (rowElement)
-                                rowElement.scrollIntoView({block: 'nearest'});
+                        if (currentSelected !== null) {
+                            if (ev.key == 'ArrowDown') {
+                                const rowElement = tableRows[selectedRowIndex + 1];
+                                if (rowElement)
+                                    rowElement.scrollIntoView({block: 'nearest'});
+                                details.selectPreviousEntry();
+                                ev.preventDefault();
+                            } else if (ev.key == 'ArrowUp') {
+                                const rowElement = tableRows[selectedRowIndex - 3];
+                                if (rowElement)
+                                    rowElement.scrollIntoView({block: 'nearest'});
 
-                            // hack for first two rows and sticky table header
-                            if (selectedRowIndex < 3) 
-                                ev.target.parentElement.parentElement.scroll(0, 0);
-                            details.selectNextEntry();
-                            ev.preventDefault();
-                        } else if (ev.key == 'Enter') {
-                            details.setCollapsed(false);
-                        } else if (ev.key == 'Escape') {
-                            if (!details.isCollapsed())
-                                details.setCollapsed(true);
+                                // hack for first two rows and sticky table header
+                                if (selectedRowIndex < 3) 
+                                    ev.target.parentElement.parentElement.scroll(0, 0);
+                                details.selectNextEntry();
+                                ev.preventDefault();
+                            } else if (ev.key == 'Enter') {
+                                details.setCollapsed(false);
+                            } else if (ev.key == 'Escape') {
+                                if (!details.isCollapsed())
+                                    details.setCollapsed(true);
+                            }
+                        }
+                        if (ev.key == 'ArrowLeft') {
+                            filter.navigatePrevious();
+                        } else if (ev.key == 'ArrowRight') {
+                            filter.navigateNext();
                         }
                     }
                 }},

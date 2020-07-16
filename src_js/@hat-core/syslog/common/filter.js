@@ -76,7 +76,7 @@ export function getNextLastId() {
 }
 
 
-export function navigateBackDisabled() {
+export function navigatePreviousDisabled() {
     return getLast() == getGlobalLast(); 
 }
 
@@ -91,11 +91,15 @@ export function navigateNextDisabled() {
 
 
 export function navigateNext() {
+    if (navigateNextDisabled())
+        return;
     r.change(changeLastId(r.get('remote', 'entries').slice(-1)[0].id - 1));
 }
 
 
 export function navigatePrevious() {
+    if (navigatePreviousDisabled())
+        return;
     const pages = r.get('local', 'pageLastIds');
     const currentPageIndex = pages.findIndex(page => page == getLast());
     if (currentPageIndex > 0)
