@@ -18,21 +18,20 @@ from hat.util import json
 def main():
     aio.init_asyncio()
     args = _create_parser().parse_args()
-    sbs_repo = common.create_sbs_repo(args.schemas_sbs_path)
 
     with contextlib.suppress(asyncio.CancelledError):
-        aio.run_asyncio(async_main(args, sbs_repo))
+        aio.run_asyncio(async_main(args))
 
 
-async def async_main(args, sbs_repo):
+async def async_main(args):
     address = f'tcp+sbs://{args.host}:{args.port}'
     subscriptions = args.subscriptions if args.command == 'subscribe' else None
 
     try:
-        client = await hat.event.client.connect(
-            sbs_repo, address, subscriptions=subscriptions)
-    except Exception:
-        print('unable to connect')
+        client = await hat.event.client.connect(address,
+                                                subscriptions=subscriptions)
+    except Exception as e:
+        print('unable to connect', e)
         sys.exit(1)
 
     printer = CsvPrinter(args) if args.csv else PrettyPrinter(args)
@@ -66,7 +65,7 @@ async def _register(args, client, printer):
         event_type=args.event_type,
         source_timestamp=args.source_timestamp,
         payload=(common.EventPayload(type=common.EventPayloadType.JSON,
-                                     data=json.encode(args.payload))
+                                     data=args.payload)
                  if args.payload is not None else None))
     events = await client.register_with_response([register_event])
     printer.print(events)
@@ -114,9 +113,9 @@ class PrettyPrinter():
             print("=" * (sum(lengths) + 2 * (len(headers) - 1)))
         self._first = False
 
-        print("  ".join(header.ljust(l)
-              for header, l in zip(headers, lengths)))
-        print("  ".join("-" * l for l in lengths))
+        print("  ".join(header.ljust(length)
+              for header, length in zip(headers, lengths)))
+        print("  ".join("-" * length for length in lengths))
 
         for row in rows:
             print("  ".join(col.rjust(l) if align == 'r' else col.ljust(l)
@@ -173,7 +172,7 @@ def _format_payload(payload, default='-'):
             common.EventPayloadType.JSON: 'JSON',
             common.EventPayloadType.SBS: 'SBS'}[payload.type]
     data = {common.EventPayloadType.BINARY: lambda: payload.data.hex(),
-            common.EventPayloadType.JSON: lambda: payload.data,
+            common.EventPayloadType.JSON: lambda: json.encode(payload.data),
             common.EventPayloadType.SBS: lambda: json.encode({
                 'module': payload.data.module,
                 'type': payload.data.type,
