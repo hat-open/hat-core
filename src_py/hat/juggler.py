@@ -51,7 +51,7 @@ async def connect(address):
     """
     session = aiohttp.ClientSession()
     try:
-        ws = await session.ws_connect(address)
+        ws = await session.ws_connect(address, max_msg_size=0)
     except Exception:
         await session.close()
         raise
