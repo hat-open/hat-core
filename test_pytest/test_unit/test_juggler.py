@@ -166,6 +166,15 @@ async def test_send_receive(client_server_connection, messages):
 
 
 @pytest.mark.asyncio
+async def test_big_message_server_to_client(client_server_connection):
+    client_conn, server_conn = client_server_connection
+
+    big_msg = '1' * 4194304 * 2
+    await server_conn.send(big_msg)
+    assert big_msg == await client_conn.receive()
+
+
+@pytest.mark.asyncio
 async def test_connection_closed(client_server_connection):
     local_conn, remote_conn = client_server_connection
 
