@@ -127,6 +127,13 @@ async def test_can_connect(connection_count, server_factory):
             data=[mms.BooleanData(value=True)]),
         mms.WriteResponse(results=[mms.DataAccessError.INVALID_ADDRESS])
     ), (
+        mms.WriteRequest(
+            specification=[mms.NameVariableSpecification(
+                name=mms.DomainSpecificObjectName(
+                    domain_id='dev', item_id='abc'))],
+            data=[mms.BooleanData(value=True)]),
+        mms.WriteResponse(results=[None])
+    ), (
         mms.DefineNamedVariableListRequest(
             name=mms.VmdSpecificObjectName(identifier='x'),
             specification=[mms.NameVariableSpecification(
