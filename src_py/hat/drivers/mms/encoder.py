@@ -123,7 +123,7 @@ def decode_request(req):
         subname, subdata = data['variableAccessSpecification']
         if subname == 'variableListName':
             value = _decode_object_name(subdata)
-        elif name == 'listOfVariable':
+        elif subname == 'listOfVariable':
             value = [_decode_variable_specification(i['variableSpecification'])
                      for i in subdata]
         else:
@@ -134,7 +134,7 @@ def decode_request(req):
         subname, subdata = data['variableAccessSpecification']
         if subname == 'variableListName':
             specification = _decode_object_name(subdata)
-        elif name == 'listOfVariable':
+        elif subname == 'listOfVariable':
             specification = [
                 _decode_variable_specification(i['variableSpecification'])
                 for i in subdata]
