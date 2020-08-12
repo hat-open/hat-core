@@ -1,6 +1,5 @@
 JavaScript utility library
 ==========================
 
-.. include:: ../../../README.hat-core.util.rst
-   :start-line: 27
-
+Documentation of `@hat-core/util` is available as part of
+`@hat-core documentation <../../jshat/index.html>`_.

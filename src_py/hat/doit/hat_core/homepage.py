@@ -4,7 +4,7 @@ import xml.etree.ElementTree
 from hat.doit import common
 from hat.doit import tmpl
 from hat.doit.hat_core.articles import dst_dir as articles_src_dir
-from hat.doit.hat_core.docs import html_dst_dir as docs_src_dir
+from hat.doit.hat_core.docs import dst_dir as docs_src_dir
 
 
 __all__ = ['task_homepage',
@@ -74,7 +74,7 @@ def task_homepage_docs():
     """Homepage - copy docs files"""
     return {'actions': [(common.rm_rf, [docs_dst_dir]),
                         (common.cp_r, [docs_src_dir, docs_dst_dir])],
-            'task_dep': ['docs_html']}
+            'task_dep': ['docs']}
 
 
 def task_homepage_articles():
