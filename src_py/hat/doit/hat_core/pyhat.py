@@ -68,7 +68,7 @@ def task_pyhat_peg():
 
     return _get_task_build(name='hat-peg',
                            description='Hat PEG parser',
-                           readme_path=Path('README.rst'),
+                           readme_path=Path('README.hat-peg.rst'),
                            dependencies=['hat-util'],
                            mappings=mappings)
 

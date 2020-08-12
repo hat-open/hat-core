@@ -59,7 +59,9 @@ Example usage of PEG parser::
         Value   <- Spacing ([0-9]+ / '(' Expr ')') Spacing
         Spacing <- ' '*
     ''', 'Expr')
+
     ast = grammar.parse('1 + 2 * 3 + (4 - 5) * 6 + 7')
+
     result = hat.peg.walk_ast(ast, {
         'Expr': lambda n, c: c[0],
         'Sum': lambda n, c: functools.reduce(
@@ -72,6 +74,7 @@ Example usage of PEG parser::
             c[0]),
         'Value': lambda n, c: (c[2] if c[1] == '(' else
                                int(''.join(c[1:-1])))})
+
     assert result == 8
 
 """
@@ -99,7 +102,13 @@ Node = util.namedtuple(
     ['value', 'List[Union[Node,Data]]: subnodes or leafs'])
 
 
-def walk_ast(node, actions, default_action=None):
+Action = typing.Callable[[Node, typing.List], typing.Any]
+
+
+def walk_ast(node: Node,
+             actions: typing.Dict[str, Action],
+             default_action: typing.Optional[Action] = None
+             ) -> typing.Any:
     """Simple depth-first abstract syntax tree parser.
 
     Actions are key value pairs where keys represent node names and values
@@ -109,11 +118,6 @@ def walk_ast(node, actions, default_action=None):
     action, default action is used. If default action is not defined and node
     name doesn't match action, result is None and recursion is stopped.
 
-    Args:
-        actions (Dict[str,Callable[[Node,List[Any]],Any]]): actions
-        default_action (Optional[Callable[[Node,List[Any]],Any]]):
-            default action
-
     """
     action = actions.get(node.name, default_action)
     if not action:
@@ -122,72 +126,6 @@ def walk_ast(node, actions, default_action=None):
                 if isinstance(i, Node) else i
                 for i in node.value]
     return action(node, children)
-
-
-class Grammar:
-    """PEG Grammar.
-
-    Args:
-        definitions (Union[str,Dict[str,Expression]]): grammar definitions
-        starting (str): starting definition name
-
-    """
-
-    def __init__(self, definitions, starting):
-        if isinstance(definitions, str):
-            data = definitions.encode('utf-8')
-            ast = _peg_grammar.parse(data)
-            definitions = walk_ast(ast, _peg_actions)
-            definitions = {k: _reduce_expression(v)
-                           for k, v in definitions.items()}
-        self._definitions = definitions
-        self._starting = starting
-
-    @property
-    def definitions(self):
-        """Dict[str,Expression]: definitions"""
-        return self._definitions
-
-    @property
-    def starting(self):
-        """str: starting definition name"""
-        return self._starting
-
-    def parse(self, data, debug_cb=None):
-        """Parse input data.
-
-        `debug_cb` is optional function which can be used for monitoring and
-        debugging parse steps. It is called each time named definition
-        is successfully or unsuccessfully matched. This function receives
-        match result and match call stack.
-
-        Args:
-            data (Data): input data
-            debug_cb (Optional[Callable[[MatchResult,MatchCallStack],None]]):
-                debug callback
-
-        Returns:
-            Node
-
-        Raises:
-            Exception
-
-        """
-        if isinstance(data, str):
-            data_fn = functools.partial(str, encoding='utf-8')
-            data = data.encode('utf-8')
-        else:
-            data_fn = bytes
-        state = _State(grammar=self,
-                       data=memoryview(data),
-                       call_stack=_MatchCallStack(None, None),
-                       data_fn=data_fn,
-                       debug_cb=debug_cb)
-        result = _match(state, self._starting)
-        if result.node is None:
-            raise Exception("could not match starting definition")
-        x = _reduce_node(data_fn, result.node)
-        return x
 
 
 Sequence = util.namedtuple('Sequence', ['expressions', 'List[Expression]'])
@@ -220,14 +158,72 @@ MatchCallFrame = util.namedtuple(
 MatchCallStack = typing.Iterable[MatchCallFrame]
 
 
-def console_debug_cb(result, call_stack):
-    """Simple console debugger.
+DebugCb = typing.Callable[[MatchResult, MatchCallStack], None]
+
+
+class Grammar:
+    """PEG Grammar.
 
     Args:
-        result (MatchResult): match result
-        call_stack (MatchCallStack): match call stack
+        definitions: grammar definitions
+        starting: starting definition name
 
     """
+
+    def __init__(self,
+                 definitions: typing.Union[str,
+                                           typing.Dict[str, Expression]],
+                 starting: str):
+        if isinstance(definitions, str):
+            data = definitions.encode('utf-8')
+            ast = _peg_grammar.parse(data)
+            definitions = walk_ast(ast, _peg_actions)
+            definitions = {k: _reduce_expression(v)
+                           for k, v in definitions.items()}
+        self._definitions = definitions
+        self._starting = starting
+
+    @property
+    def definitions(self) -> typing.Dict[str, Expression]:
+        """Definitions"""
+        return self._definitions
+
+    @property
+    def starting(self) -> str:
+        """Starting definition name"""
+        return self._starting
+
+    def parse(self,
+              data: Data,
+              debug_cb: typing.Optional[DebugCb] = None
+              ) -> Node:
+        """Parse input data.
+
+        `debug_cb` is optional function which can be used for monitoring and
+        debugging parse steps. It is called each time named definition
+        is successfully or unsuccessfully matched. This function receives
+        match result and match call stack.
+
+        """
+        if isinstance(data, str):
+            data_fn = functools.partial(str, encoding='utf-8')
+            data = data.encode('utf-8')
+        else:
+            data_fn = bytes
+        state = _State(grammar=self,
+                       data=memoryview(data),
+                       call_stack=_MatchCallStack(None, None),
+                       data_fn=data_fn,
+                       debug_cb=debug_cb)
+        result = _match(state, self._starting)
+        if result.node is None:
+            raise Exception("could not match starting definition")
+        x = _reduce_node(data_fn, result.node)
+        return x
+
+
+def console_debug_cb(result: MatchResult, call_stack: MatchCallStack):
+    """Simple console debugger."""
     success = '+++' if result.node else '---'
     stack = ', '.join(frame.name for frame in call_stack)
     consumed = util.first(call_stack).data[:-len(result.rest)]
