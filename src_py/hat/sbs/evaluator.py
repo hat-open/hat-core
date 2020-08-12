@@ -1,17 +1,12 @@
+import typing
+
 from hat.sbs import parser
 from hat.sbs import serializer
 
 
-def evaluate_modules(modules):
-    """Evaluate modules.
-
-    Args:
-        modules (Iterable[parser.AstModule]): modules
-
-    Returns:
-        Dict[serializer.Ref,serializer.Type]
-
-    """
+def evaluate_modules(modules: typing.Iterable[parser.AstModule]
+                     ) -> typing.Dict[serializer.Ref, serializer.Type]:
+    """Evaluate modules."""
     refs = dict(_builtin_refs)
     modules_dict = {module.name: module for module in modules}
     for module in modules_dict.values():

@@ -1,38 +1,8 @@
 Simple binary serialization
 ===========================
 
-Simple binary serialization (SBS) features:
-
-    * schema based
-    * small schema language optimized for human readability
-    * schema re-usability and organization into modules
-    * small number of built in types
-    * polymorphic data types
-    * binary serialization
-    * designed to enable simple and efficient implementation
-    * optimized for small encoded data size
-
-Example of SBS schema::
-
-    module Module
-
-    Entry(K, V) = Tuple {
-        key: K
-        value: V
-    }
-
-    Collection(K) = Union {
-        null: None
-        bool: Entry(K, Boolean)
-        int: Entry(K, Integer)
-        float: Entry(K, Float)
-        str: Entry(K, String)
-        bytes: Entry(K, Bytes)
-    }
-
-    IntKeyCollection = Collection(Integer)
-
-    StrKeyCollection = Collection(String)
+.. include:: ../../README.hat-sbs.rst
+   :start-line: 27
 
 
 Schema definition

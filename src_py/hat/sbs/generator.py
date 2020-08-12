@@ -1,14 +1,20 @@
+import pathlib
+
+from hat.sbs import repository
 from hat.sbs import serializer
 
 
-def generate_c(repo, dir_path, file_name='sbs_defs', prefix='hat_sbs_defs'):
+def generate_c(repo: repository.Repository,
+               dir_path: pathlib.Path,
+               file_name: str = 'sbs_defs',
+               prefix: str = 'hat_sbs_defs'):
     """Generate C header and source files
 
     Args:
-        repo (hat.sbs.repository.Repository): repository
-        dir_path (pathlib.Path): output directory path
-        file_name (str): header and source file names without suffix
-        prefix (str): variable names prefix
+        repo: repository
+        dir_path: output directory path
+        file_name: header and source file names without suffix
+        prefix: variable names prefix
 
     """
     with open(dir_path / f'{file_name}.h', 'w', encoding='utf-8') as f_h:

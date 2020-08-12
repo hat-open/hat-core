@@ -47,16 +47,15 @@ Data = typing.Union[bool, int, float, str, bytes,
                     typing.Tuple[str, 'Data']]
 
 
-def encode(refs, t, value):
+def encode(refs: typing.Dict[Ref, Type],
+           t: Type,
+           value: Data) -> bytes:
     """Encode value.
 
     Args:
-        refs (Dict[Ref,Type]): type references
-        t (Type): SBS type
-        value (Data): value
-
-    Returns:
-        bytes
+        refs: type references
+        t: SBS type
+        value: value
 
     """
     while isinstance(t, Ref) and t in refs:
@@ -80,16 +79,16 @@ def encode(refs, t, value):
     raise ValueError()
 
 
-def decode(refs, t, data):
+def decode(refs: typing.Dict[Ref, Type],
+           t: Type,
+           data: typing.Union[bytes, bytearray, memoryview]
+           ) -> typing.Tuple[Data, typing.Union[bytes, bytearray, memoryview]]:
     """Decode data.
 
     Args:
-        refs (Dict[Ref,Type]): type references
-        t (Type): SBS type
-        data (Union[bytes,bytearray,memoryview]): data
-
-    Returns:
-        Tuple[Data,Union[bytes,bytearray,memoryview]]
+        refs: type references
+        t: SBS type
+        data: data
 
     """
     while isinstance(t, Ref) and t in refs:

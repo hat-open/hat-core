@@ -1,4 +1,5 @@
 from hat import util
+from hat.util import json
 import hat.peg
 
 
@@ -26,30 +27,14 @@ AstEntry = util.namedtuple(
     ['type', 'AstType'])
 
 
-def parse(schema):
-    """Parse SBS schema
-
-    Args:
-        schema (str): SBS schema
-
-    Returns:
-        AstModule
-
-    """
+def parse(schema: str) -> AstModule:
+    """Parse SBS schema"""
     ast = _grammar.parse(schema)
     return hat.peg.walk_ast(ast, _actions)
 
 
-def module_to_json(module):
-    """Create JSON data representation of module definition
-
-    Args:
-        module (AstModule): module definition
-
-    Returns:
-        hat.util.json.Data
-
-    """
+def module_to_json(module: AstModule) -> json.Data:
+    """Create JSON data representation of module definition"""
     return {'name': module.name,
             'type_defs': {k: {'name': v.name,
                               'args': v.args,
@@ -57,16 +42,8 @@ def module_to_json(module):
                           for k, v in module.type_defs.items()}}
 
 
-def module_from_json(data):
-    """Create module definition from JSON data
-
-    Args:
-        data (hat.util.json.Data): JSON data
-
-    Returns:
-        AstModule
-
-    """
+def module_from_json(data: json.Data) -> AstModule:
+    """Create module definition from JSON data"""
     return AstModule(name=data['name'],
                      type_defs={k: AstTypeDef(name=v['name'],
                                               args=v['args'],

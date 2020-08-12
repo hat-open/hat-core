@@ -1,4 +1,5 @@
 import pathlib
+import typing
 
 from hat.sbs import evaluator
 from hat.sbs import parser
@@ -15,71 +16,48 @@ class Repository:
         * path to direcory recursivly searched for .sbs files
         * other repository
 
-    Args:
-        args (Union[Repository,pathlib.Path,str]): initialization arguments
-
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args: typing.Union['Repository', pathlib.Path, str]):
         self._modules = list(_parse_args(args))
         self._refs = evaluator.evaluate_modules(self._modules)
 
-    def encode(self, module_name, type_name, value):
-        """Encode value.
-
-        Args:
-            module_name (Optional[str]): module name
-            type_name (str): type name
-            value (serializer.Data): value
-
-        Returns:
-            bytes
-
-        """
+    def encode(self,
+               module_name: typing.Optional[str],
+               type_name: str,
+               value: serializer.Data
+               ) -> bytes:
+        """Encode value."""
         ref = serializer.Ref(module_name, type_name)
         return serializer.encode(self._refs, ref, value)
 
-    def decode(self, module_name, type_name, data):
-        """Decode data.
-
-        Args:
-            module_name (Optional[str]): module name
-            type_name (str): type name
-            data (Union[bytes,bytearray,memoryview]): data
-
-        Returns:
-            serializer.Data
-
-        """
+    def decode(self,
+               module_name: typing.Optional[str],
+               type_name: str,
+               data: typing.Union[bytes, bytearray, memoryview]
+               ) -> serializer.Data:
+        """Decode data."""
         ref = serializer.Ref(module_name, type_name)
         return serializer.decode(self._refs, ref, memoryview(data))[0]
 
-    def to_json(self):
+    def to_json(self) -> json.Data:
         """Export repository content as json serializable data.
 
         Entire repository content is exported as json serializable data.
         New repository can be created from the exported content by using
         :meth:`Repository.from_json`.
 
-        Returns:
-            json.Data
-
         """
         return [parser.module_to_json(module) for module in self._modules]
 
     @staticmethod
-    def from_json(data):
+    def from_json(data: typing.Union[pathlib.PurePath, serializer.Data]
+                  ) -> 'Repository':
         """Create new repository from content exported as json serializable
         data.
 
         Creates a new repository from content of another repository that was
         exported by using :meth:`Repository.to_json`.
-
-        Args:
-            data (Union[pathlib.PurePath,Data]): repository data
-
-        Returns:
-            Repository
 
         """
         if isinstance(data, pathlib.PurePath):
