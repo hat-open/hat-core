@@ -1,4 +1,4 @@
-/** @module "@hat-core"/future
+/** @module @hat-core/future
  */
 
 

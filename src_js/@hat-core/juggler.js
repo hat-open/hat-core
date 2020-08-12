@@ -1,4 +1,4 @@
-/** @module "@hat-core"/juggler
+/** @module @hat-core/juggler
  */
 
 import jiff from 'jiff';
@@ -174,11 +174,11 @@ export class Connection {
 export class Application {
     /**
      * Create application
-     * @param {module:"@hat-core"/renderer.Renderer} r renderer
+     * @param {module:@hat-core/renderer.Renderer} r renderer
      * @param {?string} address juggler server address, see
-     *     {@link module:"@hat-core"/juggler.Connection}
-     * @param {?module:"@hat-core"/util.Path} localPath local data state path
-     * @param {?module:"@hat-core"/util.Path} remotePath remote data state path
+     *     {@link module:@hat-core/juggler.Connection}
+     * @param {?module:@hat-core/util.Path} localPath local data state path
+     * @param {?module:@hat-core/util.Path} remotePath remote data state path
      */
     constructor(r, address, localPath, remotePath) {
         this._conn = null;

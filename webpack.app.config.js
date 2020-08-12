@@ -33,7 +33,9 @@ function app(name, entry) {
             ignored: /node_modules/
         },
         plugins: [
-            new CopyWebpackPlugin([{from: 'src_web/app/' + name}])
+            new CopyWebpackPlugin({
+                patterns: [{from: 'src_web/app/' + name}]
+            })
         ],
         devtool: 'source-map',
         stats: 'errors-only'

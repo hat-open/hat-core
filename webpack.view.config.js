@@ -34,7 +34,9 @@ function view(name, entry) {
             ignored: /node_modules/
         },
         plugins: [
-            new CopyWebpackPlugin([{from: 'src_web/view/' + name}])
+            new CopyWebpackPlugin({
+                patterns: [{from: 'src_web/view/' + name}]
+            })
         ],
         devtool: 'eval-source-map',
         stats: 'errors-only'

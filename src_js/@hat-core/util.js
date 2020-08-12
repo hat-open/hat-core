@@ -1,5 +1,4 @@
-/** @module "@hat-core"/util
- *
+/**
  * Utility library for manipulation of JSON data.
  *
  * Main characteristics:
@@ -10,9 +9,11 @@
  *   - implementation based on natively supported browser JS API
  *   - scope limited to most used functions in hat projects
  *   - usage of `paths` instead of `lenses`
-
+ *
  * TODO: define convetion for naming arguments based on their type and
  *       semantics
+ *
+ * @module @hat-core/util
  */
 
 /**
@@ -20,7 +21,7 @@
  *
  * TODO: explain paths and path compositions (include examples)
  *
- * @typedef {String|Number|Path[]} module:"@hat-core"/util.Path
+ * @typedef {(String|Number|Path[])} module:@hat-core/util.Path
  */
 
 /**
@@ -837,7 +838,7 @@ export function sleep(t) {
  * @sig (((a1, a2, ..., an) -> _), Number, a1, a2, ..., an) -> Promise
  * @param {Function} fn
  * @param {Number} [t=0]
- * @param {...} args
+ * @param {*} args
  * @return {Promise}
  */
 export function delay(fn, t, ...args) {

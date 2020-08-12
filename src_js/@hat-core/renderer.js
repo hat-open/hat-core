@@ -1,10 +1,11 @@
-/** @module "@hat-core"/renderer
+/** @module @hat-core/renderer
  */
 
-import * as snabbdom from 'snabbdom/es/snabbdom';
-import snabbdomClass from 'snabbdom/es/modules/class';
-import snabbdomDataset from 'snabbdom/es/modules/dataset';
-import snabbdomEvent from 'snabbdom/es/modules/eventlisteners';
+import {init as snabbdomInit} from 'snabbdom/build/package/init';
+import {h as snabbdomH} from 'snabbdom/build/package/h';
+import {classModule as snabbdomClass} from 'snabbdom/build/package/modules/class';
+import {datasetModule as snabbdomDataset} from 'snabbdom/build/package/modules/dataset';
+import {eventListenersModule as snabbdomEvent} from 'snabbdom/build/package/modules/eventlisteners';
 
 import * as u from '@hat-core/util';
 
@@ -75,7 +76,7 @@ const snabbdomProps = (() => {
 })();
 
 
-const patch = snabbdom.init([
+const patch = snabbdomInit([
     snabbdomAttributes,
     snabbdomClass,
     snabbdomProps,
@@ -102,8 +103,8 @@ function vhFromArray(node) {
         Array.from
     )(node.slice(hasData ? 2 : 1));
     const result = hasData ?
-        snabbdom.h(node[0], node[1], children) :
-        snabbdom.h(node[0], children);
+        snabbdomH(node[0], node[1], children) :
+        snabbdomH(node[0], children);
     return result;
 }
 
