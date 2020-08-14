@@ -99,7 +99,7 @@ def task_pyhat_chatter():
 
     return _get_task_build(name='hat-chatter',
                            description='Hat Chatter protocol',
-                           readme_path=Path('README.rst'),
+                           readme_path=Path('README.hat-chatter.rst'),
                            dependencies=['hat-util',
                                          'hat-sbs'],
                            mappings=mappings)
