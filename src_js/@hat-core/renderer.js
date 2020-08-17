@@ -6,6 +6,7 @@ import {h as snabbdomH} from 'snabbdom/build/package/h';
 import {classModule as snabbdomClass} from 'snabbdom/build/package/modules/class';
 import {datasetModule as snabbdomDataset} from 'snabbdom/build/package/modules/dataset';
 import {eventListenersModule as snabbdomEvent} from 'snabbdom/build/package/modules/eventlisteners';
+import {styleModule as snabbdomStyle} from 'snabbdom/build/package/modules/style';
 
 import * as u from '@hat-core/util';
 
@@ -79,9 +80,10 @@ const snabbdomProps = (() => {
 const patch = snabbdomInit([
     snabbdomAttributes,
     snabbdomClass,
-    snabbdomProps,
     snabbdomDataset,
-    snabbdomEvent
+    snabbdomEvent,
+    snabbdomProps,
+    snabbdomStyle
 ]);
 
 
