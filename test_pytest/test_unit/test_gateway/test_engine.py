@@ -78,6 +78,12 @@ async def set_enable(client, gateway_name, device_type, device_name, enable):
             data=enable))])
 
 
+@pytest.mark.asyncio
+async def test_create_engine_without_devices(event_server, engine_factory):
+    async with engine_factory('gateway 0', []):
+        pass
+
+
 @pytest.mark.parametrize("device_count", [1, 2, 10])
 @pytest.mark.asyncio
 async def test_create_device(event_server, event_server_port,

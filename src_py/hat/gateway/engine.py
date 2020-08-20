@@ -44,7 +44,8 @@ async def create_engine(conf, client):
         for device_conf in devices}
 
     try:
-        await asyncio.wait(create_proxy_tasks.values())
+        if create_proxy_tasks:
+            await asyncio.wait(create_proxy_tasks.values())
         engine._device_proxies = {}
         for name, task in create_proxy_tasks.items():
             proxy = task.result()
