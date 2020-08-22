@@ -131,9 +131,15 @@ async def test_send_receive(sbs_repo, unused_tcp_port):
     data = chatter.Data(module='Test',
                         type='Data',
                         data=123)
-    conn1.send(data)
+    conv = conn1.send(data)
+    assert conv.owner is True
     msg = await conn2.receive()
-    assert data == msg.data
+    assert msg.data == data
+    assert msg.conv.owner is False
+    assert msg.conv.first_id == conv.first_id
+    assert msg.first is True
+    assert msg.last is True
+    assert msg.token is True
 
     await conn1.async_close()
     await conn2.async_close()

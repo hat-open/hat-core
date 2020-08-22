@@ -350,7 +350,8 @@ class Connection:
                         conv=Conversation(conn=self,
                                           owner=not transport_msg['owner'],
                                           first_id=transport_msg['first']),
-                        first=transport_msg['first'],
+                        first=(transport_msg['owner'] and
+                               transport_msg['first'] == transport_msg['id']),
                         last=transport_msg['last'],
                         token=transport_msg['token'])
                 except asyncio.CancelledError:
