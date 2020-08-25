@@ -98,18 +98,35 @@ AsyncCallable = _AsyncCallableType()
 
 
 async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
-    """Call a function or a coroutine.
+    """Call a function or a coroutine (or other callable object).
 
-    Call a `fn` with `args` and `kwargs`. If `fn` is a coroutine, it is
-    awaited.
+    Call a `fn` with `args` and `kwargs`. If result of this call is awaitable,
+    it is awaited and returned. Otherwise, result is immediately returned.
 
     Args:
-        fn: function or coroutine
-        args: additional function arguments
-        kwargs: additional function keyword arguments
+        fn: callable object
+        args: additional positional arguments
+        kwargs: additional keyword arguments
 
     Returns:
-        function result
+        awaited result or result
+
+    Example:
+
+        def f1(x):
+            return x
+
+        def f2(x):
+            f = asyncio.Future()
+            f.set_result(x)
+            return f
+
+        async def f3(x):
+            return 'x
+
+        assert 'f1' == await hat.util.aio.call(f1, 'f1')
+        assert 'f2' == await hat.util.aio.call(f2, 'f2')
+        assert 'f3' == await hat.util.aio.call(f3, 'f3')
 
     """
     result = fn(*args, **kwargs)
@@ -121,8 +138,8 @@ async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
 async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """Call a function or a coroutine when canceled.
 
-    When canceled, `fn` is called with `args` and `kwargs`. If `fn` is a
-    coroutine, it is awaited.
+    When canceled, `fn` is called with `args` and `kwargs`by using
+    :func:`call`.
 
     Args:
         fn: function or coroutine
