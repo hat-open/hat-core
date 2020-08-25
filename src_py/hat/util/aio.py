@@ -100,8 +100,9 @@ AsyncCallable = _AsyncCallableType()
 async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """Call a function or a coroutine (or other callable object).
 
-    Call a `fn` with `args` and `kwargs`. If result of this call is awaitable,
-    it is awaited and returned. Otherwise, result is immediately returned.
+    Call the `fn` with `args` and `kwargs`. If result of this call is
+    awaitable, it is awaited and returned. Otherwise, result is immediately
+    returned.
 
     Args:
         fn: callable object
