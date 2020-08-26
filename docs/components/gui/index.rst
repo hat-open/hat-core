@@ -151,6 +151,7 @@ Supported juggler `MESSAGE` messages sent from server to client are::
             type: object
             required:
                 - type
+                - reason
                 - user
                 - view
                 - conf
@@ -158,12 +159,17 @@ Supported juggler `MESSAGE` messages sent from server to client are::
                 type:
                     enum:
                         - state
+                reason:
+                    enum:
+                        - init
+                        - login
+                        - logout
+                        - auth_fail
+                        - internal_error
                 user:
                     type:
                         - string
                         - "null"
-                    description: |
-                        null represents unsuccessful authentication
                 view:
                     type: object
         adapter:
@@ -184,20 +190,30 @@ Supported juggler `MESSAGE` messages sent from server to client are::
                         structure of this property is defined by
                         adapter type
 
-When client establishes new juggler connection with server, initial local
-data on server side is ``null``. Immediately after connection is established,
-server sends `state` message with `user` ``null`` and initial view.
+When client establishes new juggler connection with server, initial local data
+on server side is ``null``. Immediately after connection is established, server
+sends `state` message with `reason` ``init`` and initial view.
+
 At any time, client can send `login` or `logout` message. Once server receives
-``login`` or ``logout`` message, it should respond with appropriate ``state``
+`login` or `logout` message, it should respond with appropriate `state`
 message.
 
-When client successfully authenticates, server will create new `Session`
-instance which is responsible for further communication with client. Initial
-`state` message delivered to client will contain `view` data and configuration.
-Session continuously updates server's local data according to
-AdapterSessionClient's local data. It is also responsible for creating adapter
-session and bidirectional forwarding of `adapter` messages between frontend
-client and adapter client.
+If the authentication using credentials provided in `login` message fails,
+server sends `state` message with `reason` ``auth_fail`` and initial view.
+
+If client successfully authenticates, server will create new `Session` instance
+which is responsible for further communication with client. It sends a `state`
+message with `reason` ``login``, `user` set to username, and a view
+configured for a role that user has. Session continuously updates server's
+local data according to AdapterSessionClient's local data. It is also
+responsible for creating adapter session and bidirectional forwarding of
+`adapter` messages between frontend client and adapter client.
+
+After a client logs out, server sends `state` message with `reason`
+``logout`` and `user` set to ``null``.
+
+If a server-side error causes sending a `state` message with initial view,
+`reason` is set to ``internal_error``.
 
 
 Adapters
@@ -304,6 +320,31 @@ with properties:
     * ``conf``
 
         view's configuration
+
+    * ``reason``
+
+        enum representing a reason for showing this view
+
+            * `init`
+
+                initial view after connection establishment
+
+            * `login`
+
+                user has successfully logged in
+
+            * `logout`
+
+                user has successfully logged out
+
+            * `auth_fail`
+
+                authentication attempt was unsuccessful, wrong credentials were
+                provided
+
+            * `internal_error`
+
+                server experienced internal error
 
     * ``user``
 
