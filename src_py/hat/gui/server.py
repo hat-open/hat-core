@@ -59,7 +59,7 @@ class Server:
         initial_view = self._conf['initial_view']
         session = None
         try:
-            await self._show_view(conn, initial_view)
+            await self._show_view(conn, initial_view, reason='init')
             while True:
                 msg = await conn.receive()
                 if msg['type'] == 'login':
@@ -71,7 +71,7 @@ class Server:
                     if session:
                         await session.async_close()
                         session = None
-                    await self._show_view(conn, initial_view)
+                    await self._show_view(conn, initial_view, reason='logout')
                 elif msg['type'] == 'adapter':
                     if not session:
                         continue
@@ -89,14 +89,15 @@ class Server:
         initial_view = self._conf['initial_view']
         user = self._authenticate(name, password)
         if not user:
-            await self._show_view(conn, initial_view)
+            await self._show_view(conn, initial_view, reason='auth_fail')
             return
         roles = [self._roles[i] for i in user['roles']]
         if not roles:
             mlog.warning('user % has no roles', user['name'])
-            await self._show_view(conn, initial_view)
+            await self._show_view(conn, initial_view, reason='internal_error')
             return
-        await self._show_view(conn, roles[0]['view'], user['name'])
+        await self._show_view(conn, roles[0]['view'],
+                              reason='login', username=user['name'])
         adapters = {i: self._adapters[i]
                     for role in roles
                     for i in role['adapters']}
@@ -113,12 +114,13 @@ class Server:
             return
         return user
 
-    async def _show_view(self, conn, name, username=None):
+    async def _show_view(self, conn, name,  reason='init', username=None):
         view = await self._views.get(name)
         conn.set_local_data(None)
         await conn.flush_local_data()
         await conn.send({'type': 'state',
                          'user': username,
+                         'reason': reason,
                          'view': view.data,
                          'conf': view.conf})
         conn.set_local_data({})

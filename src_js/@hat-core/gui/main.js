@@ -78,6 +78,7 @@ class ViewManager {
             node => node.parentNode.removeChild(node));
         this._hat = {
             conf: msg.conf,
+            reason: msg.reason,
             user: msg.user,
             view: msg.view,
             conn: new ViewConnection(this.app)

@@ -16,6 +16,12 @@ export async function init() {
 export function vt() {
     const namePath = ['view', 'name'];
     const passwordPath = ['view', 'password'];
+    let prompt;
+    if (hat.reason == 'auth_fail')
+        prompt = 'Username or password is incorrect';
+    else if (hat.reason == 'internal_error')
+        prompt = 'Internal server error occured';
+
     return ['div.login', {
         on: {
             keyup: evt => {
@@ -24,6 +30,7 @@ export function vt() {
                 }
             }
         }},
+        !prompt ? [] : ['div.prompt', prompt],
         ['div.grid',
             form.textInput(namePath, 'Name').slice(1),
             form.passwordInput(passwordPath, 'Password').slice(1)
