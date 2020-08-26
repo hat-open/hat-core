@@ -420,38 +420,45 @@ async def test_user_login(run_gui, gui_conf, gui_port,
     user_conf = gui_conf['server']['users'][0]
     client = await create_client(gui_conf, user_conf)
 
+    msg_initial = {'type': 'state',
+                   'reason': 'init',
+                   'user': None,
+                   'view': initial_view.file_data,
+                   'conf': None}
+    msg_login = {'type': 'state',
+                 'reason': 'login',
+                 'user': user_conf['name'],
+                 'view': {f'{view_name}.txt':
+                          f'this is {view_name}'},
+                 'conf': None}
+    msg_auth_fail = dict(msg_initial, reason='auth_fail')
+    msg_logout = dict(msg_initial, reason='logout')
+
     # inital message
-    msg_init = await client.receive()
-    assert msg_init == {'type': 'state',
-                        'user': None,
-                        'view': initial_view.file_data,
-                        'conf': None}
+    assert await client.receive() == msg_initial
 
     # login failed
     await client.login(password='abc')
-    assert await client.receive() == msg_init
+    assert await client.receive() == msg_auth_fail
     await client.login(name='xy')
-    assert await client.receive() == msg_init
+    assert await client.receive() == msg_auth_fail
     await client.login(name='123', password='456')
-    assert await client.receive() == msg_init
+    assert await client.receive() == msg_auth_fail
 
     # login success
     await client.login()
-    msg_success = await client.receive()
-    assert msg_success == {'type': 'state',
-                           'user': user_conf['name'],
-                           'view': {f'{view_name}.txt':
-                                    f'this is {view_name}'},
-                           'conf': None}
+    assert await client.receive() == msg_login
+
     # login success again
     await client.login()
-    assert await client.receive() == msg_success
+    assert await client.receive() == msg_login
+
     # login failed while logged-in
     await client.login(name='bla')
-    assert await client.receive() == msg_init
+    assert await client.receive() == msg_auth_fail
 
     await client.logout()
-    assert await client.receive() == msg_init
+    assert await client.receive() == msg_logout
 
     gui_process.close_and_wait_or_kill()
     await client.async_close()

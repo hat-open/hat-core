@@ -92,6 +92,7 @@ async def test_login_success(unused_tcp_port, server_factory):
                          'password': sha256_hexstr('pass1')})
         state_message = await conn.receive()
         assert state_message['type'] == 'state'
+        assert state_message['reason'] == 'login'
         assert state_message['user'] == 'user1'
 
 
@@ -114,6 +115,7 @@ async def test_login_fail(unused_tcp_port, server_factory):
                          'password': sha256_hexstr('pass1')})
         state_message = await conn.receive()
         assert state_message['type'] == 'state'
+        assert state_message['reason'] == 'auth_fail'
         assert state_message['user'] is None
 
         await conn.send({'type': 'login',
@@ -121,6 +123,7 @@ async def test_login_fail(unused_tcp_port, server_factory):
                          'password': sha256_hexstr('incorrect')})
         state_message = await conn.receive()
         assert state_message['type'] == 'state'
+        assert state_message['reason'] == 'auth_fail'
         assert state_message['user'] is None
 
 
@@ -150,6 +153,7 @@ async def test_two_logins(unused_tcp_port, server_factory):
                          'password': sha256_hexstr('pass2')})
         message = await conn.receive()
         assert message['type'] == 'state'
+        assert message['reason'] == 'login'
         assert message['user'] == 'user2'
 
 
@@ -179,6 +183,7 @@ async def test_two_logins_second_fail(unused_tcp_port, server_factory):
                          'password': sha256_hexstr('incorrect')})
         message = await conn.receive()
         assert message['type'] == 'state'
+        assert message['reason'] == 'auth_fail'
         assert message['user'] is None
 
 
@@ -199,6 +204,7 @@ async def test_logout(unused_tcp_port, server_factory):
         await conn.send({'type': 'logout'})
         state_message = await conn.receive()
         assert state_message['type'] == 'state'
+        assert state_message['reason'] == 'logout'
         assert state_message['user'] is None
 
         await conn.send({'type': 'login',
@@ -210,6 +216,7 @@ async def test_logout(unused_tcp_port, server_factory):
         await conn.send({'type': 'logout'})
         state_message = await conn.receive()
         assert state_message['type'] == 'state'
+        assert state_message['reason'] == 'logout'
         assert state_message['user'] is None
 
 
@@ -310,6 +317,7 @@ async def test_user_noroles(unused_tcp_port, server_factory,
 
         state_message = await conn.receive()
         assert state_message['type'] == 'state'
+        assert state_message['reason'] == 'internal_error'
         assert state_message['user'] is None
         assert state_message['conf'] is None
         view_state = state_message['view']
