@@ -18,7 +18,7 @@ def task_win32_launcher():
         if not name or not module:
             raise Exception('undefined arguments')
         dst_dir.mkdir(parents=True, exist_ok=True)
-        subprocess.run([c.cc, '-O2',
+        subprocess.run([c.cc, '-O2', '-mwindows',
                         '-o', f'{dst_dir / name}.exe',
                         f'-DHAT_WIN32_LAUNCHER_PYTHON_MODULE="\\"{module}\\""',
                         str(src_path)],
