@@ -362,3 +362,55 @@ async def test_data_serialization(server_factory, data):
             assert math.isclose(received_data.value, data[0].value)
         else:
             assert received_data == expected_data
+
+
+@pytest.mark.asyncio
+async def test_receive_unconfirmed_raises_connection_exception(server_factory):
+
+    async def connection_cb(connection):
+        pass
+
+    async def request_cb(connection, request):
+        pass
+
+    async with server_factory(connection_cb, request_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(request_cb, address)
+        result_future = conn.receive_unconfirmed()
+
+    with pytest.raises(ConnectionError):
+        await result_future
+
+    await conn.async_close()
+
+
+@pytest.mark.asyncio
+async def test_send_confirmed_raises_connection_exception(server_factory):
+
+    async def connection_cb(connection):
+        pass
+
+    async def request_cb(connection, request):
+        await asyncio.sleep(1)
+
+    async with server_factory(connection_cb, request_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(request_cb, address)
+        result_future = conn.send_confirmed(mms.StatusRequest())
+
+    with pytest.raises(ConnectionError):
+        await result_future
+
+    await conn.async_close()
+
+    async with server_factory(connection_cb, request_cb) as server:
+        address = server.addresses[0]
+        conn = await mms.connect(request_cb, address)
+        result_future = asyncio.ensure_future(
+            conn.send_confirmed(mms.StatusRequest()))
+        await asyncio.sleep(0.01)
+
+    with pytest.raises(ConnectionError):
+        await result_future
+
+    await conn.async_close()

@@ -217,4 +217,5 @@ async def _asyncio_async_close(x, flush=False):
             await x.flush()
     with contextlib.suppress(Exception):
         x.close()
-    await x.wait_closed()
+    with contextlib.suppress(ConnectionError):
+        await x.wait_closed()

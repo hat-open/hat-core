@@ -226,8 +226,14 @@ class Connection:
         Returns:
             common.Unconfirmed
 
+        Raises:
+            ConnectionError: in case connection is in closing or closed state
+
         """
-        return await self._unconfirmed_queue.get()
+        try:
+            return await self._unconfirmed_queue.get()
+        except aio.QueueClosedError:
+            raise ConnectionError('connection is not open')
 
     def send_unconfirmed(self, unconfirmed):
         """Send unconfirmed message
@@ -250,9 +256,12 @@ class Connection:
         Returns:
             common.Response
 
+        Raises:
+            ConnectionError: in case connection is in closing or closed state
+
         """
         if self._group.closing.done():
-            raise Exception('connection not open')
+            raise ConnectionError('connection is not open')
         invoke_id = self._last_invoke_id + 1
         pdu = 'confirmed-RequestPDU', {
             'invokeID': invoke_id,
@@ -278,6 +287,10 @@ class Connection:
         finally:
             self._group.close()
             self._unconfirmed_queue.close()
+            for response_future in self._response_futures.values():
+                if not response_future.done():
+                    response_future.set_exception(
+                        ConnectionError('connection is not open'))
             await aio.uncancellable(self._acse_conn.async_close())
 
     async def _process_pdu(self, pdu):
