@@ -43,14 +43,6 @@ class DummyBackend(common.Backend):
         """See :meth:`common.Backend.async_close`"""
         await self._group.async_close()
 
-    async def get_event_type_id_mappings(self):
-        """See :meth:`common.Backend.get_event_type_id_mappings`"""
-        return await self._group.spawn(aio.call, lambda: {})
-
-    async def add_event_type_id_mappings(self, mappings):
-        """See :meth:`common.Backend.add_event_type_id_mappings`"""
-        return await self._group.spawn(aio.call, lambda: None)
-
     async def get_last_event_id(self, server_id):
         """See :meth:`common.Backend.get_last_event_id`"""
         return await self._group.spawn(

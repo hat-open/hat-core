@@ -25,13 +25,6 @@ def ts_gen(start):
         yield start._replace(us=start.us + next(n))
 
 
-async def register(backend, events):
-    mappings = {i.event_type_id: [str(i.event_type_id)]
-                for i in events}
-    await backend.add_event_type_id_mappings(mappings)
-    return await backend.register(events)
-
-
 @pytest.fixture(params=['sqlite'], scope="module")
 def conf_factory(tmpdir_factory, request):
 
@@ -55,7 +48,7 @@ async def backend_with_events(conf_factory, event_loop,
     reg_events = []
     for ts in [ts0, ts1, ts2]:
         backend_events = backend_events_factory(timestamp=ts)
-        await register(backend, backend_events)
+        await backend.register(backend_events)
         reg_events += backend_events
 
     yield backend, reg_events
@@ -85,7 +78,7 @@ async def backend_memory_backend(conf_factory, event_loop,
     ts = ts_gen(hat.event.common.now())
     for i in range(3):
         backend_events += backend_events_factory(timestamp=next(ts))
-    await register(backend, backend_events)
+    await backend.register(backend_events)
     await memory_backend.register(backend_events)
 
     yield backend, memory_backend
@@ -96,22 +89,22 @@ async def backend_memory_backend(conf_factory, event_loop,
 @pytest.fixture(scope="module")
 def backend_events_factory():
     types_payloads = [
-        (1, {'value': 1.2, 'quality': "GOOD"},
+        (['1'], {'value': 1.2, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (1, {'value': 1.3, 'quality': "GOOD"},
+        (['1'], {'value': 1.3, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (1, {'value': 2.8, 'quality': "GOOD"},
+        (['1'], {'value': 2.8, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (2, {'value': 205, 'quality': "GOOD"},
+        (['2'], {'value': 205, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (2, b'308', hat.event.common.EventPayloadType.BINARY),
-        (2, hat.event.common.SbsData(module=None, type='String',
-                                     data=b'ab '),
+        (['2'], b'308', hat.event.common.EventPayloadType.BINARY),
+        (['2'], hat.event.common.SbsData(module=None, type='String',
+                                         data=b'ab '),
          hat.event.common.EventPayloadType.SBS),
-        (3, [1, 2, 3], hat.event.common.EventPayloadType.JSON),
-        (4, 'payload', hat.event.common.EventPayloadType.JSON),
-        (4, None, hat.event.common.EventPayloadType.JSON),
-        (5, None, hat.event.common.EventPayloadType.JSON)]
+        (['3'], [1, 2, 3], hat.event.common.EventPayloadType.JSON),
+        (['4'], 'payload', hat.event.common.EventPayloadType.JSON),
+        (['4'], None, hat.event.common.EventPayloadType.JSON),
+        (['5'], None, hat.event.common.EventPayloadType.JSON)]
     event_id_state = {1: 0,
                       2: 0}
 
@@ -119,13 +112,13 @@ def backend_events_factory():
         ret = []
         ts = timestamp if timestamp else hat.event.common.now()
         source_ts = ts_gen(source_timestamp if source_timestamp else ts)
-        for event_type_id, payload, payload_type in types_payloads:
+        for event_type, payload, payload_type in types_payloads:
             event_id_state[server_id] += 1
-            ret.append(hat.event.server.common.BackendEvent(
+            ret.append(hat.event.server.common.Event(
                 event_id=hat.event.common.EventId(
                     server=server_id,
                     instance=event_id_state[server_id]),
-                event_type_id=event_type_id,
+                event_type=event_type,
                 timestamp=ts,
                 source_timestamp=next(source_ts),
                 payload=hat.event.common.EventPayload(type=payload_type,
@@ -143,8 +136,8 @@ async def test_register(backend, backend_events_factory):
 
 
 @pytest.mark.asyncio
-async def test_event_type_id_mappings(backend):
-    mappings_stored = await backend.get_event_type_id_mappings()
+async def test_event_type_mappings(backend):
+    mappings_stored = await backend.get_event_type_mappings()
     assert not mappings_stored
 
     mappings = {1: ['a'],
@@ -154,22 +147,22 @@ async def test_event_type_id_mappings(backend):
                 5: ['a', 'b', 'c'],
                 6: ['a', 'b', 'd'],
                 7: []}
-    await backend.add_event_type_id_mappings(mappings)
-    mappings_stored = await backend.get_event_type_id_mappings()
+    await backend.add_event_type_mappings(mappings)
+    mappings_stored = await backend.get_event_type_mappings()
     assert mappings == mappings_stored
 
     mappings_ = {8: ['d', 'e', 'f'],
                  9: ['g', 'h', 'i']}
-    await backend.add_event_type_id_mappings(mappings_)
-    mappings_stored = await backend.get_event_type_id_mappings()
+    await backend.add_event_type_mappings(mappings_)
+    mappings_stored = await backend.get_event_type_mappings()
     mappings.update(mappings_)
     assert mappings_stored == mappings
 
     # event_type_id_mappings are immutable
     mappings_ = {6: ['a', 'b', 'c', 'd'],
                  7: ['k', 'l']}
-    await backend.add_event_type_id_mappings(mappings_)
-    mappings_stored = await backend.get_event_type_id_mappings()
+    await backend.add_event_type_mappings(mappings_)
+    mappings_stored = await backend.get_event_type_mappings()
     assert mappings_stored == mappings
 
 
@@ -195,10 +188,10 @@ async def test_get_last_event_id(backend, backend_events_factory):
         e.event_id.instance for e in registered_events2)
 
 
-@pytest.mark.parametrize("event_ids, event_type_ids, payload", [
+@pytest.mark.parametrize("event_ids, event_types, payload", [
     (None, None, None),
     ([hat.event.common.EventId(server=1, instance=0)], None, None),
-    (None, [1, 4, 5], None),
+    (None, [['1'], ['4'], ['5']], None),
     (None, [], None),
     (None, None, hat.event.common.EventPayload(
         type=hat.event.common.EventPayloadType.JSON,
@@ -226,15 +219,15 @@ async def test_get_last_event_id(backend, backend_events_factory):
 @pytest.mark.parametrize("max_results", [None, 2])
 @pytest.mark.asyncio
 async def test_query_vs_memory_backend(backend_memory_backend,
-                                       event_ids, event_type_ids, t_from, t_to,
+                                       event_ids, event_types, t_from, t_to,
                                        source_t_from, source_t_to, payload,
                                        unique_type, max_results):
 
     backend, memory_backend = backend_memory_backend
 
-    q_data = hat.event.server.common.BackendQueryData(
+    q_data = hat.event.server.common.QueryData(
         event_ids=event_ids,
-        event_type_ids=event_type_ids,
+        event_types=event_types,
         t_from=t_from,
         t_to=t_to,
         source_t_from=source_t_from,
@@ -271,7 +264,7 @@ async def test_query_on_time(backend_with_events,
         else:
             ts_events[e.timestamp] = [e]
     query_res_exp = [e for ts in ts_expected for e in ts_events[ts]]
-    query_data = hat.event.server.common.BackendQueryData(
+    query_data = hat.event.server.common.QueryData(
         **{ts_label + k: v for k, v in time_filter.items()})
     query_res = await backend.query(query_data)
     assert all(e in query_res_exp for e in query_res)
@@ -289,9 +282,9 @@ async def test_order_unique_type(backend_with_events, order_by, order,
     backend, _ = backend_with_events
 
     query_res = await backend.query(
-        hat.event.server.common.BackendQueryData(unique_type=True,
-                                                 order_by=order_by,
-                                                 order=order))
+        hat.event.server.common.QueryData(unique_type=True,
+                                          order_by=order_by,
+                                          order=order))
     assert all(e.timestamp == ts_expected for e in query_res)
 
 
@@ -301,10 +294,10 @@ async def test_unique_source_ts(backend, backend_events_factory):
     timestamp_gen = ts_gen(source_ts)
     for i in range(3):
         ts = next(timestamp_gen)
-        await register(backend, backend_events_factory(
+        await backend.register(backend_events_factory(
             timestamp=ts, source_timestamp=source_ts))
 
-    query_res = await backend.query(hat.event.server.common.BackendQueryData(
+    query_res = await backend.query(hat.event.server.common.QueryData(
         unique_type=True,
         order_by=hat.event.common.OrderBy.SOURCE_TIMESTAMP))
     assert all(e.timestamp == ts for e in query_res)
@@ -315,12 +308,12 @@ async def test_persistence(conf_factory, backend_events_factory):
     conf = conf_factory()
     backend = await importlib.import_module(conf['module']).create(conf)
     events = backend_events_factory(timestamp=ts0)
-    await register(backend, events)
+    await backend.register(events)
 
     await backend.async_close()
 
     backend = await importlib.import_module(conf['module']).create(conf)
-    query_res = await backend.query(hat.event.server.common.BackendQueryData())
+    query_res = await backend.query(hat.event.server.common.QueryData())
     assert all(e in query_res for e in events)
     assert len(query_res) == len(events)
 
@@ -333,11 +326,9 @@ async def test_dummy(backend_events_factory):
     backend = await importlib.import_module(conf['module']).create(conf)
 
     backend_events = backend_events_factory(server_id=1)
-    await register(backend, backend_events)
-    await backend.add_event_type_id_mappings({1: ['a']})
+    await backend.register(backend_events)
 
-    assert not await backend.query(hat.event.server.common.BackendQueryData())
-    assert not await backend.get_event_type_id_mappings()
+    assert not await backend.query(hat.event.server.common.QueryData())
 
     await backend.async_close()
     assert backend.closed.done()

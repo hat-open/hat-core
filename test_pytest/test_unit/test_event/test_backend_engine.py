@@ -91,14 +91,10 @@ async def test_register(backend_engine_backend, register_events):
     assert all(events[0].timestamp == e.timestamp for e in events)
 
     backend_events = backend._events
-    assert all(isinstance(e, hat.event.server.common.BackendEvent)
+    assert all(isinstance(e, hat.event.common.Event)
                for e in backend_events)
-    event_types_unique = set(tuple(e.event_type) for e in register_events)
-    event_type_id_mappings = await backend.get_event_type_id_mappings()
-    assert len(event_type_id_mappings) == len(event_types_unique)
     for be, e in zip(backend_events, events):
-        assert event_type_id_mappings[be.event_type_id] == e.event_type
-        assert common.compare_backend_event_vs_event(be, e)
+        assert be == e
     # lately registered events have greater timestamp
     events_previous = events
     for _ in range(3):
@@ -109,40 +105,15 @@ async def test_register(backend_engine_backend, register_events):
         events_previous = events
 
 
-@pytest.mark.parametrize("query_type, event_types_expected", [
-    ([['*']], [['a'], ['a', 'b'], ['a', 'b', 'c'], ['b'], []]),
-    ([['?']], [['a'], ['b']]),
-    ([['?', '*']], [['a'], ['b'], ['a', 'b'], ['a', 'b', 'c']]),
-    ([['?', '?']], [['a', 'b']]),
-    ([['?', '?', '*']], [['a', 'b'], ['a', 'b', 'c']]),
-    ([['a', '*']], [['a'], ['a', 'b'], ['a', 'b', 'c']]),
-    ([['b']], [['b']]),
-    ([[]], [[]]),
-    ([['a'], ['b'], []], [['a'], ['b'], []]),
-    ([['?'], ['?', '?']], [['a'], ['b'], ['a', 'b']]),
-    ([['*'], ['a']], [['a'], ['a', 'b'], ['a', 'b', 'c'], ['b'], []]),
-    ([['c']], []),
-    ([['a', 'b', 'c']], [['a', 'b', 'c']]),
-    ([['a', 'b', 'c', 'd']], []),
-    ])
 @pytest.mark.asyncio
-async def test_query(backend_engine_backend, register_events,
-                     query_type, event_types_expected):
+async def test_query(backend_engine_backend, register_events):
     backend_engine, backend = backend_engine_backend
     process_events = await create_process_events_mock(
         register_events, backend_engine)
     await backend_engine.register(process_events)
-    event_type_id_mappings = await backend.get_event_type_id_mappings()
 
-    query_result = await backend_engine.query(
-        hat.event.common.QueryData(event_types=query_type))
+    query_data = hat.event.common.QueryData()
+    await backend_engine.query(query_data)
     backend_query_data = await backend._query_data_queue.get()
-    event_types_queried = [event_type_id_mappings[id]
-                           for id in backend_query_data.event_type_ids]
 
-    assert isinstance(backend_query_data,
-                      hat.event.server.common.BackendQueryData)
-    assert len(event_types_queried) == len(event_types_expected)
-    assert all(et in event_types_expected for et in event_types_queried)
-    assert all(e.event_type in event_types_expected for e in query_result)
-    assert all(isinstance(e, hat.event.common.Event) for e in query_result)
+    assert query_data is backend_query_data

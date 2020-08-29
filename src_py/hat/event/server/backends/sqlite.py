@@ -62,10 +62,12 @@ async def create(conf):
     await backend._conn.execute_script(_db_structure)
     backend._query_pool = await _create_connection_pool(
         db_path, conf['query_pool_size'])
+    backend._event_type_registry = await common.create_event_type_registry(
+        backend)
     return backend
 
 
-class SqliteBackend(common.Backend):
+class SqliteBackend(common.Backend, common.EventTypeRegistryStorage):
 
     @property
     def closed(self):
@@ -78,13 +80,13 @@ class SqliteBackend(common.Backend):
         await self._conn.async_close()
         await self._async_group.async_close()
 
-    async def get_event_type_id_mappings(self):
-        """See :meth:`common.Backend.get_event_type_id_mappings`"""
+    async def get_event_type_mappings(self):
+        """See :meth:`common.EventTypeRegistryStorage.get_event_type_mappings`"""  # NOQA
         result = await self._conn.execute("SELECT * FROM mappings")
         return {row[0]: json.decode(row[1]) for row in result}
 
-    async def add_event_type_id_mappings(self, mappings):
-        """See :meth:`common.Backend.add_event_type_id_mappings`"""
+    async def add_event_type_mappings(self, mappings):
+        """See :meth:`common.EventTypeRegistryStorage.add_event_type_mappings`"""  # NOQA
         labels = [
             'event_type_id',
             'event_type']
@@ -123,17 +125,19 @@ class SqliteBackend(common.Backend):
         sql = "INSERT INTO events ({columns}) VALUES({values})".format(
             columns=', '.join(labels),
             values=', '.join(f':{label}' for label in labels))
+        event_type_ids = await self._event_type_registry.get_identifiers(
+            event.event_type for event in events)
         params = [{
             'server_id': event.event_id.server,
             'instance_id': event.event_id.instance,
-            'event_type_id': event.event_type_id,
+            'event_type_id': event_type_id,
             'timestamp': common.timestamp_to_bytes(event.timestamp),
             'source_timestamp':
                 common.timestamp_to_bytes(event.source_timestamp)
                 if event.source_timestamp else None,
             'payload': (self._encode_payload(event.payload)
                         if event.payload else None)
-        } for event in events]
+        } for event, event_type_id in zip(events, event_type_ids)]
 
         async with self._conn.transaction():
             await self._conn.execute_many(sql, params)
@@ -159,11 +163,13 @@ class SqliteBackend(common.Backend):
                 subconditions.append(f"(server_id = :{server_label} AND "
                                      f"instance_id = :{instance_label})")
             conditions.append(f"({' OR '.join(subconditions)})")
-        if data.event_type_ids is not None:
-            if not data.event_type_ids:
+        if data.event_types is not None:
+            event_type_ids = self._event_type_registry.query_identifiers(
+                data.event_types)
+            if not event_type_ids:
                 return []
             labels = []
-            for i, event_type_id in enumerate(data.event_type_ids):
+            for i, event_type_id in enumerate(event_type_ids):
                 label = f'event_type_id_{i}'
                 params[label] = event_type_id
                 labels.append(label)
@@ -228,9 +234,9 @@ class SqliteBackend(common.Backend):
         async with self._query_pool.acquire() as conn:
             result = await conn.execute(sql, params)
 
-        return [common.BackendEvent(
+        return [common.Event(
             event_id=common.EventId(server=row[0], instance=row[1]),
-            event_type_id=row[2],
+            event_type=self._event_type_registry.get_event_type(row[2]),
             timestamp=common.timestamp_from_bytes(row[3]),
             source_timestamp=(common.timestamp_from_bytes(row[4])
                               if row[4] is not None else None),

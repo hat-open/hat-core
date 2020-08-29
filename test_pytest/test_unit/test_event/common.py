@@ -115,12 +115,5 @@ def compare_proces_event_vs_event(e1, e2):
             e1.event_id == e2.event_id)
 
 
-def compare_backend_event_vs_event(e1, e2):
-    return (e1.event_id == e2.event_id and
-            e1.timestamp == e2.timestamp and
-            e1.source_timestamp == e2.source_timestamp and
-            e1.payload == e2.payload)
-
-
 def compare_events(e1, e2):
     return e1 == e2

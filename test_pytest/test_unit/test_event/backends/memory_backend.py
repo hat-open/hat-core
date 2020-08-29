@@ -1,8 +1,7 @@
 import functools
 
 from hat.util import aio
-import hat.event.common
-import hat.event.server.common
+from hat.event.server import common
 
 
 async def create(conf):
@@ -14,7 +13,7 @@ async def create(conf):
     return backend
 
 
-class MemoryBackend(hat.event.server.common.Backend):
+class MemoryBackend(common.Backend):
 
     @property
     def closed(self):
@@ -23,18 +22,11 @@ class MemoryBackend(hat.event.server.common.Backend):
     async def async_close(self):
         await self._async_group.async_close()
 
-    async def get_event_type_id_mappings(self):
-        return self._mappings
-
-    async def add_event_type_id_mappings(self, mappings):
-        self._mappings.update(mappings)
-
     async def get_last_event_id(self, server_id):
         return max(filter(lambda i: i.server == server_id,
                           (e.event_id for e in self._events)),
                    key=lambda i: i.instance,
-                   default=hat.event.common.EventId(server=server_id,
-                                                    instance=0))
+                   default=common.EventId(server=server_id, instance=0))
 
     async def register(self, events):
         self._events += events
@@ -45,7 +37,7 @@ class MemoryBackend(hat.event.server.common.Backend):
         def _get_filter(query_opt):
             return {
                 'event_ids': _event_ids,
-                'event_type_ids': _event_type_ids,
+                'event_types': _event_types,
                 't_from': _t_from,
                 't_to': _t_to,
                 'source_t_from': _source_t_from,
@@ -70,8 +62,12 @@ def _event_ids(events, event_ids):
     return filter(lambda i: i.event_id in event_ids, events)
 
 
-def _event_type_ids(events, event_type_ids):
-    return filter(lambda i: i.event_type_id in event_type_ids, events)
+def _event_types(events, event_types):
+    for event in events:
+        for event_type in event_types:
+            if common.matches_query_type(event.event_type, event_type):
+                yield event
+                break
 
 
 def _t_from(events, t_from):
@@ -97,13 +93,13 @@ def _payload(events, payload):
 def _unique_type(events, unique_type):
     if not unique_type:
         return list(events)
-    type_ids = set()
+    event_types = set()
     ret = []
     for e in events:
-        if e.event_type_id in type_ids:
+        if tuple(e.event_type) in event_types:
             continue
         ret.append(e)
-        type_ids.add(e.event_type_id)
+        event_types.add(tuple(e.event_type))
     return ret
 
 
@@ -112,9 +108,10 @@ def _max_results(events, max_results):
 
 
 def _order(events, order, order_by):
-    reversed = hat.event.common.Order.DESCENDING == order
-    key = {hat.event.common.OrderBy.TIMESTAMP:
-           lambda i: (i.timestamp, i.source_timestamp),
-           hat.event.common.OrderBy.SOURCE_TIMESTAMP:
-               lambda i: (i.source_timestamp, i.timestamp)}[order_by]
+    reversed = common.Order.DESCENDING == order
+    key = {
+        common.OrderBy.TIMESTAMP:
+            lambda i: (i.timestamp, i.source_timestamp),
+        common.OrderBy.SOURCE_TIMESTAMP:
+            lambda i: (i.source_timestamp, i.timestamp)}[order_by]
     return sorted(events, key=key, reverse=reversed)
