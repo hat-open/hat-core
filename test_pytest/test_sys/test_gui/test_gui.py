@@ -10,6 +10,7 @@ import hashlib
 import collections
 import asyncio
 import random
+import secrets
 import string
 
 from hat import juggler
@@ -278,8 +279,7 @@ def generate_password():
     password = ('').join(random.choices(string.ascii_letters + string.digits,
                                         k=8))
     password_hashed = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    salt = random.SystemRandom().getrandbits(
-        64).to_bytes(8, byteorder='big')
+    salt = secrets.token_bytes(16)
     m = hashlib.sha256(salt)
     m.update(password_hashed.encode('utf-8'))
     return {'hash': m.hexdigest(), 'salt': salt.hex(),
