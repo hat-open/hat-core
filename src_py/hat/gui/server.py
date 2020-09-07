@@ -1,5 +1,6 @@
 import hashlib
 import logging
+import secrets
 import urllib
 
 from hat import juggler
@@ -110,7 +111,8 @@ class Server:
         m = hashlib.sha256(bytes.fromhex(user['password']['salt']))
         m.update(password.encode())
         hash = m.hexdigest()
-        if user['password']['hash'] != hash:
+        # cryptographically secure comparison to prevent timing attacks
+        if not secrets.compare_digest(user['password']['hash'], hash):
             return
         return user
 
