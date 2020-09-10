@@ -257,6 +257,7 @@ class _DeviceEventClient(hat.gateway.common.DeviceEventClient):
         self._queue = aio.Queue()
         self._client = client
         self._async_group = group
+        self._async_group.spawn(aio.call_on_cancel, self._queue.close)
 
     async def async_close(self):
         """Async close"""
@@ -274,7 +275,7 @@ class _DeviceEventClient(hat.gateway.common.DeviceEventClient):
     async def receive(self):
         """See :meth:`hat.gateway.common.DeviceEventClient.receive`"""
 
-        return await self._async_group.spawn(self._queue.get)
+        return await self._queue.get()
 
     def register(self, events):
         """See :meth:`hat.gateway.common.DeviceEventClient.register`"""
@@ -285,13 +286,12 @@ class _DeviceEventClient(hat.gateway.common.DeviceEventClient):
         """See
         :meth:`hat.gateway.common.DeviceEventClient.register_with_response`"""
 
-        return await self._async_group.spawn(
-            self._client.register_with_response, events)
+        return await self._client.register_with_response(events)
 
     async def query(self, data):
         """See :meth:`hat.gateway.common.DeviceEventClient.query`"""
 
-        return await self._async_group.spawn(self._client.query, data)
+        return await self._client.query(data)
 
     def _exception_cb(self, e):
         mlog.error('uncaught exception in device event client: %s', e,
