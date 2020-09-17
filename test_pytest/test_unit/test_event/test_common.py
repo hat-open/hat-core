@@ -207,3 +207,38 @@ def test_now():
             assert now_dt >= previous_dt
 
         previous_dt = now_dt
+
+
+@pytest.mark.parametrize("event", [
+    common.Event(event_id=common.EventId(0, 0),
+                 event_type=['a'],
+                 timestamp=common.now(),
+                 source_timestamp=None,
+                 payload=None),
+
+    common.Event(event_id=common.EventId(0, 0),
+                 event_type=['a'],
+                 timestamp=common.now(),
+                 source_timestamp=common.now(),
+                 payload=common.EventPayload(
+                    type=common.EventPayloadType.BINARY,
+                    data=b'123')),
+
+    common.Event(event_id=common.EventId(123, 456),
+                 event_type=['a', 'b', 'c'],
+                 timestamp=common.now(),
+                 source_timestamp=common.now(),
+                 payload=common.EventPayload(
+                    type=common.EventPayloadType.JSON,
+                    data=None)),
+
+    common.Event(event_id=common.EventId(123, 456),
+                 event_type=['a', 'b', 'c'],
+                 timestamp=common.now(),
+                 source_timestamp=common.now(),
+                 payload=common.EventPayload(
+                    type=common.EventPayloadType.JSON,
+                    data=[{}, None, [], True, False, 1, 2.5, "123"]))
+])
+def test_event_to_from_sbs(event):
+    assert event == common.event_from_sbs(common.event_to_sbs(event))
