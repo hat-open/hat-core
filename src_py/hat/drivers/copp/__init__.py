@@ -133,7 +133,7 @@ async def connect(syntax_names, addr,
         return _create_connection(syntax_names, cosp_conn, cp_ppdu, cpa_ppdu,
                                   calling_psel, called_psel)
     except Exception:
-        await util.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
+        await aio.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
         raise
 
 
@@ -182,7 +182,7 @@ async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
         except BaseException as e:
             mlog.error("error creating new incomming connection: %s", e,
                        exc_info=e)
-            await util.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
+            await aio.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
 
     async def wait_cosp_server_closed():
         try:
@@ -361,8 +361,8 @@ def _validate_connect_response(cp_ppdu, cpa_ppdu):
     called_psel_data = cp_params.get('called-presentation-selector')
     responding_psel_data = cpa_params.get('responding-presentation-selector')
     if called_psel_data and responding_psel_data:
-        called_psel = int.from_bytes(called_psel_data)
-        responding_psel = int.from_bytes(responding_psel_data)
+        called_psel = int.from_bytes(called_psel_data, 'big')
+        responding_psel = int.from_bytes(responding_psel_data, 'big')
         if called_psel != responding_psel:
             raise Exception('presentation selectors not matching')
     result_list = cpa_params['presentation-context-definition-result-list']

@@ -5,7 +5,6 @@ import asyncio
 import logging
 
 from hat import asn1
-from hat import util
 from hat.drivers import acse
 from hat.drivers.mms import common
 from hat.drivers.mms import encoder
@@ -90,7 +89,7 @@ async def connect(request_cb, addr,
             raise Exception("invalid initiate response")
         return _create_connection(request_cb, acse_conn)
     except Exception:
-        await util.uncancellable(acse_conn.async_close())
+        await aio.uncancellable(acse_conn.async_close())
         raise
 
 
@@ -133,12 +132,12 @@ async def listen(connection_cb, request_cb, addr=Address('0.0.0.0', 102)):
             try:
                 conn = _create_connection(request_cb, acse_conn)
             except Exception:
-                await util.uncancellable(acse_conn.async_close())
+                await aio.uncancellable(acse_conn.async_close())
                 raise
             try:
                 await aio.call(connection_cb, conn)
             except BaseException:
-                await util.uncancellable(conn.async_close())
+                await aio.uncancellable(conn.async_close())
                 raise
         except Exception as e:
             mlog.error("error creating new incomming connection: %s",

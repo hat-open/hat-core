@@ -121,7 +121,7 @@ async def connect(syntax_name_list, app_context_name, addr,
                                   calling_ap_title, called_ap_title,
                                   calling_ae_qualifier, called_ae_qualifier)
     except Exception:
-        await util.uncancellable(
+        await aio.uncancellable(
             _close_connection(copp_conn, _abrt_apdu(1)))
         raise
 
@@ -185,7 +185,7 @@ async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
         except BaseException as e:
             mlog.error("error creating new incomming connection: %s", e,
                        exc_info=e)
-            await util.uncancellable(
+            await aio.uncancellable(
                 _close_connection(copp_conn, _abrt_apdu(1)))
 
     async def wait_copp_server_closed():
