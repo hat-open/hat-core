@@ -2,6 +2,8 @@
 
 Attributes:
     mlog (logging.Logger): module logger
+    autoflush_delay (float): juggler autoflush delay
+
 """
 
 import contextlib
@@ -13,6 +15,9 @@ from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)
+
+
+autoflush_delay = 0.2
 
 
 async def create(conf, path, server):
@@ -33,9 +38,10 @@ async def create(conf, path, server):
     srv._async_group = aio.Group()
     addr = urllib.parse.urlparse(conf['address'])
     juggler_srv = await juggler.listen(
-        f'ws://{addr.hostname}:{addr.port}/ws',
+        addr.hostname, addr.port,
         lambda conn: srv._async_group.spawn(srv._connection_loop, conn),
-        static_path=path)
+        static_dir=path,
+        autoflush_delay=autoflush_delay)
     srv._async_group.spawn(aio.call_on_cancel, juggler_srv.async_close)
     return srv
 
@@ -68,7 +74,7 @@ class WebServer:
                     self._monitor_server.set_rank(cid=msg['payload']['cid'],
                                                   mid=msg['payload']['mid'],
                                                   rank=msg['payload']['rank'])
-        except juggler.ConnectionClosedError:
+        except ConnectionError:
             pass
         finally:
             await conn.async_close()

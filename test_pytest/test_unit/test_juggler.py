@@ -1,6 +1,7 @@
 import collections
 import itertools
 import asyncio
+import contextlib
 
 import pytest
 
@@ -9,46 +10,39 @@ from hat.util import json
 from hat import juggler
 
 
-@pytest.fixture
-def short_sync_local_delay(monkeypatch):
-    module = juggler
-    monkeypatch.setattr(module, 'sync_local_delay', 0.001)
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
-def long_sync_local_delay(monkeypatch):
-    module = juggler
-    monkeypatch.setattr(module, 'sync_local_delay', 1_000_000)
+def server_port(unused_tcp_port_factory):
+    return unused_tcp_port_factory()
 
 
-@pytest.fixture
-async def client_server_connection(unused_tcp_port_factory):
-    address = create_address(unused_tcp_port_factory)
-    srv_conn_future = asyncio.Future()
-    srv = await juggler.listen(address,
-                               lambda conn: srv_conn_future.set_result(conn))
-    conn = await juggler.connect(address)
-    srv_conn = await srv_conn_future
-    yield conn, srv_conn
-    await conn.async_close()
-    await srv.async_close()
-
-
-def create_address(unused_tcp_port_factory):
-    return f'ws://127.0.0.1:{unused_tcp_port_factory()}/ws'
+@contextlib.asynccontextmanager
+async def create_conn_pair(server_port, autoflush_delay):
+    conn_queue = aio.Queue()
+    srv = await juggler.listen('127.0.0.1', server_port, conn_queue.put_nowait,
+                               autoflush_delay=autoflush_delay)
+    conn = await juggler.connect(f'ws://127.0.0.1:{server_port}/ws',
+                                 autoflush_delay=autoflush_delay)
+    srv_conn = await conn_queue.get()
+    try:
+        yield conn, srv_conn
+    finally:
+        await conn.async_close()
+        await srv.async_close()
 
 
 @pytest.mark.parametrize("client_count", [1, 2, 5])
-@pytest.mark.asyncio
-async def test_connect_listen(unused_tcp_port_factory, client_count):
-    address = create_address(unused_tcp_port_factory)
+async def test_connect_listen(server_port, client_count):
     conn_queue = aio.Queue()
+    address = f'ws://127.0.0.1:{server_port}/ws'
 
     with pytest.raises(Exception):
         await juggler.connect(address)
 
-    srv = await juggler.listen(address,
-                               lambda conn: conn_queue.put_nowait(conn))
+    srv = await juggler.listen('127.0.0.1', server_port, conn_queue.put_nowait)
+
     assert not srv.closed.done()
 
     conns = collections.deque()
@@ -80,12 +74,11 @@ async def test_connect_listen(unused_tcp_port_factory, client_count):
 
 
 @pytest.mark.parametrize("client_count", [1, 2, 10])
-@pytest.mark.asyncio
-async def test_srv_close_active_client(unused_tcp_port_factory, client_count):
-    address = create_address(unused_tcp_port_factory)
+async def test_srv_close_active_client(server_port, client_count):
+    address = f'ws://127.0.0.1:{server_port}/ws'
     conn_closed_futures = []
 
-    srv = await juggler.listen(address, lambda conn: None)
+    srv = await juggler.listen('127.0.0.1', server_port, lambda conn: None)
 
     for _ in range(client_count):
         conn = await juggler.connect(address)
@@ -102,50 +95,50 @@ async def test_srv_close_active_client(unused_tcp_port_factory, client_count):
     [0, 1, 2, 3, 4, 5],
     [{}, {'a': 1}, {'a': 2}, {'a': 2, 'b': None}, {'b': None}],
     [0, False, '', [], {}, None]])
-@pytest.mark.asyncio
-async def test_set_local_data(client_server_connection, data,
-                              short_sync_local_delay):
-    conns = []
+async def test_set_local_data(server_port, data):
+    async with create_conn_pair(server_port, 0) as conn_pair:
+        change_queues = []
 
-    for conn in client_server_connection:
-        assert conn.local_data is None
-        assert conn.remote_data is None
+        for conn in conn_pair:
+            assert conn.local_data is None
+            assert conn.remote_data is None
+            change_queue = aio.Queue()
+            conn.register_change_cb(lambda: change_queue.put_nowait(None))
+            change_queues.append(change_queue)
+
+        for i in data:
+            for local, remote in itertools.permutations(zip(conn_pair,
+                                                            change_queues)):
+                local_conn, _ = local
+                remote_conn, change_queue = remote
+
+                local_conn.set_local_data(i)
+                assert local_conn.local_data == i
+
+                await change_queue.get()
+                assert json.equals(remote_conn.remote_data,
+                                   local_conn.local_data)
+
+
+async def test_flush_local_data(server_port):
+    async with create_conn_pair(server_port, 100) as conn_pair:
+        local_conn, remote_conn = conn_pair
         change_queue = aio.Queue()
-        conn.register_change_cb(lambda: change_queue.put_nowait(None))
-        conns.append((conn, change_queue))
+        remote_conn.register_change_cb(lambda: change_queue.put_nowait(None))
 
-    for i in data:
-        for local, remote in itertools.permutations(conns):
-            local_conn, _ = local
-            remote_conn, change_queue = remote
+        local_conn.set_local_data([1])
+        await asyncio.sleep(0.1)
+        assert change_queue.empty()
+        assert remote_conn.remote_data is None
 
-            local_conn.set_local_data(i)
-            assert local_conn.local_data == i
+        local_conn.set_local_data([1, 2])
+        await asyncio.sleep(0.1)
+        assert change_queue.empty()
+        assert remote_conn.remote_data is None
 
-            await change_queue.get()
-            assert json.equals(remote_conn.remote_data, local_conn.local_data)
-
-
-@pytest.mark.asyncio
-async def test_flush_local_data(client_server_connection,
-                                long_sync_local_delay):
-    local_conn, remote_conn = client_server_connection
-    change_queue = aio.Queue()
-    remote_conn.register_change_cb(lambda: change_queue.put_nowait(None))
-
-    local_conn.set_local_data([1])
-    await asyncio.sleep(0.1)
-    assert change_queue.empty()
-    assert remote_conn.remote_data is None
-
-    local_conn.set_local_data([1, 2])
-    await asyncio.sleep(0.1)
-    assert change_queue.empty()
-    assert remote_conn.remote_data is None
-
-    await local_conn.flush_local_data()
-    await asyncio.wait_for(change_queue.get(), 0.1)
-    assert json.equals(remote_conn.remote_data, local_conn.local_data)
+        await local_conn.flush_local_data()
+        await asyncio.wait_for(change_queue.get(), 0.1)
+        assert json.equals(remote_conn.remote_data, local_conn.local_data)
 
 
 @pytest.mark.parametrize("messages", [
@@ -153,38 +146,88 @@ async def test_flush_local_data(client_server_connection,
     [0, 0, 1, 2, 0, 3],
     [{}, {'a': 1}, {'a': 2}, {'a': 2, 'b': None}, {'b': None}],
     [0, 0.0, False, '', [], {}, None]])
-@pytest.mark.asyncio
-async def test_send_receive(client_server_connection, messages):
-    for send_msg in messages:
-        for local_conn, remote_conn in itertools.permutations(
-                client_server_connection):
-
-            await local_conn.send(send_msg)
-
-            rcv_msg = await remote_conn.receive()
-            assert json.equals(send_msg, rcv_msg)
+async def test_send_receive(server_port, messages):
+    async with create_conn_pair(server_port, 0.01) as conn_pair:
+        for send_msg in messages:
+            for local_conn, remote_conn in itertools.permutations(conn_pair):
+                await local_conn.send(send_msg)
+                rcv_msg = await remote_conn.receive()
+                assert json.equals(send_msg, rcv_msg)
 
 
-@pytest.mark.asyncio
-async def test_big_message_server_to_client(client_server_connection):
-    client_conn, server_conn = client_server_connection
+async def test_big_message_server_to_client(server_port):
+    async with create_conn_pair(server_port, 0.01) as conn_pair:
+        client_conn, server_conn = conn_pair
+        big_msg = '1' * 4194304 * 2
+        await server_conn.send(big_msg)
+        assert big_msg == await client_conn.receive()
 
-    big_msg = '1' * 4194304 * 2
-    await server_conn.send(big_msg)
-    assert big_msg == await client_conn.receive()
+
+async def test_connection_closed(server_port):
+    async with create_conn_pair(server_port, 0.01) as conn_pair:
+        local_conn, remote_conn = conn_pair
+
+        await remote_conn.async_close()
+
+        with pytest.raises(ConnectionError):
+            await local_conn.send([])
+        with pytest.raises(ConnectionError):
+            await local_conn.receive()
+        with pytest.raises(ConnectionError):
+            local_conn.set_local_data([])
+        with pytest.raises(ConnectionError):
+            await local_conn.flush_local_data()
 
 
-@pytest.mark.asyncio
-async def test_connection_closed(client_server_connection):
-    local_conn, remote_conn = client_server_connection
+async def test_autoflush_zero(server_port):
+    async with create_conn_pair(server_port, 0) as conn_pair:
+        conn1, conn2 = conn_pair
+        assert conn1.local_data is None
+        assert conn1.remote_data is None
+        assert conn2.local_data is None
+        assert conn2.remote_data is None
 
-    await remote_conn.async_close()
+        conn1_changes = aio.Queue()
+        conn2_changes = aio.Queue()
+        conn1.register_change_cb(
+            lambda: conn1_changes.put_nowait(conn1.remote_data))
+        conn2.register_change_cb(
+            lambda: conn2_changes.put_nowait(conn2.remote_data))
 
-    with pytest.raises(juggler.ConnectionClosedError):
-        await local_conn.send([])
-    with pytest.raises(juggler.ConnectionClosedError):
-        await local_conn.receive()
-    with pytest.raises(juggler.ConnectionClosedError):
-        local_conn.set_local_data([])
-    with pytest.raises(juggler.ConnectionClosedError):
-        await local_conn.flush_local_data()
+        conn1.set_local_data(123)
+        conn1.set_local_data('abc')
+        conn1.set_local_data('xyz')
+        conn2.remote_data is None
+        change1 = await conn2_changes.get()
+        change2 = await conn2_changes.get()
+        change3 = await conn2_changes.get()
+        assert change1 == 123
+        assert change2 == 'abc'
+        assert change3 == 'xyz'
+        assert conn2.remote_data == 'xyz'
+        assert conn2_changes.empty()
+
+
+async def test_autoflush_not_zero(server_port):
+    async with create_conn_pair(server_port, 0.001) as conn_pair:
+        conn1, conn2 = conn_pair
+        assert conn1.local_data is None
+        assert conn1.remote_data is None
+        assert conn2.local_data is None
+        assert conn2.remote_data is None
+
+        conn1_changes = aio.Queue()
+        conn2_changes = aio.Queue()
+        conn1.register_change_cb(
+            lambda: conn1_changes.put_nowait(conn1.remote_data))
+        conn2.register_change_cb(
+            lambda: conn2_changes.put_nowait(conn2.remote_data))
+
+        conn1.set_local_data(123)
+        conn1.set_local_data('abc')
+        conn1.set_local_data('xyz')
+        conn2.remote_data is None
+        change = await conn2_changes.get()
+        assert change == 'xyz'
+        assert conn2.remote_data == 'xyz'
+        assert conn2_changes.empty()

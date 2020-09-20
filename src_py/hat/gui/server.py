@@ -37,9 +37,9 @@ async def create(conf, path, adapters, views):
 
     addr = urllib.parse.urlparse(conf['address'])
     juggler_srv = await juggler.listen(
-        f'ws://{addr.hostname}:{addr.port}/ws',
+        addr.hostname, addr.port,
         lambda conn: srv._async_group.spawn(srv._conn_loop, conn),
-        static_path=path)
+        static_dir=path)
     srv._async_group.spawn(aio.call_on_cancel, juggler_srv.async_close)
     return srv
 
@@ -79,7 +79,7 @@ class Server:
                     session.add_adapter_message(msg['name'], msg['data'])
                 else:
                     raise Exception('received invalid message type')
-        except juggler.ConnectionClosedError:
+        except ConnectionError:
             pass
         finally:
             if session:

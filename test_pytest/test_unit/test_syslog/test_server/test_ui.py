@@ -25,7 +25,8 @@ def assert_client_vs_server_state(client):
 async def create_client(conf_ui):
     client = Client()
     ui_port = urllib.parse.urlparse(conf_ui.addr).port
-    client._conn = await juggler.connect(f'ws://127.0.0.1:{ui_port}/ws')
+    client._conn = await juggler.connect(f'ws://127.0.0.1:{ui_port}/ws',
+                                         autoflush_delay=0)
     client._conn.set_local_data(hat.syslog.server.common.Filter()._asdict())
     return client
 
@@ -70,11 +71,6 @@ def short_register_delay(monkeypatch):
 
 
 @pytest.fixture
-def short_sync_local_delay(monkeypatch):
-    monkeypatch.setattr(juggler, "sync_local_delay", 0.0)
-
-
-@pytest.fixture
 def small_max_results(monkeypatch):
     monkeypatch.setattr(hat.syslog.server.ui, "max_results_limit", 20)
 
@@ -101,7 +97,8 @@ def conf_db(tmp_path):
 
 @pytest.fixture
 @pytest.mark.asyncio
-async def backend_ui(conf_ui, conf_db, short_register_delay):
+async def backend_ui(monkeypatch, conf_ui, conf_db):
+    monkeypatch.setattr(hat.syslog.server.ui, "autoflush_delay", 0)
     backend = await hat.syslog.server.backend.create_backend(conf_db)
     web_server = await hat.syslog.server.ui.create_web_server(
         conf_ui, backend)
@@ -115,7 +112,7 @@ async def backend_ui(conf_ui, conf_db, short_register_delay):
 
 @pytest.fixture
 @pytest.mark.asyncio
-async def client(conf_ui, short_sync_local_delay):
+async def client(conf_ui):
     client = await create_client(conf_ui)
 
     yield client
@@ -280,7 +277,7 @@ async def test_get_static_files(backend_ui, conf_ui):
 @pytest.mark.parametrize("client_cont", [1])
 @pytest.mark.asyncio
 async def test_connect_disconnect(backend_ui, conf_ui, message_factory,
-                                  short_sync_local_delay, client_cont):
+                                  client_cont):
     backend, ui = backend_ui
     message_count = 3
     async with aio.Group() as group:

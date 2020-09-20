@@ -29,7 +29,8 @@ async def create_client(address):
     ws_address = 'ws://{}:{}/ws'.format(ui_address.hostname,
                                         ui_address.port)
     client = Client()
-    client._conn = await juggler.connect(ws_address)
+    client._conn = await juggler.connect(ws_address,
+                                         autoflush_delay=0)
     return client
 
 
@@ -41,6 +42,8 @@ class Client:
 
     @property
     def components(self):
+        if not self._conn.remote_data:
+            return []
         return [Component(
             id=i['id'],
             name=i['name'],
@@ -103,21 +106,24 @@ def server_address(unused_tcp_port_factory):
 
 
 @pytest.fixture
-def short_sync_local_delay(monkeypatch):
-    monkeypatch.setattr(juggler, 'sync_local_delay', 0)
+def short_autoflush_delay(monkeypatch):
+    monkeypatch.setattr(hat.orchestrator.ui, 'autoflush_delay', 0)
 
 
 @pytest.mark.asyncio
 async def test_backend_to_frontend(short_start_delay, server_address, tmpdir,
-                                   short_sync_local_delay):
+                                   short_autoflush_delay):
     conf = {'name': 'comp-xy',
             'args': ['sleep', '0.01'],
             'delay': 0.1,
             'revive': False}
+
     component = hat.orchestrator.component.Component(conf)
     server = await create_server(server_address, tmpdir, [component])
     client, components_queue = await create_client_with_components_queue(
         server_address)
+
+    assert client.components == []
 
     components = await components_queue.get()
     assert components[0].name == conf['name']
@@ -144,7 +150,7 @@ async def test_backend_to_frontend(short_start_delay, server_address, tmpdir,
 
 @pytest.mark.asyncio
 async def test_frontend_to_backend(short_start_delay, server_address, tmpdir,
-                                   short_sync_local_delay):
+                                   short_autoflush_delay):
     conf = {'name': 'comp-xy',
             'args': ['sleep', '50'],
             'delay': 0.1,

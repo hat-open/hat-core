@@ -9,6 +9,9 @@ from hat.util import aio
 mlog = logging.getLogger(__name__)
 
 
+autoflush_delay = 0.2
+
+
 async def create(conf, path, components):
     """Create ui for monitoring and controlling components
 
@@ -31,9 +34,10 @@ async def create(conf, path, components):
         for component in components]
     addr = urllib.parse.urlparse(conf['address'])
     juggler_srv = await juggler.listen(
-        f'ws://{addr.hostname}:{addr.port}/ws',
+        addr.hostname, addr.port,
         lambda conn: srv._async_group.spawn(srv._conn_loop, conn),
-        static_path=path)
+        static_dir=path,
+        autoflush_delay=autoflush_delay)
     srv._async_group.spawn(aio.call_on_cancel, juggler_srv.async_close)
     return srv
 
@@ -65,7 +69,7 @@ class WebServer:
                 'revive': component.revive,
                 'status': component.status.name
             } for idx, component in enumerate(self._components)]}
-        with contextlib.suppress(juggler.ConnectionClosedError):
+        with contextlib.suppress(ConnectionError):
             conn.set_local_data(data)
 
     async def _conn_loop(self, conn):
@@ -81,7 +85,7 @@ class WebServer:
                     if not fn:
                         raise Exception('received invalid message type')
                     fn(msg['payload'])
-        except juggler.ConnectionClosedError:
+        except ConnectionError:
             pass
         finally:
             await conn.async_close()

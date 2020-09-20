@@ -590,7 +590,7 @@ async def test_invalid_message(run_gui, gui_conf, tmp_path,
     # invalid message before login
     await client.send(invalid_msg)
     await asyncio.sleep(0.01)
-    with pytest.raises(hat.juggler.ConnectionClosedError):
+    with pytest.raises(ConnectionError):
         await client.login()
     assert client.closed.done()
 
@@ -602,7 +602,7 @@ async def test_invalid_message(run_gui, gui_conf, tmp_path,
     assert msg['user'] == 'user1'
     await client.send(invalid_msg)
     await asyncio.sleep(0.01)
-    with pytest.raises(hat.juggler.ConnectionClosedError):
+    with pytest.raises(ConnectionError):
         await client.login()
     assert client.closed.done()
 
@@ -759,7 +759,7 @@ async def test_adapter_close(run_gui, gui_conf, tmp_path,
     # after adapter is closed, gui is expected to close
     gui_process.wait_until_closed()
     # juggler connection is closed
-    with pytest.raises(hat.juggler.ConnectionClosedError):
+    with pytest.raises(ConnectionError):
         await client.receive()
 
     await client.async_close()

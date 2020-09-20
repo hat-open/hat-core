@@ -3,6 +3,7 @@
 Attributes:
     mlog (logging.Logger): module logger
     max_results_limit (int): max results limit
+    autoflush_delay (float): juggler autoflush delay
 
 """
 
@@ -20,6 +21,8 @@ mlog = logging.getLogger(__name__)
 
 max_results_limit = 200
 
+autoflush_delay = 0.2
+
 
 async def create_web_server(conf, backend):
     """Create web server
@@ -33,19 +36,15 @@ async def create_web_server(conf, backend):
 
     """
     addr = urllib.parse.urlparse(conf.addr)
-    if addr.scheme == 'http':
-        addr = addr._replace(scheme='ws', path='ws')
-    elif addr.scheme == 'https':
-        addr = addr._replace(scheme='wss', path='ws')
-    else:
-        raise ValueError(f'invalid address {conf.address}')
 
     def on_connection(conn):
         async_group.spawn(_run_client, async_group, backend, conn)
 
     async_group = aio.Group()
-    srv = await juggler.listen(addr.geturl(), on_connection,
-                               static_path=conf.path)
+    srv = await juggler.listen(addr.hostname, addr.port, on_connection,
+                               static_dir=conf.path,
+                               pem_file=conf.pem,
+                               autoflush_delay=autoflush_delay)
     async_group.spawn(aio.call_on_cancel, srv.async_close)
 
     server = WebServer()
