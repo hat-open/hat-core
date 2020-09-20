@@ -173,14 +173,11 @@ def task_pyhat_drivers():
     """PyHat - build hat-drivers"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-drivers')
-        json_schema_repo = src_py_dir / 'hat/drivers/json_schema_repo.json'
         asn1_repos = [src_py_dir / 'hat/drivers/copp/asn1_repo.json',
                       src_py_dir / 'hat/drivers/acse/asn1_repo.json',
                       src_py_dir / 'hat/drivers/mms/asn1_repo.json']
         for i in (src_py_dir / 'hat/drivers').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        yield json_schema_repo, (dst_dir /
-                                 json_schema_repo.relative_to(src_py_dir))
         for asn1_repo in asn1_repos:
             yield asn1_repo, dst_dir / asn1_repo.relative_to(src_py_dir)
 
