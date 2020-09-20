@@ -17,3 +17,4 @@ Available communication drivers:
    copp
    acse
    mms
+   modbus

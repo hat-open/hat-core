@@ -12,38 +12,77 @@ Attributes:
 """
 
 import asyncio
+import enum
 import functools
 import logging
 
 import serial
 
+from hat import util
 from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)
 
 
-async def open(conf):
+@util.extend_enum_doc
+class ByteSize(enum.Enum):
+    FIVEBITS = 'FIVEBITS'
+    SIXBITS = 'SIXBITS'
+    SEVENBITS = 'SEVENBITS'
+    EIGHTBITS = 'EIGHTBITS'
+
+
+@util.extend_enum_doc
+class Parity(enum.Enum):
+    NONE = 'PARITY_NONE'
+    EVEN = 'PARITY_EVEN'
+    ODD = 'PARITY_ODD'
+    MARK = 'PARITI_MARK'
+    SPACE = 'PARITY_SPACE'
+
+
+@util.extend_enum_doc
+class StopBits(enum.Enum):
+    ONE = 'STOPBITS_ONE'
+    ONE_POINT_FIVE = 'STOPBITS_ONE_POINT_FIVE'
+    TWO = 'STOPBITS_TWO'
+
+
+async def open(port: str, *,
+               baudrate: int = 9600,
+               bytesize: ByteSize = ByteSize.EIGHTBITS,
+               parity: Parity = Parity.NONE,
+               stopbits: StopBits = StopBits.ONE,
+               rtscts: bool = False,
+               dsrdtr: bool = False,
+               silent_interval: float = 0
+               ) -> 'Connection':
     """Open serial port
 
     Args:
-        conf (hat.json.Data): configuration defined by
-            'hat://drivers/serial.yaml#'
-
-    Returns:
-        Connection
+        port: port name dependent of operating system
+            (e.g. `/dev/ttyUSB0`, `COM3`, ...)
+        baudrate: baud rate
+        bytesize: number of data bits
+        parity: parity checking
+        stopbits: number of stop bits
+        rtscts: enable hardware RTS/CTS flow control
+        dsrdtr: enable hardware DSR/DTR flow control
+        silent_interval: minimum time in seconds between writing two
+            consecutive messages
 
     """
     executor = aio.create_executor()
     s = await executor(functools.partial(
             serial.Serial,
-            port=conf['port'],
-            baudrate=conf.get('baudrate', 9600),
-            bytesize=getattr(serial, conf.get('bytesize', 'EIGHTBITS')),
-            parity=getattr(serial, conf.get('parity', 'PARITY_NONE')),
-            stopbits=getattr(serial, conf.get('stopbits', 'STOPBITS_ONE')),
-            rtscts=conf.get('rtscts', False),
-            dsrdtr=conf.get('dsrdtr', False),
+            port=port,
+            baudrate=baudrate,
+            bytesize=getattr(serial, bytesize.value),
+            parity=getattr(serial, parity.value),
+            stopbits=getattr(serial, stopbits.value),
+            rtscts=rtscts,
+            dsrdtr=dsrdtr,
             timeout=1))
 
     read_queue = aio.Queue()
@@ -51,7 +90,7 @@ async def open(conf):
     async_group = aio.Group()
     async_group.spawn(_action_loop, async_group, executor, read_queue, 0)
     async_group.spawn(_action_loop, async_group, executor, write_queue,
-                      conf.get('silent_interval', 0))
+                      silent_interval)
     async_group.spawn(aio.call_on_cancel, executor, _ext_close, s)
 
     conn = Connection()

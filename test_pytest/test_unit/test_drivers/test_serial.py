@@ -33,12 +33,9 @@ def nullmodem(request, tmp_path):
 
 @pytest.mark.asyncio
 async def test_open(nullmodem):
-    conf = {
-        'port': str(str(nullmodem[0])),
-        'rtscts': True,
-        'dsrdtr': True}
-
-    conn = await hat.drivers.serial.open(conf)
+    conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
+                                         rtscts=True,
+                                         dsrdtr=True)
     assert not conn.closed.done()
     await conn.async_close()
     assert conn.closed.done()
@@ -46,17 +43,12 @@ async def test_open(nullmodem):
 
 @pytest.mark.asyncio
 async def test_read_write(nullmodem):
-    conf1 = {
-        'port': str(nullmodem[0]),
-        'rtscts': True,
-        'dsrdtr': True}
-    conf2 = {
-        'port': str(nullmodem[1]),
-        'rtscts': True,
-        'dsrdtr': True}
-
-    conn1 = await hat.drivers.serial.open(conf1)
-    conn2 = await hat.drivers.serial.open(conf2)
+    conn1 = await hat.drivers.serial.open(port=str(nullmodem[0]),
+                                          rtscts=True,
+                                          dsrdtr=True)
+    conn2 = await hat.drivers.serial.open(port=str(nullmodem[1]),
+                                          rtscts=True,
+                                          dsrdtr=True)
 
     data = b'test1'
     await conn1.write(data)
@@ -74,12 +66,9 @@ async def test_read_write(nullmodem):
 
 @pytest.mark.asyncio
 async def test_close_while_reading(nullmodem):
-    conf = {
-        'port': str(nullmodem[0]),
-        'rtscts': True,
-        'dsrdtr': True}
-
-    conn = await hat.drivers.serial.open(conf)
+    conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
+                                         rtscts=True,
+                                         dsrdtr=True)
 
     read_future = asyncio.ensure_future(conn.read(1))
 
@@ -91,12 +80,9 @@ async def test_close_while_reading(nullmodem):
 
 @pytest.mark.asyncio
 async def test_close_nullmodem(nullmodem):
-    conf = {
-        'port': str(nullmodem[0]),
-        'rtscts': True,
-        'dsrdtr': True}
-
-    conn = await hat.drivers.serial.open(conf)
+    conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
+                                         rtscts=True,
+                                         dsrdtr=True)
 
     read_future = asyncio.ensure_future(conn.read(1))
 

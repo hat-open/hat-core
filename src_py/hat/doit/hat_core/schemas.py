@@ -10,7 +10,6 @@ __all__ = ['task_schemas',
            'task_schemas_sbs',
            'task_schemas_asn1',
            'task_schemas_json_util',
-           'task_schemas_json_drivers',
            'task_schemas_json_orchestrator',
            'task_schemas_json_monitor',
            'task_schemas_json_event',
@@ -43,7 +42,6 @@ def task_schemas_json():
     """Schemas - generate JSON schema repository data"""
     return {'actions': None,
             'task_dep': ['schemas_json_util',
-                         'schemas_json_drivers',
                          'schemas_json_orchestrator',
                          'schemas_json_monitor',
                          'schemas_json_event',
@@ -72,12 +70,6 @@ def task_schemas_json_util():
     """Schemas - generate hat-util JSON schema repository data"""
     return _get_task_json([schemas_json_dir / 'logging.yaml'],
                           [src_py_dir / 'hat/util/json_schema_repo.json'])
-
-
-def task_schemas_json_drivers():
-    """Schemas - generate hat-drivers JSON schema repository data"""
-    return _get_task_json([*(schemas_json_dir / 'drivers').rglob('*.yaml')],
-                          [src_py_dir / 'hat/drivers/json_schema_repo.json'])
 
 
 def task_schemas_json_orchestrator():
