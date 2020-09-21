@@ -89,8 +89,7 @@ class Communication:
             event_type=['event', 'communication', status],
             source_timestamp=None,
             payload=None)
-        proc_event = self._engine.create_process_event(source, reg_event)
-        await self._engine.register([proc_event])
+        await self._engine.register(source, [reg_event])
 
     async def _run_engine(self):
         try:
@@ -110,31 +109,28 @@ class Communication:
             self._subs_registry.add(conn, event_type)
 
     def _process_register_request(self, msg, conn):
-        proc_events = [self._engine.create_process_event(
-            source=common.Source(type=common.SourceType.COMMUNICATION,
-                                 name=None,
-                                 id=self._connection_ids[conn]),
-            event=common.register_event_from_sbs(i)) for i in msg.data.data]
-        self._async_group.spawn(self._register_request_response,
-                                proc_events, conn, msg)
+        source = common.Source(type=common.SourceType.COMMUNICATION,
+                               name=None,
+                               id=self._connection_ids[conn])
+        events = [common.register_event_from_sbs(i) for i in msg.data.data]
+        self._async_group.spawn(self._register_request_response, source,
+                                events, conn, msg)
 
     def _process_query_request(self, msg, conn):
         query = common.query_from_sbs(msg.data.data)
         self._async_group.spawn(self._query_request_response,
                                 query, conn, msg)
 
-    async def _register_request_response(self, process_events, conn, msg):
-        events = await self._engine.register(process_events)
+    async def _register_request_response(self, source, reg_events, conn, msg):
+        events = await self._engine.register(source, reg_events)
         if msg.last:
             return
-        events_dict = {e.event_id: e for e in events}
-        conn.send(chatter.Data(
-            module='HatEvent',
-            type='MsgRegisterRes',
-            data=[('event', common.event_to_sbs(events_dict[e.event_id]))
-                  if e.event_id in events_dict else ('failure', None)
-                  for e in process_events]),
-                  conv=msg.conv)
+        data = chatter.Data(module='HatEvent',
+                            type='MsgRegisterRes',
+                            data=[(('event', common.event_to_sbs(e))
+                                   if e is not None else ('failure', None))
+                                  for e in events])
+        conn.send(data, conv=msg.conv)
 
     async def _query_request_response(self, query, conn, msg):
         events = await self._engine.query(query)

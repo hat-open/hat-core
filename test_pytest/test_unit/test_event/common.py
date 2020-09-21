@@ -42,7 +42,8 @@ class MockModuleEngine(hat.event.server.module_engine.ModuleEngine):
             source_timestamp=event.source_timestamp,
             payload=event.payload)
 
-    async def register(self, events):
+    async def register(self, source, events):
+        events = [self.create_process_event(source, event) for event in events]
         registered_events = await aio.call(self._register_cb, events)
         self._register_event_cbs.notify(registered_events)
         return registered_events

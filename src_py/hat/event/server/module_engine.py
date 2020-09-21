@@ -94,11 +94,12 @@ class ModuleEngine:
             source_timestamp=event.source_timestamp,
             payload=event.payload)
 
-    async def register(self, events):
+    async def register(self, source, events):
         """Register events
 
         Args:
-            events (List[common.ProcessEvent]): process events
+            source (common.Source): event source
+            events (List[common.RegisterEvent]): register events
 
         Returns:
             List[Optional[common.Event]]
@@ -113,7 +114,7 @@ class ModuleEngine:
         if not events:
             return []
         future = asyncio.Future()
-        self._register_queue.put_nowait((future, events))
+        self._register_queue.put_nowait((future, source, events))
         return await future
 
     async def query(self, data):
@@ -138,7 +139,11 @@ class ModuleEngine:
         future = None
         try:
             while True:
-                future, process_events = await self._register_queue.get()
+                future, source, register_events = \
+                    await self._register_queue.get()
+
+                process_events = [self.create_process_event(source, i)
+                                  for i in register_events]
 
                 global_changes = common.SessionChanges(
                     new=list(process_events), deleted=[])
@@ -172,21 +177,26 @@ class ModuleEngine:
                         break
 
                 deleted_ids = {i.event_id for i in global_changes.deleted}
-                register_events = [i for i in global_changes.new
-                                   if i.event_id not in deleted_ids]
+                all_process_events = [i for i in global_changes.new
+                                      if i.event_id not in deleted_ids]
 
-                events = await self._backend.register(register_events)
+                events = await self._backend.register(all_process_events)
 
                 for session in module_sessions:
                     await session.async_close(events)
 
-                future.set_result(events)
+                event_ids = {event.event_id: event
+                             for event in events
+                             if event}
+                result = [event_ids[i.event_id] for i in process_events
+                          if i.event_id in event_ids]
+                future.set_result(result)
                 self._register_cbs.notify(events)
         except BaseException as e:
             if future and not future.done():
                 future.set_exception(e)
             while not self._register_queue.empty():
-                future, _ = self._register_queue.get_nowait()
+                future, _, __ = self._register_queue.get_nowait()
                 future.set_exception(e)
         finally:
             self._register_queue.close()
