@@ -1,0 +1,63 @@
+@import '~normalize.css/normalize';
+
+@import '../../common/color';
+@import '../../common/fonts/inter';
+@import '../../common/fonts/fontawesome';
+
+
+html, body {
+    margin: 0px;
+    font-family: 'Inter';
+    user-select: none;
+    height: 100%;
+    overflow: hidden;
+}
+
+#main {
+    height: 100%;
+    overflow: auto;
+
+    table.events {
+        width: 100%;
+        border-spacing: 0px;
+        table-layout: fixed;
+        position: relative;
+
+        th {
+            padding: 5px;
+            background: $color-grey-800;
+            color: $color-grey-100;
+            position: sticky;
+            top: 0px;
+        }
+
+        tr:nth-child(even) {
+            background-color: $color-grey-300;
+        }
+
+        tr:nth-child(odd) {
+            background-color: $color-grey-100;
+        }
+
+        td {
+            padding: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .expand-icon {
+            padding: 5px;
+            color: $color-grey-800;
+        }
+
+        .col-type { width: 400px; }
+        .col-id { width: 75px; }
+        .col-timestamp { width: 200px; }
+        .col-payload { }
+
+        td.col-id { text-align: right; }
+        td.col-timestamp { text-align: center; }
+
+    }
+}

@@ -257,11 +257,17 @@ def task_pyhat_event():
         dst_dir = _get_build_dst_dir('hat-event')
         json_schema_repo = src_py_dir / 'hat/event/json_schema_repo.json'
         sbs_repo = src_py_dir / 'hat/event/sbs_repo.json'
+        viewer_jshat_build = Path('build/jshat/app/event-viewer')
         for i in (src_py_dir / 'hat/event').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         yield json_schema_repo, (dst_dir /
                                  json_schema_repo.relative_to(src_py_dir))
         yield sbs_repo, dst_dir / sbs_repo.relative_to(src_py_dir)
+        for i in viewer_jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/event/viewer/ui'
+                              / i.relative_to(viewer_jshat_build))
 
     return _get_task_build(
         name='hat-event',
@@ -274,7 +280,11 @@ def task_pyhat_event():
                       'hat-sqlite3',
                       'hat-monitor'],
         mappings=mappings,
-        console_scripts=['hat-event = hat.event.server.main:main'])
+        optional_dependencies={'viewer': ['click',
+                                          'PySide']},
+        console_scripts=['hat-event = hat.event.server.main:main'],
+        gui_scripts=['hat-event-viewer = hat.event.viewer.main:main'],
+        task_dep=['jshat_app'])
 
 
 def task_pyhat_gateway():
@@ -387,8 +397,8 @@ def task_pyhat_syslog():
 
 
 def _get_task_build(name, description, readme_path, dependencies, mappings, *,
-                    console_scripts=[], gui_scripts=[],
-                    platform_specific=False, task_dep=[]):
+                    optional_dependencies={}, console_scripts=[],
+                    gui_scripts=[], platform_specific=False, task_dep=[]):
     dst_dir = _get_build_dst_dir(name)
     setup_path = dst_dir / 'setup.py'
     manifest_path = dst_dir / 'MANIFEST.in'
@@ -399,6 +409,7 @@ def _get_task_build(name, description, readme_path, dependencies, mappings, *,
                         (_create_manifest, [manifest_path, mappings]),
                         (_create_setup_py, [setup_path, name, description,
                                             readme_path, dependencies,
+                                            optional_dependencies,
                                             console_scripts, gui_scripts,
                                             platform_specific])],
             'file_dep': src_paths,
@@ -418,7 +429,8 @@ def _copy_files(mappings):
 
 
 def _create_setup_py(path, name, description, readme_path, dependencies,
-                     console_scripts, gui_scripts, platform_specific):
+                     optional_dependencies, console_scripts, gui_scripts,
+                     platform_specific):
     plat_name = _get_plat_name() if platform_specific else 'any'
     version = _get_version()
     readme = _get_readme(readme_path)
@@ -434,6 +446,7 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                 f"      packages=['hat'],\n"
                 f"      include_package_data=True,\n"
                 f"      install_requires={repr(dependencies)},\n"
+                f"      extras_require={repr(optional_dependencies)},\n"
                 f"      python_requires='>=3.8',\n"
                 f"      license='MIT',\n"
                 f"      zip_safe=False,\n"
