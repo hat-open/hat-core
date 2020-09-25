@@ -21,6 +21,8 @@ let app = null;
 function main() {
     const root = document.body.appendChild(document.createElement('div'));
     r.init(root, defaultState, vt);
+
+    // eslint-disable-next-line no-unused-vars
     app = new juggler.Application(r, null, null, 'remote');
 }
 
