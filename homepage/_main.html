@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Hat Core - ${page.title}</title>
-<link href="main.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hat Core - <%block name="title"/></title>
+    <link href="main.css" rel="stylesheet">
 </head>
 <body>
-    <div id="main">
-        <div id="header">
-            <div class="title">Hat Core</div>
-            <div class="subtitle">remote control and monitoring framework core</div>
-        </div>
-        <div id="navigation">
-            % for i in page.links:
-                <a href="${i['path']}">${i['label']}</a>
-            % endfor
-        </div>
-        <div id="page" class="page-${page.name}">
-            ${self.body()}
-        </div>
-    </div>
-    <div id="copyright">
+    <header>
+        <h1>Hat Core - remote control and monitoring framework core</h1>
+        <nav>
+            <a href="index.html">About</a>
+            <a href="download.html">Download</a>
+            <a href="articles.html">Articles</a>
+            <a href="docs/index.html">Documentation</a>
+            <a href="https://github.com/hat-open/hat-core">Source</a>
+        </nav>
+    </header>
+    <main>
+        ${self.body()}
+    </main>
+    <footer>
         Copyright © 2020 Hat Open
         <a href="https://github.com/hat-open/hat-core/blob/master/AUTHORS">AUTHORS</a>
-    </div>
+    </footer>
 </body>
 </html>

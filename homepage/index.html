@@ -1,4 +1,5 @@
 <%inherit file="_main.html"/>
+<%block name="title">About</%block>
 
 <p>
 Hat Open is open-source framework of tools and libraries for developing
@@ -16,26 +17,81 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 (Končar KET - <a href="https://www.koncar-ket.hr">https://www.koncar-ket.hr</a>).
 </p>
 
-<div class="warning">
-    <b>WARNING:</b><br/>
+<p class="warning">
+    <strong>WARNING:</strong>
     This project is currently in state of active development. Features,
     functionality and API are unstable.
-</div>
+</p>
 
-<div class="content">
-% for title, items in [('Components', page.components), ('Python libraries', page.python_libraries), ('JavaScript libraries', page.javascript_libraries)]:
-    <div class="group">
-        <div class="title">${title}</div>
-        <div class="body">
-            <ul>
-            % for item in items:
-                <li>
-                    <div class="title">${item['title']}</div>
-                    <div class="description">${item['description']}</div>
-                </li>
-            % endfor
-            </ul>
-        </div>
-    </div>
-% endfor
-</div>
+<article>
+    <h2>Components</h2>
+    <ul>
+    % for title, description in [('hat-orchestrator', \
+                                  'Simple cross-platform daemon/service manager'), \
+                                 ('hat-monitor', \
+                                  'Redundancy and service discovery server'), \
+                                 ('hat-event', \
+                                  'Event pub/sub communication and storage'), \
+                                 ('hat-gateway', \
+                                  'Remote communication device gateway'), \
+                                 ('hat-gui', \
+                                  'GUI server'), \
+                                 ('hat-translator', \
+                                  'Configuration transformation interface'), \
+                                 ('hat-syslog', \
+                                  'Syslog server')]:
+        <li>
+            <h3>${title}</h3>
+            ${description}
+        </li>
+    % endfor
+    </ul>
+</article>
+
+<article>
+    <h2>Python libraries</h2>
+    <ul>
+    % for title, description in [('hat-util', \
+                                  'Utility modules'), \
+                                 ('hat-peg', \
+                                  'Parsing expression grammar'), \
+                                 ('hat-sbs', \
+                                  'Simple binary serialization'), \
+                                 ('hat-chatter', \
+                                  'Chatter communication protocol'), \
+                                 ('hat-juggler', \
+                                  'Juggler communication protocol'), \
+                                 ('hat-duktape', \
+                                  'Python Duktape JS wrapper'), \
+                                 ('hat-sqlite3', \
+                                  'Hat specific sqlite3 build'), \
+                                 ('hat-asn1', \
+                                  'ASN.1 parser and encoder'), \
+                                 ('hat-drivers', \
+                                  'Communication drivers')]:
+        <li>
+            <h3>${title}</h3>
+            ${description}
+        </li>
+    % endfor
+    </ul>
+</article>
+
+<article>
+    <h2>JavaScript libraries</h2>
+    <ul>
+    % for title, description in [('@hat-core/util', \
+                                  'Utility module'), \
+                                 ('@hat-core/renderer', \
+                                  'Virtual DOM renderer'), \
+                                 ('@hat-core/future', \
+                                  'Async Future implementation'), \
+                                 ('@hat-core/juggler', \
+                                  'Juggler client library')]:
+        <li>
+            <h3>${title}</h3>
+            ${description}
+        </li>
+    % endfor
+    </ul>
+</article>

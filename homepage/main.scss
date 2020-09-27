@@ -1,13 +1,13 @@
 @import '../src_scss/common/color';
-@import '../src_scss/common/shadow';
-
-$page-width: 800px;
 
 html, body {
-    font-size: 12pt;
-    margin: 0px;
-    background-color: $color-grey-100;
     font-family: Segoe UI, Helvetica, Arial, sans-serif;
+}
+
+body {
+    max-width: 960px;
+    padding: 1rem;
+    margin: 0 auto;
 }
 
 code, pre {
@@ -16,120 +16,25 @@ code, pre {
 
 pre {
     background-color: $color-grey-300;
-    padding: 5px;
-    margin: 5px;
+    padding: 0.5em;
+    margin: 0.5em;
 }
 
-#main {
-    @include shadow-4dp;
-    margin: 10px auto;
-    width: $page-width;
-    background-color: white;
+.warning {
+    background-color: $color-grey-300;
+    padding: 1em;
+}
 
-    #header {
-        padding: 15px;
-        background-color: $color-grey-200;
-
-        .title {
-            text-align: center;
-            font-weight: 600;
-            font-size: 16pt;
+header {
+    nav {
+        & > * {
+            padding-left: 0.5em;
         }
-
-        .subtitle {
-            text-align: center;
-            font-weight: 600;
-            color: $color-grey-600;
-        }
-    }
-
-    #navigation {
-        @include shadow-4dp;
-        display: flex;
-        background-color: $color-grey-200;
-        justify-content: flex-end;
-
-        & > a {
-            border-left: 1px solid $color-grey-300;
-            padding: 4px 7px;
-            text-decoration: none;
-            color: $color-grey-800;
-            font-weight: 600;
-
-            &:hover {
-                background-color: $color-grey-300;
-            }
-        }
-    }
-
-    #page {
-        padding: 10px;
     }
 }
 
-#copyright {
-    margin: 0px auto 10px;
-    width: $page-width;
+footer {
+    margin-top: 1em;
+    font-size: 0.75em;
     text-align: center;
-    font-size: 10pt;
-}
-
-.group {
-    @include shadow-4dp;
-    margin: 5px;
-
-    & > .title {
-        padding: 5px;
-        background-color: $color-grey-200;
-        font-weight: 600;
-        color: $color-grey-800;
-    }
-
-    & > .body {
-        padding: 10px;
-    }
-}
-
-.page-index, .page-download {
-    & > .warning {
-        @include shadow-4dp;
-        padding: 10px;
-        background-color: rgba(red, 0.2);
-    }
-
-    & > .content {
-        display: flex;
-        margin-top: 10px;
-        align-items: stretch;
-
-        ul {
-            margin-block-start: 0px;
-            margin-block-end: 0px;
-            padding-inline-start: 20px;
-
-            li {
-                margin-bottom: 3px;
-
-                .title {
-                    font-weight: 600;
-                }
-            }
-        }
-    }
-}
-
-.page-index {
-    & > .content {
-        & > * {
-            flex-basis: 33%;
-        }
-    }
-}
-
-.page-download {
-    & > .content {
-        & > * {
-            flex-basis: 50%;
-        }
-    }
 }

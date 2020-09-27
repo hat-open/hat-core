@@ -1,42 +1,53 @@
 <%inherit file="_main.html"/>
+<%block name="title">Download</%block>
 
-<div class="content">
+<article>
+    <h2>Python packages</h2>
 
-    <div class="group">
-        <div class="title">Python packages</div>
-        <div class="body">
-            Python packages require Python 3.8 or newer and can be installed
-            with <code>pip</code>.
-            <pre>$ pip install &lt;package&gt;</pre>
-            where <i>&lt;package&gt;</i> is one of:
-            <ul>
-            % for package in page.python_packages:
-                <li>
-                    <a href="https://pypi.org/project/${package}">
-                        ${package}
-                    </a>
-                </li>
-            % endfor
-            </ul>
-        </div>
-    </div>
+    Python packages require Python 3.8 or newer and can be installed
+    with <code>pip</code>.
+    <pre>$ pip install &lt;package&gt;</pre>
+    where <i>&lt;package&gt;</i> is one of:
 
-    <div class="group">
-        <div class="title">JavaScript packages</div>
-        <div class="body">
-            JavaScript packages can be installed with <code>npm</code>.
-            <pre>$ npm install &lt;package&gt;</pre>
-            where <i>&lt;package&gt;</i> is one of:
-            <ul>
-            % for package in page.javascript_packages:
-                <li>
-                    <a href="https://www.npmjs.com/package/${package}">
-                        ${package}
-                    </a>
-                </li>
-            % endfor
-            </ul>
-        </div>
-    </div>
+    <ul>
+    % for package in ['hat-util', \
+                      'hat-peg', \
+                      'hat-sbs', \
+                      'hat-chatter', \
+                      'hat-juggler', \
+                      'hat-duktape', \
+                      'hat-sqlite3', \
+                      'hat-asn1', \
+                      'hat-drivers', \
+                      'hat-orchestrator', \
+                      'hat-monitor', \
+                      'hat-event', \
+                      'hat-gateway', \
+                      'hat-gui', \
+                      'hat-translator', \
+                      'hat-syslog']:
+        <li>
+            <a href="https://pypi.org/project/${package}">${package}</a>
+        </li>
+    % endfor
+    </ul>
+</article>
 
-</div>
+<article>
+    <h2>JavaScript packages</h2>
+
+    JavaScript packages can be installed with <code>npm</code>.
+    <pre>$ npm install &lt;package&gt;</pre>
+    where <i>&lt;package&gt;</i> is one of:
+
+    <ul>
+    % for package in ['@hat-core/util', \
+                      '@hat-core/renderer', \
+                      '@hat-core/future', \
+                      '@hat-core/juggler']:
+        <li>
+            <a href="https://www.npmjs.com/package/${package}">${package}</a>
+        </li>
+    % endfor
+    </ul>
+</article>
