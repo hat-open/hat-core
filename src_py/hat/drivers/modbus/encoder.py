@@ -52,9 +52,11 @@ def _encode_adu_ascii(adu):
     msg_bytes.extend(_encode_pdu(adu.pdu))
     lrc = _calculate_lrc(msg_bytes)
     msg_bytes.extend([lrc])
-    msg_ascii = itertools.chain.from_iterable(
-        hex(i).upper()[2:].encode('ascii') for i in msg_bytes)
-    return bytes(itertools.chain(b':', msg_ascii, b'\r\n'))
+    msg_ascii = bytearray(b':')
+    for i in msg_bytes:
+        msg_ascii.extend(f'{i:02X}'.encode('ascii'))
+    msg_ascii.extend(b'\r\n')
+    return bytes(msg_ascii)
 
 
 def _encode_pdu(pdu):
@@ -84,26 +86,26 @@ def _encode_pdu_req(pdu):
 
 
 def _encode_pdu_res(pdu):
-    if isinstance(pdu, common.ReadReqPdu):
+    if isinstance(pdu, common.ReadResPdu):
         return _encode_pdu_res_read(pdu)
 
-    if isinstance(pdu, common.WriteSingleReqPdu):
+    if isinstance(pdu, common.WriteSingleResPdu):
         return _encode_pdu_res_write_single(pdu)
 
-    if isinstance(pdu, common.WriteMultipleReqPdu):
+    if isinstance(pdu, common.WriteMultipleResPdu):
         return _encode_pdu_res_write_multiple(pdu)
 
     raise ValueError("invalid pdu")
 
 
 def _encode_pdu_err(pdu):
-    if isinstance(pdu, common.ReadReqPdu):
+    if isinstance(pdu, common.ReadErrPdu):
         return _encode_pdu_err_read(pdu)
 
-    if isinstance(pdu, common.WriteSingleReqPdu):
+    if isinstance(pdu, common.WriteSingleErrPdu):
         return _encode_pdu_err_write_single(pdu)
 
-    if isinstance(pdu, common.WriteMultipleReqPdu):
+    if isinstance(pdu, common.WriteMultipleErrPdu):
         return _encode_pdu_err_write_multiple(pdu)
 
     raise ValueError("invalid pdu")
@@ -114,7 +116,7 @@ def _encode_pdu_req_read(pdu):
         fc = 1
         data = struct.pack('>HH', pdu.address, pdu.quantity)
 
-    elif pdu.data_type == common.DataType.DESCRETE_INPUT:
+    elif pdu.data_type == common.DataType.DISCRETE_INPUT:
         fc = 2
         data = struct.pack('>HH', pdu.address, pdu.quantity)
 
@@ -166,7 +168,7 @@ def _encode_pdu_req_write_multiple(pdu):
 
     elif pdu.data_type == common.DataType.HOLDING_REGISTER:
         fc = 16
-        quantity = len(pdu['values'])
+        quantity = len(pdu.values)
         count = 2 * quantity
         data = bytearray(struct.pack('>HHB', pdu.address, quantity, count))
         for i in range(count):
@@ -191,7 +193,7 @@ def _encode_pdu_res_read(pdu):
                     data_byte = data_byte | (1 << j)
             data.append(data_byte)
 
-    elif pdu.data_type == common.DataType.DESCRETE_INPUT:
+    elif pdu.data_type == common.DataType.DISCRETE_INPUT:
         fc = 2
         quantity = len(pdu.values)
         count = quantity // 8 + (1 if quantity % 8 else 0)
@@ -261,7 +263,7 @@ def _encode_pdu_err_read(pdu):
     if pdu.data_type == common.DataType.COIL:
         fc = 1
 
-    elif pdu.data_type == common.DataType.DESCRETE_INPUT:
+    elif pdu.data_type == common.DataType.DISCRETE_INPUT:
         fc = 2
 
     elif pdu.data_type == common.DataType.HOLDING_REGISTER:
@@ -333,8 +335,7 @@ async def _read_adu_rtu(direction, reader):
 async def _read_adu_ascii(direction, reader):
     while b':' != await reader.read(1):
         pass
-    device_id = int(await reader.read(2), 16)
-    data = memoryview(bytearray())
+    data = bytearray()
     while True:
         temp = await reader.read(2)
         if temp == b'\r\n':
@@ -342,6 +343,7 @@ async def _read_adu_ascii(direction, reader):
         data.append(int(temp, 16))
     memory_reader = common.MemoryReader(data)
     caching_reader = common.CachingReader(memory_reader)
+    device_id = (await caching_reader.read(1))[0]
     pdu = await _read_pdu(direction, caching_reader)
     lrc = _calculate_lrc(caching_reader.cache)
     if lrc != (await caching_reader.read(1))[0]:
@@ -370,7 +372,7 @@ async def _read_pdu_req(reader):
                                  quantity=quantity)
 
     if fc == 2:
-        data_type = common.DataType.DESCRETE_INPUT
+        data_type = common.DataType.DISCRETE_INPUT
         address, quantity = struct.unpack('>HH', await reader.read(4))
         return common.ReadReqPdu(data_type=data_type,
                                  address=address,
@@ -420,7 +422,7 @@ async def _read_pdu_req(reader):
         address, quantity, byte_count = struct.unpack('>HHB',
                                                       await reader.read(5))
         values_bytes = await reader.read(byte_count)
-        values = [(values_bytes[i * 2] << 8) & values_bytes[i * 2 + 1]
+        values = [(values_bytes[i * 2] << 8) | values_bytes[i * 2 + 1]
                   for i in range(quantity)]
         return common.WriteMultipleReqPdu(data_type=data_type,
                                           address=address,
@@ -454,7 +456,7 @@ async def _read_pdu_res(reader):
                                  values=values)
 
     if fc == 2:
-        data_type = common.DataType.DESCRETE_INPUT
+        data_type = common.DataType.DISCRETE_INPUT
         if error:
             return common.ReadErrPdu(data_type, error)
         byte_count = (await reader.read(1))[0]

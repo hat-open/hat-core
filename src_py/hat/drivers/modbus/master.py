@@ -57,8 +57,8 @@ def _create_master(modbus_type, reader, writer):
     master._modbus_type = modbus_type
     master._reader = reader
     master._writer = writer
-    master._send_queue = aio.Queue(exception_cb=_on_exception)
-    master._async_group = aio.Group()
+    master._send_queue = aio.Queue()
+    master._async_group = aio.Group(exception_cb=_on_exception)
     master._async_group.spawn(aio.call_on_cancel, writer.async_close)
     master._async_group.spawn(master._send_loop)
     return master
@@ -128,14 +128,11 @@ class Master:
                     data_type: common.DataType,
                     start_address: int,
                     values: typing.List[int]
-                    ) -> typing.Union[bool, common.Error]:
+                    ) -> typing.Optional[common.Error]:
         """Write data to modbus device
 
         Data types `DISCRETE_INPUT`, `INPUT_REGISTER` and `QUEUE` are not
         supported.
-
-        This method returns ``True`` if write was successful and ``False``
-        otherwise.
 
         Args:
             device_id: slave device identifier
@@ -159,8 +156,11 @@ class Master:
         res_pdu = await future
 
         if isinstance(res_pdu, common.WriteMultipleResPdu):
-            return (res_pdu.address == start_address and
-                    res_pdu.quantity == len(values))
+            if (res_pdu.address != start_address):
+                raise Exception("invalid response pdu address")
+            if (res_pdu.quantity != len(values)):
+                raise Exception("invalid response pdu quantity")
+            return
 
         if isinstance(res_pdu, common.WriteMultipleErrPdu):
             return res_pdu.error
@@ -197,7 +197,7 @@ class Master:
                 except Exception as e:
                     future.set_exception(e)
                     continue
-                self._writer.write(req_adu_bytes)
+                await self._writer.write(req_adu_bytes)
 
                 res_adu = await encoder.read_adu(self._modbus_type,
                                                  common.Direction.RESPONSE,
@@ -214,7 +214,7 @@ class Master:
                 if isinstance(req_adu.pdu, common.ReadReqPdu):
                     if (not isinstance(res_adu.pdu, common.ReadResPdu)
                             and not isinstance(res_adu.pdu,
-                                               common.ReadResPdu)):
+                                               common.ReadErrPdu)):
                         raise Exception("invalid response pdu type")
 
                 elif isinstance(req_adu.pdu, common.WriteSingleReqPdu):

@@ -148,8 +148,9 @@ class TcpWriter:
     def __init__(self, writer):
         self._writer = writer
 
-    def write(self, data):
+    async def write(self, data):
         self._writer.write(data)
+        await self._writer.drain()
 
     async def async_close(self):
         with contextlib.suppress(Exception):
@@ -163,8 +164,8 @@ class SerialWriter:
     def __init__(self, conn):
         self._conn = conn
 
-    def write(self, data):
-        self._conn.write(data)
+    async def write(self, data):
+        await self._conn.write(data)
 
     async def async_close(self):
         await self._conn.async_close()

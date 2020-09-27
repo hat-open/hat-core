@@ -156,9 +156,12 @@ class Slave:
     async def _receive_loop(self):
         try:
             while True:
-                req_adu = await encoder.read_adu(self._modbus_type,
-                                                 common.Direction.REQUEST,
-                                                 self._reader)
+                try:
+                    req_adu = await encoder.read_adu(self._modbus_type,
+                                                     common.Direction.REQUEST,
+                                                     self._reader)
+                except (asyncio.IncompleteReadError, EOFError):
+                    break
 
                 if isinstance(req_adu.pdu, common.ReadReqPdu):
                     result = await aio.call(self._read_cb, self,
@@ -228,7 +231,7 @@ class Slave:
                     raise Exception("invalid modbus type")
 
                 res_adu_bytes = encoder.encode_adu(res_adu)
-                self._writer.write(res_adu_bytes)
+                await self._writer.write(res_adu_bytes)
 
         finally:
             self._async_group.close()
