@@ -18,3 +18,4 @@ Available communication drivers:
    acse
    mms
    modbus
+   hue
