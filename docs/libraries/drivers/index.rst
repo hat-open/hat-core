@@ -19,3 +19,4 @@ Available communication drivers:
    mms
    modbus
    hue
+   upnp
