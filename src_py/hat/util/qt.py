@@ -1,9 +1,12 @@
+"""Parallel execution of Qt and asyncio threads"""
+
 import concurrent.futures
 import queue
 import sys
 import threading
 import asyncio
 import functools
+import typing
 
 import PySide2.QtCore
 import PySide2.QtWebEngineWidgets
@@ -12,7 +15,22 @@ import PySide2.QtWidgets
 from hat.util import aio
 
 
-def run(async_main, *args, **kwargs):
+QtExecutor = typing.Callable[..., typing.Awaitable[typing.Any]]
+"""First argument is Callable called with additionaln arguments"""
+
+AsyncMain = typing.Callable[..., typing.Awaitable[typing.Any]]
+"""First argument is QtExecutor"""
+
+
+def run(async_main: AsyncMain, *args, **kwargs):
+    """Run Qt application with additional asyncyio thread
+
+    Args:
+        async_main: asyncio main entry point
+        args: aditional positional arguments passed to `async_main`
+        kwargs: aditional keyword arguments passed to `async_main`
+
+    """
     app = PySide2.QtWidgets.QApplication(sys.argv)
     executor = _QtExecutor()
     async_thread = threading.Thread(target=_run_async_thread,
@@ -56,7 +74,7 @@ def _run_async_thread(app, executor, async_main, args, kwargs):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        async_executor = functools.partial(loop.run_in_executor, executor)
-        loop.run_until_complete(async_main(async_executor, *args, **kwargs))
+        qt_executor = functools.partial(loop.run_in_executor, executor)
+        loop.run_until_complete(async_main(qt_executor, *args, **kwargs))
     finally:
         executor.submit(app.exit)

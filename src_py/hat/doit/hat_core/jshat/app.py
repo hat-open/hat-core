@@ -11,14 +11,16 @@ def task_jshat_app():
     """JsHat application - build all"""
     return {'actions': ['yarn run --silent build '
                         '--config webpack.app.config.js'],
-            'task_dep': ['jshat_deps']}
+            'task_dep': ['jshat_deps',
+                         'jshat_assets']}
 
 
 def task_jshat_app_watch():
     """JsHat application - build all on change"""
     return {'actions': ['yarn run --silent watch '
                         '--config webpack.app.config.js'],
-            'task_dep': ['jshat_deps']}
+            'task_dep': ['jshat_deps',
+                         'jshat_assets']}
 
 
 # def task_jshat_analyze():

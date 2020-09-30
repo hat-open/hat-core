@@ -87,7 +87,7 @@ async def get_description(location: str) -> DeviceDescription:
                               depth=i['depth'],
                               url=i['url']))
         return DeviceDescription(
-            url=data.get('URLBase'),
+            url=data['root'].get('URLBase'),
             dev_type=device['deviceType'],
             dev_name=device['friendlyName'],
             manufacturer=device['deviceType'],

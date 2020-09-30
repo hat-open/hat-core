@@ -1,9 +1,8 @@
 import asyncio
-import contextlib
-import socket
 
 import pytest
 
+from hat import util
 from hat.util import aio
 
 
@@ -25,10 +24,4 @@ def unused_udp_port(unused_udp_port_factory):
 
 @pytest.fixture
 def unused_udp_port_factory():
-
-    def unused_udp_port_factory():
-        with contextlib.closing(socket.socket(type=socket.SOCK_DGRAM)) as sock:
-            sock.bind(('127.0.0.1', 0))
-            return sock.getsockname()[1]
-
-    return unused_udp_port_factory
+    return util.get_unused_udp_port

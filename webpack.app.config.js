@@ -48,5 +48,6 @@ module.exports = [
     app('monitor', '.' + path.sep + path.join('src_js', '@hat-core', 'monitor', 'main')),
     app('gui', '.' + path.sep + path.join('src_js', '@hat-core', 'gui', 'main')),
     app('syslog', '.' + path.sep + path.join('src_js', '@hat-core', 'syslog', 'main')),
-    app('event-viewer', '.' + path.sep + path.join('src_js', '@hat-core', 'event-viewer', 'main'))
+    app('event-viewer', '.' + path.sep + path.join('src_js', '@hat-core', 'event-viewer', 'main')),
+    app('hue-manager', '.' + path.sep + path.join('src_js', '@hat-core', 'hue-manager', 'main'))
 ];

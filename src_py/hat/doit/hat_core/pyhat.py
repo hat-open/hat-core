@@ -56,7 +56,8 @@ def task_pyhat_util():
                            dependencies=['pyyaml',
                                          'jsonschema',
                                          'jsonpatch'],
-                           mappings=mappings)
+                           mappings=mappings,
+                           optional_dependencies={'qt': ['PySide2']})
 
 
 def task_pyhat_peg():
@@ -176,18 +177,29 @@ def task_pyhat_drivers():
         asn1_repos = [src_py_dir / 'hat/drivers/copp/asn1_repo.json',
                       src_py_dir / 'hat/drivers/acse/asn1_repo.json',
                       src_py_dir / 'hat/drivers/mms/asn1_repo.json']
+        hue_manager_jshat_build = Path('build/jshat/app/hue-manager')
         for i in (src_py_dir / 'hat/drivers').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         for asn1_repo in asn1_repos:
             yield asn1_repo, dst_dir / asn1_repo.relative_to(src_py_dir)
+        for i in hue_manager_jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/drivers/hue/manager/ui'
+                              / i.relative_to(hue_manager_jshat_build))
 
-    return _get_task_build(name='hat-drivers',
-                           description='Hat communication drivers',
-                           readme_path=Path('README.rst'),
-                           dependencies=['pyserial',
-                                         'hat-util',
-                                         'hat-asn1'],
-                           mappings=mappings)
+    return _get_task_build(
+        name='hat-drivers',
+        description='Hat communication drivers',
+        readme_path=Path('README.rst'),
+        dependencies=['pyserial',
+                      'hat-util',
+                      'hat-asn1'],
+        mappings=mappings,
+        optional_dependencies={'hue-manager': ['click',
+                                               'PySide2',
+                                               'hat-juggler']},
+        gui_scripts=['hat-hue-manager = hat.drivers.hue.manager.main:main'])
 
 
 def task_pyhat_orchestrator():
@@ -281,7 +293,7 @@ def task_pyhat_event():
                       'hat-monitor'],
         mappings=mappings,
         optional_dependencies={'viewer': ['click',
-                                          'PySide']},
+                                          'PySide2']},
         console_scripts=['hat-event = hat.event.server.main:main'],
         gui_scripts=['hat-event-viewer = hat.event.viewer.main:main'],
         task_dep=['jshat_app'])

@@ -42,3 +42,7 @@ modules:
 
         Functions related to serialization of JSON data and validation based
         on JSON Schemas.
+
+    * `hat.util.qt`
+
+        Parallel execution of Qt and asyncio threads.

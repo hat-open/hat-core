@@ -7,6 +7,7 @@ import enum
 import logging.handlers
 import os
 import pathlib
+import socket
 import sys
 import typing
 
@@ -199,3 +200,17 @@ class EnvPathArgParseAction(argparse.Action):
             except Exception as e:
                 parser.error(str(e))
         setattr(namespace, self.dest, ret if self.nargs else ret[0])
+
+
+def get_unused_tcp_port() -> int:
+    """Search for unused TCP port"""
+    with contextlib.closing(socket.socket()) as sock:
+        sock.bind(('127.0.0.1', 0))
+        return sock.getsockname()[1]
+
+
+def get_unused_udp_port() -> int:
+    """Search for unused UDP port"""
+    with contextlib.closing(socket.socket(type=socket.SOCK_DGRAM)) as sock:
+        sock.bind(('127.0.0.1', 0))
+        return sock.getsockname()[1]

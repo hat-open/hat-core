@@ -139,7 +139,7 @@ async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
 async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """Call a function or a coroutine when canceled.
 
-    When canceled, `fn` is called with `args` and `kwargs`by using
+    When canceled, `fn` is called with `args` and `kwargs` by using
     :func:`call`.
 
     Args:
@@ -153,6 +153,30 @@ async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """
     with contextlib.suppress(asyncio.CancelledError):
         await asyncio.Future()
+    return await call(fn, *args, *kwargs)
+
+
+async def call_on_done(f: typing.Awaitable,
+                       fn: AsyncCallable,
+                       *args, **kwargs
+                       ) -> typing.Any:
+    """Call a function or a coroutine when awaitable is done.
+
+    When `f` is done, `fn` is called with `args` and `kwargs` by using
+    :func:`call`.
+
+    Args:
+        f: awaitable future
+        fn: function or coroutine
+        args: additional function arguments
+        kwargs: additional function keyword arguments
+
+    Returns:
+        function result
+
+    """
+    with contextlib.suppress(Exception):
+        await f
     return await call(fn, *args, *kwargs)
 
 
@@ -172,7 +196,7 @@ def create_executor(*args: typing.Any,
         loop: asyncio loop
 
     Returns:
-        Coroutine[[Callable,...],Any]: executor coroutine
+        Callable[[Callable,...],Awaitable[Any]]: executor coroutine
 
     """
     executor = executor_cls(*args)

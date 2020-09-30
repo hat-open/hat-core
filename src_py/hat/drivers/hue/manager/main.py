@@ -7,7 +7,7 @@ import PySide2.QtWidgets
 
 from hat import util
 from hat.util import qt
-from hat.event.viewer import server
+from hat.drivers.hue.manager import server
 from hat.util import aio
 
 
@@ -16,20 +16,17 @@ default_ui_path = package_path / 'ui'
 
 
 @click.command()
-@click.option('--addr', metavar='URL',
-              default='tcp+sbs://127.0.0.1:23012', show_default=True,
-              help='Event Server address')
 @click.option('--debug', default=False, is_flag=True,
               help='Show debugging console')
 @click.option('--ui-path', default=default_ui_path, metavar='PATH',
               callback=lambda ctx, param, value: util.parse_env_path(value),
               help='Override web ui directory path (development argument)')
-def main(addr, debug, ui_path):
-    return qt.run(async_main, addr, debug, ui_path)
+def main(debug, ui_path):
+    return qt.run(async_main, debug, ui_path)
 
 
-async def async_main(qt_executor, addr, debug, ui_path):
-    srv = await server.create(addr, ui_path)
+async def async_main(qt_executor, debug, ui_path):
+    srv = await server.create(ui_path)
     await qt_executor(_ext_qt_open_window, srv.addr, debug)
     try:
         await srv.closed
@@ -47,7 +44,7 @@ def _ext_qt_open_window(url, debug):
 
     _view = PySide2.QtWebEngineWidgets.QWebEngineView()
     _view.contextMenuEvent = lambda _: None
-    _view.setWindowTitle('Event Viewer')
+    _view.setWindowTitle('Hue manager')
     _view.load(url)
     _view.show()
 

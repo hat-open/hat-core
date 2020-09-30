@@ -1,7 +1,5 @@
 import asyncio
-import contextlib
 import functools
-import socket
 
 from hat import juggler
 from hat import util
@@ -19,19 +17,19 @@ async def create(evt_srv_addr, ui_path):
 
     srv._client = await client.connect(evt_srv_addr, [['*']])
     srv._async_group.spawn(aio.call_on_cancel, srv._client.async_close)
-    srv._async_group.spawn(_close_on_done, srv._client.closed,
-                           srv._async_group)
+    srv._async_group.spawn(aio.call_on_done, srv._client.closed,
+                           srv._async_group.close)
 
     try:
-        port = _get_unused_tcp_port()
+        port = util.get_unused_tcp_port()
         srv._addr = f'http://127.0.0.1:{port}'
         srv._srv = await juggler.listen(
             '127.0.0.1', port,
             functools.partial(srv._async_group.spawn, srv._connection_loop),
             static_dir=ui_path)
         srv._async_group.spawn(aio.call_on_cancel, srv._srv.async_close)
-        srv._async_group.spawn(_close_on_done, srv._srv.closed,
-                               srv._async_group)
+        srv._async_group.spawn(aio.call_on_done, srv._srv.closed,
+                               srv._async_group.close)
         srv._async_group.spawn(srv._server_loop)
     except BaseException:
         await aio.uncancellable(srv._async_group.async_close())
@@ -75,17 +73,6 @@ class Server:
         for event in events:
             self._events[tuple(event.event_type)] = _event_to_json(event)
         self._change_cbs.notify(list(self._events.values()))
-
-
-def _get_unused_tcp_port():
-    with contextlib.closing(socket.socket()) as sock:
-        sock.bind(('127.0.0.1', 0))
-        return sock.getsockname()[1]
-
-
-async def _close_on_done(future, closable):
-    with contextlib.closing(closable):
-        await future
 
 
 def _event_to_json(event):

@@ -21,3 +21,9 @@ Python utility library
 '''''''''''''''
 
 .. automodule:: hat.util.json
+
+
+`hat.util.qt`
+'''''''''''''''
+
+.. automodule:: hat.util.qt
