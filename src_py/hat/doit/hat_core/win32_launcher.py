@@ -22,15 +22,16 @@ else:
 def task_win32_launcher():
     "Win32 launcher - build"
 
-    def build(name, module, icon):
-        if not name or not module:
+    def build(name, cmd, icon):
+        if not name or not cmd:
             raise Exception('undefined arguments')
+        cmd = cmd.replace('\\', '\\\\')
         dst_dir.mkdir(parents=True, exist_ok=True)
         sources = [str(src_path)]
 
         if icon:
             icon = str(Path(icon).resolve()).replace('\\', '\\\\')
-            rc_path = dst_dir / 'res.rc'
+            rc_path = dst_dir / f'{name}.rc'
             rc_o_path = rc_path.with_suffix('.o')
             sources.append(rc_o_path)
             with open(rc_path, 'w', encoding='utf-8') as f:
@@ -41,16 +42,16 @@ def task_win32_launcher():
 
         subprocess.run([cc, '-O2', '-mwindows',
                         '-o', f'{dst_dir / name}.exe',
-                        f'-DHAT_WIN32_LAUNCHER_PYTHON_MODULE="\\"{module}\\""',
+                        f'-DHAT_WIN32_LAUNCHER_CMD="\\"{cmd}\\""',
                         *sources],
                        check=True)
 
     return {'actions': [build],
-            'params': [{'name': 'module',
-                        'long': 'module',
+            'params': [{'name': 'cmd',
+                        'long': 'cmd',
                         'type': str,
                         'default': None,
-                        'help': 'python module'},
+                        'help': 'relative command'},
                        {'name': 'name',
                         'long': 'name',
                         'type': str,

@@ -2,12 +2,8 @@
 #include <stdio.h>
 
 
-#ifndef HAT_WIN32_LAUNCHER_PYTHON_PATH
-#define HAT_WIN32_LAUNCHER_PYTHON_PATH "python\\pythonw.exe"
-#endif
-
-#ifndef HAT_WIN32_LAUNCHER_PYTHON_MODULE
-#error "definition HAT_WIN32_LAUNCHER_PYTHON_MODULE required"
+#ifndef HAT_WIN32_LAUNCHER_CMD
+#error "definition HAT_WIN32_LAUNCHER_CMD required"
 #endif
 
 
@@ -23,9 +19,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     if (!cmd_len)
         return 1;
 
-    snprintf(cmd + cmd_len, sizeof(cmd) - cmd_len, "%s -m %s %s",
-             HAT_WIN32_LAUNCHER_PYTHON_PATH, HAT_WIN32_LAUNCHER_PYTHON_MODULE,
-             pCmdLine);
+    snprintf(cmd + cmd_len, sizeof(cmd) - cmd_len, "%s %s",
+             HAT_WIN32_LAUNCHER_CMD, pCmdLine);
     cmd[sizeof(cmd) - 1] = 0;
 
     STARTUPINFO si;
