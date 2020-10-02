@@ -243,7 +243,7 @@ def decode_response(res):
 
     if name == 'getNameList':
         return common.GetNameListResponse(data['listOfIdentifier'],
-                                          data.get('moreFollows', False))
+                                          data.get('moreFollows', True))
 
     if name == 'identify':
         return common.IdentifyResponse(
