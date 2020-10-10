@@ -1,6 +1,7 @@
 """Statechart module"""
 
 import collections
+import itertools
 import typing
 import xml.etree.ElementTree
 
@@ -19,17 +20,18 @@ class Event(typing.NamedTuple):
 
 class Transition(typing.NamedTuple):
     event: EventName
-    destination: StateName
-    action: typing.Optional[ActionName] = None
-    local: bool = False
+    target: StateName
+    actions: typing.List[ActionName] = []
+    internal: bool = False
 
 
 class State(typing.NamedTuple):
     name: StateName
     children: typing.List['State'] = []
     transitions: typing.List[Transition] = []
-    entry: typing.Optional[ActionName] = None
-    exit: typing.Optional[ActionName] = None
+    entries: typing.List[ActionName] = []
+    exits: typing.List[ActionName] = []
+    final: bool = False
 
 
 Action = typing.Callable[['Statechart', typing.Optional[Event]], None]
@@ -73,8 +75,11 @@ class Statechart:
         """Run statechart"""
         transition = Transition(None, self._initial)
         self._walk(None, transition, None)
-        async for event in self._queue:
+        while True:
             state = self.state
+            if not state or self._states[state].final:
+                break
+            event = await self._queue.get()
             transition = None
             while state:
                 transition = self._transitions.get((state, event.name))
@@ -82,26 +87,26 @@ class Statechart:
                     break
                 state = self._parents[state]
             if transition:
-                ancestor = self._find_ancestor(state, transition.destination,
-                                               transition.local)
+                ancestor = self._find_ancestor(state, transition.target,
+                                               transition.internal)
                 self._walk(ancestor, transition, event)
 
     def _walk(self, ancestor, transition, event):
         self._walk_up(ancestor, event)
-        self._exec_action(transition.action, event)
-        self._walk_down(transition.destination, event)
+        self._exec_actions(transition.actions, event)
+        self._walk_down(transition.target, event)
 
-    def _walk_up(self, destination, event):
-        while self.state != destination:
+    def _walk_up(self, target, event):
+        while self.state != target:
             state = self._states[self.state]
-            self._exec_action(state.exit, event)
+            self._exec_actions(state.exits, event)
             self._stack.pop()
 
-    def _walk_down(self, destination, event):
-        destination = destination or self._initial
-        if not destination:
+    def _walk_down(self, target, event):
+        target = target or self._initial
+        if not target:
             return
-        states = collections.deque([self._states[destination]])
+        states = collections.deque([self._states[target]])
         while ((state := states[0]).name != self.state and
                 (parent := self._parents[state.name])):
             states.appendleft(self._states[parent])
@@ -111,9 +116,9 @@ class Statechart:
             states.popleft()
         for state in states:
             self._stack.append(state.name)
-            self._exec_action(state.entry, event)
+            self._exec_actions(state.entries, event)
 
-    def _find_ancestor(self, state, sibling, local):
+    def _find_ancestor(self, state, sibling, internal):
         if not sibling or not state:
             return
         path = collections.deque([sibling])
@@ -123,18 +128,17 @@ class Statechart:
         for i, j in zip(self._stack, path):
             if i != j:
                 break
-            if not local and i in [sibling, state]:
+            if i in [sibling, state]:
+                if internal and i == state:
+                    ancestor = i
                 break
             ancestor = i
-            if i == state:
-                break
         return ancestor
 
-    def _exec_action(self, name, event):
-        if not name:
-            return
-        action = self._actions[name]
-        action(self, event)
+    def _exec_actions(self, names, event):
+        for name in names:
+            action = self._actions[name]
+            action(self, event)
 
 
 def parse_scxml(scxml: typing.TextIO) -> typing.List[State]:
@@ -145,7 +149,8 @@ def parse_scxml(scxml: typing.TextIO) -> typing.List[State]:
 
 def _parse_scxml_states(parent_el):
     states = {}
-    for state_el in parent_el.findall("./state"):
+    for state_el in itertools.chain(parent_el.findall("./state"),
+                                    parent_el.findall("./final")):
         state = _parse_scxml_state(state_el)
         states[state.name] = state
     if not states:
@@ -156,23 +161,26 @@ def _parse_scxml_states(parent_el):
 
 
 def _parse_scxml_state(state_el):
-    entry_el = state_el.find('./onentry')
-    exit_el = state_el.find('./onexit')
-    entry = (entry_el.text or None) if entry_el is not None else None
-    exit = (exit_el.text or None) if exit_el is not None else None
     return State(name=state_el.get('id'),
                  children=_parse_scxml_states(state_el),
                  transitions=[_parse_scxml_transition(i)
                               for i in state_el.findall('./transition')],
-                 entry=entry,
-                 exit=exit)
+                 entries=[entry_el.text
+                          for entry_el in state_el.findall('./onentry')
+                          if entry_el.text],
+                 exits=[exit_el.text
+                        for exit_el in state_el.findall('./onexit')
+                        if exit_el.text],
+                 final=state_el.tag == 'final')
 
 
 def _parse_scxml_transition(transition_el):
     return Transition(event=transition_el.get('event'),
-                      destination=transition_el.get('target'),
-                      action=transition_el.text or None,
-                      local=transition_el.get('type') == 'internal')
+                      target=transition_el.get('target'),
+                      actions=[i
+                               for i in (transition_el.text or '').split(' ')
+                               if i],
+                      internal=transition_el.get('type') == 'internal')
 
 
 def _read_xml(source):
