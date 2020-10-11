@@ -35,7 +35,7 @@ class State(typing.NamedTuple):
     final: bool = False
 
 
-Action = typing.Callable[['Statechart', typing.Optional[Event]], None]
+Action = typing.Callable[[typing.Optional[Event]], None]
 
 
 class Statechart:
@@ -139,7 +139,7 @@ class Statechart:
     def _exec_actions(self, names, event):
         for name in names:
             action = self._actions[name]
-            action(self, event)
+            action(event)
 
 
 def parse_scxml(scxml: typing.Union[typing.TextIO, pathlib.Path]

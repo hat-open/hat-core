@@ -88,16 +88,15 @@ async def test_single_state():
                             stc.Transition('e2', 's1', ['transit'], True)],
                         entries=['enter'],
                         exits=['exit'])]
-    actions = {'enter': lambda m, e: queue.put_nowait(('enter', m, e)),
-               'exit': lambda m, e: queue.put_nowait(('exit', m, e)),
-               'transit': lambda m, e: queue.put_nowait(('transit', m, e))}
+    actions = {'enter': lambda e: queue.put_nowait(('enter', e)),
+               'exit': lambda e: queue.put_nowait(('exit', e)),
+               'transit': lambda e: queue.put_nowait(('transit', e))}
     machine = stc.Statechart(states, actions)
     assert machine.state is None
 
     f = asyncio.ensure_future(machine.run())
-    a, m, e = await queue.get()
+    a, e = await queue.get()
     assert a == 'enter'
-    assert m is machine
     assert e is None
     assert machine.state == 's1'
 
@@ -106,12 +105,12 @@ async def test_single_state():
 
     event = stc.Event('e1', None)
     machine.register(event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('exit', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('transit', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter', machine, event)
+    a, e = await queue.get()
+    assert (a, e) == ('exit', event)
+    a, e = await queue.get()
+    assert (a, e) == ('transit', event)
+    a, e = await queue.get()
+    assert (a, e) == ('enter', event)
     assert machine.state == 's1'
 
     await asyncio.sleep(0.001)
@@ -119,8 +118,8 @@ async def test_single_state():
 
     event = stc.Event('e2', 123)
     machine.register(event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('transit', machine, event)
+    a, e = await queue.get()
+    assert (a, e) == ('transit', event)
     assert machine.state == 's1'
 
     await asyncio.sleep(0.001)
@@ -160,26 +159,26 @@ async def test_nested_states():
         transitions=[stc.Transition('e2', 's2', ['transit2'])],
         entries=['enter_s1'],
         exits=['exit_s1'])]
-    actions = {'enter_s1': lambda m, e: queue.put_nowait(('enter_s1', m, e)),
-               'exit_s1': lambda m, e: queue.put_nowait(('exit_s1', m, e)),
-               'enter_s2': lambda m, e: queue.put_nowait(('enter_s2', m, e)),
-               'exit_s2': lambda m, e: queue.put_nowait(('exit_s2', m, e)),
-               'enter_s3': lambda m, e: queue.put_nowait(('enter_s3', m, e)),
-               'exit_s3': lambda m, e: queue.put_nowait(('exit_s3', m, e)),
-               'enter_s4': lambda m, e: queue.put_nowait(('enter_s4', m, e)),
-               'exit_s4': lambda m, e: queue.put_nowait(('exit_s4', m, e)),
-               'transit1': lambda m, e: queue.put_nowait(('transit1', m, e)),
-               'transit2': lambda m, e: queue.put_nowait(('transit2', m, e))}
+    actions = {'enter_s1': lambda e: queue.put_nowait(('enter_s1', e)),
+               'exit_s1': lambda e: queue.put_nowait(('exit_s1', e)),
+               'enter_s2': lambda e: queue.put_nowait(('enter_s2', e)),
+               'exit_s2': lambda e: queue.put_nowait(('exit_s2', e)),
+               'enter_s3': lambda e: queue.put_nowait(('enter_s3', e)),
+               'exit_s3': lambda e: queue.put_nowait(('exit_s3', e)),
+               'enter_s4': lambda e: queue.put_nowait(('enter_s4', e)),
+               'exit_s4': lambda e: queue.put_nowait(('exit_s4', e)),
+               'transit1': lambda e: queue.put_nowait(('transit1', e)),
+               'transit2': lambda e: queue.put_nowait(('transit2', e))}
     machine = stc.Statechart(states, actions)
     assert machine.state is None
 
     f = asyncio.ensure_future(machine.run())
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s1', machine, None)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s2', machine, None)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s3', machine, None)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s1', None)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s2', None)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s3', None)
     assert machine.state == 's3'
 
     await asyncio.sleep(0.001)
@@ -187,12 +186,12 @@ async def test_nested_states():
 
     event = stc.Event('e1', 123)
     machine.register(event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('exit_s3', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('transit1', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s4', machine, event)
+    a, e = await queue.get()
+    assert (a, e) == ('exit_s3', event)
+    a, e = await queue.get()
+    assert (a, e) == ('transit1', event)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s4', event)
     assert machine.state == 's4'
 
     await asyncio.sleep(0.001)
@@ -200,20 +199,20 @@ async def test_nested_states():
 
     event = stc.Event('e2', 123)
     machine.register(event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('exit_s4', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('exit_s2', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('exit_s1', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('transit2', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s1', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s2', machine, event)
-    a, m, e = await queue.get()
-    assert (a, m, e) == ('enter_s3', machine, event)
+    a, e = await queue.get()
+    assert (a, e) == ('exit_s4', event)
+    a, e = await queue.get()
+    assert (a, e) == ('exit_s2', event)
+    a, e = await queue.get()
+    assert (a, e) == ('exit_s1', event)
+    a, e = await queue.get()
+    assert (a, e) == ('transit2', event)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s1', event)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s2', event)
+    a, e = await queue.get()
+    assert (a, e) == ('enter_s3', event)
     assert machine.state == 's3'
 
     f.cancel()
