@@ -2,6 +2,7 @@
 
 import collections
 import itertools
+import pathlib
 import typing
 import xml.etree.ElementTree
 
@@ -141,9 +142,14 @@ class Statechart:
             action(self, event)
 
 
-def parse_scxml(scxml: typing.TextIO) -> typing.List[State]:
+def parse_scxml(scxml: typing.Union[typing.TextIO, pathlib.Path]
+                ) -> typing.List[State]:
     """Parse SCXML"""
-    root_el = _read_xml(scxml)
+    if isinstance(scxml, pathlib.Path):
+        with open(scxml, encoding='utf-8') as f:
+            root_el = _read_xml(f)
+    else:
+        root_el = _read_xml(scxml)
     return _parse_scxml_states(root_el)
 
 
