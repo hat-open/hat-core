@@ -12,6 +12,7 @@ from hat.util import aio
 EventName = str
 StateName = str
 ActionName = str
+ConditionName = str
 
 
 class Event(typing.NamedTuple):
@@ -21,8 +22,9 @@ class Event(typing.NamedTuple):
 
 class Transition(typing.NamedTuple):
     event: EventName
-    target: StateName
+    target: typing.Optional[StateName]
     actions: typing.List[ActionName] = []
+    conditions: typing.List[ConditionName] = []
     internal: bool = False
 
 
@@ -36,17 +38,20 @@ class State(typing.NamedTuple):
 
 
 Action = typing.Callable[[typing.Optional[Event]], None]
+Condition = typing.Callable[[typing.Optional[Event]], bool]
 
 
 class Statechart:
 
     def __init__(self,
                  states: typing.Iterable[State],
-                 actions: typing.Dict[str, Action]):
+                 actions: typing.Dict[str, Action],
+                 conditions: typing.Dict[str, Condition] = {}):
         states = collections.deque(states)
 
         self._initial = states[0].name if states else None
         self._actions = actions
+        self._conditions = conditions
         self._states = {}
         self._parents = {}
         self._transitions = {}
@@ -74,8 +79,10 @@ class Statechart:
 
     async def run(self):
         """Run statechart"""
-        transition = Transition(None, self._initial)
-        self._walk(None, transition, None)
+        ancestor = None
+        event = None
+        self._walk_up(ancestor, event)
+        self._walk_down(self._initial, event)
         while True:
             state = self.state
             if not state or self._states[state].final:
@@ -84,18 +91,19 @@ class Statechart:
             transition = None
             while state:
                 transition = self._transitions.get((state, event.name))
-                if transition:
+                if transition and all(self._conditions[name](event)
+                                      for name in transition.conditions):
                     break
                 state = self._parents[state]
-            if transition:
+            if not transition:
+                continue
+            if transition.target:
                 ancestor = self._find_ancestor(state, transition.target,
                                                transition.internal)
-                self._walk(ancestor, transition, event)
-
-    def _walk(self, ancestor, transition, event):
-        self._walk_up(ancestor, event)
-        self._exec_actions(transition.actions, event)
-        self._walk_down(transition.target, event)
+                self._walk_up(ancestor, event)
+            self._exec_actions(transition.actions, event)
+            if transition.target:
+                self._walk_down(transition.target, event)
 
     def _walk_up(self, target, event):
         while self.state != target:
@@ -186,6 +194,9 @@ def _parse_scxml_transition(transition_el):
                       actions=[i
                                for i in (transition_el.text or '').split(' ')
                                if i],
+                      conditions=[i for i in (transition_el.get('cond') or
+                                              '').split(' ')
+                                  if i],
                       internal=transition_el.get('type') == 'internal')
 
 

@@ -85,7 +85,7 @@ async def test_single_state():
     states = [stc.State('s1',
                         transitions=[
                             stc.Transition('e1', 's1', ['transit']),
-                            stc.Transition('e2', 's1', ['transit'], True)],
+                            stc.Transition('e2', 's1', ['transit'], [], True)],
                         entries=['enter'],
                         exits=['exit'])]
     actions = {'enter': lambda e: queue.put_nowait(('enter', e)),
