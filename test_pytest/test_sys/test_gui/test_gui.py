@@ -423,11 +423,13 @@ async def test_user_login(run_gui, gui_conf, gui_port,
     msg_initial = {'type': 'state',
                    'reason': 'init',
                    'user': None,
+                   'roles': [],
                    'view': initial_view.file_data,
                    'conf': None}
     msg_login = {'type': 'state',
                  'reason': 'login',
                  'user': user_conf['name'],
+                 'roles': user_conf['roles'],
                  'view': {f'{view_name}.txt':
                           f'this is {view_name}'},
                  'conf': None}
@@ -628,6 +630,7 @@ async def test_users_roles(tmp_path, run_gui, gui_conf,
         role_conf = util.first(gui_conf['server']['roles'],
                                lambda i: i['name'] == role)
         assert msg['user'] == user_conf['name']
+        assert msg['roles'] == user_conf['roles']
         assert msg['view'] == {f"{role_conf['view']}.txt":
                                f"this is {role_conf['view']}"}
     # event gets to all clients for each adapter

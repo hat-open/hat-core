@@ -97,8 +97,8 @@ class Server:
             mlog.warning('user % has no roles', user['name'])
             await self._show_view(conn, initial_view, reason='internal_error')
             return
-        await self._show_view(conn, roles[0]['view'],
-                              reason='login', username=user['name'])
+        await self._show_view(conn, roles[0]['view'], reason='login',
+                              username=user['name'], roles=user['roles'])
         adapters = {i: self._adapters[i]
                     for role in roles
                     for i in role['adapters']}
@@ -116,12 +116,14 @@ class Server:
             return
         return user
 
-    async def _show_view(self, conn, name,  reason='init', username=None):
+    async def _show_view(self, conn, name,  reason='init',
+                         username=None, roles=[]):
         view = await self._views.get(name)
         conn.set_local_data(None)
         await conn.flush_local_data()
         await conn.send({'type': 'state',
                          'user': username,
+                         'roles': roles,
                          'reason': reason,
                          'view': view.data,
                          'conf': view.conf})

@@ -80,6 +80,7 @@ class ViewManager {
             conf: msg.conf,
             reason: msg.reason,
             user: msg.user,
+            roles: msg.roles,
             view: msg.view,
             conn: new ViewConnection(this.app)
         };

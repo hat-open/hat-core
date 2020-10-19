@@ -94,6 +94,7 @@ async def test_login_success(unused_tcp_port, server_factory):
         assert state_message['type'] == 'state'
         assert state_message['reason'] == 'login'
         assert state_message['user'] == 'user1'
+        assert state_message['roles'] == ['role1']
 
 
 @pytest.mark.asyncio
@@ -117,6 +118,7 @@ async def test_login_fail(unused_tcp_port, server_factory):
         assert state_message['type'] == 'state'
         assert state_message['reason'] == 'auth_fail'
         assert state_message['user'] is None
+        assert state_message['roles'] == []
 
         await conn.send({'type': 'login',
                          'name': 'user1',
@@ -125,6 +127,7 @@ async def test_login_fail(unused_tcp_port, server_factory):
         assert state_message['type'] == 'state'
         assert state_message['reason'] == 'auth_fail'
         assert state_message['user'] is None
+        assert state_message['roles'] == []
 
 
 @pytest.mark.asyncio
@@ -155,6 +158,7 @@ async def test_two_logins(unused_tcp_port, server_factory):
         assert message['type'] == 'state'
         assert message['reason'] == 'login'
         assert message['user'] == 'user2'
+        assert message['roles'] == ['role1']
 
 
 @pytest.mark.asyncio
@@ -185,6 +189,7 @@ async def test_two_logins_second_fail(unused_tcp_port, server_factory):
         assert message['type'] == 'state'
         assert message['reason'] == 'auth_fail'
         assert message['user'] is None
+        assert message['roles'] == []
 
 
 @pytest.mark.asyncio
@@ -206,6 +211,7 @@ async def test_logout(unused_tcp_port, server_factory):
         assert state_message['type'] == 'state'
         assert state_message['reason'] == 'logout'
         assert state_message['user'] is None
+        assert state_message['roles'] == []
 
         await conn.send({'type': 'login',
                          'name': 'user1',
@@ -218,6 +224,7 @@ async def test_logout(unused_tcp_port, server_factory):
         assert state_message['type'] == 'state'
         assert state_message['reason'] == 'logout'
         assert state_message['user'] is None
+        assert state_message['roles'] == []
 
 
 @pytest.mark.asyncio
@@ -319,6 +326,7 @@ async def test_user_noroles(unused_tcp_port, server_factory,
         assert state_message['type'] == 'state'
         assert state_message['reason'] == 'internal_error'
         assert state_message['user'] is None
+        assert state_message['roles'] == []
         assert state_message['conf'] is None
         view_state = state_message['view']
         for descriptor in default_view_descriptors:

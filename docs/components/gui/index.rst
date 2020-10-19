@@ -153,6 +153,7 @@ Supported juggler `MESSAGE` messages sent from server to client are::
                 - type
                 - reason
                 - user
+                - roles
                 - view
                 - conf
             properties:
@@ -170,6 +171,10 @@ Supported juggler `MESSAGE` messages sent from server to client are::
                     type:
                         - string
                         - "null"
+                roles:
+                    type: array
+                    items:
+                        type: string
                 view:
                     type: object
         adapter:
@@ -203,11 +208,13 @@ server sends `state` message with `reason` ``auth_fail`` and initial view.
 
 If client successfully authenticates, server will create new `Session` instance
 which is responsible for further communication with client. It sends a `state`
-message with `reason` ``login``, `user` set to username, and a view
-configured for a role that user has. Session continuously updates server's
-local data according to AdapterSessionClient's local data. It is also
-responsible for creating adapter session and bidirectional forwarding of
-`adapter` messages between frontend client and adapter client.
+message with `reason` ``login``, `user` set to username, `roles` containing a
+list of roles for the user, and a view that is associated with the first role.
+
+Session continuously updates server's local data according to
+AdapterSessionClient's local data. It is also responsible for creating adapter
+session and bidirectional forwarding of `adapter` messages between frontend
+client and adapter client.
 
 After a client logs out, server sends `state` message with `reason`
 ``logout`` and `user` set to ``null``.
