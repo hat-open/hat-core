@@ -10,9 +10,16 @@ from hat.util import aio
 
 
 EventName = str
+"""Event name"""
+
 StateName = str
+"""State name"""
+
 ActionName = str
+"""Action name"""
+
 ConditionName = str
+"""Condition name"""
 
 
 class Event(typing.NamedTuple):
@@ -38,10 +45,14 @@ class State(typing.NamedTuple):
 
 
 Action = typing.Callable[[typing.Optional[Event]], None]
+"""Action function"""
+
 Condition = typing.Callable[[typing.Optional[Event]], bool]
+"""Condition function"""
 
 
 class Statechart:
+    """Statechart engine"""
 
     def __init__(self,
                  states: typing.Iterable[State],
@@ -54,7 +65,6 @@ class Statechart:
         self._conditions = conditions
         self._states = {}
         self._parents = {}
-        self._transitions = {}
         self._stack = collections.deque()
         self._queue = aio.Queue()
 
@@ -63,10 +73,6 @@ class Statechart:
             states.extend(state.children)
             self._states[state.name] = state
             self._parents.update({i.name: state.name for i in state.children})
-            if state.name not in self._parents:
-                self._parents[state.name] = None
-            for transition in state.transitions:
-                self._transitions[(state.name, transition.event)] = transition
 
     @property
     def state(self) -> typing.Optional[StateName]:
@@ -79,22 +85,14 @@ class Statechart:
 
     async def run(self):
         """Run statechart"""
-        ancestor = None
-        event = None
-        self._walk_up(ancestor, event)
-        self._walk_down(self._initial, event)
+        self._walk_up(None, None)
+        self._walk_down(self._initial, None)
         while True:
             state = self.state
             if not state or self._states[state].final:
                 break
             event = await self._queue.get()
-            transition = None
-            while state:
-                transition = self._transitions.get((state, event.name))
-                if transition and all(self._conditions[name](event)
-                                      for name in transition.conditions):
-                    break
-                state = self._parents[state]
+            state, transition = self._find_state_transition(state, event)
             if not transition:
                 continue
             if transition.target:
@@ -117,7 +115,7 @@ class Statechart:
             return
         states = collections.deque([self._states[target]])
         while ((state := states[0]).name != self.state and
-                (parent := self._parents[state.name])):
+                (parent := self._parents.get(state.name))):
             states.appendleft(self._states[parent])
         while (state := states[-1]).children:
             states.append(state.children[0])
@@ -127,11 +125,23 @@ class Statechart:
             self._stack.append(state.name)
             self._exec_actions(state.entries, event)
 
+    def _find_state_transition(self, state, event):
+        while state:
+            for transition in self._states[state].transitions:
+                if transition.event != event.name:
+                    continue
+                if not all(self._conditions[condition](event)
+                           for condition in transition.conditions):
+                    continue
+                return state, transition
+            state = self._parents.get(state)
+        return None, None
+
     def _find_ancestor(self, state, sibling, internal):
         if not sibling or not state:
             return
         path = collections.deque([sibling])
-        while (parent := self._parents[path[0]]):
+        while (parent := self._parents.get(path[0])):
             path.appendleft(parent)
         ancestor = None
         for i, j in zip(self._stack, path):

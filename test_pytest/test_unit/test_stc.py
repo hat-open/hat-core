@@ -66,7 +66,22 @@ pytestmark = pytest.mark.asyncio
                 children=[stc.State('s2', exits=['a2'])]),
       stc.State('s3',
                 entries=['a3'],
-                exits=['a4'])])
+                exits=['a4'])]),
+
+    (r"""<?xml version="1.0" encoding="UTF-8"?>
+        <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="s1" version="1.0">
+        <state id="s1">
+            <transition event="e1"/>
+            <transition event="e2" cond="c1"/>
+            <transition event="e2" cond="c2 c3"/>
+        </state>
+        </scxml>""",  # NOQA
+     [stc.State('s1',
+                transitions=[stc.Transition('e1', None),
+                             stc.Transition('e2', None,
+                                            conditions=['c1']),
+                             stc.Transition('e2', None,
+                                            conditions=['c2', 'c3'])])]),
 
 ])
 def test_parse_scxml(scxml, states):
@@ -214,6 +229,94 @@ async def test_nested_states():
     a, e = await queue.get()
     assert (a, e) == ('enter_s3', event)
     assert machine.state == 's3'
+
+    f.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await f
+
+
+async def test_conditions():
+    queue = aio.Queue()
+    states = [stc.State(
+        's1',
+        transitions=[
+            stc.Transition('e', 's1', conditions=['c1'], actions=['a1']),
+            stc.Transition('e', 's1', conditions=['c2'], actions=['a2'])])]
+    conditions = {'c1': lambda e: e.payload == 1,
+                  'c2': lambda e: e.payload == 2}
+    actions = {'a1': lambda e: queue.put_nowait('a1'),
+               'a2': lambda e: queue.put_nowait('a2')}
+
+    machine = stc.Statechart(states, actions, conditions)
+    f = asyncio.ensure_future(machine.run())
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
+
+    event = stc.Event('e', 1)
+    machine.register(event)
+    a = await queue.get()
+    assert a == 'a1'
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
+
+    event = stc.Event('e', 2)
+    machine.register(event)
+    a = await queue.get()
+    assert a == 'a2'
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
+
+    event = stc.Event('e', 3)
+    machine.register(event)
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
+
+    f.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await f
+
+
+async def test_local_transitions():
+    queue = aio.Queue()
+    states = [stc.State(
+        's1',
+        entries=['enter'],
+        transitions=[
+            stc.Transition('e1', 's1', actions=['a1']),
+            stc.Transition('e2', None, actions=['a2'])])]
+    actions = {'enter': lambda e: queue.put_nowait('enter'),
+               'a1': lambda e: queue.put_nowait('a1'),
+               'a2': lambda e: queue.put_nowait('a2')}
+
+    machine = stc.Statechart(states, actions)
+    f = asyncio.ensure_future(machine.run())
+    a = await queue.get()
+    assert a == 'enter'
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
+
+    event = stc.Event('e1')
+    machine.register(event)
+    a = await queue.get()
+    assert a == 'a1'
+    a = await queue.get()
+    assert a == 'enter'
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
+
+    event = stc.Event('e2')
+    machine.register(event)
+    a = await queue.get()
+    assert a == 'a2'
+
+    await asyncio.sleep(0.001)
+    assert queue.empty()
 
     f.cancel()
     with pytest.raises(asyncio.CancelledError):

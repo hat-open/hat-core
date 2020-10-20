@@ -13,6 +13,7 @@ from hat.doit.hat_core.pymod import sqlite3_mod_path
 
 __all__ = ['task_pyhat_util',
            'task_pyhat_peg',
+           'task_pyhat_stc',
            'task_pyhat_sbs',
            'task_pyhat_chatter',
            'task_pyhat_juggler',
@@ -70,6 +71,20 @@ def task_pyhat_peg():
     return _get_task_build(name='hat-peg',
                            description='Hat PEG parser',
                            readme_path=Path('README.hat-peg.rst'),
+                           dependencies=['hat-util'],
+                           mappings=mappings)
+
+
+def task_pyhat_stc():
+    """PyHat - build hat-stc"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-stc')
+        src_py = src_py_dir / 'hat/stc.py'
+        yield src_py, dst_dir / src_py.relative_to(src_py_dir)
+
+    return _get_task_build(name='hat-stc',
+                           description='Hat statechart engine',
+                           readme_path=Path('README.hat-stc.rst'),
                            dependencies=['hat-util'],
                            mappings=mappings)
 

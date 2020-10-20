@@ -7,7 +7,7 @@ import sphinx.domains.python
 
 def setup(app):
     app.setup_extension('sphinx.ext.autodoc')
-    app.connect('autodoc-process-docstring', _autodoc_process_docstring)
+    # app.connect('autodoc-process-docstring', _autodoc_process_docstring)
     return {'version': '0.1'}
 
 

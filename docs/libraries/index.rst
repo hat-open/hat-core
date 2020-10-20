@@ -6,6 +6,7 @@ Libraries
 
     util/index
     peg
+    stc
     sbs
     chatter
     juggler
