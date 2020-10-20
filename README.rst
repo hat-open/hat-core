@@ -52,6 +52,10 @@ where ``package-name`` is one of following:
 
         Parsing expression grammar
 
+    * `hat-stc <https://pypi.org/project/hat-stc>`_
+
+        Statechart engine
+
     * `hat-sbs <https://pypi.org/project/hat-sbs>`_
 
         Chatter communication protocol

@@ -26,10 +26,10 @@ jobs:
             run: |
                 python -m pip install --upgrade pip
                 pip install -r requirements.pip.txt
-          - name: doit check
+          - name: check
             run: doit check
-          - name: doit test test_unit
-            run: doit test test_unit
+          - name: test
+            run: doit test -- -x --timeout 60 --timeout-method thread test_unit
     dist:
         needs: test
         runs-on: ubuntu-latest
@@ -48,8 +48,8 @@ jobs:
                 pip install -r requirements.pip.txt
           - name: doit dist
             run: doit dist
-          - name: upload artifacts
-            uses: actions/upload-artifact@v1
-            with:
-                name: dist
-                path: dist
+          # - name: upload artifacts
+          #   uses: actions/upload-artifact@v1
+          #   with:
+          #       name: dist
+          #       path: dist
