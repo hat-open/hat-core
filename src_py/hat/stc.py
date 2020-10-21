@@ -202,10 +202,10 @@ def _parse_scxml_transition(transition_el):
     return Transition(event=transition_el.get('event'),
                       target=transition_el.get('target'),
                       actions=[i
-                               for i in (transition_el.text or '').split(' ')
+                               for i in (transition_el.text or '').split()
                                if i],
                       conditions=[i for i in (transition_el.get('cond') or
-                                              '').split(' ')
+                                              '').split()
                                   if i],
                       internal=transition_el.get('type') == 'internal')
 
