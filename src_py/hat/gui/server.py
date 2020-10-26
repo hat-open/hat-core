@@ -102,7 +102,8 @@ class Server:
         adapters = {i: self._adapters[i]
                     for role in roles
                     for i in role['adapters']}
-        return await create_session(conn, user['name'], roles, adapters)
+        return await create_session(conn, user['name'], user['roles'],
+                                    adapters)
 
     def _authenticate(self, name, password):
         user = self._users.get(name)

@@ -362,7 +362,7 @@ async def test_adapter_session_created(unused_tcp_port, server_factory):
         client = adapter.sessions[0].session_client
 
         assert client.user == 'user1'
-        assert client.roles == user1_roles
+        assert client.roles == ['role1']
 
         conn2 = await hat.juggler.connect(f'ws://127.0.0.1:{ui_port}/ws')
         state_message = await conn2.receive()
