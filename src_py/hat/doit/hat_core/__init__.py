@@ -56,6 +56,7 @@ __all__ = (['task_clean_all'] +
 build_dir = Path('build')
 dist_dir = Path('dist')
 src_py_dir = Path('src_py')
+src_js_dir = Path('src_js')
 src_c_dir = Path('src_c')
 
 
@@ -70,7 +71,9 @@ def task_clean_all():
                            'json_schema_repo.json',
                            'sbs_repo.json',
                            'asn1_repo.json']
-        targets = [build_dir, dist_dir,
+        targets = [build_dir,
+                   dist_dir,
+                   src_js_dir / '@hat-core/hue-manager/assets.js',
                    *itertools.chain.from_iterable(src_py_dir.rglob(i)
                                                   for i in src_py_patterns),
                    *(src_c_dir / 'hat').glob('sbs_defs.*')]

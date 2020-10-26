@@ -1,8 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "build": "webpack",
-    "watch": "webpack -w",
     "check_js": "eslint src_js",
     "check_sass": "sass-lint src_scss/**/*.scss",
     "docs": "jsdoc -c jsdoc.json",

@@ -214,7 +214,8 @@ def task_pyhat_drivers():
         optional_dependencies={'hue-manager': ['click',
                                                'PySide2',
                                                'hat-juggler']},
-        gui_scripts=['hat-hue-manager = hat.drivers.hue.manager.main:main'])
+        gui_scripts=['hat-hue-manager = hat.drivers.hue.manager.main:main'],
+        task_dep=['jshat_app_hue_manager'])
 
 
 def task_pyhat_orchestrator():
@@ -243,7 +244,7 @@ def task_pyhat_orchestrator():
                       'hat-juggler'],
         mappings=mappings,
         console_scripts=['hat-orchestrator = hat.orchestartor.main:main'],
-        task_dep=['jshat_app'])
+        task_dep=['jshat_app_orchestrator'])
 
 
 def task_pyhat_monitor():
@@ -275,7 +276,7 @@ def task_pyhat_monitor():
                       'hat-juggler'],
         mappings=mappings,
         console_scripts=['hat-monitor = hat.monitor.server.main:main'],
-        task_dep=['jshat_app'])
+        task_dep=['jshat_app_monitor'])
 
 
 def task_pyhat_event():
@@ -311,7 +312,7 @@ def task_pyhat_event():
                                           'PySide2']},
         console_scripts=['hat-event = hat.event.server.main:main'],
         gui_scripts=['hat-event-viewer = hat.event.viewer.main:main'],
-        task_dep=['jshat_app'])
+        task_dep=['jshat_app_event_viewer'])
 
 
 def task_pyhat_gateway():
@@ -373,7 +374,7 @@ def task_pyhat_gui():
                       'hat-juggler'],
         mappings=mappings,
         console_scripts=['hat-gui = hat.gui.main:main'],
-        task_dep=['jshat_app',
+        task_dep=['jshat_app_gui',
                   'jshat_view'])
 
 
@@ -420,7 +421,7 @@ def task_pyhat_syslog():
                       'hat-sqlite3'],
         mappings=mappings,
         console_scripts=['hat-syslog = hat.syslog.server.main:main'],
-        task_dep=['jshat_app'])
+        task_dep=['jshat_app_syslog'])
 
 
 def _get_task_build(name, description, readme_path, dependencies, mappings, *,

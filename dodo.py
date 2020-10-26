@@ -1,11 +1,13 @@
-import sys
+import multiprocessing
 import os
+import sys
 from pathlib import Path
 
 
 DOIT_CONFIG = {'backend': 'sqlite3',
                'default_tasks': ['dist'],
-               'verbosity': 2}
+               'verbosity': 2,
+               'num_process': multiprocessing.cpu_count()}
 
 pythonpath = os.environ.get('PYTHONPATH')
 src_py_path = str(Path('src_py').resolve())
