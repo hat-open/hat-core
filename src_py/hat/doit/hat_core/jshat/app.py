@@ -140,7 +140,8 @@ def _get_task_assets(dst_path, mappings):
     src_paths = [src_path for _, src_path in mappings()]
     return {'actions': [(_build_assets, [dst_path, mappings])],
             'file_dep': src_paths,
-            'targets': [dst_path]}
+            'targets': [dst_path],
+            'task_dep': ['jshat_deps']}
 
 
 def _build_app(name, entry, *args):
