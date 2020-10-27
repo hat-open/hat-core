@@ -16,6 +16,7 @@ from hat.doit.hat_core.pyhat import *  # NOQA
 from hat.doit.hat_core.pymod import *  # NOQA
 from hat.doit.hat_core.schemas import *  # NOQA
 from hat.doit.hat_core.test import *  # NOQA
+from hat.doit.hat_core.timestamp import *  # NOQA
 from hat.doit.hat_core.vm import *  # NOQA
 from hat.doit.hat_core.win32_launcher import *  # NOQA
 from hat.doit.hat_core import articles
@@ -31,6 +32,7 @@ from hat.doit.hat_core import pyhat
 from hat.doit.hat_core import pymod
 from hat.doit.hat_core import schemas
 from hat.doit.hat_core import test
+from hat.doit.hat_core import timestamp
 from hat.doit.hat_core import vm
 from hat.doit.hat_core import win32_launcher
 
@@ -49,6 +51,7 @@ __all__ = (['task_clean_all'] +
            pymod.__all__ +
            schemas.__all__ +
            test.__all__ +
+           timestamp.__all__ +
            vm.__all__ +
            win32_launcher.__all__)
 

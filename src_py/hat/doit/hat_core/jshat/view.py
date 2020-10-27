@@ -74,7 +74,7 @@ module.exports = {{
     entry: '{entry}',
     output: {{
         libraryTarget: 'commonjs',
-        filename: '{name}.js',
+        filename: 'index.js',
         path: '{build_dir}/{name}'
     }},
     module: {{

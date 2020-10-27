@@ -1,14 +1,12 @@
 from pathlib import Path
-import datetime
 import platform
 import shutil
 import sys
 
-import packaging.version
-
 from hat.doit import common
 from hat.doit.hat_core.duktape import src_py_lib_path as duktape_lib_path
 from hat.doit.hat_core.pymod import sqlite3_mod_path
+from hat.doit.hat_core.timestamp import timestamp_path
 
 
 __all__ = ['task_pyhat_util',
@@ -442,7 +440,8 @@ def _get_task_build(name, description, readme_path, dependencies, mappings, *,
                                             platform_specific])],
             'file_dep': src_paths,
             'targets': dst_paths,
-            'task_dep': task_dep}
+            'task_dep': ['timestamp',
+                         *task_dep]}
 
 
 def _get_build_dst_dir(name):
@@ -460,7 +459,7 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                      optional_dependencies, console_scripts, gui_scripts,
                      platform_specific):
     plat_name = _get_plat_name() if platform_specific else 'any'
-    version = _get_version()
+    version = common.get_version(common.VersionType.PIP, timestamp_path)
     readme = _get_readme(readme_path)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(f"from setuptools import setup\n\n\n"
@@ -512,15 +511,6 @@ def _get_plat_name():
     if sys.platform == 'darwin' and arch == '64bit':
         return 'macosx_10_13_x86_64'
     raise NotImplementedError()
-
-
-def _get_version():
-    with open('VERSION', encoding='utf-8') as f:
-        version_str = f.read().strip()
-    if version_str.endswith('dev'):
-        version_str += datetime.datetime.now().strftime("%Y%m%d")
-    version = packaging.version.Version(version_str)
-    return version.public
 
 
 def _get_readme(readme_path):

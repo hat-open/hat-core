@@ -1,8 +1,17 @@
 from pathlib import Path
 import contextlib
+import enum
+import functools
 import shutil
 import socket
 import subprocess
+import sys
+import datetime
+
+import packaging.version
+
+
+now = datetime.datetime.now()
 
 
 def mkdir_p(*paths):
@@ -39,7 +48,7 @@ def get_free_tcp_port():
 class StaticWebServer:
 
     def __init__(self, dir, port):
-        self._p = subprocess.Popen(['python',
+        self._p = subprocess.Popen([sys.executable,
                                     '-m', 'http.server',
                                     '-b', '127.0.0.1',
                                     '-d', str(dir),
@@ -55,3 +64,31 @@ class StaticWebServer:
 
     def close(self):
         self._p.terminate()
+
+
+class VersionType(enum.Enum):
+    SEMVER = 0
+    PIP = 1
+
+
+@functools.lru_cache
+def get_version(version_type=VersionType.SEMVER, timestamp_path=None):
+    with open('VERSION', encoding='utf-8') as f:
+        version = f.read().strip()
+
+    if version.endswith('dev'):
+        if timestamp_path:
+            with open(timestamp_path, encoding='utf-8') as f:
+                timestamp = datetime.datetime.fromtimestamp(float(f.read()))
+        else:
+            timestamp = now
+
+        version += timestamp.strftime("%Y%m%d%H%M")
+
+    if version_type == VersionType.SEMVER:
+        return version
+
+    elif version_type == VersionType.PIP:
+        return packaging.version.Version(version).public
+
+    raise ValueError()

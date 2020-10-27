@@ -1,8 +1,8 @@
 from pathlib import Path
-import datetime
 import shutil
 
 from hat.doit import common
+from hat.doit.hat_core.timestamp import timestamp_path
 from hat.util import json
 
 
@@ -36,7 +36,7 @@ def task_jshat_lib_renderer():
         src_js = src_dir / '@hat-core/renderer.js'
         yield src_js, dst_dir / 'index.js'
 
-    version = _get_version()
+    version = common.get_version()
     return _get_task_lib(name='@hat-core/renderer',
                          desc='Hat virtual DOM renderer',
                          readme_path=Path('README.rst'),
@@ -65,7 +65,7 @@ def task_jshat_lib_juggler():
         src_js = src_dir / '@hat-core/juggler.js'
         yield src_js, dst_dir / 'index.js'
 
-    version = _get_version()
+    version = common.get_version()
     return _get_task_lib(name='@hat-core/juggler',
                          desc='Hat juggler client library',
                          readme_path=Path('README.rst'),
@@ -86,7 +86,8 @@ def _get_task_lib(name, desc, readme_path, mappings, deps={}):
                         (_copy_files, [mappings]),
                         (_create_package_json, [name, desc, deps])],
             'file_dep': src_paths,
-            'targets': dst_paths}
+            'targets': dst_paths,
+            'task_dep': ['timestamp']}
 
 
 def _get_dst_dir(name):
@@ -101,7 +102,7 @@ def _copy_files(mappings):
 
 
 def _create_package_json(name, desc, deps):
-    version = _get_version()
+    version = common.get_version(common.VersionType.SEMVER, timestamp_path)
     dst_dir = _get_dst_dir(name)
     package = {'name': name,
                'version': version,
@@ -113,11 +114,3 @@ def _create_package_json(name, desc, deps):
                'repository': 'hat-open/hat-core',
                'dependencies': deps}
     json.encode_file(package, dst_dir / 'package.json')
-
-
-def _get_version():
-    with open('VERSION', encoding='utf-8') as f:
-        version = f.read().strip()
-    if version.endswith('dev'):
-        version += datetime.datetime.now().strftime("%Y%m%d")
-    return version
