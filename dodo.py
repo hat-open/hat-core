@@ -3,8 +3,13 @@ import os
 import sys
 from pathlib import Path
 
-
-num_process = multiprocessing.cpu_count() if sys.platform != 'darwin' else 0
+num_process = os.environ.get('DOIT_NUM_PROCESS')
+if num_process:
+    num_process = int(num_process)
+elif sys.platform == 'darwin':
+    num_process = 0
+else:
+    num_process = multiprocessing.cpu_count()
 
 DOIT_CONFIG = {'backend': 'sqlite3',
                'default_tasks': ['dist'],

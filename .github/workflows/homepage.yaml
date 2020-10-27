@@ -7,6 +7,7 @@ env:
     CPP: gcc
     CC: gcc
     LD: gcc
+    DOIT_NUM_PROCESS: 0
 jobs:
     homepage:
         runs-on: ubuntu-latest
