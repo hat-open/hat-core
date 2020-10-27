@@ -51,7 +51,7 @@ function disconnected() {
                     },
                     on: {
                         change: evt => {
-                            const checked = evt.target.checked
+                            const checked = evt.target.checked;
                             r.set('remember', checked);
                             if (!checked)
                                 common.deleteSettings();
