@@ -1,4 +1,5 @@
 from pathlib import Path
+import functools
 import io
 import subprocess
 import tempfile
@@ -9,17 +10,11 @@ from hat.gui import vt
 
 __all__ = ['task_jshat_app',
            'task_jshat_app_orchestrator',
-           'task_jshat_app_orchestrator_watch',
            'task_jshat_app_monitor',
-           'task_jshat_app_monitor_watch',
            'task_jshat_app_gui',
-           'task_jshat_app_gui_watch',
            'task_jshat_app_syslog',
-           'task_jshat_app_syslog_watch',
            'task_jshat_app_event_viewer',
-           'task_jshat_app_event_viewer_watch',
            'task_jshat_app_hue_manager',
-           'task_jshat_app_hue_manager_watch',
            'task_jshat_app_hue_manager_assets']
 
 
@@ -47,21 +42,9 @@ def task_jshat_app_orchestrator():
                            src_js_dir / '@hat-core/orchestrator/main.js')
 
 
-def task_jshat_app_orchestrator_watch():
-    """JsHat application - build orchestrator on change"""
-    return _get_task_watch('orchestrator',
-                           src_js_dir / '@hat-core/orchestrator/main.js')
-
-
 def task_jshat_app_monitor():
     """JsHat application - build monitor"""
     return _get_task_build('monitor',
-                           src_js_dir / '@hat-core/monitor/main.js')
-
-
-def task_jshat_app_monitor_watch():
-    """JsHat application - build monitor on change"""
-    return _get_task_watch('monitor',
                            src_js_dir / '@hat-core/monitor/main.js')
 
 
@@ -71,21 +54,9 @@ def task_jshat_app_gui():
                            src_js_dir / '@hat-core/gui/main.js')
 
 
-def task_jshat_app_gui_watch():
-    """JsHat application - build gui on change"""
-    return _get_task_watch('gui',
-                           src_js_dir / '@hat-core/gui/main.js')
-
-
 def task_jshat_app_syslog():
     """JsHat application - build syslog"""
     return _get_task_build('syslog',
-                           src_js_dir / '@hat-core/syslog/main.js')
-
-
-def task_jshat_app_syslog_watch():
-    """JsHat application - build syslog on change"""
-    return _get_task_watch('syslog',
                            src_js_dir / '@hat-core/syslog/main.js')
 
 
@@ -95,22 +66,9 @@ def task_jshat_app_event_viewer():
                            src_js_dir / '@hat-core/event-viewer/main.js')
 
 
-def task_jshat_app_event_viewer_watch():
-    """JsHat application - build event-viewer on change"""
-    return _get_task_watch('event-viewer',
-                           src_js_dir / '@hat-core/event-viewer/main.js')
-
-
 def task_jshat_app_hue_manager():
     """JsHat application - build hue-manager"""
     return _get_task_build('hue-manager',
-                           src_js_dir / '@hat-core/hue-manager/main.js',
-                           task_dep=['jshat_app_hue_manager_assets'])
-
-
-def task_jshat_app_hue_manager_watch():
-    """JsHat application - build hue-manager on change"""
-    return _get_task_watch('hue-manager',
                            src_js_dir / '@hat-core/hue-manager/main.js',
                            task_dep=['jshat_app_hue_manager_assets'])
 
@@ -125,13 +83,8 @@ def task_jshat_app_hue_manager_assets():
 
 
 def _get_task_build(name, entry, task_dep=[]):
-    return {'actions': [(_build_app, [name, entry])],
-            'task_dep': ['jshat_deps',
-                         *task_dep]}
-
-
-def _get_task_watch(name, entry, task_dep=[]):
-    return {'actions': [(_build_app, [name, entry, '-w'])],
+    return {'actions': [functools.partial(_build_app, name, entry)],
+            'pos_arg': 'args',
             'task_dep': ['jshat_deps',
                          *task_dep]}
 
@@ -144,7 +97,8 @@ def _get_task_assets(dst_path, mappings):
             'task_dep': ['jshat_deps']}
 
 
-def _build_app(name, entry, *args):
+def _build_app(name, entry, args):
+    args = args or []
     conf = _webpack_conf.format(
         name=name,
         entry=entry.resolve(),

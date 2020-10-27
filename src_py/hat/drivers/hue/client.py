@@ -75,12 +75,14 @@ class Client:
         return devices
 
     async def get_device(self, device_id: common.DeviceId) -> common.Device:
+        """Get device"""
         data = await self._transport.get(device_id)
         return encoder.device_from_json(device_id, data)
 
     async def set_state(self,
                         device_id: common.DeviceId,
                         state: common.DeviceState):
+        """Set device state"""
         data = encoder.state_to_json(state)
         await self._transport.set_state(device_id, data)
 
@@ -149,6 +151,10 @@ class ClientTransport:
         path = f'{device_id.type.value}/{device_id.label}/state'
         await self._put(path, data)
 
+    async def delete_user(self, user: str):
+        """Delete existing user"""
+        await self._delete(f'config/whitelist/{user}')
+
     async def _get(self, path):
         url = f'{self._addr}/api/{self._user}/{path}'
         async with self._session.get(url) as res:
@@ -162,6 +168,11 @@ class ClientTransport:
     async def _put(self, path, data=None):
         url = f'{self._addr}/api/{self._user}/{path}'
         async with self._session.put(url, json=data) as res:
+            _parse_action_response(await res.json())
+
+    async def _delete(self, path):
+        url = f'{self._addr}/api/{self._user}/{path}'
+        async with self._session.delete(url) as res:
             _parse_action_response(await res.json())
 
 

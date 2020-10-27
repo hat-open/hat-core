@@ -11,6 +11,7 @@ html, body {
     user-select: none;
     height: 100%;
     overflow: hidden;
+    background-color: $color-grey-50;
 }
 
 #main {
@@ -192,6 +193,21 @@ html, body {
         flex-grow: 1;
         overflow: auto;
 
+        .group {
+            margin: 2em 1em 1em;
+            border: 1px solid $color-grey-500;
+
+            & > .title {
+                position: relative;
+                top: -0.5em;
+                left: 1em;
+                padding: 0.5em;
+                background-color: $color-grey-800;
+                color: $color-grey-100;
+                font-weight: 600;
+            }
+        }
+
         .grid {
             margin: 1em;
             display: grid;
@@ -204,6 +220,11 @@ html, body {
             & > *:nth-child(3n+1) {
                 justify-self: end;
             }
+        }
+
+        table.users {
+            width: 100%;
+
         }
 
 

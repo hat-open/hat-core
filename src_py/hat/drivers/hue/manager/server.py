@@ -1,10 +1,18 @@
+from pathlib import Path
 import asyncio
+
+import appdirs
 
 from hat import juggler
 from hat import util
 from hat.util import aio
+from hat.util import json
 from hat.drivers import hue
 from hat.drivers import upnp
+
+
+user_data_dir = Path(appdirs.user_data_dir('hat'))
+settings_path = user_data_dir / 'hue-manager.json'
 
 
 async def create(ui_path):
@@ -44,12 +52,15 @@ class Session:
         self._async_group = async_group
         self._juggler_conn = juggler_conn
         self._hue_conn = None
-        self._rpc_cbs = {'find_hubs': self.find_hubs,
+        self._rpc_cbs = {'get_settings': self.get_settings,
+                         'set_settings': self.set_settings,
+                         'find_hubs': self.find_hubs,
                          'create_user': self.create_user,
                          'connect': self.connect,
                          'disconnect': self.disconnect,
                          'get': self.get,
-                         'set_conf': self.set_conf}
+                         'set_conf': self.set_conf,
+                         'delete_user': self.delete_user}
 
         async_group.spawn(aio.call_on_cancel, juggler_conn.async_close)
         async_group.spawn(aio.call_on_cancel, self.disconnect)
@@ -77,6 +88,15 @@ class Session:
         finally:
             self._async_group.close()
 
+    async def get_settings(self):
+        if not settings_path.exists():
+            return
+        return json.decode_file(settings_path)
+
+    async def set_settings(self, settings):
+        settings_path.parent.mkdir(parents=True, exist_ok=True)
+        return json.encode_file(settings, settings_path)
+
     async def find_hubs(self, duration):
         available = {}
         locations = set()
@@ -102,8 +122,8 @@ class Session:
         await srv.async_close()
         return list(available.values())
 
-    async def create_user(self, url, app_name, dev_name):
-        return await hue.create_user(url, app_name, dev_name)
+    async def create_user(self, url):
+        return await hue.create_user(url)
 
     async def connect(self, url, user):
         await self.disconnect()
@@ -124,8 +144,11 @@ class Session:
 
     async def set_conf(self, device_id, conf):
         if not device_id:
-            return await self._hue_conn.transport.set_conf(None, conf)
-        return await self._hue_conn.transport.set_conf(
+            await self._hue_conn.transport.set_conf(None, conf)
+        await self._hue_conn.transport.set_conf(
             hue.DeviceId(type=hue.DeviceType[device_id['type']],
                          label=device_id['label']),
             conf)
+
+    async def delete_user(self, user):
+        await self._hue_conn.transport.delete_user(user)

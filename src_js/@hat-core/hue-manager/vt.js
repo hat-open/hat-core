@@ -43,7 +43,23 @@ function disconnected() {
             form.textInput('url', 'Address').slice(1),
             form.textInput('user', 'Username').slice(1),
             ['div'],
-            form.checkboxInput('remember', 'Remember'),
+            ['label',
+                ['input', {
+                    props: {
+                        type: 'checkbox',
+                        checked: r.get('remember')
+                    },
+                    on: {
+                        change: evt => {
+                            const checked = evt.target.checked
+                            r.set('remember', checked);
+                            if (!checked)
+                                common.deleteSettings();
+                        }
+                    }}
+                ],
+                ' Remember'
+            ],
             ['div'],
             ['div',
                 ['button', {
@@ -194,107 +210,195 @@ function discovery() {
 
 
 function config() {
-    const zigbeeChannelValues = [
-        [0, 'Undefined'],
-        [11, '11'],
-        [15, '15'],
-        [20, '20'],
-        [25, '25']
-    ];
+    const users = r.get('state', 'config', 'whitelist') || {};
     return ['div.page',
-        ['div.grid',
-            configItemText('name', 'Name'),
-            configItemChoice('zigbeechannel', 'ZigBee channel', zigbeeChannelValues),
-            configItemText('bridgeid', 'Bridge ID'),
-            configItemText('mac', 'MAX address'),
-            configItemBoolean('dhcp', 'DHCP'),
-            configItemText('ipaddress', 'IP address'),
-            configItemText('netmask', 'Network mask'),
-            configItemText('gateway', 'Gateway'),
-            configItemText('proxyaddress', 'Proxy address'),
-            configItemNumber('proxyport', 'Proxy port'),
-            configItemText('UTC', 'UTC'),
-            configItemText('localtime', 'localtime'),
-            configItemText('timezone', 'timezone'),
-            configItemText('modelid', 'modelid'),
-            configItemText('swversion', 'swversion'),
-            configItemText('apiversion', 'apiversion'),
-            configItemNumber(['swupdate', 'updatestate'], 'Update state'),
-            configItemBoolean(['swupdate', 'checkforupdate'], 'Check for update'),
-            configItemBoolean(['swupdate', 'devicetypes', 'bridge'], 'Update bridge'),
-            configItemText(['swupdate', 'url'], 'Update url'),
-            configItemText(['swupdate', 'text'], 'Update text'),
-            configItemBoolean(['swupdate', 'notify'], 'Update notify'),
-            configItemBoolean('linkbutton', 'linkbutton'),
-            configItemBoolean('portalservices', 'portalservices'),
-            configItemText('portalconnection', 'portalconnection'),
+        ['div.group',
+            ['label.title', 'Bridge'],
+            ['div.grid',
+                configItemText('name', 'Name', true),
+                configItemText('bridgeid', 'Bridge ID'),
+                configItemText('swversion', 'Software version'),
+                configItemText('modelid', 'Model ID'),
+                configItemText('apiversion', 'API version'),
+                configItemBoolean('factorynew', 'Factory new'),
+                configItemBoolean('linkbutton', 'Link button', true),
+                ['lable', 'ZigBee touchlink'],
+                ['button', {
+                    on: {
+                        click: _ => common.setConf(null, {'touchlink': true})
+                    }},
+                    ['span.fa.fa-refresh'],
+                    ' Connect'
+                ],
+                ['div']
+            ]
+        ],
+        ['div.group',
+            ['label.title', 'Software update'],
+            ['div.grid',
+                configItemText(['swupdate', 'updatestate'], 'Update state', true),  // number
+                configItemBoolean(['swupdate', 'checkforupdate'], 'Check for update', true),
+                configItemBoolean(['swupdate', 'devicetypes', 'bridge'], 'Update bridge', true),
+                configItemText(['swupdate', 'url'], 'Update URL', true),
+                configItemText(['swupdate', 'text'], 'Update text', true),
+                configItemBoolean(['swupdate', 'notify'], 'Update notify', true)
+            ]
+        ],
+        ['div.group',
+            ['label.title', 'Time'],
+            ['div.grid',
+                configItemText('UTC', 'UTC time', true),
+                configItemText('localtime', 'Local time', true),
+                configItemText('timezone', 'Time zone', true)
+            ]
+        ],
+        ['div.group',
+            ['label.title', 'Network'],
+            ['div.grid',
+                configItemText('mac', 'MAC address', true),
+                configItemBoolean('dhcp', 'DHCP', true),
+                configItemText('ipaddress', 'IP address', true),
+                configItemText('netmask', 'Network mask', true),
+                configItemText('gateway', 'Gateway', true),
+                configItemText('proxyaddress', 'Proxy address', true),
+                configItemText('proxyport', 'Proxy port', true),  // number
+                configItemChoice('zigbeechannel', 'ZigBee channel', [
+                    [0, 'Undefined'],
+                    [11, '11'],
+                    [15, '15'],
+                    [20, '20'],
+                    [25, '25']
+                ])
+            ]
+        ],
+        ['div.group',
+            ['label.title', 'Portal'],
+            ['div.grid',
+                configItemBoolean('portalservices', 'Service', true),
+                configItemText('portalconnection', 'Connection'),
+                configItemBoolean(['portalstate', 'signedon'], 'Signed'),
+                configItemBoolean(['portalstate', 'incomming'], 'Incomming'),
+                configItemBoolean(['portalstate', 'signedon'], 'Outgoing'),
+                configItemText(['portalstate', 'communication'], 'Communication')
+            ]
+        ],
+        ['div.group',
+            ['label.title', 'Users'],
+            ['table.users',
+                ['thead',
+                    ['tr',
+                        ['th', 'Username'],
+                        ['th', 'Last used'],
+                        ['th', 'Created'],
+                        ['th', 'Name'],
+                        ['th']
+                    ]
+                ],
+                ['tbody',
+                    u.toPairs(users).map(([username, user]) =>
+                        ['tr',
+                            ['td', username],
+                            ['td', user['last use date']],
+                            ['td', user['create date']],
+                            ['td', user.name],
+                            ['td',
+                                ['button', {
+                                    on: {
+                                        click: _ => common.deleteUser(username)
+                                    }},
+                                    ['span.fa.fa-times']
+                                ]
+                            ]
+                        ]
+                    )
+                ]
+            ]
         ]
     ];
 }
 
 
-function configItemText(pathSuffix, label) {
+function configItemText(pathSuffix, label, editable) {
     const path = ['state', 'config', pathSuffix];
+    const value = String(r.get(path));
     return [
-        form.textInput(path, label).slice(1),
-        ['button', {
-            on: {
-                click: _ => common.setConf(
-                    null, u.set(pathSuffix, r.get(path), {}))
-            }},
-            ['span.fa.fa-check']
-        ],
+        ['label', label, ': '],
+        (editable ?
+            ['input', {
+                props: {
+                    type: 'text',
+                    value: value
+                }
+            }] :
+            ['label', value]),
+        (editable ?
+            ['button', {
+                on: {
+                    click: _ => common.setConf(
+                        null, u.set(pathSuffix, r.get(path), {}))
+                }},
+                ['span.fa.fa-pencil']
+            ] :
+            ['div'])
+    ];
+}
+
+
+function configItemBoolean(pathSuffix, label, editable) {
+    const path = ['state', 'config', pathSuffix];
+    const value = r.get(path);
+    return [
+        ['label', label, ': '],
+        ['label', (value ?
+            ['span.fa.fa-check'] :
+            ['span.fa.fa-times']
+        )],
+        (editable ?
+            ['button', {
+                on: {
+                    click: _ => common.setConf(
+                        null, u.set(pathSuffix, !r.get(path), {}))
+                }}, (value ?
+                ['span.fa.fa-toggle-on'] :
+                ['span.fa.fa-toggle-off']
+            )] :
+            ['div'])
     ];
 }
 
 
 function configItemChoice(pathSuffix, label, values) {
     const path = ['state', 'config', pathSuffix];
+    const selectedValue = r.get(path);
+    const allValues = (
+        values.find(([i, _]) => u.equals(selectedValue, i)) === undefined ?
+            u.append([selectedValue, String(selectedValue)], values) :
+            values);
     return [
-        form.selectInput(path, label, values).slice(1),
-        ['button', {
+        ['label', label, ': '],
+        ['select', {
             on: {
-                click: _ => common.setConf(
-                    null, u.set(pathSuffix, r.get(path), {}))
+                change: evt => r.set(path, evt.target.value)
             }},
-            ['span.fa.fa-check']
-        ]
-    ];
-}
-
-
-function configItemBoolean(pathSuffix, label) {
-    const path = ['state', 'config', pathSuffix];
-    return [
-        ['div'],
-        form.checkboxInput(path, label),
-        ['button', {
-            on: {
-                click: _ => common.setConf(
-                    null, u.set(pathSuffix, r.get(path), {}))
-            }},
-            ['span.fa.fa-check']
-        ]
-    ];
-}
-
-
-function configItemNumber(pathSuffix, label) {
-    const path = ['state', 'config', pathSuffix];
-    return [
-        form.textInput(path, label, form.floatValidator).slice(1),
-        ['button', {
-            on: {
-                click: _ => common.setConf(
-                    null, u.set(pathSuffix, u.strictParseFloat(r.get(path)) || null, {}))
-            }},
-            ['span.fa.fa-check']
+            allValues.map(([value, valueLabel]) =>
+                ['option', {
+                    props: {
+                        selected: value == selectedValue,
+                        value: value
+                    }},
+                    valueLabel
+                ]
+            )
         ],
+        ['button', {
+            on: {
+                click: _ => common.setConf(
+                    null, u.set(pathSuffix, r.get(path), {}))
+            }},
+            ['span.fa.fa-pencil']
+        ]
     ];
 }
-
-
-
 
 
 function lights() {

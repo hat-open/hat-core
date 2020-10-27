@@ -5,8 +5,8 @@ import * as future from '@hat-core/future';
 
 
 export const defaultState = {
-    url: 'http://192.168.0.30',
-    user: '1zyh2QDVxcc8g1Vu56HRM6ukhKUnGN05brFmlb-x',
+    url: '',
+    user: '',
     remember: false,
     connected: false,
     discovery: {
@@ -24,11 +24,11 @@ let rpc = null;
 
 
 export function init() {
-    const app = new juggler.Application(r, null, null, null);
+    const conn = new juggler.Connection(null);
     const transactions = new Map();
     let last_transaction = 0;
 
-    app.onMessage = msg => {
+    conn.onMessage = msg => {
         const f = transactions.get(msg.transaction);
         transactions.delete(msg.transaction);
         if (msg.error) {
@@ -38,10 +38,21 @@ export function init() {
         }
     };
 
+    conn.onOpen = async () => {
+        const settings = await rpc.get_settings();
+        if (settings) {
+            r.change(u.pipe(
+                u.set('url', settings.url),
+                u.set('user', settings.user),
+                u.set('remember', true)
+            ));
+        }
+    };
+
     rpc = new Proxy({}, {
         get: (_, action) => (...args) => {
             last_transaction += 1;
-            app.send({
+            conn.send({
                 transaction: last_transaction,
                 action: action,
                 args: args});
@@ -79,7 +90,24 @@ export async function createUser() {
         await log('Create user error: invalid address');
         return;
     }
-    await log('Create user not implemented');
+    try {
+        const user = await rpc.create_user(url);
+        await r.set('user', user);
+        await log(`User ${user} created`);
+    } catch (e) {
+        await log(`Error during create user: ${e}`);
+    }
+}
+
+
+export async function deleteUser(user) {
+    try {
+        await rpc.delete_user(user);
+        await log(`User ${user} deleted`);
+    } catch (e) {
+        await log(`Delete user error: ${e}`);
+    }
+    await refresh();
 }
 
 
@@ -87,11 +115,11 @@ export async function connect() {
     const url = r.get('url');
     const user = r.get('user');
     if (!url) {
-        await log('Create user error: invalid address');
+        await log('Connect error: invalid address');
         return;
     }
     if (!user) {
-        await log('Create user error: invalid username');
+        await log('Connect error: invalid username');
         return;
     }
     try {
@@ -101,8 +129,16 @@ export async function connect() {
     } catch (e) {
         await log(`Connect error: ${e}`);
     }
-    if (r.get('connected'))
-        refresh();
+    if (!r.get('connected'))
+        return;
+    if (r.get('remember')) {
+        try {
+            await rpc.set_settings({'url': url, 'user': user});
+        } catch (e) {
+            await log(`Set settings error: ${e}`);
+        }
+    }
+    refresh();
 }
 
 
@@ -143,9 +179,15 @@ export async function setConf(deviceId, conf) {
 }
 
 
+export async function deleteSettings() {
+    await rpc.set_settings(null);
+}
+
 
 async function log(msg) {
     await r.change('log', u.append({
         timestamp: Date.now() / 1000,
         msg: msg}));
 }
+
+
