@@ -20,10 +20,12 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 #log {
     flex-grow: 0;
+    flex-shrink: 0;
     height: 200px;
     width: 100%;
     overflow: auto;
@@ -110,18 +112,8 @@ html, body {
 
             th {
                 padding: 5px;
-                background: $color-grey-800;
-                color: $color-grey-100;
                 position: sticky;
                 top: 0px;
-            }
-
-            tr:nth-child(even) {
-                background-color: $color-grey-300;
-            }
-
-            tr:nth-child(odd) {
-                background-color: $color-grey-100;
             }
 
             td {
@@ -159,8 +151,11 @@ html, body {
     flex-direction: column;
     display: flex;
     width: 100%;
+    overflow: auto;
 
     .toolbar {
+        flex-grow: 0;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         background-color: $color-grey-800;
@@ -211,7 +206,7 @@ html, body {
         .grid {
             margin: 1em;
             display: grid;
-            grid-template-columns: repeat(auto-fit, 150px 200px 40px);
+            grid-template-columns: repeat(auto-fit, 150px 250px 40px);
             grid-column-gap: 5px;
             grid-row-gap: 1em;
             align-items: center;

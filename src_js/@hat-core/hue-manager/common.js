@@ -138,7 +138,7 @@ export async function connect() {
             await log(`Set settings error: ${e}`);
         }
     }
-    refresh();
+    await refresh();
 }
 
 
@@ -159,7 +159,7 @@ export async function disconnect() {
 export async function refresh() {
     let state = {};
     try {
-        state = await rpc.get(null);
+        state = await rpc.get();
         await log(`Global state updated`);
     } catch (e) {
         await log(`Update state error: ${e}`);
@@ -168,12 +168,23 @@ export async function refresh() {
 }
 
 
-export async function setConf(deviceId, conf) {
+export async function setConf(conf) {
     try {
-        await rpc.set_conf(deviceId, conf);
+        await rpc.set_conf(conf);
         await log(`Configuration changed`);
     } catch (e) {
         await log(`Configuration change error: ${e}`);
+    }
+    await refresh();
+}
+
+
+export async function setState(deviceType, deviceLabel, state) {
+    try {
+        await rpc.set_state(deviceType, deviceLabel, state);
+        await log(`State changed`);
+    } catch (e) {
+        await log(`State change error: ${e}`);
     }
     await refresh();
 }

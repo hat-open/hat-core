@@ -215,7 +215,7 @@ function config() {
         ['div.group',
             ['label.title', 'Bridge'],
             ['div.grid',
-                configItemText('name', 'Name', true),
+                configItemText('name', 'Name', u.identity),
                 configItemText('bridgeid', 'Bridge ID'),
                 configItemText('swversion', 'Software version'),
                 configItemText('modelid', 'Model ID'),
@@ -225,7 +225,7 @@ function config() {
                 ['lable', 'ZigBee touchlink'],
                 ['button', {
                     on: {
-                        click: _ => common.setConf(null, {'touchlink': true})
+                        click: _ => common.setConf({'touchlink': true})
                     }},
                     ['span.fa.fa-refresh'],
                     ' Connect'
@@ -236,32 +236,32 @@ function config() {
         ['div.group',
             ['label.title', 'Software update'],
             ['div.grid',
-                configItemText(['swupdate', 'updatestate'], 'Update state', true),  // number
+                configItemText(['swupdate', 'updatestate'], 'Update state', u.strictParseInt),
                 configItemBoolean(['swupdate', 'checkforupdate'], 'Check for update', true),
                 configItemBoolean(['swupdate', 'devicetypes', 'bridge'], 'Update bridge', true),
-                configItemText(['swupdate', 'url'], 'Update URL', true),
-                configItemText(['swupdate', 'text'], 'Update text', true),
+                configItemText(['swupdate', 'url'], 'Update URL', u.identity),
+                configItemText(['swupdate', 'text'], 'Update text', u.identity),
                 configItemBoolean(['swupdate', 'notify'], 'Update notify', true)
             ]
         ],
         ['div.group',
             ['label.title', 'Time'],
             ['div.grid',
-                configItemText('UTC', 'UTC time', true),
-                configItemText('localtime', 'Local time', true),
-                configItemText('timezone', 'Time zone', true)
+                configItemText('UTC', 'UTC time', u.identity),
+                configItemText('localtime', 'Local time', u.identity),
+                configItemText('timezone', 'Time zone', u.identity)
             ]
         ],
         ['div.group',
             ['label.title', 'Network'],
             ['div.grid',
-                configItemText('mac', 'MAC address', true),
+                configItemText('mac', 'MAC address', u.identity),
                 configItemBoolean('dhcp', 'DHCP', true),
-                configItemText('ipaddress', 'IP address', true),
-                configItemText('netmask', 'Network mask', true),
-                configItemText('gateway', 'Gateway', true),
-                configItemText('proxyaddress', 'Proxy address', true),
-                configItemText('proxyport', 'Proxy port', true),  // number
+                configItemText('ipaddress', 'IP address', u.identity),
+                configItemText('netmask', 'Network mask', u.identity),
+                configItemText('gateway', 'Gateway', u.identity),
+                configItemText('proxyaddress', 'Proxy address', u.identity),
+                configItemText('proxyport', 'Proxy port', u.strictParseInt),  // number
                 configItemChoice('zigbeechannel', 'ZigBee channel', [
                     [0, 'Undefined'],
                     [11, '11'],
@@ -318,24 +318,27 @@ function config() {
 }
 
 
-function configItemText(pathSuffix, label, editable) {
+function configItemText(pathSuffix, label, setValueConversion) {
     const path = ['state', 'config', pathSuffix];
     const value = String(r.get(path));
     return [
         ['label', label, ': '],
-        (editable ?
+        (setValueConversion ?
             ['input', {
                 props: {
                     type: 'text',
                     value: value
+                },
+                on: {
+                    change: evt => r.set(path, evt.target.value)
                 }
             }] :
             ['label', value]),
-        (editable ?
+        (setValueConversion ?
             ['button', {
                 on: {
                     click: _ => common.setConf(
-                        null, u.set(pathSuffix, r.get(path), {}))
+                        u.set(pathSuffix, setValueConversion(value), {}))
                 }},
                 ['span.fa.fa-pencil']
             ] :
@@ -357,7 +360,7 @@ function configItemBoolean(pathSuffix, label, editable) {
             ['button', {
                 on: {
                     click: _ => common.setConf(
-                        null, u.set(pathSuffix, !r.get(path), {}))
+                        u.set(pathSuffix, !r.get(path), {}))
                 }}, (value ?
                 ['span.fa.fa-toggle-on'] :
                 ['span.fa.fa-toggle-off']
@@ -393,7 +396,7 @@ function configItemChoice(pathSuffix, label, values) {
         ['button', {
             on: {
                 click: _ => common.setConf(
-                    null, u.set(pathSuffix, r.get(path), {}))
+                    u.set(pathSuffix, r.get(path), {}))
             }},
             ['span.fa.fa-pencil']
         ]
@@ -402,16 +405,139 @@ function configItemChoice(pathSuffix, label, values) {
 
 
 function lights() {
-    // const state = r.get('state', 'lights') || {};
-
-
-    return ['div.page'];
+    const lights = r.get('state', 'lights') || {};
+    return ['div.page',
+        Object.keys(lights).map(deviceLabel => ['div.group',
+            ['label.title', `Light ${deviceLabel}`],
+            ['div.grid',
+                lightsConfItemText(deviceLabel, 'name', 'Name'),
+                lightsConfItemText(deviceLabel, 'type', 'Type'),
+                lightsConfItemText(deviceLabel, 'modelid', 'Model ID'),
+                lightsConfItemText(deviceLabel, 'manufacturername', 'Manufacturer'),
+                lightsConfItemText(deviceLabel, 'uniqueid', 'Unique ID'),
+                lightsConfItemText(deviceLabel, 'swversion', 'Software version'),
+                lightsConfItemText(deviceLabel, 'swconfigid', 'Config ID'),
+                lightsConfItemText(deviceLabel, 'productid', 'Product ID')
+            ],
+            ['div.group',
+                ['label.title', 'State'],
+                ['div.grid',
+                    lightsStateItemBoolean(deviceLabel, 'on', 'On', true),
+                    lightsStateItemText(deviceLabel, 'bri', 'Brightness', u.strictParseInt),
+                    lightsStateItemChoice(deviceLabel, 'alert', 'Alert', [
+                        ['none', 'none'],
+                        ['select', 'select'],
+                        ['lselect', 'lselect']
+                    ]),
+                    lightsStateItemBoolean(deviceLabel, 'reachable', 'Reachable'),
+                ],
+            ]
+        ])
+    ];
 }
 
 
+
+function lightsConfItemText(deviceLabel, pathSuffix, label) {
+    const path = ['state', 'lights', deviceLabel, pathSuffix];
+    const value = String(r.get(path));
+    return [
+        ['label', label, ': '],
+        ['label', value],
+        ['div']
+    ];
+}
+
+
+function lightsStateItemText(deviceLabel, pathSuffix, label, setValueConversion) {
+    const path = ['state', 'lights', deviceLabel, 'state', pathSuffix];
+    const value = String(r.get(path));
+    return [
+        ['label', label, ': '],
+        (setValueConversion ?
+            ['input', {
+                props: {
+                    type: 'text',
+                    value: value
+                },
+                on: {
+                    change: evt => r.set(path, evt.target.value)
+                }
+            }] :
+            ['label', value]),
+        (setValueConversion ?
+            ['button', {
+                on: {
+                    click: _ => common.setState(
+                        'LIGHT', deviceLabel,
+                        u.set(pathSuffix, setValueConversion(value), {}))
+                }},
+                ['span.fa.fa-pencil']
+            ] :
+            ['div'])
+    ];
+}
+
+
+function lightsStateItemBoolean(deviceLabel, pathSuffix, label, editable) {
+    const path = ['state', 'lights', deviceLabel, 'state', pathSuffix];
+    const value = r.get(path);
+    return [
+        ['label', label, ': '],
+        ['label', (value ?
+            ['span.fa.fa-check'] :
+            ['span.fa.fa-times']
+        )],
+        (editable ?
+            ['button', {
+                on: {
+                    click: _ => common.setState(
+                        'LIGHT', deviceLabel, u.set(pathSuffix, !r.get(path), {}))
+                }}, (value ?
+                ['span.fa.fa-toggle-on'] :
+                ['span.fa.fa-toggle-off']
+            )] :
+            ['div'])
+    ];
+}
+
+
+function lightsStateItemChoice(deviceLabel, pathSuffix, label, values) {
+    const path = ['state', 'lights', deviceLabel, 'state', pathSuffix];
+    const selectedValue = r.get(path);
+    const allValues = (
+        values.find(([i, _]) => u.equals(selectedValue, i)) === undefined ?
+            u.append([selectedValue, String(selectedValue)], values) :
+            values);
+    return [
+        ['label', label, ': '],
+        ['select', {
+            on: {
+                change: evt => r.set(path, evt.target.value)
+            }},
+            allValues.map(([value, valueLabel]) =>
+                ['option', {
+                    props: {
+                        selected: value == selectedValue,
+                        value: value
+                    }},
+                    valueLabel
+                ]
+            )
+        ],
+        ['button', {
+            on: {
+                click: _ => common.setState(
+                    'LIGHT', deviceLabel, u.set(pathSuffix, r.get(path), {}))
+            }},
+            ['span.fa.fa-pencil']
+        ]
+    ];
+}
+
+
+
+
 function sensors() {
-    // const state = r.get('state', 'sensors') || {};
-
-
     return ['div.page'];
 }

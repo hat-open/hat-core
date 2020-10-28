@@ -60,6 +60,7 @@ class Session:
                          'disconnect': self.disconnect,
                          'get': self.get,
                          'set_conf': self.set_conf,
+                         'set_state': self.set_state,
                          'delete_user': self.delete_user}
 
         async_group.spawn(aio.call_on_cancel, juggler_conn.async_close)
@@ -135,20 +136,16 @@ class Session:
         await self._hue_conn.async_close()
         self._hue_conn = None
 
-    async def get(self, device_id):
-        if not device_id:
-            return await self._hue_conn.transport.get(None)
-        return await self._hue_conn.transport.get(
-            hue.DeviceId(type=hue.DeviceType[device_id['type']],
-                         label=device_id['label']))
+    async def get(self):
+        return await self._hue_conn.transport.get(None)
 
-    async def set_conf(self, device_id, conf):
-        if not device_id:
-            await self._hue_conn.transport.set_conf(None, conf)
-        await self._hue_conn.transport.set_conf(
-            hue.DeviceId(type=hue.DeviceType[device_id['type']],
-                         label=device_id['label']),
-            conf)
+    async def set_conf(self, conf):
+        await self._hue_conn.transport.set_conf(None, conf)
+
+    async def set_state(self, device_type, device_label, state):
+        device_id = hue.DeviceId(type=hue.DeviceType[device_type],
+                                 label=device_label)
+        await self._hue_conn.transport.set_state(device_id, state)
 
     async def delete_user(self, user):
         await self._hue_conn.transport.delete_user(user)
