@@ -3,7 +3,7 @@ JSON data in Hat Open
 
 :Author: Bozo Kopic
 :Date: 2020-07-09
-:Version: 1
+:Last update: 2020-10-28
 
 
 This article gives short introduction to JSON, YAML, JSON Schema, `hat-core`
@@ -40,27 +40,35 @@ enable fast prototyping of application core functionality while marginalizing
 effort required for implementation of additional features as configuration
 parsing.
 
-.. image:: json_schema/json_value.png
-    :align: center
+.. figure:: json_value.png
+   :align: center
 
-.. image:: json_schema/json_string.png
-    :align: center
+   JSON value
 
-.. image:: json_schema/json_number.png
-    :align: center
+.. figure:: json_string.png
+   :align: center
 
-.. image:: json_schema/json_object.png
-    :align: center
+   JSON string
 
-.. image:: json_schema/json_array.png
-    :align: center
+.. figure:: json_number.png
+   :align: center
 
-.. image:: json_schema/json_whitespace.png
-    :align: center
+   JSON number
 
-.. note::
+.. figure:: json_object.png
+   :align: center
 
-    Images origin `<https://json.org>`_
+   JSON object
+
+.. figure:: json_array.png
+   :align: center
+
+   JSON array
+
+.. figure:: json_whitespace.png
+   :align: center
+
+   JSON whitespace
 
 
 YAML
@@ -469,6 +477,6 @@ packages, are required, new instances of `SchemaRepository` can be created.
 JSON patch
 ----------
 
-.. todo::
+todo::
 
     ...

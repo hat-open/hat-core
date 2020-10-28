@@ -1,0 +1,29 @@
+@import '../src_scss/common/color';
+
+@import './html4css1';
+
+html, body {
+    font-family: Segoe UI, Helvetica, Arial, sans-serif;
+}
+
+body {
+    max-width: 960px;
+    padding: 1rem;
+    margin: 0 auto;
+}
+
+code, pre {
+    font-family: Consolas, Liberation Mono, Menlo, monospace;
+}
+
+pre {
+    background-color: $color-grey-300;
+    padding: 0.5em;
+    margin: 0.5em;
+}
+
+.section {
+    & > h1 {
+        border-bottom: 2px solid black;
+    }
+}

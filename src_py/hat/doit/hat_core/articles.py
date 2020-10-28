@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 
 import docutils.core
 
@@ -12,39 +13,52 @@ src_dir = Path('articles')
 dst_dir = Path('build/articles')
 
 
+def get_article_names():
+    for i in src_dir.glob('*'):
+        if not i.is_dir():
+            continue
+        name = i.name
+        if name.startswith('_'):
+            continue
+        yield name
+
+
 def task_articles():
     """Articles - build"""
+    for name in get_article_names():
+        yield {'name': name,
+               'actions': [(_build_article, [name])]}
 
-    for src_path in src_dir.rglob('*'):
-        if src_path.is_dir():
+
+def _build_article(name):
+    article_src_dir = src_dir / name
+    article_dst_dir = dst_dir / name
+
+    common.rm_rf(article_dst_dir)
+    article_dst_dir.mkdir(parents=True, exist_ok=True)
+
+    for src_path in article_src_dir.rglob('*'):
+        if src_path.is_dir() or src_path.name.startswith('_'):
             continue
-        dst_path = dst_dir / src_path.relative_to(src_dir)
+        dst_path = article_dst_dir / src_path.relative_to(article_src_dir)
+        dst_path.parent.mkdir(parents=True, exist_ok=True)
 
         if src_path.suffix == '.scss':
-            if src_path.name.startswith('_'):
-                continue
             dst_path = dst_path.with_suffix('.css')
-            yield {'name': str(dst_path),
-                   'actions': [(common.mkdir_p, [dst_path.parent]),
-                               f'sassc {src_path} {dst_path}'],
-                   'targets': [dst_path]}
+            _build_scss(src_path, dst_path)
 
         elif src_path.suffix == '.rst':
-            if src_path.name.startswith('_'):
-                continue
             dst_path = dst_path.with_suffix('.html')
-            yield {'name': str(dst_path),
-                   'actions': [(common.mkdir_p, [dst_path.parent]),
-                               (_build_rst, [src_path, dst_path])],
-                   'file_dep': [src_path],
-                   'targets': [dst_path]}
+            _build_rst(src_path, dst_path)
 
         else:
-            yield {'name': str(dst_path),
-                   'actions': [(common.mkdir_p, [dst_path.parent]),
-                               (common.cp_r, [src_path, dst_path])],
-                   'file_dep': [src_path],
-                   'targets': [dst_path]}
+            common.cp_r(src_path, dst_path)
+
+
+def _build_scss(src_path, dst_path):
+    subprocess.run(['sassc', '-t', 'compressed',
+                    str(src_path), str(dst_path)],
+                   check=True)
 
 
 def _build_rst(src_path, dst_path):
