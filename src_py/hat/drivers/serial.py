@@ -18,7 +18,6 @@ import logging
 
 import serial
 
-from hat import util
 from hat.util import aio
 
 

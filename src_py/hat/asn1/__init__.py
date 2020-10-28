@@ -47,7 +47,6 @@ Value mapping:
 import enum
 import pathlib
 
-from hat import util
 from hat.util import json
 from hat.asn1 import ber
 from hat.asn1 import common
