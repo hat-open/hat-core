@@ -19,8 +19,8 @@ import sys
 import threading
 import time
 import traceback
+import typing
 
-from hat import util
 from hat.syslog import common
 from hat.util import json
 
@@ -28,7 +28,6 @@ from hat.util import json
 reconnect_delay = 5
 
 
-@util.extend_enum_doc
 class CommType(enum.Enum):
     """Syslog communication type"""
 
@@ -38,17 +37,13 @@ class CommType(enum.Enum):
 
 
 class SysLogHandler(logging.Handler):
-    """Syslog handler
+    """Syslog handler"""
 
-    Args:
-        host (str): hostname
-        port (int): port number
-        comm_type (Union[CommType,str]): communication type
-        queue_size (int): queue size (number of log entries)
-
-    """
-
-    def __init__(self, host, port, comm_type, queue_size=1024):
+    def __init__(self,
+                 host: str,
+                 port: int,
+                 comm_type: typing.Union[CommType, str],
+                 queue_size: int = 1024):
         super().__init__()
         self.__state = _ThreadState(
             host=host,
@@ -94,16 +89,28 @@ class SysLogHandler(logging.Handler):
                 state.cv.notify_all()
 
 
-_ThreadState = util.namedtuple(
-    '_ThreadState',
-    ['host', 'str: hostname'],
-    ['port', 'int: tsp port number'],
-    ['comm_type', 'Union[CommType,str]: communication type'],
-    ['queue', 'collections.deque: message queue'],
-    ['queue_size', 'int: message queue size'],
-    ['cv', 'threading.Condition: condition variable'],
-    ['closed', 'threading.Event: closed flag'],
-    ['dropped', 'List[int]: dropped message counter'])
+class _ThreadState(typing.NamedTuple):
+    """Handler thread state
+
+    Attributes:
+        host: hostname
+        port: TCP port
+        comm_type: communication type
+        queue: message queue
+        queue_size: message queue size
+        cv: conditionaln variable
+        closed: closed flag
+        dropped: dropped message counter
+
+    """
+    host: str
+    port: int
+    comm_type: typing.Union[CommType, str]
+    queue: collections.deque
+    queue_size: int
+    cv: threading.Condition
+    closed: threading.Event
+    dropped: typing.List[int]
 
 
 def _logging_handler_thread(state):

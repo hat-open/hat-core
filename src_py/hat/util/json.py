@@ -236,7 +236,8 @@ class SchemaRepository:
 
     @staticmethod
     def from_json(data: typing.Union[pathlib.PurePath,
-                                     Data]) -> 'SchemaRepository':
+                                     Data]
+                  ) -> 'SchemaRepository':
         """Create new repository from content exported as json serializable
         data.
 

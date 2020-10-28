@@ -10,9 +10,9 @@ from hat.event.common import *  # NOQA
 from hat.util import json
 
 
-SourceType = util.extend_enum_doc(enum.Enum('SourceType', [
+SourceType = enum.Enum('SourceType', [
     'COMMUNICATION',
-    'MODULE']))
+    'MODULE'])
 
 
 Source = util.namedtuple(

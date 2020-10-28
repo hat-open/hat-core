@@ -99,7 +99,7 @@ __all__ = ['Data',
            'Repository']
 
 
-Encoding = util.extend_enum_doc(enum.Enum('Encoding', ['BER']))
+Encoding = enum.Enum('Encoding', ['BER'])
 
 
 class Encoder:

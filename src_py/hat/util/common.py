@@ -10,6 +10,7 @@ import pathlib
 import socket
 import sys
 import typing
+import warnings
 
 
 T = typing.TypeVar('T')
@@ -74,18 +75,20 @@ def namedtuple(name: typing.Union[str, typing.Tuple[str, str]],
 def extend_enum_doc(cls: enum.EnumMeta,
                     description: str = None) -> enum.EnumMeta:
     """Extend enumeration documentation with a list of all members."""
+    warnings.warn("extend_enum_doc is deprecated", DeprecationWarning)
     doc = description or cls.__doc__
     cls.__doc__ = doc + "\n\n" + "\n".join("* " + i.name for i in cls)
     return cls
 
 
-class RegisterCallbackHandle(namedtuple('RegisterCallbackHandle', 'cancel')):
+class RegisterCallbackHandle(typing.NamedTuple):
     """Handle for canceling callback registration.
 
-    Args:
-        cancel (Callable[[],None]): cancel callback registration
+    Attributes:
+        cancel: cancel callback registration
 
     """
+    cancel: typing.Callable[[], None]
 
     def __enter__(self):
         return self

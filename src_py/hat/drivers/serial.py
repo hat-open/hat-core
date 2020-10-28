@@ -25,7 +25,6 @@ from hat.util import aio
 mlog = logging.getLogger(__name__)
 
 
-@util.extend_enum_doc
 class ByteSize(enum.Enum):
     FIVEBITS = 'FIVEBITS'
     SIXBITS = 'SIXBITS'
@@ -33,7 +32,6 @@ class ByteSize(enum.Enum):
     EIGHTBITS = 'EIGHTBITS'
 
 
-@util.extend_enum_doc
 class Parity(enum.Enum):
     NONE = 'PARITY_NONE'
     EVEN = 'PARITY_EVEN'
@@ -42,7 +40,6 @@ class Parity(enum.Enum):
     SPACE = 'PARITY_SPACE'
 
 
-@util.extend_enum_doc
 class StopBits(enum.Enum):
     ONE = 'STOPBITS_ONE'
     ONE_POINT_FIVE = 'STOPBITS_ONE_POINT_FIVE'

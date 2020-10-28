@@ -5,9 +5,9 @@ import enum
 from hat import util
 
 
-Algorithm = util.extend_enum_doc(enum.Enum('Algorithm', [
+Algorithm = enum.Enum('Algorithm', [
     'BLESS_ALL',
-    'BLESS_ONE']))
+    'BLESS_ONE'])
 
 
 _last_token_id = 0

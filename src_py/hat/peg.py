@@ -90,19 +90,20 @@ Data = typing.Union[str, bytes]
 """Data"""
 
 
-Node = util.namedtuple(
-    ['Node', """Abstract syntax tree node.
+class Node(typing.NamedTuple):
+    """Abstract syntax tree node.
 
     Node names are identifiers of parser's definitions and values
     are other nodes or Data representing matched `Literal`, `Class` or
     `Dot` leafs.
 
-    """],
-    ['name', 'str: node name (production definition identifier)'],
-    ['value', 'List[Union[Node,Data]]: subnodes or leafs'])
+    """
+    name: str
+    value: typing.List[typing.Union['Node', Data]]
 
 
 Action = typing.Callable[[Node, typing.List], typing.Any]
+"""Action"""
 
 
 def walk_ast(node: Node,
@@ -128,31 +129,76 @@ def walk_ast(node: Node,
     return action(node, children)
 
 
-Sequence = util.namedtuple('Sequence', ['expressions', 'List[Expression]'])
-Choice = util.namedtuple('Choice', ['expressions', 'List[Expression]'])
-Not = util.namedtuple('Not', ['expression', 'Expression'])
-And = util.namedtuple('And', ['expression', 'Expression'])
-OneOrMore = util.namedtuple('OneOrMore', ['expression', 'Expression'])
-ZeroOrMore = util.namedtuple('ZeroOrMore', ['expression', 'Expression'])
-Optional = util.namedtuple('Optional', ['expression', 'Expression'])
-Identifier = util.namedtuple('Identifier', ['value', 'str'])
-Literal = util.namedtuple('Literal', ['value', 'bytes'])
-Class = util.namedtuple('Class', ['values', 'List[Union[int,Tuple[int,int]]]'])
-Dot = util.namedtuple('Dot')
+class Sequence(typing.NamedTuple):
+    expressions: typing.List['Expression']
+
+
+class Choice(typing.NamedTuple):
+    expressions: typing.List['Expression']
+
+
+class Not(typing.NamedTuple):
+    expression: 'Expression'
+
+
+class And(typing.NamedTuple):
+    expression: 'Expression'
+
+
+class OneOrMore(typing.NamedTuple):
+    expression: 'Expression'
+
+
+class ZeroOrMore(typing.NamedTuple):
+    expression: 'Expression'
+
+
+class Optional(typing.NamedTuple):
+    expression: 'Expression'
+
+
+class Identifier(typing.NamedTuple):
+    value: str
+
+
+class Literal(typing.NamedTuple):
+    value: bytes
+
+
+class Class(typing.NamedTuple):
+    values: typing.List[typing.Union[int, typing.Tuple[int, int]]]
+
+
+class Dot(typing.NamedTuple):
+    pass
+
+
 Expression = typing.Union[Sequence, Choice, Not, And, OneOrMore, ZeroOrMore,
                           Optional, Identifier, Literal, Class, Dot]
 
 
-MatchResult = util.namedtuple(
-    'MatchResult',
-    ['node', 'Optional[Node]: None if match failed'],
-    ['rest', 'Data: remaining input data'])
+class MatchResult(typing.NamedTuple):
+    """Match result
+
+    Attributes:
+        node: matched node or ``None`` if match failed
+        rest: remaining input data
+
+    """
+    node: typing.Optional[Node]
+    rest: Data
 
 
-MatchCallFrame = util.namedtuple(
-    'MatchCallFrame',
-    ['name', 'str: definition name'],
-    ['data', 'Data: input data'])
+class MatchCallFrame(typing.NamedTuple):
+    """Match call frame
+
+    Attributes:
+        name: definition name
+        data: input data
+
+    """
+    name: str
+    data: Data
 
 
 MatchCallStack = typing.Iterable[MatchCallFrame]
@@ -232,7 +278,9 @@ def console_debug_cb(result: MatchResult, call_stack: MatchCallStack):
     print('>>>', result.rest, flush=True)
 
 
-class _MatchCallStack(util.namedtuple('_MatchCallStack', 'frame', 'previous')):
+class _MatchCallStack(typing.NamedTuple):
+    frame: typing.Optional[MatchCallFrame]
+    previous: typing.Optional['_MatchCallStack']
 
     def __iter__(self):
         current = self
@@ -241,8 +289,12 @@ class _MatchCallStack(util.namedtuple('_MatchCallStack', 'frame', 'previous')):
             current = current.previous
 
 
-_State = util.namedtuple('_State', 'grammar', 'data', 'call_stack',
-                         'data_fn', 'debug_cb')
+class _State(typing.NamedTuple):
+    grammar: Grammar
+    data: Data
+    call_stack: _MatchCallStack
+    data_fn: typing.Callable
+    debug_cb: DebugCb
 
 
 def _match(state, name):

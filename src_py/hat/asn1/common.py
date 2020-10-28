@@ -5,7 +5,6 @@ import typing
 from hat import util
 
 
-@util.extend_enum_doc
 class ClassType(enum.Enum):
     UNIVERSAL = 0
     APPLICATION = 1

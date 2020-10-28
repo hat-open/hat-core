@@ -25,20 +25,20 @@ sbs_repo = sbs.Repository(
     sbs.Repository.from_json(package_path / 'sbs_repo.json'))
 
 
-Order = util.extend_enum_doc(enum.Enum('Order', [
+Order = enum.Enum('Order', [
     'DESCENDING',
-    'ASCENDING']))
+    'ASCENDING'])
 
 
-OrderBy = util.extend_enum_doc(enum.Enum('OrderBy', [
+OrderBy = enum.Enum('OrderBy', [
     'TIMESTAMP',
-    'SOURCE_TIMESTAMP']))
+    'SOURCE_TIMESTAMP'])
 
 
-EventPayloadType = util.extend_enum_doc(enum.Enum('EventPayloadType', [
+EventPayloadType = enum.Enum('EventPayloadType', [
     'BINARY',
     'JSON',
-    'SBS']))
+    'SBS'])
 
 
 EventId = util.namedtuple(

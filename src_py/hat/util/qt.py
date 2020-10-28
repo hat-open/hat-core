@@ -23,7 +23,7 @@ AsyncMain = typing.Callable[..., typing.Awaitable[typing.Any]]
 
 
 def run(async_main: AsyncMain, *args, **kwargs):
-    """Run Qt application with additional asyncyio thread
+    """Run Qt application with additional asyncio thread
 
     Args:
         async_main: asyncio main entry point

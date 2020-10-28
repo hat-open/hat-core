@@ -4,7 +4,6 @@ import enum
 from hat import util
 
 
-@util.extend_enum_doc
 class DataAccessError(enum.Enum):
     OBJECT_INVALIDATED = 0
     HARDWARE_FAULT = 1
@@ -20,7 +19,6 @@ class DataAccessError(enum.Enum):
     OBJECT_VALUE_INVALID = 11
 
 
-@util.extend_enum_doc
 class ObjectClass(enum.Enum):
     NAMED_VARIABLE = 0
     NAMED_VARIABLE_LIST = 2
@@ -29,7 +27,6 @@ class ObjectClass(enum.Enum):
     UNDEFINED = 0xFF
 
 
-@util.extend_enum_doc
 class ErrorClass(enum.Enum):
     ACCESS = 'access'
     APPLICATION_REFERENCE = 'application-reference'

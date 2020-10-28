@@ -1,12 +1,11 @@
 """Common syslog functionality and data structures"""
 
 from pathlib import Path
-
 import datetime
 import enum
 import re
+import typing
 
-from hat import util
 from hat.util import json
 
 
@@ -17,7 +16,6 @@ json_schema_repo = json.SchemaRepository(
     json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
 
 
-@util.extend_enum_doc
 class Facility(enum.Enum):
     KERNEL = 0
     USER = 1
@@ -45,7 +43,6 @@ class Facility(enum.Enum):
     LOCAL7 = 23
 
 
-@util.extend_enum_doc
 class Severity(enum.Enum):
     EMERGENCY = 0
     ALERT = 1
@@ -57,30 +54,27 @@ class Severity(enum.Enum):
     DEBUG = 7
 
 
-Msg = util.namedtuple(
-    'Msg',
-    ['facility', "Facility: facility"],
-    ['severity', "Severity: severity"],
-    ['version', "int: version"],
-    ['timestamp', "Optional[float]: timestamp"],
-    ['hostname', "Optional[str]: hostname"],
-    ['app_name', "Optional[str]: application name"],
-    ['procid', "Optional[str]: process id"],
-    ['msgid', "Optional[str]: message id"],
-    ['data', "Optional[str]: json serialized Dict[str,Dict[str,str]] data"],
-    ['msg', "Optional[str]: message content"])
+class Msg(typing.NamedTuple):
+    """Message
 
-
-def msg_to_str(msg):
-    """Create string representation of message according to RFC 5424
-
-    Args:
-        msg (Msg): message
-
-    Returns:
-        str
+    `data` containes JSON serialized Dict[str, Dict[str, str]]
 
     """
+    'Msg',
+    facility: Facility
+    severity: Severity
+    version: int
+    timestamp: typing.Optional[float]
+    hostname: typing.Optional[str]
+    app_name: typing.Optional[str]
+    procid: typing.Optional[str]
+    msgid: typing.Optional[str]
+    data: typing.Optional[str]
+    msg: typing.Optional[str]
+
+
+def msg_to_str(msg: Msg) -> str:
+    """Create string representation of message according to RFC 5424"""
     buff = [
         f'<{msg.facility.value * 8 + msg.severity.value}>{msg.version}',
         _timestamp_to_str(msg.timestamp),
@@ -94,16 +88,8 @@ def msg_to_str(msg):
     return ' '.join(buff)
 
 
-def msg_from_str(msg_str):
-    """Parse message string formatted according to RFC 5424
-
-    Args:
-        msg_str (str): message string
-
-    Returns:
-        Msg
-
-    """
+def msg_from_str(msg_str: str) -> Msg:
+    """Parse message string formatted according to RFC 5424"""
     match = _msg_pattern.fullmatch(msg_str).groupdict()
     prival = int(match['prival'])
     return Msg(
@@ -120,50 +106,32 @@ def msg_from_str(msg_str):
              else match['msg']))
 
 
-def msg_to_json(msg):
-    """Convert message to json serializable data
-
-    Args:
-        msg (Msg): message
-
-    Returns:
-        json.Data
-
-    """
-    return {
-        'facility': msg.facility.name,
-        'severity': msg.severity.name,
-        'version': msg.version,
-        'timestamp': msg.timestamp,
-        'hostname': msg.hostname,
-        'app_name': msg.app_name,
-        'procid': msg.procid,
-        'msgid': msg.msgid,
-        'data': msg.data,
-        'msg': msg.msg}
+def msg_to_json(msg: Msg) -> json.Data:
+    """Convert message to json serializable data"""
+    return {'facility': msg.facility.name,
+            'severity': msg.severity.name,
+            'version': msg.version,
+            'timestamp': msg.timestamp,
+            'hostname': msg.hostname,
+            'app_name': msg.app_name,
+            'procid': msg.procid,
+            'msgid': msg.msgid,
+            'data': msg.data,
+            'msg': msg.msg}
 
 
-def msg_from_json(data):
-    """Convert json serializable data to message
-
-    Args:
-        data (json.Data): data
-
-    Returns:
-        Msg
-
-    """
-    return Msg(
-        facility=Facility[data['facility']],
-        severity=Severity[data['severity']],
-        version=data['version'],
-        timestamp=data['timestamp'],
-        hostname=data['hostname'],
-        app_name=data['app_name'],
-        procid=data['procid'],
-        msgid=data['msgid'],
-        data=data['data'],
-        msg=data['msg'])
+def msg_from_json(data: json.Data) -> Msg:
+    """Convert json serializable data to message"""
+    return Msg(facility=Facility[data['facility']],
+               severity=Severity[data['severity']],
+               version=data['version'],
+               timestamp=data['timestamp'],
+               hostname=data['hostname'],
+               app_name=data['app_name'],
+               procid=data['procid'],
+               msgid=data['msgid'],
+               data=data['data'],
+               msg=data['msg'])
 
 
 _msg_pattern = re.compile(r'''

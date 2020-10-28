@@ -8,7 +8,6 @@ import typing
 from hat import util
 
 
-@util.extend_enum_doc
 class DataType(enum.Enum):
     COIL = 1
     DISCRETE_INPUT = 2
@@ -17,7 +16,6 @@ class DataType(enum.Enum):
     QUEUE = 5
 
 
-@util.extend_enum_doc
 class Error(enum.Enum):
     INVALID_FUNCTION_CODE = 1
     INVALID_DATA_ADDRESS = 2
@@ -25,14 +23,12 @@ class Error(enum.Enum):
     FUNCTION_ERROR = 4
 
 
-@util.extend_enum_doc
 class ModbusType(enum.Enum):
     TCP = 0
     RTU = 1
     ASCII = 2
 
 
-@util.extend_enum_doc
 class Direction(enum.Enum):
     REQUEST = 0
     RESPONSE = 1

@@ -26,12 +26,12 @@ sigkill_timeout = 2
 """float: SIGKILL timeout in seconds"""
 
 
-Status = util.extend_enum_doc(enum.Enum('Status', [
+Status = enum.Enum('Status', [
     'STOPPED',
     'DELAYED',
     'STARTING',
     'RUNNING',
-    'STOPPING']))
+    'STOPPING'])
 
 
 class Component:
