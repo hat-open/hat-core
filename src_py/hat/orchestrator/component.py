@@ -204,7 +204,8 @@ class Component:
                          if sys.platform == 'win32' else 0)
         process = await asyncio.create_subprocess_exec(
             *self.args, stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT, creationflags=creationflags)
+            stderr=subprocess.STDOUT, creationflags=creationflags,
+            preexec_fn=_preexec_fn)
         mlog.info("component %s (%s) started", self.name, process.pid)
         return process
 
@@ -238,3 +239,17 @@ class Component:
                       self.name, process.pid, line)
             now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             print(f"[{now} {self.name} ({process.pid})] {line}")
+
+
+if sys.platform == 'linux':
+
+    def _preexec_fn():
+        import ctypes
+        libc = ctypes.cdll.LoadLibrary('libc.so.6')
+        PR_SET_PDEATHSIG = 1
+        SIGKILL = 9
+        libc.prctl(PR_SET_PDEATHSIG, SIGKILL)
+
+else:
+
+    _preexec_fn = None

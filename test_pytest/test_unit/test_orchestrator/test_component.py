@@ -250,8 +250,7 @@ async def test_process_stopped_on_stop(short_start_delay, process_queue):
     p = await process_queue.get()
     assert p.returncode is None
     component.stop()
-    while p.returncode is None:
-        await asyncio.sleep(0.001)
+    await asyncio.wait_for(p.wait(), 1)
     await component.async_close()
 
 

@@ -199,7 +199,7 @@ def test_orchestrator_kills_children(run_orchestrator_factory):
                children)
 
 
-@pytest.mark.skip(reason='WIP')
+@pytest.mark.skipif(sys.platform != 'linux', reason="not suppoprted")
 def test_orchestrator_kills_children_on_kill(run_orchestrator_factory):
     process = run_orchestrator_factory(
         components=[{'name': f'comp-{i}',
