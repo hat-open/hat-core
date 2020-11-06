@@ -195,6 +195,16 @@ export async function deleteSettings() {
 }
 
 
+export async function search(deviceType) {
+    try {
+        await rpc.search(deviceType);
+        await log(`Search ${deviceType} started`);
+    } catch (e) {
+        await log(`Search error: ${e}`);
+    }
+}
+
+
 async function log(msg) {
     await r.change('log', u.append({
         timestamp: Date.now() / 1000,

@@ -372,7 +372,7 @@ function configItemBoolean(pathSuffix, label, editable) {
 
 function configItemChoice(pathSuffix, label, values) {
     const path = ['state', 'config', pathSuffix];
-    const selectedValue = r.get(path);
+    const selectedValue = u.strictParseInt(r.get(path));
     const allValues = (
         values.find(([i, _]) => u.equals(selectedValue, i)) === undefined ?
             u.append([selectedValue, String(selectedValue)], values) :
@@ -381,7 +381,7 @@ function configItemChoice(pathSuffix, label, values) {
         ['label', label, ': '],
         ['select', {
             on: {
-                change: evt => r.set(path, evt.target.value)
+                change: evt => r.set(path, u.strictParseInt(evt.target.value))
             }},
             allValues.map(([value, valueLabel]) =>
                 ['option', {
@@ -396,7 +396,7 @@ function configItemChoice(pathSuffix, label, values) {
         ['button', {
             on: {
                 click: _ => common.setConf(
-                    u.set(pathSuffix, r.get(path), {}))
+                    u.set(pathSuffix, u.strictParseInt(r.get(path)), {}))
             }},
             ['span.fa.fa-pencil']
         ]
@@ -407,6 +407,12 @@ function configItemChoice(pathSuffix, label, values) {
 function lights() {
     const lights = r.get('state', 'lights') || {};
     return ['div.page',
+        ['button', {
+            on: {
+                click: _ => common.search('LIGHT')
+            }},
+            "Search lights"
+        ],
         Object.keys(lights).map(deviceLabel => ['div.group',
             ['label.title', `Light ${deviceLabel}`],
             ['div.grid',
@@ -539,5 +545,12 @@ function lightsStateItemChoice(deviceLabel, pathSuffix, label, values) {
 
 
 function sensors() {
-    return ['div.page'];
+    return ['div.page',
+        ['button', {
+            on: {
+                click: _ => common.search('SENSOR')
+            }},
+            "Search sensors"
+        ],
+    ];
 }

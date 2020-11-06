@@ -61,7 +61,8 @@ class Session:
                          'get': self.get,
                          'set_conf': self.set_conf,
                          'set_state': self.set_state,
-                         'delete_user': self.delete_user}
+                         'delete_user': self.delete_user,
+                         'search': self.search}
 
         async_group.spawn(aio.call_on_cancel, juggler_conn.async_close)
         async_group.spawn(aio.call_on_cancel, self.disconnect)
@@ -149,3 +150,6 @@ class Session:
 
     async def delete_user(self, user):
         await self._hue_conn.transport.delete_user(user)
+
+    async def search(self, device_type):
+        await self._hue_conn.transport.search(hue.DeviceType[device_type])
