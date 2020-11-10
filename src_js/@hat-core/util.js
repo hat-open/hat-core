@@ -246,20 +246,16 @@ export function fromPairs(arr) {
  * are also arrays are replaced with elements of resulting recursive
  * application of flatten function.
  *
+ * If argument is not an array, function returns the argument encapsulated in
+ * an array.
+ *
  * @function
  * @sig [a] -> [b]
- * @param {Array} arr
+ * @param {*} arr
  * @return {Array}
  */
 export function flatten(arr) {
-    return Array.from((function* flatten(x) {
-        if (isArray(x)) {
-            for (let i of x)
-                yield* flatten(i);
-        } else {
-            yield x;
-        }
-    })(arr));
+    return isArray(arr) ? arr.flat(Infinity) : [arr];
 }
 
 /**
