@@ -7,7 +7,7 @@ __all__ = ['task_cache_tools',
            'task_cache_tools_plantuml']
 
 
-plantuml_url = 'https://vorboss.dl.sourceforge.net/project/plantuml/plantuml.jar'  # NOQA
+plantuml_url = 'http://downloads.sourceforge.net/project/plantuml/plantuml.jar'
 
 cache_dir = Path('cache/tools')
 plantuml_path = cache_dir / 'plantuml.jar'
