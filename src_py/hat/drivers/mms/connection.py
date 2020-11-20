@@ -283,6 +283,12 @@ class Connection:
                     continue
                 pdu = _decode(entity)
                 running = await self._process_pdu(pdu)
+        except asyncio.CancelledError:
+            pdu = 'conclude-RequestPDU', None
+            data = _mms_syntax_name, _encode(pdu)
+            self._acse_conn.write(data)
+            # TODO: wait for response
+            raise
         finally:
             self._group.close()
             self._unconfirmed_queue.close()
@@ -342,7 +348,9 @@ class Connection:
             return True
 
         elif name == 'conclude-RequestPDU':
-            # TODO: send response
+            res_pdu = 'conclude-ResponsePDU', None
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
             return False
 
         return False
