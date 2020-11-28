@@ -178,7 +178,9 @@ SBS schema:
    :literal:
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.chatter
+Documentation is available as part of generated API reference:
+
+    * `Python hat.chatter module <../pyhat/hat/chatter/index.html>`_

@@ -4,7 +4,7 @@ Libraries
 .. toctree::
     :maxdepth: 1
 
-    util/index
+    util
     peg
     stc
     sbs
@@ -12,4 +12,4 @@ Libraries
     juggler
     duktape
     asn1
-    drivers/index
+    drivers

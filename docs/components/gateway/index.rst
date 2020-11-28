@@ -171,9 +171,9 @@ Devices available as part of `hat-gateway` package:
        devices/dummy
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.gateway.common
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.gateway.engine
+    * `Python hat.gateway module <../../pyhat/hat/gateway/index.html>`_

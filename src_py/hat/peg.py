@@ -180,7 +180,7 @@ Expression = typing.Union[Sequence, Choice, Not, And, OneOrMore, ZeroOrMore,
 class MatchResult(typing.NamedTuple):
     """Match result
 
-    Attributes:
+    Args:
         node: matched node or ``None`` if match failed
         rest: remaining input data
 
@@ -192,7 +192,7 @@ class MatchResult(typing.NamedTuple):
 class MatchCallFrame(typing.NamedTuple):
     """Match call frame
 
-    Attributes:
+    Args:
         name: definition name
         data: input data
 

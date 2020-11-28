@@ -38,9 +38,9 @@ line module arguments) is used.
       "input: editor; output: event; variant: primary")
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.translator.common
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.translator.main
+    * `Python hat.translator module <../pyhat/hat/translator/index.html>`_

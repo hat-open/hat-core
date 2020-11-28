@@ -382,21 +382,9 @@ When server detected change of client's local data, it should update its
 local data to match filter from client's local data.
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.syslog.common
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.syslog.handler
-
-.. automodule:: hat.syslog.server.common
-
-.. automodule:: hat.syslog.server.conf
-
-.. automodule:: hat.syslog.server.backend
-
-.. automodule:: hat.syslog.server.database
-
-.. automodule:: hat.syslog.server.syslog
-
-.. automodule:: hat.syslog.server.ui
+    * `Python hat.syslog module <../pyhat/hat/syslog/index.html>`_

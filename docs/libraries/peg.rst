@@ -1,7 +1,6 @@
 Parsing expression grammar
 ==========================
 
-Python implementation
----------------------
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.peg
+    * `Python hat.peg module <../pyhat/hat/peg.html>`_

@@ -1,7 +1,6 @@
 Statechart
 ==========
 
-Python implementation
----------------------
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.stc
+    * `Python hat.stc module <../pyhat/hat/stc.html>`_

@@ -1,7 +1,6 @@
 Abstract Syntax Notation One
 ============================
 
-Python implementation
----------------------
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.asn1
+    * `Python hat.asn1 module <../pyhat/hat/asn1/index.html>`_

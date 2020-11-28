@@ -479,28 +479,9 @@ Backends available as part of `hat-event` package:
        backends/sqlite
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-Common
-''''''
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.event.common
-
-
-Client
-''''''
-
-.. automodule:: hat.event.client
-
-
-Server
-''''''
-
-.. automodule:: hat.event.server.common
-
-.. automodule:: hat.event.server.communication
-
-.. automodule:: hat.event.server.module_engine
-
-.. automodule:: hat.event.server.backend_engine
+    * `Python hat.event module <../../pyhat/hat/event/index.html>`_

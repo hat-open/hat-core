@@ -1,7 +1,6 @@
 Duktape wrapper
 ===============
 
-Python implementation
----------------------
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.duktape
+    * `Python hat.duktape module <../pyhat/hat/duktape/index.html>`_

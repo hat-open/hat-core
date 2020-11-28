@@ -2,3 +2,7 @@
 body > div > nav > div > div.wy-side-nav-search > div.version {
     margin-bottom: 0px;
 }
+
+dl {
+    padding: 5px;
+}

@@ -172,7 +172,9 @@ Union encodes single element prefixed with encoded element's zero-based index
 as ``Integer``.
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.sbs
+Documentation is available as part of generated API reference:
+
+    * `Python hat.sbs module <../pyhat/hat/sbs/index.html>`_

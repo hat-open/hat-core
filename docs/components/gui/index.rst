@@ -410,13 +410,9 @@ Views available as part of `hat-gui` package:
        views/dummy
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.gui.common
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.gui.view
-
-.. automodule:: hat.gui.server
-
-.. automodule:: hat.gui.vt
+    * `Python hat.gui module <../../pyhat/hat/gui/index.html>`_

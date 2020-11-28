@@ -504,40 +504,9 @@ Future features
         * listening for control events
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-Common
-''''''
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.monitor.common
-
-
-Client
-''''''
-
-.. automodule:: hat.monitor.client
-
-
-Blessing
-''''''''
-
-.. automodule:: hat.monitor.server.blessing
-
-
-Server
-''''''
-
-.. automodule:: hat.monitor.server.server
-
-
-Master
-''''''
-
-.. automodule:: hat.monitor.server.master
-
-
-UI
-''
-
-.. automodule:: hat.monitor.server.ui
+    * `Python hat.monitor module <../pyhat/hat/monitor/index.html>`_

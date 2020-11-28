@@ -84,7 +84,7 @@ def extend_enum_doc(cls: enum.EnumMeta,
 class RegisterCallbackHandle(typing.NamedTuple):
     """Handle for canceling callback registration.
 
-    Attributes:
+    Args:
         cancel: cancel callback registration
 
     """

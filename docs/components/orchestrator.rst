@@ -292,16 +292,9 @@ Possible future improvements
     * listening for control events
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-Component
-'''''''''
+Documentation is available as part of generated API reference:
 
-.. automodule:: hat.orchestrator.component
-
-
-UI
-''
-
-.. automodule:: hat.orchestrator.ui
+    * `Python hat.orchestrator module <../pyhat/hat/orchestrator/index.html>`_

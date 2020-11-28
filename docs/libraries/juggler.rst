@@ -71,7 +71,9 @@ local data changes.
 `MESSAGE` messages provide asynchronous message passing communication.
 
 
-Python implementation
----------------------
+Implementation
+--------------
 
-.. automodule:: hat.juggler
+Documentation is available as part of generated API reference:
+
+    * `Python hat.juggler module <../pyhat/hat/juggler.html>`_
