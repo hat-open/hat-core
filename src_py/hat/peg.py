@@ -27,6 +27,7 @@ PEG's grammar itself can be defined by PEG grammar::
     Range      <- Char '-' Char / Char
     Char       <- '\\' [nrt'"\[\]\\]
                 / '\\' 'x' Hex Hex
+                / '\\' 'u' Hex Hex Hex Hex
                 / !'\\' .
     Hex        <- [0-9a-fA-F]
 
@@ -79,27 +80,21 @@ Example usage of PEG parser::
 
 """
 
-import collections.abc
-import functools
 import typing
 
 from hat import util
-
-
-Data = typing.Union[str, bytes]
-"""Data"""
 
 
 class Node(typing.NamedTuple):
     """Abstract syntax tree node.
 
     Node names are identifiers of parser's definitions and values
-    are other nodes or Data representing matched `Literal`, `Class` or
-    `Dot` leafs.
+    are other nodes or string values representing matched `Literal`, `Class`
+    or `Dot` leafs.
 
     """
     name: str
-    value: typing.List[typing.Union['Node', Data]]
+    value: typing.List[typing.Union['Node', str]]
 
 
 Action = typing.Callable[[Node, typing.List], typing.Any]
@@ -162,11 +157,11 @@ class Identifier(typing.NamedTuple):
 
 
 class Literal(typing.NamedTuple):
-    value: bytes
+    value: str
 
 
 class Class(typing.NamedTuple):
-    values: typing.List[typing.Union[int, typing.Tuple[int, int]]]
+    values: typing.List[typing.Union[str, typing.Tuple[str, str]]]
 
 
 class Dot(typing.NamedTuple):
@@ -186,7 +181,7 @@ class MatchResult(typing.NamedTuple):
 
     """
     node: typing.Optional[Node]
-    rest: Data
+    rest: str
 
 
 class MatchCallFrame(typing.NamedTuple):
@@ -198,7 +193,7 @@ class MatchCallFrame(typing.NamedTuple):
 
     """
     name: str
-    data: Data
+    data: str
 
 
 MatchCallStack = typing.Iterable[MatchCallFrame]
@@ -221,8 +216,7 @@ class Grammar:
                                            typing.Dict[str, Expression]],
                  starting: str):
         if isinstance(definitions, str):
-            data = definitions.encode('utf-8')
-            ast = _peg_grammar.parse(data)
+            ast = _peg_grammar.parse(definitions)
             definitions = walk_ast(ast, _peg_actions)
             definitions = {k: _reduce_expression(v)
                            for k, v in definitions.items()}
@@ -240,7 +234,7 @@ class Grammar:
         return self._starting
 
     def parse(self,
-              data: Data,
+              data: str,
               debug_cb: typing.Optional[DebugCb] = None
               ) -> Node:
         """Parse input data.
@@ -251,20 +245,14 @@ class Grammar:
         match result and match call stack.
 
         """
-        if isinstance(data, str):
-            data_fn = functools.partial(str, encoding='utf-8')
-            data = data.encode('utf-8')
-        else:
-            data_fn = bytes
         state = _State(grammar=self,
-                       data=memoryview(data),
+                       data=data,
                        call_stack=_MatchCallStack(None, None),
-                       data_fn=data_fn,
                        debug_cb=debug_cb)
         result = _match(state, self._starting)
         if result.node is None:
             raise Exception("could not match starting definition")
-        x = _reduce_node(data_fn, result.node)
+        x = _reduce_node(result.node)
         return x
 
 
@@ -291,9 +279,8 @@ class _MatchCallStack(typing.NamedTuple):
 
 class _State(typing.NamedTuple):
     grammar: Grammar
-    data: Data
+    data: str
     call_stack: _MatchCallStack
-    data_fn: typing.Callable
     debug_cb: DebugCb
 
 
@@ -309,12 +296,9 @@ def _match(state, name):
             node=result.node._replace(name=name))
     if state.debug_cb:
         debug_result = MatchResult(
-            node=(_reduce_node(state.data_fn, result.node)
-                  if result.node else None),
-            rest=state.data_fn(result.rest))
-        debug_call_stack = [i._replace(data=state.data_fn(i.data))
-                            for i in state.call_stack]
-        state.debug_cb(debug_result, debug_call_stack)
+            node=(_reduce_node(result.node) if result.node else None),
+            rest=result.rest)
+        state.debug_cb(debug_result, state.call_stack)
     return result
 
 
@@ -416,10 +400,10 @@ def _match_literal(state, expression):
 def _match_class(state, expression):
     if state.data:
         for i in expression.values:
-            if isinstance(i, collections.abc.Sequence):
-                matched = i[0] <= state.data[0] <= i[1]
-            else:
+            if isinstance(i, str):
                 matched = state.data[0] == i
+            else:
+                matched = i[0] <= state.data[0] <= i[1]
             if matched:
                 return MatchResult(Node(None, [state.data[:1]]),
                                    state.data[1:])
@@ -443,18 +427,18 @@ def _reduce_expression(expr):
     return expr
 
 
-def _reduce_node(data_fn, node):
-    return node._replace(value=list(_reduce_node_list(data_fn, node.value)))
+def _reduce_node(node):
+    return node._replace(value=list(_reduce_node_list(node.value)))
 
 
-def _reduce_node_list(data_fn, nodes):
+def _reduce_node_list(nodes):
     for node in nodes:
         if not isinstance(node, Node):
-            yield data_fn(node)
+            yield node
         elif node.name is None:
-            yield from _reduce_node_list(data_fn, node.value)
+            yield from _reduce_node_list(node.value)
         else:
-            yield _reduce_node(data_fn, node)
+            yield _reduce_node(node)
 
 
 _peg_grammar = Grammar({
@@ -498,103 +482,109 @@ _peg_grammar = Grammar({
         Identifier('IdentStart'),
         ZeroOrMore(Identifier('IdentCont')),
         Identifier('Spacing')]),
-    'IdentStart': Class([(ord('a'), ord('z')),
-                         (ord('A'), ord('Z')),
-                         ord('_')]),
+    'IdentStart': Class([('a', 'z'),
+                         ('A', 'Z'),
+                         '_']),
     'IdentCont': Choice([
         Identifier('IdentStart'),
-        Class([(ord('0'), ord('9'))])]),
+        Class([('0', '9')])]),
     'Literal': Choice([
         Sequence([
-            Class([ord("'")]),
+            Class(["'"]),
             ZeroOrMore(Sequence([
-                Not(Class([ord("'")])),
+                Not(Class(["'"])),
                 Identifier('Char')])),
-            Class([ord("'")]),
+            Class(["'"]),
             Identifier('Spacing')]),
         Sequence([
-            Class([ord('"')]),
+            Class(['"']),
             ZeroOrMore(Sequence([
-                Not(Class([ord('"')])),
+                Not(Class(['"'])),
                 Identifier('Char')])),
-            Class([ord('"')]),
+            Class(['"']),
             Identifier('Spacing')])]),
     'Class': Sequence([
-        Literal(b'['),
+        Literal('['),
         ZeroOrMore(Sequence([
-            Not(Literal(b']')),
+            Not(Literal(']')),
             Identifier('Range')])),
-        Literal(b']'),
+        Literal(']'),
         Identifier('Spacing')]),
     'Range': Choice([
         Sequence([
             Identifier('Char'),
-            Literal(b'-'),
+            Literal('-'),
             Identifier('Char')]),
         Identifier('Char')]),
     'Char': Choice([
         Sequence([
-            Literal(b'\\'),
-            Class([ord('n'), ord('r'), ord('t'), ord("'"), ord('"'),
-                   ord('['), ord(']'), ord('\\')])]),
+            Literal('\\'),
+            Class(['n', 'r', 't', "'", '"', '[', ']', '\\'])]),
         Sequence([
-            Literal(b'\\'),
-            Literal(b'x'),
+            Literal('\\'),
+            Literal('x'),
             Identifier('Hex'),
             Identifier('Hex')]),
         Sequence([
-            Not(Literal(b'\\')),
+            Literal('\\'),
+            Literal('u'),
+            Identifier('Hex'),
+            Identifier('Hex'),
+            Identifier('Hex'),
+            Identifier('Hex')]),
+        Sequence([
+            Not(Literal('\\')),
             Dot()])]),
-    'Hex': Class([(ord('0'), ord('9')),
-                  (ord('a'), ord('f')),
-                  (ord('A'), ord('F'))]),
+    'Hex': Class([('0', '9'),
+                  ('a', 'f'),
+                  ('A', 'F')]),
     'LEFTARROW': Sequence([
-        Literal(b'<-'),
+        Literal('<-'),
         Identifier('Spacing')]),
     'SLASH': Sequence([
-        Literal(b'/'),
+        Literal('/'),
         Identifier('Spacing')]),
     'AND': Sequence([
-        Literal(b'&'),
+        Literal('&'),
         Identifier('Spacing')]),
     'NOT': Sequence([
-        Literal(b'!'),
+        Literal('!'),
         Identifier('Spacing')]),
     'QUESTION': Sequence([
-        Literal(b'?'),
+        Literal('?'),
         Identifier('Spacing')]),
     'STAR': Sequence([
-        Literal(b'*'),
+        Literal('*'),
         Identifier('Spacing')]),
     'PLUS': Sequence([
-        Literal(b'+'),
+        Literal('+'),
         Identifier('Spacing')]),
     'OPEN': Sequence([
-        Literal(b'('),
+        Literal('('),
         Identifier('Spacing')]),
     'CLOSE': Sequence([
-        Literal(b')'),
+        Literal(')'),
         Identifier('Spacing')]),
     'DOT': Sequence([
-        Literal(b'.'),
+        Literal('.'),
         Identifier('Spacing')]),
     'Spacing': ZeroOrMore(Choice([
         Identifier('Space'),
         Identifier('Comment')])),
     'Comment': Sequence([
-        Literal(b'#'),
+        Literal('#'),
         ZeroOrMore(Sequence([
             Not(Identifier('EndOfLine')),
             Dot()])),
         Identifier('EndOfLine')]),
     'Space': Choice([
-        Literal(b' '),
-        Literal(b'\t'),
+        Literal(' '),
+        Literal('\t'),
         Identifier('EndOfLine')]),
     'EndOfLine': Choice([
-        Literal(b'\r\n'),
-        Literal(b'\n'),
-        Literal(b'\r')]),
+        Literal('\r\n'),
+        Literal('\n'),
+        Literal('\r')]),
     'EndOfFile': Not(Dot())
 }, 'Grammar')
 
@@ -610,24 +600,23 @@ _peg_actions = {
                             c[1](c[0])),
     'Primary': lambda n, c: (c[1] if c[0] is None else
                              c[0]),
-    'Identifier': lambda n, c: Identifier(str(b''.join(c[:-1]),
-                                              encoding='utf-8')),
+    'Identifier': lambda n, c: Identifier(''.join(c[:-1])),
     'IdentStart': lambda n, c: c[0],
     'IdentCont': lambda n, c: c[0],
-    'Literal': lambda n, c: Literal(bytes(c[1:-2])),
+    'Literal': lambda n, c: Literal(''.join(c[1:-2])),
     'Class': lambda n, c: Class(c[1:-2]),
     'Range': lambda n, c: (c[0] if len(c) == 1 else
                            (c[0], c[2])),
-    'Char': lambda n, c: (c[0][0] if c[0] != b'\\' else
-                          ord('\n') if c[1] == b'n' else
-                          ord('\r') if c[1] == b'r' else
-                          ord('\t') if c[1] == b't' else
-                          ord("'") if c[1] == b"'" else
-                          ord('"') if c[1] == b'"' else
-                          ord('[') if c[1] == b'[' else
-                          ord(']') if c[1] == b']' else
-                          ord('\\') if c[1] == b'\\' else
-                          int(b''.join(c[2:]), 16)),
+    'Char': lambda n, c: (c[0] if c[0] != '\\' else
+                          '\n' if c[1] == 'n' else
+                          '\r' if c[1] == 'r' else
+                          '\t' if c[1] == 't' else
+                          "'" if c[1] == "'" else
+                          '"' if c[1] == '"' else
+                          '[' if c[1] == '[' else
+                          ']' if c[1] == ']' else
+                          '\\' if c[1] == '\\' else
+                          chr(int(c[2:], 16))),
     'Hex': lambda n, c: c[0],
     'AND': lambda n, c: And,
     'NOT': lambda n, c: Not,
