@@ -10,7 +10,6 @@ import asyncio
 import contextlib
 
 from hat import sqlite3
-from hat import util
 from hat.event.server import common
 from hat.util import aio
 from hat.util import json
