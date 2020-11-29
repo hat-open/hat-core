@@ -5,6 +5,7 @@ Attributes:
 
 """
 
+from pathlib import Path
 import asyncio
 import contextlib
 
@@ -57,7 +58,7 @@ async def create(conf):
     backend = SqliteBackend()
     backend._async_group = aio.Group()
     backend._last_instance_ids = {}
-    db_path = util.parse_env_path(conf['db_path'])
+    db_path = Path(conf['db_path'])
     backend._conn = await _create_connection(db_path)
     await backend._conn.execute_script(_db_structure)
     backend._query_pool = await _create_connection_pool(

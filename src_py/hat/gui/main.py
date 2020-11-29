@@ -9,7 +9,6 @@ import sys
 
 import appdirs
 
-from hat import util
 from hat.gui import common
 from hat.util import aio
 from hat.util import json
@@ -210,21 +209,18 @@ def create_parser():
     parser = argparse.ArgumentParser(prog='hat-gui')
     parser.add_argument(
         '--conf', metavar='path', dest='conf',
-        default=default_conf_path,
-        action=util.EnvPathArgParseAction,
+        default=default_conf_path, type=Path,
         help="configuration defined by hat://gui/main.yaml# "
              "(default $XDG_CONFIG_HOME/hat/gui.yaml)")
     parser.add_argument(
         '--additional-json-schemas-path', metavar='path',
-        dest='additional_json_schemas_paths', nargs='*', default=[],
-        action=util.EnvPathArgParseAction,
+        dest='additional_json_schemas_paths', nargs='*', default=[], type=Path,
         help="additional json schemas paths")
 
     dev_args = parser.add_argument_group('development arguments')
     dev_args.add_argument(
         '--ui-path', metavar='path', dest='ui_path',
-        default=default_ui_path,
-        action=util.EnvPathArgParseAction,
+        default=default_ui_path, type=Path,
         help="override web ui directory path")
     return parser
 

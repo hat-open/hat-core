@@ -7,7 +7,6 @@ import sys
 
 import appdirs
 
-from hat import util
 from hat.util import aio
 from hat.util import json
 import hat.orchestrator.component
@@ -61,16 +60,14 @@ def _create_parser():
     parser = argparse.ArgumentParser(prog='hat-orchestrator')
     parser.add_argument(
         '--conf', metavar='path', dest='conf',
-        default=default_conf_path,
-        action=util.EnvPathArgParseAction,
+        default=default_conf_path, type=Path,
         help="configuration defined by hat://orchestrator.yaml# "
              "(default $XDG_CONFIG_HOME/hat/orchestrator.yaml)")
 
     dev_args = parser.add_argument_group('development arguments')
     dev_args.add_argument(
         '--ui-path', metavar='path', dest='ui_path',
-        default=default_ui_path,
-        action=util.EnvPathArgParseAction,
+        default=default_ui_path, type=Path,
         help="override web ui directory path")
     return parser
 

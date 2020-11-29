@@ -16,7 +16,7 @@ from hat.util import aio
 
 
 QtExecutor = typing.Callable[..., typing.Awaitable[typing.Any]]
-"""First argument is Callable called with additionaln arguments"""
+"""First argument is Callable called with additional arguments"""
 
 AsyncMain = typing.Callable[..., typing.Awaitable[typing.Any]]
 """First argument is QtExecutor"""

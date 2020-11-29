@@ -225,31 +225,41 @@ def init_asyncio():
                 asyncio.WindowsProactorEventLoopPolicy())
 
 
-def run_asyncio(future: typing.Awaitable) -> typing.Any:
+def run_asyncio(future: typing.Awaitable, *,
+                handle_signals=True,
+                create_loop=False
+                ) -> typing.Any:
     """Run asyncio loop until the `future` is completed and return the result.
 
-    SIGINT and SIGTERM handlers are temporarily overridden. Instead of raising
-    ``KeyboardInterrupt`` on every signal reception, Future is canceled only
-    once. Additional signals are ignored.
+    If `handle_signals` is ``True``, SIGINT and SIGTERM handlers are
+    temporarily overridden. Instead of raising ``KeyboardInterrupt`` on every
+    signal reception, Future is canceled only once. Additional signals are
+    ignored. On Windows, SIGBREAK (CTRL_BREAK_EVENT) handler is also
+    overridden.
 
-    On Windows, SIGBREAK (CTRL_BREAK_EVENT) handler is also overridden and
-    asyncio loop gets periodically woken up (every 0.5 seconds).
+    If `create_loop` is set to ``True``, new event loop is created and set
+    as thread's default event loop.
+
+    On Windows, asyncio loop gets periodically woken up (every 0.5 seconds).
 
     Args:
         future: future or coroutine
+        handle_signals: handle signals flag
+        create_loop: create new event loop
 
     Returns:
         future's result
 
     """
-    loop = asyncio.get_event_loop()
+    if create_loop:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    else:
+        loop = asyncio.get_event_loop()
+
     task = asyncio.ensure_future(future, loop=loop)
-    canceled = False
-    signalnums = [signal.SIGINT, signal.SIGTERM]
 
     if sys.platform == 'win32':
-
-        signalnums += [signal.SIGBREAK]
 
         async def task_wrapper(task):
             try:
@@ -261,6 +271,14 @@ def run_asyncio(future: typing.Awaitable) -> typing.Any:
 
         task = asyncio.ensure_future(task_wrapper(task), loop=loop)
 
+    if not handle_signals:
+        return loop.run_until_complete(task)
+
+    canceled = False
+    signalnums = [signal.SIGINT, signal.SIGTERM]
+    if sys.platform == 'win32':
+        signalnums += [signal.SIGBREAK]
+
     def signal_handler(*args):
         nonlocal canceled
         if canceled:
@@ -268,18 +286,17 @@ def run_asyncio(future: typing.Awaitable) -> typing.Any:
         loop.call_soon_threadsafe(task.cancel)
         canceled = True
 
-    @contextlib.contextmanager
-    def change_signal_handlers():
-        handlers = {signalnum: signal.getsignal(signalnum) or signal.SIG_DFL
-                    for signalnum in signalnums}
-        for signalnum in signalnums:
-            signal.signal(signalnum, signal_handler)
-        yield
+    handlers = {signalnum: signal.getsignal(signalnum) or signal.SIG_DFL
+                for signalnum in signalnums}
+    for signalnum in signalnums:
+        signal.signal(signalnum, signal_handler)
+
+    try:
+        return loop.run_until_complete(task)
+
+    finally:
         for signalnum, handler in handlers.items():
             signal.signal(signalnum, handler)
-
-    with change_signal_handlers():
-        return loop.run_until_complete(task)
 
 
 class QueueClosedError(Exception):

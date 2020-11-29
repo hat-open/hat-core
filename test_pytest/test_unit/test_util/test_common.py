@@ -100,38 +100,3 @@ def test_parse_url_query(query, params):
 def test_namedtuple():
     with pytest.raises(Exception):
         util.namedtuple('T', ('a', '', 0), 'b')
-
-
-def test_parse_env_path(monkeypatch):
-    path = Path('$A/$B/c')
-    with monkeypatch.context() as ctx:
-        ctx.setenv("A", "a")
-        assert util.parse_env_path(path) == Path('a/./c')
-        ctx.delenv("A")
-        assert util.parse_env_path(path) == Path('././c')
-
-
-def test_log_rotating_file_handler(tmp_path, monkeypatch):
-    path = tmp_path / '$HATPATH/log.txt'
-    with monkeypatch.context() as ctx:
-        ctx.setenv('HATPATH', 'hatpath')
-        util.parse_env_path(path).parent.mkdir()
-        handler = util.LogRotatingFileHandler(path)
-        assert handler.baseFilename == str(tmp_path / 'hatpath/log.txt')
-
-
-def test_env_path_arg_parse_action(monkeypatch, capsys):
-    with monkeypatch.context() as ctx:
-        ctx.setenv('HATPATH', 'hatpath')
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--x', action=util.EnvPathArgParseAction)
-        args = parser.parse_args(['--x', '$HATPATH/a.txt'])
-        assert args.x == Path('hatpath/a.txt')
-
-        def invalid_parse_env_path(*args):
-            raise Exception()
-
-        ctx.setattr(util.common, 'parse_env_path', invalid_parse_env_path)
-        with pytest.raises(SystemExit):
-            with contextlib.redirect_stderr(io.StringIO()):
-                parser.parse_args(['--x', '$HATPATH/a.txt'])

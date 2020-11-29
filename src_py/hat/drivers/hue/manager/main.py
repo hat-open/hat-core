@@ -5,7 +5,6 @@ import click
 import PySide2.QtWebEngineWidgets
 import PySide2.QtWidgets
 
-from hat import util
 from hat.util import qt
 from hat.drivers.hue.manager import server
 from hat.util import aio
@@ -18,8 +17,7 @@ default_ui_path = package_path / 'ui'
 @click.command()
 @click.option('--debug', default=False, is_flag=True,
               help='Show debugging console')
-@click.option('--ui-path', default=default_ui_path, metavar='PATH',
-              callback=lambda ctx, param, value: util.parse_env_path(value),
+@click.option('--ui-path', default=default_ui_path, metavar='PATH', type=Path,
               help='Override web ui directory path (development argument)')
 def main(debug, ui_path):
     return qt.run(async_main, debug, ui_path)

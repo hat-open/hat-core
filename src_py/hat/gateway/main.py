@@ -17,7 +17,6 @@ import sys
 
 import appdirs
 
-from hat import util
 from hat.util import aio
 from hat.util import json
 import hat.event.client
@@ -100,14 +99,12 @@ def _create_parser():
     parser = argparse.ArgumentParser(prog='hat-gateway')
     parser.add_argument(
         '--conf', metavar='path', dest='conf',
-        default=default_conf_path,
-        action=util.EnvPathArgParseAction,
+        default=default_conf_path, type=Path,
         help="configuration defined by hat://gateway/main.yaml# "
              "(default $XDG_CONFIG_HOME/hat/gateway.yaml)")
     parser.add_argument(
         '--additional-json-schemas-path', metavar='path',
-        dest='additional_json_schemas_paths', nargs='*', default=[],
-        action=util.EnvPathArgParseAction,
+        dest='additional_json_schemas_paths', nargs='*', default=[], type=Path,
         help="additional json schemas paths")
     return parser
 

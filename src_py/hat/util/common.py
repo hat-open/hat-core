@@ -1,12 +1,8 @@
 """Common utility functions"""
 
-import argparse
 import collections
 import contextlib
 import enum
-import logging.handlers
-import os
-import pathlib
 import socket
 import sys
 import typing
@@ -157,52 +153,6 @@ def parse_url_query(query: str) -> typing.Dict[str, str]:
             continue
         ret[temp[0]] = temp[1] if len(temp) > 1 else None
     return ret
-
-
-def parse_env_path(path: os.PathLike) -> pathlib.Path:
-    """Parse path with environment variables.
-
-    Parse file path and replace all file path segments equal to ``$<name>``
-    with value of ``<name>`` environment variable. If environment variable is
-    not set, segments are replaced with ``.``.
-
-    """
-    path = pathlib.Path(path)
-    segments = []
-    for segment in path.parts:
-        if segment.startswith('$'):
-            segment = os.environ.get(segment[1:], '.')
-        segments.append(segment)
-    return pathlib.Path(*segments)
-
-
-class LogRotatingFileHandler(logging.handlers.RotatingFileHandler):
-
-    def __init__(self, filename, *vargs, **kwargs):
-        """Filename is parsed with :func:`parse_env_path`.
-
-        For other arguments, see:
-        :class:`logging.handlers.RotatingFileHandler`.
-
-        """
-        super().__init__(parse_env_path(filename), *vargs, **kwargs)
-
-
-class EnvPathArgParseAction(argparse.Action):
-    """Argparse action for parsing file paths with environment variables.
-
-    Each path is parsed with :func:`parse_env_path`.
-
-    """
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        ret = []
-        for value in (values if self.nargs else [values]):
-            try:
-                ret.append(parse_env_path(value))
-            except Exception as e:
-                parser.error(str(e))
-        setattr(namespace, self.dest, ret if self.nargs else ret[0])
 
 
 def get_unused_tcp_port() -> int:

@@ -1,3 +1,4 @@
+from pathlib import Path
 import base64
 import logging
 
@@ -69,7 +70,7 @@ class ViewManager:
 
 def _ext_get_view(view, json_schema_repo):
     data = {}
-    view_path = util.parse_env_path(view['view_path'])
+    view_path = Path(view['view_path'])
     try:
         for i in view_path.rglob('*'):
             if i.is_dir():
@@ -97,7 +98,7 @@ def _ext_get_view(view, json_schema_repo):
 
     conf = None
     if view['conf_path'] is not None:
-        conf_path = util.parse_env_path(view['conf_path'])
+        conf_path = Path(view['conf_path'])
         conf = json.decode_file(conf_path)
     schema = util.first(v for k, v in data.items()
                         if k in {'schema.json', 'schema.yaml', 'schema.yml'})

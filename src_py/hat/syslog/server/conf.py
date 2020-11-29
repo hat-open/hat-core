@@ -87,16 +87,16 @@ def _parse_json_conf(json_conf):
         log=json_conf['log'],
         syslog=SysLogServerConf(
             addr=json_conf['syslog_addr'],
-            pem=(util.parse_env_path(json_conf['syslog_pem'])
+            pem=(Path(json_conf['syslog_pem'])
                  if 'syslog_pem' in json_conf
                  else None)),
         ui=WebServerConf(
             addr=json_conf['ui_addr'],
-            pem=(util.parse_env_path(json_conf['ui_pem'])
+            pem=(Path(json_conf['ui_pem'])
                  if 'ui_pem' in json_conf
                  else None)),
         db=BackendConf(
-            path=util.parse_env_path(json_conf['db_path']),
+            path=Path(json_conf['db_path']),
             low_size=json_conf['db_low_size'],
             high_size=json_conf['db_high_size'],
             enable_archive=json_conf['db_enable_archive'],
@@ -130,7 +130,7 @@ def _update_syslog_conf(syslog_conf, args):
         addr=(args.syslog_addr
               if args.syslog_addr is not None
               else syslog_conf.addr),
-        pem=(util.parse_env_path(args.syslog_pem)
+        pem=(Path(args.syslog_pem)
              if args.syslog_pem is not None
              else syslog_conf.pem))
 
@@ -140,7 +140,7 @@ def _update_ui_conf(ui_conf, args):
         addr=(args.ui_addr
               if args.ui_addr is not None
               else ui_conf.addr),
-        pem=(util.parse_env_path(args.ui_pem)
+        pem=(Path(args.ui_pem)
              if args.ui_pem is not None
              else ui_conf.pem),
         path=args.ui_path)
@@ -148,7 +148,7 @@ def _update_ui_conf(ui_conf, args):
 
 def _update_db_conf(db_conf, args):
     return db_conf._replace(
-        path=(util.parse_env_path(args.db_path)
+        path=(Path(args.db_path)
               if args.db_path is not None
               else db_conf.path),
         low_size=(args.db_low_size
@@ -167,8 +167,7 @@ def _create_parser():
     parser = argparse.ArgumentParser(prog='hat-syslog')
     parser.add_argument(
         '--conf', metavar='path',
-        default=default_conf_path,
-        action=util.EnvPathArgParseAction,
+        default=default_conf_path, type=Path,
         help="configuration defined by hat://syslog/server.yaml# "
              "(default $XDG_CONFIG_HOME/hat/syslog.yaml)")
 
@@ -222,8 +221,7 @@ def _create_parser():
     dev_args = parser.add_argument_group('development arguments')
     dev_args.add_argument(
         '--ui-path', metavar='path', dest='ui_path',
-        default=default_ui_path,
-        action=util.EnvPathArgParseAction,
+        default=default_ui_path, type=Path,
         help="override web ui directory path")
 
     return parser

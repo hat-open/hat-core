@@ -6,6 +6,7 @@ Attributes:
 
 """
 
+from pathlib import Path
 import argparse
 import importlib
 import itertools
@@ -104,9 +105,8 @@ def _create_parser():
             default=[],
             help="additional translators module name")
         parser.add_argument(
-            '--additional-json-schemas-path', metavar='path',
+            '--additional-json-schemas-path', metavar='path', type=Path,
             dest='additional_json_schemas_paths', nargs='*', default=[],
-            action=util.EnvPathArgParseAction,
             help="additional json schemas paths")
         parser.add_argument(
             '--format', metavar='format', dest='format',
