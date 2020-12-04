@@ -7,8 +7,8 @@ import signal
 import subprocess
 import sys
 
+from hat import aio
 from hat import util
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

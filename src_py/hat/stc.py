@@ -6,7 +6,7 @@ import pathlib
 import typing
 import xml.etree.ElementTree
 
-from hat.util import aio
+from hat import aio
 
 
 EventName = str

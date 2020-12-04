@@ -1,5 +1,5 @@
+from hat import json
 from hat import util
-from hat.util import json
 import hat.peg
 
 

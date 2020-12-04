@@ -1,10 +1,10 @@
 import pytest
 
-import hat.monitor.server.ui
-from hat.monitor.common import ComponentInfo
-from hat import util
-from hat.util import aio
+from hat import aio
 from hat import juggler
+from hat import util
+from hat.monitor.common import ComponentInfo
+import hat.monitor.server.ui
 
 
 async def create_client(address):

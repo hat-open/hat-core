@@ -1,9 +1,9 @@
 from pathlib import Path
 import shutil
 
+from hat import json
 from hat.doit import common
 from hat.doit.hat_core.timestamp import timestamp_path
-from hat.util import json
 
 
 __all__ = ['task_jshat_lib_util',

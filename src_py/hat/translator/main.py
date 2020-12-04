@@ -12,8 +12,8 @@ import importlib
 import itertools
 import sys
 
+from hat import json
 from hat import util
-from hat.util import json
 
 
 builtin_translators = []

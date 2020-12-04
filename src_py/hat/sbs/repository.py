@@ -1,10 +1,10 @@
 import pathlib
 import typing
 
+from hat import json
 from hat.sbs import evaluator
 from hat.sbs import parser
 from hat.sbs import serializer
-from hat.util import json
 
 
 class Repository:

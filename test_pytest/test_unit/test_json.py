@@ -2,7 +2,7 @@ import itertools
 
 import pytest
 
-from hat.util import json
+from hat import json
 
 
 @pytest.mark.parametrize("params,is_equal", [

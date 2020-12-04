@@ -125,9 +125,9 @@ async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
         async def f3(x):
             return 'x
 
-        assert 'f1' == await hat.util.aio.call(f1, 'f1')
-        assert 'f2' == await hat.util.aio.call(f2, 'f2')
-        assert 'f3' == await hat.util.aio.call(f3, 'f3')
+        assert 'f1' == await hat.aio.call(f1, 'f1')
+        assert 'f2' == await hat.aio.call(f2, 'f2')
+        assert 'f3' == await hat.aio.call(f3, 'f3')
 
     """
     result = fn(*args, **kwargs)

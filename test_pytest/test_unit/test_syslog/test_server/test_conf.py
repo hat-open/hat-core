@@ -2,7 +2,7 @@ import pytest
 import sys
 from pathlib import Path
 
-from hat.util import json
+from hat import json
 import hat.syslog.server.conf
 
 

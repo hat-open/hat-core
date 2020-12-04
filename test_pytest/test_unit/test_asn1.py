@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 
 from hat import asn1
-from hat.util import json
+from hat import json
 
 
 def get_encoder(repository, encoding):

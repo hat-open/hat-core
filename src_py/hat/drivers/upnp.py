@@ -6,9 +6,9 @@ import xml.sax.handler
 
 import aiohttp
 
+from hat import aio
 from hat import util
 from hat.drivers import udp
-from hat.util import aio
 
 
 DeviceInfo = util.namedtuple(

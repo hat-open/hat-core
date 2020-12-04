@@ -2,8 +2,8 @@
 
 import typing
 
+from hat import json
 from hat import util
-from hat.util import json
 
 
 Translate = typing.Callable[[json.Data], json.Data]

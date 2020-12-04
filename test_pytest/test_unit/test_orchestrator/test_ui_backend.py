@@ -4,12 +4,12 @@ import asyncio
 import contextlib
 import urllib
 
-from hat import util
-from hat.util import aio
-from hat.util import json
+from hat import aio
+from hat import json
 from hat import juggler
-import hat.orchestrator.ui
+from hat import util
 import hat.orchestrator.component
+import hat.orchestrator.ui
 
 
 Component = util.namedtuple(

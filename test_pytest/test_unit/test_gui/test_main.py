@@ -2,14 +2,14 @@ import asyncio
 import contextlib
 import pytest
 
-import hat.event.server.main
+from hat import aio
+from hat import util
 import hat.event.client
 import hat.event.common
+import hat.event.server.main
 import hat.gui.main
 import hat.gui.server
 import hat.gui.view
-from hat import util
-from hat.util import aio
 
 import test_unit.test_gui.mock
 

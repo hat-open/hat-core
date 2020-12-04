@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from hat.util import json
+from hat import json
 from hat.syslog.common import (Msg, Facility, Severity,
                                msg_to_str, msg_from_str,
                                msg_to_json, msg_from_json)

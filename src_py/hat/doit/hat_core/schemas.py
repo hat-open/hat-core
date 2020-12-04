@@ -1,15 +1,15 @@
 from pathlib import Path
 
 from hat import asn1
+from hat import json
 from hat import sbs
-from hat.util import json
 
 
 __all__ = ['task_schemas',
            'task_schemas_json',
            'task_schemas_sbs',
            'task_schemas_asn1',
-           'task_schemas_json_util',
+           'task_schemas_json_json',
            'task_schemas_json_orchestrator',
            'task_schemas_json_monitor',
            'task_schemas_json_event',
@@ -41,7 +41,7 @@ def task_schemas():
 def task_schemas_json():
     """Schemas - generate JSON schema repository data"""
     return {'actions': None,
-            'task_dep': ['schemas_json_util',
+            'task_dep': ['schemas_json_json',
                          'schemas_json_orchestrator',
                          'schemas_json_monitor',
                          'schemas_json_event',
@@ -66,10 +66,10 @@ def task_schemas_asn1():
                          'schemas_asn1_mms']}
 
 
-def task_schemas_json_util():
-    """Schemas - generate hat-util JSON schema repository data"""
+def task_schemas_json_json():
+    """Schemas - generate hat-json JSON schema repository data"""
     return _get_task_json([schemas_json_dir / 'logging.yaml'],
-                          [src_py_dir / 'hat/util/json_schema_repo.json'])
+                          [src_py_dir / 'hat/json/json_schema_repo.json'])
 
 
 def task_schemas_json_orchestrator():

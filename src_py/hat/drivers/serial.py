@@ -18,7 +18,7 @@ import logging
 
 import serial
 
-from hat.util import aio
+from hat import aio
 
 
 mlog = logging.getLogger(__name__)

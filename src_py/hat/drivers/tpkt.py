@@ -11,8 +11,8 @@ import itertools
 import logging
 import typing
 
+from hat import aio
 from hat import util
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

@@ -5,7 +5,7 @@ import asyncio
 import logging.config
 import sys
 
-import hat.util.aio
+from hat import aio
 
 
 mlog = logging.getLogger('hat.syslog.generator')
@@ -13,7 +13,7 @@ mlog = logging.getLogger('hat.syslog.generator')
 
 def main():
     """Main entry point"""
-    hat.util.aio.init_asyncio()
+    aio.init_asyncio()
     args = _create_parser().parse_args()
     logging.config.dictConfig({
         'version': 1,
@@ -32,7 +32,7 @@ def main():
             'level': 'INFO',
             'handlers': ['syslog']},
         'disable_existing_loggers': False})
-    hat.util.aio.run_asyncio(async_main(args))
+    aio.run_asyncio(async_main(args))
 
 
 async def async_main(args):

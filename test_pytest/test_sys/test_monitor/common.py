@@ -3,11 +3,11 @@ import sys
 import psutil
 import signal
 
+from hat import aio
+from hat import json
 from hat import util
-from hat.util import aio
-from hat.util import json
-import hat.monitor.client
 import hat.juggler
+import hat.monitor.client
 
 
 ServerInfo = util.namedtuple(

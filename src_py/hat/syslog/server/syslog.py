@@ -13,8 +13,8 @@ import logging
 import ssl
 import urllib.parse
 
+from hat import aio
 from hat.syslog.server import common
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

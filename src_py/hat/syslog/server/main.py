@@ -10,11 +10,11 @@ import contextlib
 import logging.config
 import sys
 
+from hat import aio
 from hat.syslog.server.backend import create_backend
 from hat.syslog.server.conf import get_conf
 from hat.syslog.server.syslog import create_syslog_server
 from hat.syslog.server.ui import create_web_server
-from hat.util import aio
 
 
 mlog = logging.getLogger('hat.syslog.server.main')

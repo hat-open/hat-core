@@ -7,8 +7,8 @@ import sys
 
 import appdirs
 
-from hat.util import aio
-from hat.util import json
+from hat import aio
+from hat import json
 import hat.orchestrator.component
 import hat.orchestrator.ui
 

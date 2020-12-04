@@ -7,9 +7,9 @@ Attributes:
 
 import logging
 
+from hat import aio
 from hat import sqlite3
 from hat.syslog.server import common
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

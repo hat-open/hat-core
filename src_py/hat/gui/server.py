@@ -3,11 +3,11 @@ import logging
 import secrets
 import urllib
 
+from hat import aio
+from hat import json
 from hat import juggler
 from hat import util
 from hat.gui import common
-from hat.util import aio
-from hat.util import json
 
 
 mlog = logging.getLogger(__name__)

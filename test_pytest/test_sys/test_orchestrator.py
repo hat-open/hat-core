@@ -7,10 +7,10 @@ import psutil
 import pytest
 import urllib
 
-from hat import util
-from hat.util import aio
-from hat.util import json
+from hat import aio
+from hat import json
 from hat import juggler
+from hat import util
 
 
 no_change_delay = 1

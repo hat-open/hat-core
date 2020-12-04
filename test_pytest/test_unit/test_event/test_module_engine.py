@@ -6,11 +6,11 @@ import contextlib
 import sys
 import types
 
+from hat import aio
 from hat import util
-from hat.util import aio
-import hat.event.server.module_engine
-import hat.event.server.common
 import hat.event.common
+import hat.event.server.common
+import hat.event.server.module_engine
 
 from test_unit.test_event import common
 import test_unit.test_event.modules.module1

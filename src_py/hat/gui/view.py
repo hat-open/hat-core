@@ -2,9 +2,9 @@ from pathlib import Path
 import base64
 import logging
 
+from hat import aio
+from hat import json
 from hat import util
-from hat.util import aio
-from hat.util import json
 import hat.gui.vt
 
 

@@ -12,7 +12,7 @@ import PySide2.QtCore
 import PySide2.QtWebEngineWidgets
 import PySide2.QtWidgets
 
-from hat.util import aio
+from hat import aio
 
 
 QtExecutor = typing.Callable[..., typing.Awaitable[typing.Any]]

@@ -4,7 +4,7 @@ import contextlib
 
 from hat import chatter
 from hat import sbs
-from hat.util import aio
+from hat import aio
 import hat.event.server.common
 
 

@@ -9,10 +9,10 @@ from pathlib import Path
 import asyncio
 import contextlib
 
+from hat import aio
+from hat import json
 from hat import sqlite3
 from hat.event.server import common
-from hat.util import aio
-from hat.util import json
 
 
 json_schema_id = "hat://event/backends/sqlite.yaml#"

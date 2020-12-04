@@ -16,8 +16,8 @@ import logging
 
 import appdirs
 
+from hat import json
 from hat import util
-from hat.util import json
 from hat.syslog import common
 
 

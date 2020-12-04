@@ -13,10 +13,10 @@ import random
 import secrets
 import string
 
+from hat import aio
+from hat import json
 from hat import juggler
 from hat import util
-from hat.util import aio
-from hat.util import json
 import hat.event.client
 import hat.event.common
 

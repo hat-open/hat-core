@@ -21,8 +21,8 @@ import time
 import traceback
 import typing
 
+from hat import json
 from hat.syslog import common
-from hat.util import json
 
 
 reconnect_delay = 5

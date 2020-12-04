@@ -5,10 +5,10 @@ import contextlib
 import logging
 import typing
 
+from hat import aio
 from hat.drivers import serial
 from hat.drivers.modbus import common
 from hat.drivers.modbus import encoder
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

@@ -5,8 +5,8 @@ import contextlib
 
 import pytest
 
-from hat.util import aio
-from hat.util import json
+from hat import aio
+from hat import json
 from hat import juggler
 
 

@@ -3,8 +3,8 @@ import io
 
 import pytest
 
+from hat import aio
 from hat import stc
-from hat.util import aio
 
 
 pytestmark = pytest.mark.asyncio

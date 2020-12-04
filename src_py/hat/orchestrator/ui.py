@@ -2,9 +2,9 @@ import contextlib
 import logging
 import urllib
 
+from hat import aio
 from hat import juggler
 from hat import util
-from hat.util import aio
 
 mlog = logging.getLogger(__name__)
 

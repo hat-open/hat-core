@@ -7,8 +7,8 @@ import time
 import urllib.parse
 import asyncio
 
+from hat import json
 from hat import util
-from hat.util import json
 import hat.event.client
 import hat.event.common
 

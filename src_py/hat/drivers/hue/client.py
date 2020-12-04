@@ -4,10 +4,10 @@ import typing
 
 import aiohttp
 
+from hat import aio
+from hat import json
 from hat.drivers.hue import common
 from hat.drivers.hue import encoder
-from hat.util import aio
-from hat.util import json
 
 
 async def create_user(addr: str,

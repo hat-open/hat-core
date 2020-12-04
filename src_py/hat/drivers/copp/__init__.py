@@ -9,10 +9,10 @@ from pathlib import Path
 import logging
 import typing
 
+from hat import aio
 from hat import asn1
 from hat import util
 from hat.drivers import cosp
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

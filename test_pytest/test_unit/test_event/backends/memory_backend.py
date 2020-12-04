@@ -1,6 +1,6 @@
 import functools
 
-from hat.util import aio
+from hat import aio
 from hat.event.server import common
 
 

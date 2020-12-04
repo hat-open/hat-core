@@ -10,9 +10,9 @@ import enum
 import logging
 import typing
 
+from hat import aio
 from hat import util
 from hat.drivers import cotp
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

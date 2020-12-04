@@ -8,10 +8,10 @@ Attributes:
 import contextlib
 import logging
 
+from hat import aio
 from hat import chatter
 from hat import util
 from hat.monitor import common
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

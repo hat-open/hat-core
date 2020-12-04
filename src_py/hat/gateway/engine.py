@@ -9,8 +9,8 @@ import asyncio
 import importlib
 import logging
 
+from hat import aio
 from hat import util
-from hat.util import aio
 import hat.event.common
 import hat.gateway.common
 

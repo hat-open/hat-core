@@ -5,9 +5,9 @@ import enum
 import typing
 import itertools
 
+from hat import json
 from hat import util
 from hat.event.common import *  # NOQA
-from hat.util import json
 
 
 SourceType = enum.Enum('SourceType', [

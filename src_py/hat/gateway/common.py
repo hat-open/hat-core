@@ -4,7 +4,7 @@ from pathlib import Path
 import abc
 import typing
 
-from hat.util import json
+from hat import json
 import hat.event.common
 import hat.monitor.common
 

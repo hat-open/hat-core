@@ -4,7 +4,7 @@ import io
 import subprocess
 import tempfile
 
-from hat.util import json
+from hat import json
 from hat.gui import vt
 
 

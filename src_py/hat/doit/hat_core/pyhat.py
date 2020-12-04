@@ -10,6 +10,9 @@ from hat.doit.hat_core.timestamp import timestamp_path
 
 
 __all__ = ['task_pyhat_util',
+           'task_pyhat_aio',
+           'task_pyhat_json',
+           'task_pyhat_qt',
            'task_pyhat_peg',
            'task_pyhat_stc',
            'task_pyhat_sbs',
@@ -43,20 +46,59 @@ def task_pyhat_util():
     """PyHat - build hat-util"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-util')
-        json_schema_repo = src_py_dir / 'hat/util/json_schema_repo.json'
-        for i in (src_py_dir / 'hat/util').rglob('*.py'):
+        yield src_py_dir / 'hat/util.py', dst_dir / 'hat/util.py'
+
+    return _get_task_build(name='hat-util',
+                           description='Hat utility library',
+                           readme_path=Path('README.hat-util.rst'),
+                           dependencies=[],
+                           mappings=mappings)
+
+
+def task_pyhat_aio():
+    """PyHat - build hat-aio"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-aio')
+        yield src_py_dir / 'hat/aio.py', dst_dir / 'hat/aio.py'
+
+    return _get_task_build(name='hat-aio',
+                           description='Hat async utility library',
+                           readme_path=Path('README.hat-aio.rst'),
+                           dependencies=[],
+                           mappings=mappings)
+
+
+def task_pyhat_json():
+    """PyHat - build hat-json"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-json')
+        json_schema_repo = src_py_dir / 'hat/json/json_schema_repo.json'
+        for i in (src_py_dir / 'hat/json').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         yield json_schema_repo, (dst_dir /
                                  json_schema_repo.relative_to(src_py_dir))
 
-    return _get_task_build(name='hat-util',
-                           description='Hat utility modules',
-                           readme_path=Path('README.hat-util.rst'),
+    return _get_task_build(name='hat-json',
+                           description='Hat JSON library',
+                           readme_path=Path('README.hat-json.rst'),
                            dependencies=['pyyaml',
                                          'jsonschema',
                                          'jsonpatch'],
-                           mappings=mappings,
-                           optional_dependencies={'qt': ['PySide2']})
+                           mappings=mappings)
+
+
+def task_pyhat_qt():
+    """PyHat - build hat-qt"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-qt')
+        yield src_py_dir / 'hat/qt.py', dst_dir / 'hat/qt.py'
+
+    return _get_task_build(name='hat-qt',
+                           description='Hat Qt utility library',
+                           readme_path=Path('README.hat-qt.rst'),
+                           dependencies=['PySide2',
+                                         'hat-aio'],
+                           mappings=mappings)
 
 
 def task_pyhat_peg():
@@ -83,7 +125,7 @@ def task_pyhat_stc():
     return _get_task_build(name='hat-stc',
                            description='Hat statechart engine',
                            readme_path=Path('README.hat-stc.rst'),
-                           dependencies=['hat-util'],
+                           dependencies=['hat-aio'],
                            mappings=mappings)
 
 
@@ -179,6 +221,7 @@ def task_pyhat_asn1():
                            description='Hat ASN.1 parser and encoder',
                            readme_path=Path('README.rst'),
                            dependencies=['hat-util',
+                                         'hat-json',
                                          'hat-peg'],
                            mappings=mappings)
 
@@ -207,11 +250,14 @@ def task_pyhat_drivers():
         readme_path=Path('README.rst'),
         dependencies=['pyserial',
                       'hat-util',
+                      'hat-aio',
+                      'hat-json',
                       'hat-asn1'],
         mappings=mappings,
         optional_dependencies={'hue-manager': ['appdirs',
                                                'click',
                                                'PySide2',
+                                               'hat-qt',
                                                'hat-juggler']},
         gui_scripts=['hat-hue-manager = hat.drivers.hue.manager.main:main'],
         task_dep=['jshat_app_hue_manager'])
@@ -240,6 +286,8 @@ def task_pyhat_orchestrator():
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
+                      'hat-aio',
+                      'hat-json',
                       'hat-juggler'],
         mappings=mappings,
         console_scripts=['hat-orchestrator = hat.orchestartor.main:main'],
@@ -270,6 +318,8 @@ def task_pyhat_monitor():
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
+                      'hat-json',
+                      'hat-aio',
                       'hat-sbs',
                       'hat-chatter',
                       'hat-juggler'],
@@ -302,6 +352,8 @@ def task_pyhat_event():
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
+                      'hat-aio',
+                      'hat-json',
                       'hat-sbs',
                       'hat-chatter',
                       'hat-sqlite3',
@@ -330,6 +382,8 @@ def task_pyhat_gateway():
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
+                      'hat-aio',
+                      'hat-json',
                       'hat-sbs',
                       'hat-chatter',
                       'hat-monitor',
@@ -366,6 +420,8 @@ def task_pyhat_gui():
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
+                      'hat-aio',
+                      'hat-json',
                       'hat-sbs',
                       'hat-chatter',
                       'hat-monitor',
@@ -388,7 +444,8 @@ def task_pyhat_translator():
         name='hat-translator',
         description='Hat configuration transformation interface',
         readme_path=Path('README.rst'),
-        dependencies=['hat-util'],
+        dependencies=['hat-util',
+                      'hat-json'],
         mappings=mappings,
         console_scripts=['hat-translator = hat.translator.main:main'])
 
@@ -416,6 +473,8 @@ def task_pyhat_syslog():
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
                       'hat-util',
+                      'hat-aio',
+                      'hat-json',
                       'hat-juggler',
                       'hat-sqlite3'],
         mappings=mappings,

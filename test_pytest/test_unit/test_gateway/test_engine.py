@@ -10,7 +10,7 @@ import hat.event.client
 import hat.event.server.main
 import hat.gateway.engine
 
-from hat.util import aio
+from hat import aio
 from test_unit.test_gateway import mock_device
 
 

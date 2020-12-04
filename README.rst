@@ -46,7 +46,19 @@ where ``package-name`` is one of following:
 
     * `hat-util <https://pypi.org/project/hat-util>`_
 
-        Utility module
+        Utility library
+
+    * `hat-aio <https://pypi.org/project/hat-aio>`_
+
+        Async utility library
+
+    * `hat-json <https://pypi.org/project/hat-json>`_
+
+        JSON library
+
+    * `hat-qt <https://pypi.org/project/hat-qt>`_
+
+        Qt utility library
 
     * `hat-peg <https://pypi.org/project/hat-peg>`_
 

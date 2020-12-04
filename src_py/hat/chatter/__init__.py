@@ -20,9 +20,9 @@ import math
 import ssl
 import urllib.parse
 
+from hat import aio
 from hat import sbs
 from hat import util
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

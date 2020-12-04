@@ -12,10 +12,10 @@ import asyncio
 import contextlib
 import logging
 
+from hat import aio
 from hat import util
 from hat.syslog.server import common
 from hat.syslog.server import database
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

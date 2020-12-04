@@ -7,10 +7,10 @@ import pytest
 import xml.sax
 import yaml
 
-import hat.util.json
-from hat.util import aio
+from hat import aio
 import hat.gui.view
 import hat.gui.vt
+import hat.json
 
 from test_unit.test_gui import common
 
@@ -171,7 +171,7 @@ async def test_conf_validated(view_factory, view_manager_factory):
             relative_path='schema.yaml',
             serialization_method=common.SerializationMethod.TEXT,
             content=conf_schema)]
-    schema_repo = hat.util.json.SchemaRepository()
+    schema_repo = hat.json.SchemaRepository()
     conf = {'abc': 'def'}
     view_name = 'test_conf_validated'
     manager_conf = [view_factory(view_name, file_descriptors, conf)]

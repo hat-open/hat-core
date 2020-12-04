@@ -10,7 +10,7 @@ import unittest.mock
 
 import pytest
 
-from hat.util import aio
+from hat import aio
 
 
 @pytest.mark.asyncio
@@ -165,7 +165,7 @@ def test_run_asyncio_with_subprocess(tmp_path):
     py_path = tmp_path / 'temp.py'
     run_path = tmp_path / 'temp.run'
     with open(py_path, 'w', encoding='utf-8') as f:
-        f.write(f"from hat.util import aio\n"
+        f.write(f"from hat import aio\n"
                 f"import asyncio\n"
                 f"import sys\n"
                 f"async def f():\n"
@@ -383,7 +383,7 @@ async def test_group_default_exception_handler():
 
     e = Exception()
     g = aio.Group()
-    with unittest.mock.patch('hat.util.aio.mlog.warning') as mock:
+    with unittest.mock.patch('hat.aio.mlog.warning') as mock:
         with pytest.raises(Exception):
             await g.spawn(f)
     await g.async_close()

@@ -7,9 +7,9 @@ import struct
 import typing
 
 from hat import chatter
+from hat import json
 from hat import sbs
 from hat import util
-from hat.util import json
 import hat.monitor.common
 
 

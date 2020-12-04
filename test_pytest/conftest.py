@@ -2,8 +2,8 @@ import asyncio
 
 import pytest
 
+from hat import aio
 from hat import util
-from hat.util import aio
 
 
 @pytest.fixture(scope='session')

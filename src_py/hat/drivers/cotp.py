@@ -9,9 +9,9 @@ import enum
 import logging
 import math
 
+from hat import aio
 from hat import util
 from hat.drivers import tpkt
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

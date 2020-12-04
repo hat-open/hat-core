@@ -9,9 +9,9 @@ import sys
 
 import appdirs
 
+from hat import aio
+from hat import json
 from hat.gui import common
-from hat.util import aio
-from hat.util import json
 import hat.event.client
 import hat.event.common
 import hat.gui.common

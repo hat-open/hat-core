@@ -4,13 +4,13 @@ import datetime
 import asyncio
 import aiohttp
 
+from hat import aio
 from hat import juggler
 from hat import util
-from hat.util import aio
-import hat.syslog.server.conf
 import hat.syslog.server.backend
-import hat.syslog.server.ui
 import hat.syslog.server.common
+import hat.syslog.server.conf
+import hat.syslog.server.ui
 
 
 def ts_now():

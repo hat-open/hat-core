@@ -4,11 +4,11 @@ from pathlib import Path
 import asyncio
 import logging
 
+from hat import aio
 from hat import asn1
 from hat.drivers import acse
 from hat.drivers.mms import common
 from hat.drivers.mms import encoder
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

@@ -9,9 +9,9 @@ import sys
 
 import appdirs
 
+from hat import aio
+from hat import json
 from hat.monitor import common
-from hat.util import aio
-from hat.util import json
 import hat.monitor.server.master
 import hat.monitor.server.server
 import hat.monitor.server.ui

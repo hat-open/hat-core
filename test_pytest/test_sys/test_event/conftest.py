@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from hat.util import json
+from hat import json
 
 from test_sys.test_event.process import Process
 

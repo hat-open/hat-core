@@ -2,10 +2,10 @@ import asyncio
 import pytest
 import collections
 
+from hat import aio
 from hat import util
-from hat.util import aio
-import hat.monitor.common
 import hat.monitor.client
+import hat.monitor.common
 import hat.monitor.server.master
 import hat.monitor.server.server
 

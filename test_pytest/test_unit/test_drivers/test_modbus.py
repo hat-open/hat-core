@@ -8,8 +8,8 @@ import sys
 
 import pytest
 
+from hat import aio
 from hat.drivers import modbus
-from hat.util import aio
 
 
 pytestmark = pytest.mark.asyncio

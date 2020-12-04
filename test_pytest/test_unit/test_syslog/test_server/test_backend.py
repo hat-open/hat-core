@@ -4,8 +4,8 @@ import datetime
 import socket
 import os
 
+from hat import aio
 from hat import util
-from hat.util import aio
 import hat.syslog.server.backend
 import hat.syslog.server.conf
 import hat.syslog.server.common as server_common

@@ -38,9 +38,9 @@ import pathlib
 import typing
 import ssl
 
+from hat import aio
+from hat import json
 from hat import util
-from hat.util import aio
-from hat.util import json
 
 
 mlog = logging.getLogger(__name__)

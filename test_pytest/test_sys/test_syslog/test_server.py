@@ -3,8 +3,8 @@ import logging
 
 import pytest
 
+from hat import json
 from hat import juggler
-from hat.util import json
 import hat.syslog.handler
 
 from test_sys.test_syslog.process import Process

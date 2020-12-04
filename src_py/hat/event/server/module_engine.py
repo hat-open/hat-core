@@ -4,9 +4,9 @@ import asyncio
 import importlib
 import logging
 
+from hat import aio
 from hat import util
 from hat.event.server import common
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

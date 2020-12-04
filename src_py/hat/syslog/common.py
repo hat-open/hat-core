@@ -6,7 +6,7 @@ import enum
 import re
 import typing
 
-from hat.util import json
+from hat import json
 
 
 package_path = Path(__file__).parent

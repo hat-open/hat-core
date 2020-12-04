@@ -2,7 +2,7 @@ import pytest
 import collections
 import asyncio
 
-from hat.util import aio
+from hat import aio
 import hat.monitor.server.master
 import hat.monitor.server.server
 import hat.monitor.client

@@ -73,10 +73,10 @@ Attributes:
 import asyncio
 import logging
 
+from hat import aio
 from hat import chatter
 from hat import util
 from hat.event import common
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

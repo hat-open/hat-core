@@ -9,7 +9,7 @@ import hat.event.client
 import hat.event.common
 import hat.event.server.communication
 
-from hat.util import aio
+from hat import aio
 from test_unit.test_event import common
 
 

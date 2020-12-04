@@ -261,7 +261,7 @@ def type_to_json(t):
         t (Type): type
 
     Returns:
-        hat.util.json.Data
+        hat.json.Data
 
     """
     if isinstance(t, TypeRef):
@@ -335,7 +335,7 @@ def type_from_json(data):
     """Convert JSON data to type definition
 
     Args:
-        data (hat.util.json.Data): data
+        data (hat.json.Data): data
 
     Returns:
         Type

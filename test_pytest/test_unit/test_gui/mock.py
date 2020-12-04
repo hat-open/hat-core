@@ -1,4 +1,4 @@
-from hat.util import aio
+from hat import aio
 import hat.gui.common
 
 

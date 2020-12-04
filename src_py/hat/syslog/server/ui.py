@@ -11,9 +11,9 @@ import functools
 import logging
 import urllib
 
+from hat import aio
 from hat import juggler
 from hat.syslog.server import common
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

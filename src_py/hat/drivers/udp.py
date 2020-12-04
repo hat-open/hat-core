@@ -2,8 +2,8 @@
 
 import asyncio
 
+from hat import aio
 from hat import util
-from hat.util import aio
 
 
 Address = util.namedtuple(

@@ -1,7 +1,7 @@
 import hat.monitor.server.master
 
+from hat import aio
 from hat import util
-from hat.util import aio
 
 
 def create_master(mid=0, components=[]):

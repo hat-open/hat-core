@@ -3,9 +3,9 @@
 from pathlib import Path
 
 from hat import chatter
+from hat import json
 from hat import sbs
 from hat import util
-from hat.util import json
 
 
 package_path = Path(__file__).parent

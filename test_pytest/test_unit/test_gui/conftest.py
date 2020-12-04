@@ -1,7 +1,7 @@
 import pytest
 from test_unit.test_gui import common
 
-from hat.util import json
+from hat import json
 import hat.gui.view
 
 

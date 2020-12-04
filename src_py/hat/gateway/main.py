@@ -17,8 +17,8 @@ import sys
 
 import appdirs
 
-from hat.util import aio
-from hat.util import json
+from hat import aio
+from hat import json
 import hat.event.client
 import hat.event.common
 import hat.gateway.common

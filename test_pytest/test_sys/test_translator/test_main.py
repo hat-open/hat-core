@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
+from hat import json
 from hat import util
-from hat.util import json
 from hat.translator import common
 
 

@@ -11,7 +11,7 @@ import time
 
 import pytest
 
-from hat.util import json
+from hat import json
 
 import hat.syslog.handler
 import hat.syslog.server.conf

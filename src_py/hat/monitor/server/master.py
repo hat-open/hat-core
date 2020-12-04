@@ -18,11 +18,11 @@ import asyncio
 import contextlib
 import logging
 
+from hat import aio
 from hat import chatter
 from hat import util
 from hat.monitor import common
 from hat.monitor.server import blessing
-from hat.util import aio
 
 
 mlog = logging.getLogger(__name__)

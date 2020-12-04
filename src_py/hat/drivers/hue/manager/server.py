@@ -3,10 +3,10 @@ import asyncio
 
 import appdirs
 
+from hat import aio
+from hat import json
 from hat import juggler
 from hat import util
-from hat.util import aio
-from hat.util import json
 from hat.drivers import hue
 from hat.drivers import upnp
 

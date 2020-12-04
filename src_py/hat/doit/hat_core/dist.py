@@ -9,6 +9,9 @@ from hat.doit.hat_core.pyhat import build_dir as pyhat_dir
 __all__ = ['task_dist',
            'task_dist_upload',
            'task_dist_pyhat_util',
+           'task_dist_pyhat_aio',
+           'task_dist_pyhat_json',
+           'task_dist_pyhat_qt',
            'task_dist_pyhat_peg',
            'task_dist_pyhat_stc',
            'task_dist_pyhat_sbs',
@@ -40,6 +43,9 @@ def task_dist():
     """Dist - create all distribution packages"""
     return {'actions': None,
             'task_dep': ['dist_pyhat_util',
+                         'dist_pyhat_aio',
+                         'dist_pyhat_json',
+                         'dist_pyhat_qt',
                          'dist_pyhat_peg',
                          'dist_pyhat_stc',
                          'dist_pyhat_sbs',
@@ -74,6 +80,21 @@ def task_dist_upload():
 def task_dist_pyhat_util():
     """Dist - create pyhat hat-util distribution"""
     return _get_task_dist_pyhat('hat-util', 'pyhat_util')
+
+
+def task_dist_pyhat_aio():
+    """Dist - create pyhat hat-aio distribution"""
+    return _get_task_dist_pyhat('hat-aio', 'pyhat_aio')
+
+
+def task_dist_pyhat_json():
+    """Dist - create pyhat hat-json distribution"""
+    return _get_task_dist_pyhat('hat-json', 'pyhat_json')
+
+
+def task_dist_pyhat_qt():
+    """Dist - create pyhat hat-qt distribution"""
+    return _get_task_dist_pyhat('hat-qt', 'pyhat_qt')
 
 
 def task_dist_pyhat_peg():

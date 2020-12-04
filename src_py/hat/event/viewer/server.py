@@ -1,11 +1,11 @@
 import asyncio
 import functools
 
+from hat import aio
 from hat import juggler
 from hat import util
 from hat.event import client
 from hat.event import common
-from hat.util import aio
 
 
 async def create(evt_srv_addr, ui_path):

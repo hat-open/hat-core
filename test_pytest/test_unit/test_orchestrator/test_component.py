@@ -3,10 +3,10 @@ import asyncio
 import unittest.mock
 import sys
 
-import hat.orchestrator.component
-from hat.util import aio
+from hat import aio
 from hat.orchestrator.component import (Status,
                                         Component)
+import hat.orchestrator.component
 
 
 @pytest.fixture()

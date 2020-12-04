@@ -10,8 +10,8 @@ all methods are successful and:
 
 """
 
+from hat import aio
 from hat.event.server import common
-from hat.util import aio
 
 
 json_schema_id = None

@@ -6,8 +6,8 @@ import hat.event.server.common
 import hat.event.server.module_engine
 import hat.event.server.backend_engine
 
+from hat import aio
 from hat import util
-from hat.util import aio
 
 
 def create_module_engine(register_cb=lambda _: [], query_cb=lambda _: []):

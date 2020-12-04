@@ -5,7 +5,7 @@ import hat.monitor.common
 import hat.monitor.server.main
 import hat.monitor.client
 
-from hat.util import aio
+from hat import aio
 
 from test_unit.test_monitor import common
 

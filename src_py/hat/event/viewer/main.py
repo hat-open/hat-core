@@ -5,9 +5,9 @@ import click
 import PySide2.QtWebEngineWidgets
 import PySide2.QtWidgets
 
-from hat.util import qt
+from hat import aio
+from hat import qt
 from hat.event.viewer import server
-from hat.util import aio
 
 
 package_path = Path(__file__).parent
