@@ -5,7 +5,6 @@ Components
     :maxdepth: 1
 
     syslog
-    translator
     orchestrator
     monitor
     event/index

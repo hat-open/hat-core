@@ -116,10 +116,6 @@ where ``package-name`` is one of following:
 
         GUI server
 
-    * `hat-translator <https://pypi.org/project/hat-translator>`_
-
-        Configuration transformation interface
-
     * `hat-syslog <https://pypi.org/project/hat-syslog>`_
 
         Syslog server and logging handler

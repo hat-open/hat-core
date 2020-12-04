@@ -27,7 +27,6 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_event',
            'task_pyhat_gateway',
            'task_pyhat_gui',
-           'task_pyhat_translator',
            'task_pyhat_syslog']
 
 
@@ -431,23 +430,6 @@ def task_pyhat_gui():
         console_scripts=['hat-gui = hat.gui.main:main'],
         task_dep=['jshat_app_gui',
                   'jshat_view'])
-
-
-def task_pyhat_translator():
-    """PyHat - build hat-translator"""
-    def mappings():
-        dst_dir = _get_build_dst_dir('hat-translator')
-        for i in (src_py_dir / 'hat/translator').rglob('*.py'):
-            yield i, dst_dir / i.relative_to(src_py_dir)
-
-    return _get_task_build(
-        name='hat-translator',
-        description='Hat configuration transformation interface',
-        readme_path=Path('README.rst'),
-        dependencies=['hat-util',
-                      'hat-json'],
-        mappings=mappings,
-        console_scripts=['hat-translator = hat.translator.main:main'])
 
 
 def task_pyhat_syslog():
