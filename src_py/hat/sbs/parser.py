@@ -1,30 +1,30 @@
+import typing
+
 from hat import json
-from hat import util
 import hat.peg
 
 
-AstModule = util.namedtuple(
-    'AstModule',
-    ['name', 'str'],
-    ['type_defs', 'Dict[str,AstTypeDef]'])
+class AstType(typing.NamedTuple):
+    module: typing.Optional[str]
+    name: str
+    entries: typing.List['AstEntry']
+    args: typing.List['AstType']
 
-AstTypeDef = util.namedtuple(
-    'AstTypeDef',
-    ['name', 'str'],
-    ['args', 'List[str]'],
-    ['type', 'AstType'])
 
-AstType = util.namedtuple(
-    'AstType',
-    ['module', 'Optional[str]'],
-    ['name', 'str'],
-    ['entries', 'List[AstEntry]'],
-    ['args', 'List[AstType]'])
+class AstEntry(typing.NamedTuple):
+    name: str
+    type: AstType
 
-AstEntry = util.namedtuple(
-    'AstEntry',
-    ['name', 'str'],
-    ['type', 'AstType'])
+
+class AstTypeDef(typing.NamedTuple):
+    name: str
+    args: typing.List[str]
+    type: AstType
+
+
+class AstModule(typing.NamedTuple):
+    name: str
+    type_defs: typing.Dict[str, AstTypeDef]
 
 
 def parse(schema: str) -> AstModule:

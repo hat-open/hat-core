@@ -3,33 +3,43 @@ import itertools
 import struct
 import typing
 
-from hat import util
+
+class Ref(typing.NamedTuple):
+    module: typing.Optional[str]
+    name: str
 
 
-Ref = util.namedtuple(
-    'Ref',
-    ['module', 'Optional[str]'],
-    ['name', 'str'])
+class BooleanType(typing.NamedTuple):
+    pass
 
-BooleanType = util.namedtuple('BooleanType')
 
-IntegerType = util.namedtuple('IntegerType')
+class IntegerType(typing.NamedTuple):
+    pass
 
-FloatType = util.namedtuple('FloatType')
 
-StringType = util.namedtuple('StringType')
+class FloatType(typing.NamedTuple):
+    pass
 
-BytesType = util.namedtuple('BytesType')
 
-ArrayType = util.namedtuple('ArrayType', ['t', 'Type'])
+class StringType(typing.NamedTuple):
+    pass
 
-TupleType = util.namedtuple(
-    'TupleType',
-    ['entries', 'List[Tuple[str,Type]]'])
 
-UnionType = util.namedtuple(
-    'UnionType',
-    ['entries', 'List[Tuple[str,Type]]'])
+class BytesType(typing.NamedTuple):
+    pass
+
+
+class ArrayType(typing.NamedTuple):
+    t: 'Type'
+
+
+class TupleType(typing.NamedTuple):
+    entries: typing.List[typing.Tuple[str, 'Type']]
+
+
+class UnionType(typing.NamedTuple):
+    entries: typing.List[typing.Tuple[str, 'Type']]
+
 
 Type = typing.Union[Ref,
                     BooleanType,
