@@ -5,52 +5,189 @@ import pytest
 from hat import json
 
 
-@pytest.mark.parametrize("params,is_equal", [
-    ((0, 0.0), True),
-    ((0, 1E-9), False),
-    ((-100, -100.0), True),
-    ((True, True), True),
-    (('a', 'a'), True),
-    (({'a': 0, 'b': 1}, {'b': 1, 'a': 0}), True),
-    ((0, False, '', [], {}, None), False),
-    (({'a': 0}, [0], 0), False),
-    (([1, 2], [2, 1]), False),
-    (([], [[]], [{}], [None], [0.0], [False], ['']), False),
-    (({'a': None}, {'a': []}, {'a': {}}, {'a': 0}, {'a': False}, {'a': ''}),
-     False)])
-def test_json_equals(params, is_equal):
+@pytest.mark.parametrize("params, is_equal", [
+    ((0, 0.0),
+     True),
+
+    ((0, 1E-9),
+     False),
+
+    ((-100, -100.0),
+     True),
+
+    ((True, True),
+     True),
+
+    (('a', 'a'),
+     True),
+
+    (({'a': 0, 'b': 1},
+      {'b': 1, 'a': 0}),
+     True),
+
+    ((0, False, '', [], {}, None),
+     False),
+
+    (({'a': 0}, [0], 0),
+     False),
+
+    (([1, 2], [2, 1]),
+     False),
+
+    (([], [[]], [{}], [None], [0.0], [False], ['']),
+     False),
+
+    (({'a': None},
+      {'a': []},
+      {'a': {}},
+      {'a': 0},
+      {'a': False},
+      {'a': ''}),
+     False)
+])
+def test_equals(params, is_equal):
     for a, b in itertools.combinations(params, 2):
         assert json.equals(a, b) == is_equal
 
 
-def test_jsonpatch():
-    x = {'a': 0}
-    y = {'a': False}
-    diff = json.diff(x, y)
-    assert diff == [{'op': 'replace', 'path': '/a', 'value': False}]
+@pytest.mark.parametrize("data, result", [
+    (None,
+     [None]),
 
+    (1,
+     [1]),
 
-@pytest.mark.parametrize("x,y,diff", [
-    ({'a': 0}, {'a': False},
-     [{'op': 'replace', 'path': '/a', 'value': False}]),
-    ({'a': ""}, {'a': False},
-     [{'op': 'replace', 'path': '/a', 'value': False}]),
-    ({'a': False}, {'a': False},
+    (True,
+     [True]),
+
+    ('xyz',
+     ['xyz']),
+
+    ({'a': [1, [2, 3]]},
+     [{'a': [1, [2, 3]]}]),
+
+    ([],
      []),
-    ({'a': []}, {'a': {}},
+
+    ([1, 2, 3],
+     [1, 2, 3]),
+
+    ([[[]], []],
+     []),
+
+    ([1, [2, [], [[], 3]]],
+     [1, 2, 3])
+])
+def test_flatten(data, result):
+    x = list(json.flatten(data))
+    assert json.equals(x, result)
+
+
+@pytest.mark.parametrize("data, path, result", [
+    (123,
+     [],
+     123),
+
+    ('abc',
+     [1, 'a', 2, 'b', 3],
+     None),
+
+    ({'a': [{'b': 1}, 2, 3]},
+     ['a', 0, 'b'],
+     1),
+
+    ([1, 2, 3],
+     0,
+     1),
+
+    ([1, 2, 3],
+     -1,
+     3),
+
+    ([1, 2, 3],
+     3,
+     None),
+
+    ([1, 2, 3],
+     -4,
+     None)
+])
+def test_get(data, path, result):
+    x = json.get(data, path)
+    assert json.equals(x, result)
+
+
+@pytest.mark.parametrize("data, path, value, result", [
+    (123,
+     [],
+     'abc',
+     'abc'),
+
+    (None,
+     ['a', 1],
+     'x',
+     {'a': [None, 'x']}),
+
+    ({'a': [1, 2], 'b': 3},
+     ['a', 1],
+     4,
+     {'a': [1, 4], 'b': 3}),
+
+    ([1, 2, 3],
+     4,
+     'a',
+     [1, 2, 3, None, 'a']),
+
+    ([1, 2, 3],
+     -5,
+     'a',
+     ['a', None, 1, 2, 3])
+])
+def test_set_(data, path, value, result):
+    x = json.set_(data, path, value)
+    assert json.equals(x, result)
+
+
+@pytest.mark.parametrize("x, y, diff", [
+    ({'a': 0},
+     {'a': False},
+     [{'op': 'replace', 'path': '/a', 'value': False}]),
+
+    ({'a': ""},
+     {'a': False},
+     [{'op': 'replace', 'path': '/a', 'value': False}]),
+
+    ({'a': False},
+     {'a': False},
+     []),
+
+    ({'a': []},
+     {'a': {}},
      [{'op': 'replace', 'path': '/a', 'value': {}}]),
-    ({'a': False}, {'a': None},
+
+    ({'a': False},
+     {'a': None},
      [{'op': 'replace', 'path': '/a', 'value': None}]),
+
     # TODO should we consider 1 and 1.0 to be equal
-    ({'a': 1.0}, {'a': 1},
+    ({'a': 1.0},
+     {'a': 1},
      [{'op': 'replace', 'path': '/a', 'value': 1.0}]),
-    ({'a': ""}, {'a': []},
+
+    ({'a': ""},
+     {'a': []},
      [{'op': 'replace', 'path': '/a', 'value': []}]),
-    ({'a': {}}, {'a': {}},
+
+    ({'a': {}},
+     {'a': {}},
      []),
-    ({'a': ""}, {'a': ""},
+
+    ({'a': ""},
+     {'a': ""},
      []),
-    ({'a': []}, {'a': []},
+
+    ({'a': []},
+     {'a': []},
      [])
 ])
 def test_diff(x, y, diff):
@@ -92,22 +229,25 @@ def test_schema_repository_init_paths(tmp_path):
     assert repo1.to_json() == repo2.to_json()
 
 
-@pytest.mark.parametrize("schemas,schema_id,data", [
+@pytest.mark.parametrize("schemas, schema_id, data", [
     ([r'''
         id: 'xyz://abc'
       '''],
      'xyz://abc#',
      None),
+
     ([r'''
         id: 'xyz://abc#'
       '''],
      'xyz://abc#',
      {'a': 'b'}),
+
     ([r'''
         id: 'xyz://abc#'
       '''],
      'xyz://abc',
      [1, 2, 3]),
+
     ([r'''
         id: 'xyz://abc1'
         type: object
@@ -136,7 +276,7 @@ def test_json_schema_repository_validate(schemas, schema_id, data):
     repo.validate(schema_id, data)
 
 
-@pytest.mark.parametrize("schemas,schema_id,data", [
+@pytest.mark.parametrize("schemas, schema_id, data", [
     ([r'''
         id: 'xyz://abc'
         type: integer

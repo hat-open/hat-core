@@ -1,5 +1,6 @@
 """JSON data manipulation and validation"""
 
+import collections
 import enum
 import io
 import itertools
@@ -13,14 +14,16 @@ import jsonschema.validators
 import yaml
 
 
-Data = typing.Union[None, bool, int, float, str,
-                    typing.List['Data'],
-                    typing.Dict[str, 'Data']]
+Array = typing.List['Data']
+Object = typing.Dict[str, 'Data']
+Data = typing.Union[None, bool, int, float, str, Array, Object]
 """JSON data type identifier."""
-
 
 Format = enum.Enum('Format', ['JSON', 'YAML'])
 """Encoding format"""
+
+Path = typing.Union[int, str, typing.List['Path']]
+"""Data path"""
 
 
 def equals(a: Data, b: Data) -> bool:
@@ -43,6 +46,92 @@ def equals(a: Data, b: Data) -> bool:
         return all(equals(i, j) for i, j in zip(a, b))
     else:
         return True
+
+
+def flatten(data: Data) -> typing.Iterable[Data]:
+    """Flatten JSON data
+
+    If `data` is array, this generator recursively yields result of `flatten`
+    call with each element of input list. For other `Data` types, input data is
+    yielded.
+
+    """
+    if isinstance(data, list):
+        for i in data:
+            yield from flatten(i)
+    else:
+        yield data
+
+
+def get(data: Data, path: Path) -> Data:
+    """Get data element referenced by path"""
+    for i in flatten(path):
+        if isinstance(i, str):
+            data = data.get(i) if isinstance(data, dict) else None
+
+        elif isinstance(i, int) and not isinstance(i, bool):
+            try:
+                data = data[i] if isinstance(data, list) else None
+            except IndexError:
+                data = None
+
+        else:
+            raise ValueError('invalid path')
+
+    return data
+
+
+def set_(data: Data, path: Path, value: Data):
+    """Create new data by setting data path element value"""
+    parents = collections.deque()
+
+    for i in flatten(path):
+        parent = data
+
+        if isinstance(i, str):
+            data = data.get(i) if isinstance(data, dict) else None
+
+        elif isinstance(i, int) and not isinstance(i, bool):
+            try:
+                data = data[i] if isinstance(data, list) else None
+            except IndexError:
+                data = None
+
+        else:
+            raise ValueError('invalid path')
+
+        parents.append((parent, i))
+
+    while parents:
+        parent, i = parents.pop()
+
+        if isinstance(i, str):
+            parent = dict(parent) if isinstance(parent, dict) else {}
+            parent[i] = value
+
+        elif isinstance(i, int) and not isinstance(i, bool):
+            if not isinstance(parent, list):
+                parent = []
+
+            if i >= len(parent):
+                parent = [*parent,
+                          *itertools.repeat(None, i - len(parent) + 1)]
+
+            elif i < 0 and (-i) > len(parent):
+                parent = [*itertools.repeat(None, (-i) - len(parent)),
+                          *parent]
+
+            else:
+                parent = list(parent)
+
+            parent[i] = value
+
+        else:
+            raise ValueError('invalid path')
+
+        value = parent
+
+    return value
 
 
 def diff(src: Data, dst: Data) -> Data:
