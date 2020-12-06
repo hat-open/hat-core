@@ -35,10 +35,12 @@ class Device(abc.ABC):
 
         * device_type (str): device type identification
         * json_schema_id (Optional[str]): JSON schema id
+        * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
         * create (CreateDevice): creating new device instance
 
-    If module defines JSON schema id, it will be used for additional
-    validation of device configuration.
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of device configuration
+    with JSON schema id.
 
     `create` is called with device configuration, appropriate instance of
     `DeviceEventClient` and event type prefix. Event type prefix is defined

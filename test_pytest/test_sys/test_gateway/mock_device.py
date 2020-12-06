@@ -7,6 +7,7 @@ import hat.event.common
 
 device_type = 'mock'
 json_schema_id = None
+json_schema_repo = None
 
 
 async def create(conf, client, event_type_prefix):
