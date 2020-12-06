@@ -94,7 +94,7 @@ class Server:
             return
         roles = [self._roles[i] for i in user['roles']]
         if not roles:
-            mlog.warning('user % has no roles', user['name'])
+            mlog.warning('user %s has no roles', user['name'])
             await self._show_view(conn, initial_view, reason='internal_error')
             return
         await self._show_view(conn, roles[0]['view'], reason='login',
