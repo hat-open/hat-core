@@ -3,6 +3,10 @@ import hat.event.server
 import hat.event.common
 
 
+json_schema_id = None
+json_schema_repo = None
+
+
 async def create(conf, engine):
     module = Module2()
     module._async_group = aio.Group()

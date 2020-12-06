@@ -1,5 +1,4 @@
 import subprocess
-from pathlib import Path
 
 import pytest
 
@@ -13,9 +12,7 @@ class EventServerProcess(Process):
     def __init__(self, conf_path, local_port, ignore_stderr=False):
         super().__init__([
             'python', '-m', 'hat.event.server',
-            '--conf', str(conf_path),
-            '--additional-json-schemas-path',
-            str(Path(__file__).parent / 'modules/remote.yaml')
+            '--conf', str(conf_path)
         ], stderr=(subprocess.DEVNULL if ignore_stderr else None))
         self._local_port = local_port
 

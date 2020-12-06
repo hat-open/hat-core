@@ -34,43 +34,38 @@ def main():
 
     args = create_parser().parse_args()
     conf = json.decode_file(args.conf)
-    json_schema_repo = json.SchemaRepository(
-        hat.gui.common.json_schema_repo, *args.additional_json_schemas_paths)
-    json_schema_repo.validate('hat://gui/main.yaml#', conf)
+    hat.gui.common.json_schema_repo.validate('hat://gui/main.yaml#', conf)
 
     for adapter_conf in conf['adapters']:
         module = importlib.import_module(adapter_conf['module'])
-        json_schema_id = module.json_schema_id
-        if json_schema_id:
-            json_schema_repo.validate(json_schema_id, adapter_conf)
+        if module.json_schema_repo and module.json_schema_id:
+            module.json_schema_repo.validate(module.json_schema_id,
+                                             adapter_conf)
 
     logging.config.dictConfig(conf['log'])
 
     with contextlib.suppress(asyncio.CancelledError):
-        aio.run_asyncio(async_main(conf, args.ui_path, json_schema_repo))
+        aio.run_asyncio(async_main(conf, args.ui_path))
 
 
-async def async_main(conf, ui_path, json_schema_repo):
+async def async_main(conf, ui_path):
     """Async main
 
     Args:
         conf (json.Data): configuration defined by ``hat://gui/main.yaml#``
         ui_path (pathlib.Path): web ui directory path
-        json_schema_repo (json.SchemaRepository): json schema repository
 
     """
-    run_cb = functools.partial(run_with_monitor, conf, ui_path,
-                               json_schema_repo)
+    run_cb = functools.partial(run_with_monitor, conf, ui_path)
     await hat.monitor.client.run_component(conf['monitor'], run_cb)
 
 
-async def run_with_monitor(conf, ui_path, json_schema_repo, monitor):
+async def run_with_monitor(conf, ui_path, monitor):
     """Run with monitor client
 
     Args:
         conf (json.Data): configuration defined by ``hat://gui/main.yaml#``
         ui_path (pathlib.Path): web ui directory path
-        json_schema_repo (json.SchemaRepository): json schema repository
         monitor (hat.monitor.client.Client): monitor client
 
     """
@@ -80,18 +75,17 @@ async def run_with_monitor(conf, ui_path, json_schema_repo, monitor):
         if module.event_type_prefix is not None:
             subscriptions.add(tuple(module.event_type_prefix + ['*']))
 
-    run_cb = functools.partial(run_with_event, conf, ui_path, json_schema_repo)
+    run_cb = functools.partial(run_with_event, conf, ui_path)
     await hat.event.client.run_client(
         monitor, conf['event_server_group'], run_cb, list(subscriptions))
 
 
-async def run_with_event(conf, ui_path, json_schema_repo, client):
+async def run_with_event(conf, ui_path, client):
     """Run with event client
 
     Args:
         conf (json.Data): configuration defined by ``hat://gui/main.yaml#``
         ui_path (pathlib.Path): web ui directory path
-        json_schema_repo (json.SchemaRepository): json schema repository
         client (hat.event.client.Client): event client
 
     """
@@ -112,8 +106,7 @@ async def run_with_event(conf, ui_path, json_schema_repo, client):
             async_group.spawn(aio.call_on_cancel, adapter.async_close)
             adapters[name] = adapter
 
-        views = await hat.gui.view.create_view_manager(conf['views'],
-                                                       json_schema_repo)
+        views = await hat.gui.view.create_view_manager(conf['views'])
         async_group.spawn(aio.call_on_cancel, views.async_close)
 
         server = await hat.gui.server.create(conf['server'], ui_path,
@@ -212,10 +205,6 @@ def create_parser():
         default=default_conf_path, type=Path,
         help="configuration defined by hat://gui/main.yaml# "
              "(default $XDG_CONFIG_HOME/hat/gui.yaml)")
-    parser.add_argument(
-        '--additional-json-schemas-path', metavar='path',
-        dest='additional_json_schemas_paths', nargs='*', default=[], type=Path,
-        help="additional json schemas paths")
 
     dev_args = parser.add_argument_group('development arguments')
     dev_args.add_argument(

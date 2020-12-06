@@ -1,7 +1,6 @@
 import pytest
 from test_unit.test_gui import common
 
-from hat import json
 import hat.gui.view
 
 
@@ -24,10 +23,8 @@ def view_factory(tmp_path_factory):
 async def view_manager_factory():
     managers = []
 
-    async def factory(conf, schema_repo=None):
-        if schema_repo is None:
-            schema_repo = json.SchemaRepository()
-        manager = await hat.gui.view.create_view_manager(conf, schema_repo)
+    async def factory(conf):
+        manager = await hat.gui.view.create_view_manager(conf)
         managers.append(manager)
         return manager
         await manager.async_close()

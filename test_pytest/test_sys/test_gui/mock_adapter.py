@@ -6,6 +6,7 @@ import hat.gui.common
 event_type_prefix = ['a1']
 
 json_schema_id = None
+json_schema_repo = None
 
 
 async def create(conf, event_client):

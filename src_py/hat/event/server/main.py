@@ -38,16 +38,13 @@ def main():
 
     args = _create_parser().parse_args()
     conf = json.decode_file(args.conf)
-    json_schema_repo = json.SchemaRepository(
-        hat.event.common.json_schema_repo, *args.additional_json_schemas_paths)
-    json_schema_repo.validate('hat://event/main.yaml#', conf)
+    hat.event.common.json_schema_repo.validate('hat://event/main.yaml#', conf)
     sub_confs = ([conf['backend_engine']['backend']] +
                  conf['module_engine']['modules'])
     for sub_conf in sub_confs:
         module = importlib.import_module(sub_conf['module'])
-        json_schema_id = module.json_schema_id
-        if json_schema_id:
-            json_schema_repo.validate(json_schema_id, sub_conf)
+        if module.json_schema_repo and module.json_schema_id:
+            module.json_schema_repo.validate(module.json_schema_id, sub_conf)
 
     logging.config.dictConfig(conf['log'])
 
@@ -110,10 +107,6 @@ def _create_parser():
         default=default_conf_path, type=Path,
         help="configuration defined by hat://event/main.yaml# "
              "(default $XDG_CONFIG_HOME/hat/event.yaml)")
-    parser.add_argument(
-        '--additional-json-schemas-path', metavar='path',
-        dest='additional_json_schemas_paths', nargs='*', default=[], type=Path,
-        help="additional json schemas paths")
     return parser
 
 

@@ -2,17 +2,19 @@ from pathlib import Path
 import asyncio
 import contextlib
 
-from hat import chatter
-from hat import sbs
 from hat import aio
+from hat import chatter
+from hat import json
+from hat import sbs
 import hat.event.server.common
 
 
+package_path = Path(__file__).parent
+
 json_schema_id = "test://modules/remote.yaml#"
+json_schema_repo = json.SchemaRepository(package_path / 'remote.yaml')
 
-
-sbs_repo = sbs.Repository(chatter.sbs_repo,
-                          Path(__file__).parent / 'remote.sbs')
+sbs_repo = sbs.Repository(chatter.sbs_repo, package_path / 'remote.sbs')
 
 
 async def create(conf, engine):

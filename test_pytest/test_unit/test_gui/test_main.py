@@ -76,7 +76,7 @@ async def adapter_factory(monkeypatch, event_client_factory):
         adapters = {}
         create_default = test_unit.test_gui.mock.create
 
-        async def create_view_manager(conf, repo):
+        async def create_view_manager(conf):
             return _Closeable()
 
         async def create_server(conf, ui_path, adapters, views):
@@ -95,7 +95,7 @@ async def adapter_factory(monkeypatch, event_client_factory):
             ctx.setattr(test_unit.test_gui.mock, 'create', create_patch)
             async with aio.Group() as group:
                 group.spawn(
-                    hat.gui.main.run_with_event, conf, None, None,
+                    hat.gui.main.run_with_event, conf, None,
                     await event_client_factory(
                         [test_unit.test_gui.mock.event_type_prefix + ['*']]))
                 await asyncio.sleep(0.1)

@@ -51,10 +51,12 @@ class Backend(abc.ABC):
     It is expected that this module implements:
 
     * json_schema_id (Optional[str]): JSON schema id
+    * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
     * create (CreateBackend): create new backend instance
 
-    If module defines JSON schema id, it will be used for aditional
-    validation of backend's configuration.
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of backend configuration
+    with JSON schema id.
 
     """
 
@@ -151,10 +153,12 @@ class Module(abc.ABC):
     It is expected that this module implements:
 
         * json_schema_id (Optional[str]): JSON schema id
+        * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
         * create (CreateModule): create new module instance
 
-    If module defines JSON schema id, it will be used for aditional
-    validation of module's configuration.
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of module configuration
+    with JSON schema id.
 
     Module's `subscriptions` are constant during module's lifetime.
 

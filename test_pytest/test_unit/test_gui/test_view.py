@@ -171,11 +171,10 @@ async def test_conf_validated(view_factory, view_manager_factory):
             relative_path='schema.yaml',
             serialization_method=common.SerializationMethod.TEXT,
             content=conf_schema)]
-    schema_repo = hat.json.SchemaRepository()
     conf = {'abc': 'def'}
     view_name = 'test_conf_validated'
     manager_conf = [view_factory(view_name, file_descriptors, conf)]
-    view_manager = await view_manager_factory(manager_conf, schema_repo)
+    view_manager = await view_manager_factory(manager_conf)
 
     with pytest.raises(jsonschema.ValidationError):
         await view_manager.get(view_name)

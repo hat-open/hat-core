@@ -95,6 +95,7 @@ def create_module():
 
         module = types.ModuleType(name)
         module.json_schema_id = None
+        module.json_schema_repo = None
         module.create = create
         sys.modules[name] = module
         try:

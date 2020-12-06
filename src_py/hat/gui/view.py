@@ -18,14 +18,12 @@ View = util.namedtuple(
     ['data', 'Dict[str,json.Data]'])
 
 
-async def create_view_manager(conf, json_schema_repo):
+async def create_view_manager(conf):
     """Create view manager
 
     Args:
         conf (json.Data): configuration defined by
             ``hat://gui/main.yaml#/definitions/views``
-        json_schema_repo (json.SchemaRepository): json schema repository
-            used for view configuration validation
 
     Returns:
         ViewManager
@@ -33,7 +31,6 @@ async def create_view_manager(conf, json_schema_repo):
     """
     manager = ViewManager()
     manager._views = {view['name']: view for view in conf}
-    manager._json_schema_repo = json_schema_repo
     manager._async_group = aio.Group()
     manager._executor = aio.create_executor(1)
     return manager
@@ -65,10 +62,10 @@ class ViewManager:
             raise Exception('view manager is closed')
         view = self._views[name]
         return await self._async_group.spawn(self._executor, _ext_get_view,
-                                             view, self._json_schema_repo)
+                                             view)
 
 
-def _ext_get_view(view, json_schema_repo):
+def _ext_get_view(view):
     data = {}
     view_path = Path(view['view_path'])
     try:
@@ -103,7 +100,7 @@ def _ext_get_view(view, json_schema_repo):
     schema = util.first(v for k, v in data.items()
                         if k in {'schema.json', 'schema.yaml', 'schema.yml'})
     if schema:
-        repo = json.SchemaRepository(json_schema_repo, schema)
+        repo = json.SchemaRepository(schema)
         repo.validate(schema['id'], conf)
 
     return View(name=view['name'],

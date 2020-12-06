@@ -27,13 +27,15 @@ class Adapter(abc.ABC):
     python module identifier. It is expected that this module implements:
 
         * json_schema_id (Optional[str]): JSON schema id
+        * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
         * event_type_prefix (Optional[hat.event.common.EventType]):
             event type prefix
         * create (Callable[[json.Data,AdapterEventClient],Adapter]):
             coroutine responsible for creating adapter
 
-    If module defines JSON schema id, it will be used for aditional
-    validation of module's configuration.
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of adapter configuration
+    with JSON schema id.
 
     Event type prefix is used for filtering events that can be obtained
     by calling :meth:`AdapterEventClient.receive`. It can not contain

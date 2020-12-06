@@ -4,6 +4,10 @@ from hat import aio
 from hat.event.server import common
 
 
+json_schema_id = None
+json_schema_repo = None
+
+
 async def create(conf):
     backend = MemoryBackend()
     backend._async_group = aio.Group()

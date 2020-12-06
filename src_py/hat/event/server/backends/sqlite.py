@@ -16,6 +16,7 @@ from hat.event.server import common
 
 
 json_schema_id = "hat://event/backends/sqlite.yaml#"
+json_schema_repo = common.json_schema_repo
 
 _db_structure = """
     BEGIN;
