@@ -1,42 +1,33 @@
-"""Backend implementation
-
-Attributes:
-    mlog (logging.Logger): module logger
-    register_delay (float): registration delay in seconds
-    register_queue_size (int): registration queue size
-    register_queue_treshold (int): registration queue threshold
-
-"""
+"""Backend implementation"""
 
 import asyncio
 import contextlib
 import logging
+import typing
 
 from hat import aio
 from hat import util
 from hat.syslog.server import common
 from hat.syslog.server import database
+import hat.syslog.server.conf
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
+
+register_delay: float = 0.1
+"""Registration delay in seconds"""
+
+register_queue_size: int = 50
+"""Registration queue size"""
+
+register_queue_treshold: int = 10
+"""Registration queue threshold"""
 
 
-register_delay = 0.1
-register_queue_size = 50
-register_queue_treshold = 10
-
-
-async def create_backend(conf):
-    """Create backend
-
-    Args:
-        conf (hat.syslog.server.conf.BackendConf): configuration
-
-    Returns:
-        Backend
-
-    """
-
+async def create_backend(conf: hat.syslog.server.conf.BackendConf
+                         ) -> 'Backend':
+    """Create backend"""
     db = await database.create_database(conf.path, conf.disable_journal)
     try:
         first_id = await db.get_first_id()
@@ -65,41 +56,40 @@ async def create_backend(conf):
 class Backend:
 
     @property
-    def first_id(self):
-        """Optional[int]: first entry id"""
+    def first_id(self) -> typing.Optional[int]:
+        """First entry id"""
         return self._first_id
 
     @property
-    def last_id(self):
-        """Optional[int]: last entry id"""
+    def last_id(self) -> typing.Optional[int]:
+        """Last entry id"""
         return self._last_id
 
-    def register_change_cb(self, cb):
+    def register_change_cb(self,
+                           cb: typing.Callable[[typing.List[common.Entry]],
+                                               None]
+                           ) -> util.RegisterCallbackHandle:
         """Register change callback
 
         Callback is called if `first_id` changes and/or `lats_id` changes
         and/or new entries are available (passed as argument to registered
         callback).
 
-        Args:
-            cb (Callable[[List[common.Entry]],None]): callback
-
-        Returns:
-            util.RegisterCallbackHandle
-
         """
         return self._change_cbs.register(cb)
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
+    def closed(self) -> asyncio.Future:
+        """Closed future"""
         return self._async_group.closed
 
     async def async_close(self):
         """Async close"""
         await self._async_group.async_close()
 
-    async def register(self, timestamp, msg):
+    async def register(self,
+                       timestamp: float,
+                       msg: common.Msg):
         """Register message
 
         Registration adds msg to registration queue. If queue is full, wait
@@ -110,23 +100,13 @@ class Backend:
         is greater than threshold, all messages are removed from queue and
         inserted into sqlite database.
 
-        Args:
-            timestamp (float): timestamp
-            msg (common.Msg): message
-
         """
         await self._msg_queue.put((timestamp, msg))
 
-    async def query(self, filter):
-        """Query entries
-
-        Args:
-            filter (common.Filter): filter
-
-        Returns:
-            List[common.Entry]
-
-        """
+    async def query(self,
+                    filter: common.Filter
+                    ) -> typing.List[common.Entry]:
+        """Query entries"""
         return await self._db.query(filter)
 
     async def _loop(self):

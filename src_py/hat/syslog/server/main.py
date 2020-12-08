@@ -1,9 +1,4 @@
-"""Syslog Server main module
-
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
+"""Syslog Server main module"""
 
 import asyncio
 import contextlib
@@ -12,12 +7,13 @@ import sys
 
 from hat import aio
 from hat.syslog.server.backend import create_backend
-from hat.syslog.server.conf import get_conf
+from hat.syslog.server.conf import (Conf, get_conf)
 from hat.syslog.server.syslog import create_syslog_server
 from hat.syslog.server.ui import create_web_server
 
 
-mlog = logging.getLogger('hat.syslog.server.main')
+mlog: logging.Logger = logging.getLogger('hat.syslog.server.main')
+"""Module logger"""
 
 
 def main():
@@ -29,13 +25,8 @@ def main():
         aio.run_asyncio(async_main(conf))
 
 
-async def async_main(conf):
-    """Syslog Server async main
-
-    Args:
-        conf (hat.syslog.server.conf.Conf): configuration
-
-    """
+async def async_main(conf: Conf):
+    """Syslog Server async main"""
     backend = None
     web_server = None
     syslog_server = None

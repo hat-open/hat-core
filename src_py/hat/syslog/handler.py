@@ -2,9 +2,6 @@
 
 Implementation of :class:`logging.Handler` for syslog logging protocol.
 
-Attributes:
-    reconnect_delay (int): delay in seconds before retrying connection with
-        remote syslog server
 """
 
 import collections
@@ -25,7 +22,8 @@ from hat import json
 from hat.syslog import common
 
 
-reconnect_delay = 5
+reconnect_delay: float = 5
+"""Delay in seconds before retrying connection with remote syslog server"""
 
 
 class CommType(enum.Enum):

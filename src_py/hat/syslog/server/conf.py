@@ -1,70 +1,73 @@
-"""Configuration parser
-
-Attributes:
-    mlog (logging.Logger): module logger
-    package_path (pathlib.Path): `hat.syslog.server` package directory
-    user_data_dir (pathlib.Path): XDG user data directory
-    user_conf_dir (pathlib.Path): XDG user conf directory
-    default_ui_path (pathlib.Path): default ui directory
-    default_conf_path (pathlib.Path): default conf path
-
-"""
+"""Configuration parser"""
 
 from pathlib import Path
 import argparse
 import logging
+import typing
 
 import appdirs
 
 from hat import json
-from hat import util
-from hat.syslog import common
+from hat.syslog.server import common
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
-package_path = Path(__file__).parent
-user_data_dir = Path(appdirs.user_data_dir('hat'))
-user_conf_dir = Path(appdirs.user_config_dir('hat'))
+package_path: Path = Path(__file__).parent
+"""Package file system path"""
 
-default_ui_path = package_path / 'ui'
-default_conf_path = user_conf_dir / 'syslog.yaml'
+user_data_dir: Path = Path(appdirs.user_data_dir('hat'))
+"""User data directory path"""
 
+user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
+"""User configuration directory path"""
 
-SysLogServerConf = util.namedtuple(
-    'SysLogServerConf',
-    ['addr', 'str: listening address', 'tcp://0.0.0.0:6514'],
-    ['pem', 'Optional[Path]: pem file path', None])
+default_ui_path: Path = package_path / 'ui'
+"""Default UI file system path"""
 
-WebServerConf = util.namedtuple(
-    'WebServerConf',
-    ['addr', 'str: listening address', 'http://0.0.0.0:23020'],
-    ['pem', 'Optional[Path]: pem file path', None],
-    ['path', 'Path: static ui files path', default_ui_path])
-
-BackendConf = util.namedtuple(
-    'BackendConf',
-    ['path', 'Path: database file path', user_data_dir / 'syslog.db'],
-    ['low_size', 'int: low size count', int(1e6)],
-    ['high_size', 'int: high size count', int(1e7)],
-    ['enable_archive', 'bool: enable archive flag', False],
-    ['disable_journal', 'bool: disable journal flag', False])
-
-Conf = util.namedtuple(
-    'Conf',
-    ['log', 'Any: logging configuration', {'version': 1}],
-    ['syslog', 'SysLogServerConf', SysLogServerConf()],
-    ['ui', 'WebServerConf', WebServerConf()],
-    ['db', 'BackendConf', BackendConf()])
+default_conf_path: Path = user_conf_dir / 'syslog.yaml'
+"""Default configuration file path"""
 
 
-def get_conf():
-    """Get configuration data
+class SysLogServerConf(typing.NamedTuple):
+    addr: str = 'tcp://0.0.0.0:6514'
+    """Listening address"""
+    pem: typing.Optional[Path] = None
+    """PEM file path"""
 
-    Returns:
-        Conf
 
-    """
+class WebServerConf(typing.NamedTuple):
+    addr: str = 'http://0.0.0.0:23020'
+    """Listening address"""
+    pem: typing.Optional[Path] = None
+    """PEM file path"""
+    path: Path = default_ui_path
+    """Static UI files path"""
+
+
+class BackendConf(typing.NamedTuple):
+    path: Path = user_data_dir / 'syslog.db'
+    """Database file path"""
+    low_size: int = int(1e6)
+    """Low size count"""
+    high_size: int = int(1e7)
+    """High size count"""
+    enable_archive: bool = False
+    """Enable archive flag"""
+    disable_journal: bool = False
+    """Disable journal flag"""
+
+
+class Conf(typing.NamedTuple):
+    log: json.Data = {'version': 1}
+    syslog: SysLogServerConf = SysLogServerConf()
+    ui: WebServerConf = WebServerConf()
+    db: BackendConf = BackendConf()
+
+
+def get_conf() -> Conf:
+    """Get configuration data"""
     args = _create_parser().parse_args()
 
     if args.conf.exists():

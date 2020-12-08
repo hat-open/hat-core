@@ -1,9 +1,4 @@
-"""Syslog server implementation
-
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
+"""Syslog server implementation"""
 
 import asyncio.sslproto
 import contextlib
@@ -15,22 +10,18 @@ import urllib.parse
 
 from hat import aio
 from hat.syslog.server import common
+import hat.syslog.server.backend
+import hat.syslog.server.conf
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
-async def create_syslog_server(conf, backend):
-    """Create syslog server
-
-    Args:
-        conf (hat.syslog.server.conf.SysLogServer): configuration
-        backend (hat.syslog.server.backend.Backend): backend
-
-    Returns:
-        SysLogServer
-
-    """
+async def create_syslog_server(conf: hat.syslog.server.conf.SysLogServerConf,
+                               backend: hat.syslog.server.backend.Backend
+                               ) -> 'SysLogServer':
+    """Create syslog server"""
     addr = urllib.parse.urlparse(conf.addr)
     if addr.scheme == 'ssl':
         ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
@@ -60,8 +51,8 @@ class SysLogServer:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
+    def closed(self) -> asyncio.Future:
+        """Closed future"""
         return self._async_group.closed
 
     async def async_close(self):

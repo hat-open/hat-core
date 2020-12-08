@@ -1,12 +1,6 @@
-"""Web server implementation
+"""Web server implementation"""
 
-Attributes:
-    mlog (logging.Logger): module logger
-    max_results_limit (int): max results limit
-    autoflush_delay (float): juggler autoflush delay
-
-"""
-
+import asyncio
 import functools
 import logging
 import urllib
@@ -14,27 +8,24 @@ import urllib
 from hat import aio
 from hat import juggler
 from hat.syslog.server import common
+import hat.syslog.server.backend
+import hat.syslog.server.conf
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
+
+max_results_limit: int = 200
+"""Max results limit"""
+
+autoflush_delay: float = 0.2
+"""Juggler autoflush delay"""
 
 
-max_results_limit = 200
-
-autoflush_delay = 0.2
-
-
-async def create_web_server(conf, backend):
-    """Create web server
-
-    Args:
-        conf (hat.syslog.server.conf.WebServerConf): configuration
-        backend (hat.syslog.server.backend.Backend): backend
-
-    Returns:
-        WebServer
-
-    """
+async def create_web_server(conf: hat.syslog.server.conf.WebServerConf,
+                            backend: hat.syslog.server.backend.Backend
+                            ) -> 'WebServer':
+    """Create web server"""
     addr = urllib.parse.urlparse(conf.addr)
 
     def on_connection(conn):
@@ -55,8 +46,8 @@ async def create_web_server(conf, backend):
 class WebServer:
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
+    def closed(self) -> asyncio.Future:
+        """Closed future"""
         return self._async_group.closed
 
     async def async_close(self):

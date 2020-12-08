@@ -8,7 +8,8 @@ import sys
 from hat import aio
 
 
-mlog = logging.getLogger('hat.syslog.generator')
+mlog: logging.Logger = logging.getLogger('hat.syslog.generator')
+"""Module logger"""
 
 
 def main():

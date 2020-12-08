@@ -1,31 +1,23 @@
-"""Interface to SQLite database
+"""Interface to SQLite database"""
 
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
-
+from pathlib import Path
+import asyncio
 import logging
+import typing
 
 from hat import aio
 from hat import sqlite3
 from hat.syslog.server import common
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
-async def create_database(path, disable_journal):
-    """Create database
-
-    Args:
-        path (pathlib.Path): database file path
-        disable_journal (bool): disable journal flag
-
-    Returns:
-        Database
-
-    """
+async def create_database(path: Path,
+                          disable_journal: bool
+                          ) -> 'Database':
+    """Create database"""
 
     async def close():
         await executor(_ext_close, conn)
@@ -49,44 +41,28 @@ async def create_database(path, disable_journal):
 class Database:
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
+    def closed(self) -> asyncio.Future:
+        """Closed future"""
         return self._async_group.closed
 
     async def async_close(self):
         """Async close"""
         await self._async_group.async_close()
 
-    async def get_first_id(self):
-        """Get first entry id
-
-        Returns:
-            Optional[int]
-
-        """
+    async def get_first_id(self) -> typing.Optional[int]:
+        """Get first entry id"""
         return await self._async_group.spawn(self._executor, _ext_fist_id,
                                              self._conn)
 
-    async def get_last_id(self):
-        """Get last entry id
-
-        Returns:
-            Optional[int]
-
-        """
+    async def get_last_id(self) -> typing.Optional[int]:
+        """Get last entry id"""
         return await self._async_group.spawn(self._executor, _ext_last_id,
                                              self._conn)
 
-    async def add_msgs(self, msgs):
-        """Add messages
-
-        Args:
-            msgs (List[Tuple[float,hat.syslog.common.Msg]): timestamp messages
-
-        Returns:
-            List[Entry]
-
-        """
+    async def add_msgs(self,
+                       msgs: typing.List[typing.Tuple[float, common.Msg]]
+                       ) -> typing.List[common.Entry]:
+        """Add timestamped messages"""
         columns = ['entry_timestamp', 'facility', 'severity', 'version',
                    'msg_timestamp', 'hostname', 'app_name', 'procid', 'msgid',
                    'data', 'msg']
@@ -107,13 +83,8 @@ class Database:
                    len(entries))
         return entries
 
-    async def add_entries(self, entries):
-        """Add entries
-
-        Args:
-            entries (List[Entry]): entries
-
-        """
+    async def add_entries(self, entries: typing.List[common.Entry]):
+        """Add entries"""
         columns = ['rowid', 'entry_timestamp', 'facility', 'severity',
                    'version', 'msg_timestamp', 'hostname', 'app_name',
                    'procid', 'msgid', 'data', 'msg']
@@ -128,16 +99,10 @@ class Database:
         mlog.debug("entries added to database (entry count: %s)",
                    len(entry_ids))
 
-    async def query(self, filter):
-        """Query entries that satisfy filter
-
-        Args:
-            filter (Filter): filter
-
-        Returns:
-            List[Entry]
-
-        """
+    async def query(self,
+                    filter: common.Filter
+                    ) -> typing.List[common.Entry]:
+        """Query entries that satisfy filter"""
         conditions = []
         args = {}
         if filter.last_id is not None:
@@ -193,13 +158,8 @@ class Database:
         mlog.debug("query resulted with %s entries", len(entries))
         return entries
 
-    async def delete(self, first_id):
-        """Delete entries prior to first_id
-
-        Args:
-            first_id (int): first entry id
-
-        """
+    async def delete(self, first_id: int):
+        """Delete entries prior to first_id"""
         entry_count = await self._async_group.spawn(
             self._executor, _ext_delete, self._conn, first_id)
         mlog.debug("deleted %s entries", entry_count)

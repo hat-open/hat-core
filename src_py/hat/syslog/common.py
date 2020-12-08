@@ -9,11 +9,13 @@ import typing
 from hat import json
 
 
-package_path = Path(__file__).parent
+package_path: Path = Path(__file__).parent
+"""Package file system path"""
 
-json_schema_repo = json.SchemaRepository(
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
     json.json_schema_repo,
     json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
+"""JSON schema repository"""
 
 
 class Facility(enum.Enum):
@@ -60,7 +62,6 @@ class Msg(typing.NamedTuple):
     `data` containes JSON serialized Dict[str, Dict[str, str]]
 
     """
-    'Msg',
     facility: Facility
     severity: Severity
     version: int
