@@ -1,6 +1,5 @@
 """Web server implementation"""
 
-import asyncio
 import functools
 import logging
 import urllib

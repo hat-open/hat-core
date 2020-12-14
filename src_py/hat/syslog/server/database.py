@@ -1,7 +1,6 @@
 """Interface to SQLite database"""
 
 from pathlib import Path
-import asyncio
 import logging
 import typing
 
