@@ -1,3 +1,5 @@
+"""Orchestrator main"""
+
 from pathlib import Path
 import argparse
 import asyncio
@@ -13,18 +15,26 @@ import hat.orchestrator.component
 import hat.orchestrator.ui
 
 
-package_path = Path(__file__).parent
-user_conf_dir = Path(appdirs.user_config_dir('hat'))
+package_path: Path = Path(__file__).parent
+"""Package file system path"""
 
-default_ui_path = package_path / 'ui'
-default_conf_path = user_conf_dir / 'orchestrator.yaml'
+user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
+"""User configuration directory"""
 
-json_schema_repo = json.SchemaRepository(
+default_ui_path: Path = package_path / 'ui'
+"""Default UI file system path"""
+
+default_conf_path: Path = user_conf_dir / 'orchestrator.yaml'
+"""Default configuration file system path"""
+
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
     json.json_schema_repo,
     json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
+"""JSON schema repository"""
 
 
 def main():
+    """Main"""
     aio.init_asyncio()
 
     args = _create_parser().parse_args()
@@ -37,25 +47,28 @@ def main():
         aio.run_asyncio(async_main(conf, args.ui_path))
 
 
-async def async_main(conf, ui_path):
-    components = [hat.orchestrator.component.Component(i)
-                  for i in conf['components']]
-    if not components:
-        return
-    ui = None
+async def async_main(conf: json.Data, ui_path: Path):
+    """Async main"""
+    async_group = aio.Group()
+    components = []
+
     try:
+        for component_conf in conf['components']:
+            component = hat.orchestrator.component.Component(component_conf)
+            async_group.spawn(aio.call_on_cancel, component.async_close)
+            async_group.spawn(aio.call_on_done, component.wait_closed(),
+                              async_group.close)
+            components.append(component)
+
         ui = await hat.orchestrator.ui.create(conf['ui'], ui_path, components)
-        async with aio.Group() as group:
-            await asyncio.wait([*(group.spawn(i.wait_closed)
-                                  for i in components),
-                                group.spawn(ui.wait_closed)],
-                               return_when=asyncio.FIRST_COMPLETED)
+        async_group.spawn(aio.call_on_cancel, ui.async_close)
+        async_group.spawn(aio.call_on_done, ui.wait_closed(),
+                          async_group.close)
+
+        await async_group.wait_closed()
+
     finally:
-        close_futures = [i.async_close() for i in components]
-        if ui:
-            close_futures.append(ui.async_close())
-        await aio.uncancellable(asyncio.wait(close_futures),
-                                raise_cancel=False)
+        await aio.uncancellable(async_group.async_close(), raise_cancel=False)
         await aio.uncancellable(asyncio.sleep(0.1), raise_cancel=False)
 
 

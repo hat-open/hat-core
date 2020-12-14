@@ -1,3 +1,5 @@
+"""Orchestrator's controlled component"""
+
 import asyncio
 import contextlib
 import datetime
@@ -6,24 +8,27 @@ import logging
 import signal
 import subprocess
 import sys
+import typing
 
 from hat import aio
+from hat import json
 from hat import util
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
-start_delay = 0.5
-"""float: process start delay in seconds"""
+start_delay: float = 0.5
+"""Process start delay in seconds"""
 
-create_timeout = 2
-"""float: create process timeout in seconds"""
+create_timeout: float = 2
+"""Create process timeout in seconds"""
 
-sigint_timeout = 5
-"""float: SIGINT timeout in seconds"""
+sigint_timeout: float = 5
+"""SIGINT timeout in seconds"""
 
-sigkill_timeout = 2
-"""float: SIGKILL timeout in seconds"""
+sigkill_timeout: float = 2
+"""SIGKILL timeout in seconds"""
 
 
 Status = enum.Enum('Status', [
@@ -38,12 +43,12 @@ class Component(aio.Resource):
     """Component
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://orchestrator.yaml#/definitions/component``
 
     """
 
-    def __init__(self, conf):
+    def __init__(self, conf: json.Data):
         self._conf = conf
         self._status = Status.DELAYED if conf['delay'] else Status.STOPPED
         self._revive = conf['revive']
@@ -60,53 +65,44 @@ class Component(aio.Resource):
         return self._async_group
 
     @property
-    def status(self):
-        """Status: current status"""
+    def status(self) -> Status:
+        """Current status"""
         return self._status
 
     @property
-    def name(self):
-        """str: component name"""
+    def name(self) -> str:
+        """Component name"""
         return self._conf['name']
 
     @property
-    def args(self):
-        """List[str]: command line arguments"""
+    def args(self) -> typing.List[str]:
+        """Command line arguments"""
         return self._conf['args']
 
     @property
-    def delay(self):
-        """float: delay in seconds"""
+    def delay(self) -> float:
+        """Delay in seconds"""
         return self._conf['delay']
 
     @property
-    def revive(self):
-        """bool: revive component"""
+    def revive(self) -> bool:
+        """Revive component"""
         return self._revive
 
-    def register_change_cb(self, cb):
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -> util.RegisterCallbackHandle:
         """Register change callback
 
         All changes to revive and/or status properties (even those occuring
         due to call of async_close) are notified by calling registered
         callback.
 
-        Args:
-            cb (Callable[[],None]): change callback
-
-        Returns:
-            util.RegisterCallbackHandle
-
         """
         return self._change_cbs.register(cb)
 
-    def set_revive(self, revive):
-        """Set revive flag
-
-        Args:
-            revive (bool): revive flag
-
-        """
+    def set_revive(self, revive: bool):
+        """Set revive flag"""
         if revive == self.revive:
             return
         self._revive = revive

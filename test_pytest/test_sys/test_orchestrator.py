@@ -180,7 +180,7 @@ async def run_orchestrator_ui_client_factory(conf, tmp_path):
     for process in processes:
         stop_process(process)
     for client in clients:
-        await client.wait_closed()
+        await client.async_close()
 
 
 def test_orchestrator_kills_children(run_orchestrator_factory):

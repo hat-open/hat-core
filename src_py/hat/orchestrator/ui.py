@@ -1,28 +1,36 @@
+"""UI web server"""
+
+from pathlib import Path
 import contextlib
 import logging
+import typing
 import urllib
 
 from hat import aio
+from hat import json
 from hat import juggler
 from hat import util
-
-mlog = logging.getLogger(__name__)
-
-
-autoflush_delay = 0.2
+import hat.orchestrator.component
 
 
-async def create(conf, path, components):
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
+
+autoflush_delay: float = 0.2
+"""Jugler autoflush delay"""
+
+
+async def create(conf: json.Data,
+                 path: Path,
+                 components: typing.List[hat.orchestrator.component.Component]
+                 ) -> 'WebServer':
     """Create ui for monitoring and controlling components
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://orchestrator.yaml#/definitions/ui``
-        path (pathlib.Path): web ui directory path
-        components (List[hat.orchestrator.component.Component]): components
-
-    Returns:
-        WebServer
+        path: web ui directory path
+        components: components
 
     """
     srv = WebServer()
@@ -30,14 +38,8 @@ async def create(conf, path, components):
     srv._components = components
     srv._change_registry = util.CallbackRegistry()
 
-    cb_handles = [component.register_change_cb(srv._change_registry.notify)
-                  for component in components]
-
-    def close_cb_handles():
-        for cb_handle in cb_handles:
-            cb_handle.cancel()
-
-    srv._async_group.spawn(aio.call_on_cancel, close_cb_handles)
+    for component in components:
+        srv._async_group.spawn(srv._component_loop, component)
 
     addr = urllib.parse.urlparse(conf['address'])
     juggler_srv = await juggler.listen(
@@ -46,6 +48,7 @@ async def create(conf, path, components):
         static_dir=path,
         autoflush_delay=autoflush_delay)
     srv._async_group.spawn(aio.call_on_cancel, juggler_srv.async_close)
+
     return srv
 
 
@@ -72,6 +75,10 @@ class WebServer(aio.Resource):
             } for idx, component in enumerate(self._components)]}
         with contextlib.suppress(ConnectionError):
             conn.set_local_data(data)
+
+    async def _component_loop(self, component):
+        with component.register_change_cb(self._change_registry.notify):
+            await component.wait_closed()
 
     async def _conn_loop(self, conn):
         try:
