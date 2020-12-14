@@ -43,7 +43,7 @@ async def test_connect_listen(server_port, client_count):
 
     srv = await juggler.listen('127.0.0.1', server_port, conn_queue.put_nowait)
 
-    assert not srv.closed.done()
+    assert not srv.is_closed
 
     conns = collections.deque()
 
@@ -56,18 +56,18 @@ async def test_connect_listen(server_port, client_count):
     while conns:
         conn, srv_conn = conns.popleft()
 
-        assert not conn.closed.done()
-        assert not srv_conn.closed.done()
+        assert not conn.is_closed
+        assert not srv_conn.is_closed
 
         await conn.async_close()
 
-        assert conn.closed.done()
-        assert srv_conn.closed.done()
+        assert conn.is_closed
+        assert srv_conn.is_closed
 
-    assert not srv.closed.done()
+    assert not srv.is_closed
 
     await srv.async_close()
-    assert srv.closed.done()
+    assert srv.is_closed
 
     with pytest.raises(Exception):
         await juggler.connect(address)
@@ -82,10 +82,10 @@ async def test_srv_close_active_client(server_port, client_count):
 
     for _ in range(client_count):
         conn = await juggler.connect(address)
-        conn_closed_futures.append(conn.closed)
+        conn_closed_futures.append(conn.wait_closed())
 
     await asyncio.wait_for(srv.async_close(), 0.1)
-    assert srv.closed.done()
+    assert srv.is_closed
 
     await asyncio.wait_for(asyncio.gather(*conn_closed_futures), 0.1)
 

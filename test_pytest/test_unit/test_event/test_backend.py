@@ -331,4 +331,4 @@ async def test_dummy(backend_events_factory):
     assert not await backend.query(hat.event.server.common.QueryData())
 
     await backend.async_close()
-    assert backend.closed.done()
+    assert backend.is_closed

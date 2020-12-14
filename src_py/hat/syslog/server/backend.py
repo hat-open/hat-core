@@ -53,7 +53,12 @@ async def create_backend(conf: hat.syslog.server.conf.BackendConf
     return backend
 
 
-class Backend:
+class Backend(aio.Resource):
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def first_id(self) -> typing.Optional[int]:
@@ -77,15 +82,6 @@ class Backend:
 
         """
         return self._change_cbs.register(cb)
-
-    @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
 
     async def register(self,
                        timestamp: float,

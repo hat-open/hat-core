@@ -47,16 +47,12 @@ async def create(conf, engine):
     return comm
 
 
-class Communication:
+class Communication(aio.Resource):
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _connection_loop(self, conn):
         global _source_id
@@ -94,7 +90,7 @@ class Communication:
     async def _run_engine(self):
         try:
             with self._engine.register_events_cb(self._on_events):
-                await self._engine.closed
+                await self._engine.wait_closed()
         finally:
             self._async_group.close()
 

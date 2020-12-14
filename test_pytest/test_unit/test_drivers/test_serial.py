@@ -36,9 +36,9 @@ async def test_open(nullmodem):
     conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
                                          rtscts=True,
                                          dsrdtr=True)
-    assert not conn.closed.done()
+    assert not conn.is_closed
     await conn.async_close()
-    assert conn.closed.done()
+    assert conn.is_closed
 
 
 @pytest.mark.asyncio

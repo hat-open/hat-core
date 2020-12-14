@@ -37,8 +37,8 @@ async def create_client(address):
 class Client:
 
     @property
-    def closed(self):
-        return self._conn.closed
+    def is_closed(self):
+        return self._conn.is_closed
 
     @property
     def components(self):
@@ -53,6 +53,9 @@ class Client:
 
     def register_components_change_cb(self, cb):
         return self._conn.register_change_cb(cb)
+
+    async def wait_closed(self):
+        await self._conn.wait_closed()
 
     async def async_close(self):
         await self._conn.async_close()
@@ -145,7 +148,7 @@ async def test_backend_to_frontend(short_start_delay, server_address, tmpdir,
     await component.async_close()
     await client.async_close()
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -191,8 +194,8 @@ async def test_frontend_to_backend(short_start_delay, server_address, tmpdir,
 
     await component.async_close()
     await server.async_close()
-    assert server.closed.done()
-    await client.closed
+    assert server.is_closed
+    await client.wait_closed()
 
 
 @pytest.mark.asyncio
@@ -221,19 +224,19 @@ async def test_get_static_files(server_address, tmpdir):
 @pytest.mark.asyncio
 async def test_connect_disconnect(server_address, tmpdir):
     server = await create_server(server_address, tmpdir, [])
-    assert not server.closed.done()
+    assert not server.is_closed
 
     client = await create_client(server_address)
-    assert not client.closed.done()
+    assert not client.is_closed
 
     await client.async_close()
-    assert client.closed.done()
-    assert not server.closed.done()
+    assert client.is_closed
+    assert not server.is_closed
 
     await asyncio.sleep(0.001)
 
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.timeout(1)

@@ -44,17 +44,13 @@ async def create(conf, path, adapters, views):
     return srv
 
 
-class Server:
+class Server(aio.Resource):
     """Server"""
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _conn_loop(self, conn):
         initial_view = self._conf['initial_view']
@@ -161,17 +157,13 @@ async def create_session(conn, user, roles, adapters):
     return session
 
 
-class Session:
+class Session(aio.Resource):
     """Client session"""
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     def add_adapter_message(self, name, msg):
         """Add adapter message

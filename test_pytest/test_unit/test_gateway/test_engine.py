@@ -99,16 +99,16 @@ async def test_create_device(event_server, event_server_port,
             await set_enable(client, 'gateway 0', mock_device.device_type,
                              i['name'], True)
             device = await device_queue.get()
-            assert not device.closed.done()
+            assert not device.is_closed
             devices.append(device)
 
         for i in device_confs:
             device = devices.popleft()
-            assert not device.closed.done()
+            assert not device.is_closed
             await set_enable(client, 'gateway 0', mock_device.device_type,
                              i['name'], False)
-            await device.closed
-            assert device.closed.done()
+            await device.wait_closed()
+            assert device.is_closed
 
 
 @pytest.mark.asyncio
@@ -131,24 +131,24 @@ async def test_device_enable(event_server, event_server_port,
 
         await set_enable(client, 'gateway 0', device_type, device_name, True)
         device = await device_queue.get()
-        assert not device.closed.done()
+        assert not device.is_closed
         running_event = (await client.receive())[0]
         assert running_event.payload.data is True
 
         await set_enable(client, 'gateway 0', device_type, device_name, False)
-        await device.closed
-        assert device.closed.done()
+        await device.wait_closed()
+        assert device.is_closed
         running_event = (await client.receive())[0]
         assert running_event.payload.data is False
 
         await set_enable(client, 'gateway 0', device_type, device_name, True)
         device = await device_queue.get()
-        assert not device.closed.done()
+        assert not device.is_closed
         running_event = (await client.receive())[0]
         assert running_event.payload.data is True
 
-    await device.closed
-    assert device.closed.done()
+    await device.wait_closed()
+    assert device.is_closed
     running_event = (await client.receive())[0]
     assert running_event.payload.data is False
 
@@ -157,7 +157,7 @@ async def test_device_enable(event_server, event_server_port,
         assert running_event.payload.data is False
 
         device = await device_queue.get()
-        assert not device.closed.done()
+        assert not device.is_closed
         running_event = (await client.receive())[0]
         assert running_event.payload.data is True
 
@@ -252,10 +252,10 @@ async def test_device_close(event_server, event_server_port,
         #  Close "random" device
         await devices[random.Random(4).randrange(len(devices))].async_close()
 
-        await asyncio.gather(*(i.closed for i in devices))
+        await asyncio.gather(*(i.wait_closed() for i in devices))
 
-        await engine.closed
-        assert engine.closed.done()
+        await engine.wait_closed()
+        assert engine.is_closed
 
 
 @pytest.mark.parametrize("register_event", [
@@ -333,5 +333,5 @@ async def test_malformed_event(event_server, event_server_port,
         await client.register_with_response([register_event])
 
         await asyncio.sleep(0.1)
-        assert not device.closed.done()
-        assert not engine.closed.done()
+        assert not device.is_closed
+        assert not engine.is_closed

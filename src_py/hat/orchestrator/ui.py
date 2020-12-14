@@ -29,9 +29,16 @@ async def create(conf, path, components):
     srv._async_group = aio.Group()
     srv._components = components
     srv._change_registry = util.CallbackRegistry()
-    srv._cb_handles = [
-        component.register_change_cb(srv._change_registry.notify)
-        for component in components]
+
+    cb_handles = [component.register_change_cb(srv._change_registry.notify)
+                  for component in components]
+
+    def close_cb_handles():
+        for cb_handle in cb_handles:
+            cb_handle.cancel()
+
+    srv._async_group.spawn(aio.call_on_cancel, close_cb_handles)
+
     addr = urllib.parse.urlparse(conf['address'])
     juggler_srv = await juggler.listen(
         addr.hostname, addr.port,
@@ -42,7 +49,7 @@ async def create(conf, path, components):
     return srv
 
 
-class WebServer:
+class WebServer(aio.Resource):
     """WebServer
 
     For creating new instance of this class see :func:`create`
@@ -50,15 +57,9 @@ class WebServer:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Close web server and all active connections"""
-        for handle in self._cb_handles:
-            handle.cancel()
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     def _set_data(self, conn):
         data = {

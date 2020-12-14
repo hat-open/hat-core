@@ -150,29 +150,34 @@ async def listen(sbs_repo, address, on_connection_cb, *, pem_file=None,
     else:
         raise ValueError("Undefined protocol")
 
+    async_group = aio.Group(_async_group_exception_cb)
+
     def connected_cb(reader, writer):
         mlog.debug("server accepted new connection")
         transport = _TcpTransport(sbs_repo, reader, writer)
         conn = _create_connection(sbs_repo, transport, ping_timeout,
-                                  queue_maxsize)
-        srv._conns.add(conn)
-        conn.closed.add_done_callback(lambda _: srv._conns.remove(conn))
+                                  queue_maxsize, async_group)
         on_connection_cb(conn)
 
-    srv = Server()
-    srv._closed = asyncio.Future()
-    srv._conns = set()
-    srv._srv = await asyncio.start_server(
+    srv = await asyncio.start_server(
         connected_cb, url.hostname, url.port, ssl=ssl_ctx)
-    srv._addresses = [
+    addresses = [
         _convert_sock_info_to_address(socket.getsockname(), url.scheme)
-        for socket in srv._srv.sockets]
+        for socket in srv.sockets]
     mlog.debug("listening socket created")
 
-    return srv
+    async def on_close():
+        srv.close()
+        await srv.wait_closed()
+
+    server = Server()
+    server._addresses = addresses
+    server._async_group = async_group
+    server._async_group.spawn(aio.call_on_cancel, on_close)
+    return server
 
 
-class Server:
+class Server(aio.Resource):
     """Server
 
     For creating new server see :func:`listen`.
@@ -180,48 +185,43 @@ class Server:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return asyncio.shield(self._closed)
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def addresses(self):
         """List[str]: listening addresses"""
         return self._addresses
 
-    async def async_close(self):
-        """Close server and all associated connections"""
-        if self._srv:
-            self._srv.close()
-            await self._srv.wait_closed()
-            self._srv = None
-        if self._conns:
-            await asyncio.wait([conn.async_close() for conn in self._conns])
-        if not self._closed.done():
-            self._closed.set_result(True)
 
-
-def _create_connection(sbs_repo, transport, ping_timeout, queue_maxsize):
+def _create_connection(sbs_repo, transport, ping_timeout, queue_maxsize,
+                       parent_async_group=None):
     conn = Connection()
     conn._sbs_repo = sbs_repo
     conn._transport = transport
     conn._last_id = 0
     conn._conv_timeouts = {}
     conn._msg_queue = aio.Queue(maxsize=queue_maxsize)
-    conn._async_group = aio.Group(
-        lambda e: mlog.error('connection async group exception: %s', e,
-                             exc_info=e))
+    conn._async_group = (parent_async_group.create_subgroup()
+                         if parent_async_group is not None
+                         else aio.Group(_async_group_exception_cb))
     conn._async_group.spawn(conn._read_loop)
     conn._async_group.spawn(conn._ping_loop, ping_timeout)
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """Single connection
 
     For creating new connection see :func:`connect`.
 
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def local_address(self):
@@ -232,15 +232,6 @@ class Connection:
     def remote_address(self):
         """str: Remote address"""
         return self._transport.remote_address
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
 
     async def receive(self):
         """Receive incomming message
@@ -287,7 +278,7 @@ class Connection:
 
         """
         mlog.debug("sending message")
-        if self.closed.done():
+        if self.is_closed:
             raise ConnectionClosedError()
 
         mlog.debug("setting message parameters")
@@ -402,11 +393,11 @@ class Connection:
 
         mlog.debug("ping loop started")
         with contextlib.suppress(asyncio.CancelledError):
-            while not self.closed.done():
+            while not self.is_closed:
                 mlog.debug("waiting for %ss", timeout)
                 await asyncio.sleep(timeout)
                 mlog.debug("sending ping request")
-                if self.closed.done():
+                if self.is_closed:
                     break
                 self.send(Data('HatPing', 'MsgPing', None),
                           last=False, timeout=timeout,
@@ -483,3 +474,7 @@ def _uint_to_bebytes(x):
 
 def _bebytes_to_uint(b):
     return int.from_bytes(b, 'big')
+
+
+def _async_group_exception_cb(e):
+    mlog.error('async group exception: %s', e, exc_info=e)

@@ -29,14 +29,13 @@ async def create(local_addr=None, remote_addr=None, queue_size=0, **kwargs):
     endpoint = Endpoint()
     endpoint._local_addr = local_addr
     endpoint._remote_addr = remote_addr
-    endpoint._closed = asyncio.Future()
+    endpoint._async_group = aio.Group()
     endpoint._queue = aio.Queue(queue_size)
 
     class Protocol(asyncio.DatagramProtocol):
 
         def connection_lost(self, exc):
-            endpoint._queue.close()
-            endpoint._closed.set_result(True)
+            endpoint._async_group.close()
 
         def datagram_received(self, data, addr):
             endpoint._queue.put_nowait((data, Address(addr[0], addr[1])))
@@ -45,26 +44,23 @@ async def create(local_addr=None, remote_addr=None, queue_size=0, **kwargs):
     endpoint._transport, endpoint._protocol = \
         await loop.create_datagram_endpoint(Protocol, local_addr, remote_addr,
                                             **kwargs)
+    endpoint._async_group.spawn(aio.call_on_cancel, endpoint._transport.close)
+    endpoint._async_group.spawn(aio.call_on_cancel, endpoint._queue.close)
     return endpoint
 
 
-class Endpoint:
+class Endpoint(aio.Resource):
     """UDP endpoint"""
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return asyncio.shield(self._closed)
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def empty(self):
         """bool: is receive queue empty"""
         return self._queue.empty()
-
-    async def async_close(self):
-        """Async close"""
-        self._close()
-        await self.closed
 
     def send(self, data, remote_addr=None):
         """Send datagram
@@ -88,6 +84,3 @@ class Endpoint:
         """
         data, addr = await self._queue.get()
         return data, addr
-
-    def _close(self):
-        self._transport.close()

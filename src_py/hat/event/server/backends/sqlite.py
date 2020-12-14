@@ -65,21 +65,18 @@ async def create(conf):
         db_path, conf['query_pool_size'])
     backend._event_type_registry = await common.create_event_type_registry(
         backend)
+    backend._async_group.spawn(aio.call_on_cancel,
+                               backend._query_pool.async_close)
+    backend._async_group.spawn(aio.call_on_cancel,
+                               backend._conn.async_close)
     return backend
 
 
 class SqliteBackend(common.Backend, common.EventTypeRegistryStorage):
 
     @property
-    def closed(self):
-        """See :meth:`common.Backend.closed`"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """See :meth:`common.Backend.async_close`"""
-        await self._query_pool.async_close()
-        await self._conn.async_close()
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def get_event_type_mappings(self):
         """See :meth:`common.EventTypeRegistryStorage.get_event_type_mappings`"""  # NOQA

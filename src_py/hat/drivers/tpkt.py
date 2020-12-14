@@ -68,7 +68,7 @@ async def listen(connection_cb, addr=Address('0.0.0.0', 102)):
 
     """
     def on_connection(reader, writer):
-        group.spawn(on_connection_async, reader, writer)
+        async_group.spawn(on_connection_async, reader, writer)
 
     async def on_connection_async(reader, writer):
         try:
@@ -86,44 +86,38 @@ async def listen(connection_cb, addr=Address('0.0.0.0', 102)):
             mlog.error("error creating new incomming connection: %s", e,
                        exc_info=e)
 
-    group = aio.Group()
+    async_group = aio.Group()
     tcp_server = await asyncio.start_server(on_connection, addr.host,
                                             addr.port)
-    group.spawn(aio.call_on_cancel, _asyncio_async_close, tcp_server)
+    async_group.spawn(aio.call_on_cancel, _asyncio_async_close, tcp_server)
 
     socknames = [socket.getsockname() for socket in tcp_server.sockets]
     addresses = [Address(*sockname[:2]) for sockname in socknames]
 
     srv = Server()
     srv._addresses = addresses
-    srv._group = group
+    srv._async_group = async_group
     return srv
 
 
-class Server:
+class Server(aio.Resource):
     """TPKT listening server
 
-    For creation of new instance see :func:`listen`
+    For creation of new instance see :func:`listen`.
+
+    Closing server doesn't close active incomming connections.
 
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def addresses(self):
         """List[Address]: listening addresses"""
         return self._addresses
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Close listening socket
-
-        Calling this method doesn't close active incomming connections
-
-        """
-        await self._group.async_close()
 
 
 def _create_connection(reader, writer):
@@ -137,12 +131,12 @@ def _create_connection(reader, writer):
     conn._writer = writer
     conn._info = info
     conn._read_queue = aio.Queue()
-    conn._group = aio.Group()
-    conn._group.spawn(conn._read_loop)
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """TPKT connection
 
     For creation of new instance see :func:`connect`
@@ -150,18 +144,14 @@ class Connection:
     """
 
     @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
+
+    @property
     def info(self):
         """ConnectionInfo: connection info"""
         return self._info
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._group.async_close()
 
     async def read(self):
         """Read data
@@ -206,7 +196,7 @@ class Connection:
         except Exception as e:
             mlog.error("error while reading: %s", e, exc_info=e)
         finally:
-            self._group.close()
+            self._async_group.close()
             self._read_queue.close()
             await aio.uncancellable(_asyncio_async_close(self._writer, True))
 

@@ -36,17 +36,13 @@ async def create_view_manager(conf):
     return manager
 
 
-class ViewManager:
+class ViewManager(aio.Resource):
     """View manager"""
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def get(self, name):
         """Get view
@@ -58,7 +54,7 @@ class ViewManager:
             View
 
         """
-        if self.closed.done():
+        if self.is_closed:
             raise Exception('view manager is closed')
         view = self._views[name]
         return await self._async_group.spawn(self._executor, _ext_get_view,

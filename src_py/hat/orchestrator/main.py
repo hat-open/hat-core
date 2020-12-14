@@ -45,8 +45,11 @@ async def async_main(conf, ui_path):
     ui = None
     try:
         ui = await hat.orchestrator.ui.create(conf['ui'], ui_path, components)
-        wait_futures = [i.closed for i in components] + [ui.closed]
-        await asyncio.wait(wait_futures, return_when=asyncio.FIRST_COMPLETED)
+        async with aio.Group() as group:
+            await asyncio.wait([*(group.spawn(i.wait_closed)
+                                  for i in components),
+                                group.spawn(ui.wait_closed)],
+                               return_when=asyncio.FIRST_COMPLETED)
     finally:
         close_futures = [i.async_close() for i in components]
         if ui:

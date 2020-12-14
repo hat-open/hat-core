@@ -445,7 +445,7 @@ async def test_close_juggler(unused_tcp_port, server_factory):
             await asyncio.sleep(0.1)
 
         await conn.async_close()
-        await adapter.sessions[0].closed
+        await adapter.sessions[0].wait_closed()
 
 
 @pytest.mark.asyncio
@@ -591,8 +591,8 @@ async def test_server_shutdown(unused_tcp_port, server_factory, monkeypatch):
             while len(adapter.sessions) != 2:
                 await asyncio.sleep(0.1)
 
-    await conn.closed
-    await conn2.closed
-    await asyncio.wait([session.closed for session in sessions])
-    await asyncio.wait([session.closed for session in adapter.sessions])
-    assert not adapter.closed.done()
+    await conn.wait_closed()
+    await conn2.wait_closed()
+    await asyncio.wait([session.wait_closed() for session in sessions])
+    await asyncio.wait([session.wait_closed() for session in adapter.sessions])
+    assert not adapter.is_closed

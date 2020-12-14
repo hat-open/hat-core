@@ -62,7 +62,7 @@ async def message_queue(conf_syslog, pem_path):
     yield backend._msg_queue
 
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.fixture

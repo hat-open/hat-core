@@ -13,7 +13,9 @@ import pytest
 from hat import aio
 
 
-@pytest.mark.asyncio
+pytestmark = pytest.mark.asyncio
+
+
 async def test_first():
     queue = aio.Queue()
     queue.put_nowait(1)
@@ -38,22 +40,20 @@ async def test_first():
     assert queue.empty()
 
 
-@pytest.mark.asyncio
 async def test_queue():
     queue = aio.Queue()
-    assert not queue.closed.done()
+    assert not queue.is_closed
     f = asyncio.ensure_future(queue.get())
     assert not f.done()
     queue.put_nowait(1)
     assert 1 == await f
     for _ in range(5):
         queue.close()
-        assert queue.closed.done()
+        assert queue.is_closed
     with pytest.raises(aio.QueueClosedError):
         await queue.get()
 
 
-@pytest.mark.asyncio
 async def test_queue_get_until_empty():
     queue = aio.Queue()
     queue.put_nowait(1)
@@ -72,7 +72,6 @@ def test_queue_get_nowait_until_empty():
     assert result == 3
 
 
-@pytest.mark.asyncio
 async def test_queue_with_size():
     queue_size = 5
     queue = aio.Queue(queue_size)
@@ -85,7 +84,6 @@ async def test_queue_with_size():
         queue.put_nowait(None)
 
 
-@pytest.mark.asyncio
 async def test_queue_put():
     queue = aio.Queue(1)
     await queue.put(1)
@@ -95,7 +93,6 @@ async def test_queue_put():
         await put_future
 
 
-@pytest.mark.asyncio
 async def test_queue_put_cancel():
     queue = aio.Queue(1)
     await queue.put(1)
@@ -105,7 +102,6 @@ async def test_queue_put_cancel():
         await put_future
 
 
-@pytest.mark.asyncio
 async def test_queue_async_iterable():
     queue = aio.Queue()
     data = collections.deque()
@@ -213,7 +209,6 @@ def test_run_asyncio_with_multiple_signals():
     t.join()
 
 
-@pytest.mark.asyncio
 async def test_call():
 
     def f1(x):
@@ -230,7 +225,6 @@ async def test_call():
     assert result == 123
 
 
-@pytest.mark.asyncio
 async def test_call_on_cancel():
     exceptions = aio.Queue()
     called = asyncio.Future()
@@ -238,8 +232,8 @@ async def test_call_on_cancel():
 
     async def closing(called):
         called.set_result(True)
-        assert group.closing.done()
-        assert not group.closed.done()
+        assert group.is_closing
+        assert not group.is_closed
 
     group.spawn(aio.call_on_cancel, closing, called)
     assert not called.done()
@@ -249,7 +243,6 @@ async def test_call_on_cancel():
     assert exceptions.empty()
 
 
-@pytest.mark.asyncio
 async def test_group():
     group = aio.Group()
     futures = [group.wrap(asyncio.Future()) for _ in range(100)]
@@ -258,7 +251,6 @@ async def test_group():
     assert all(future.done() for future in futures)
 
 
-@pytest.mark.asyncio
 async def test_group_spawn_async_close():
 
     async def task():
@@ -267,21 +259,20 @@ async def test_group_spawn_async_close():
 
     group = aio.Group()
     group.spawn(task)
-    await group.closed
+    await group.wait_closed()
 
 
-@pytest.mark.asyncio
 async def test_group_subgroup():
     g1 = aio.Group()
     g2 = g1.create_subgroup()
     f = g2.wrap(asyncio.Future())
     g1.close()
 
-    assert g1.closing.done()
-    assert g2.closing.done()
+    assert g1.is_closing
+    assert g2.is_closing
     assert not f.done()
-    assert not g1.closed.done()
-    assert not g2.closed.done()
+    assert not g1.is_closed
+    assert not g2.is_closed
 
     with pytest.raises(Exception):
         g1.create_subgroup()
@@ -290,21 +281,19 @@ async def test_group_subgroup():
         g1.create_subgroup()
 
     assert f.done()
-    assert g1.closed.done()
-    assert g2.closed.done()
+    assert g1.is_closed
+    assert g2.is_closed
 
 
-@pytest.mark.asyncio
 async def test_group_async_close_subgroup_without_tasks():
     g1 = aio.Group()
     g2 = g1.create_subgroup()
     await g1.async_close()
 
-    assert g1.closed.done()
-    assert g2.closed.done()
+    assert g1.is_closed
+    assert g2.is_closed
 
 
-@pytest.mark.asyncio
 async def test_group_spawn_subgroup_in_closing_subgroup():
     exceptions = aio.Queue()
     g1 = aio.Group(lambda e: exceptions.put_nowait(e))
@@ -319,12 +308,11 @@ async def test_group_spawn_subgroup_in_closing_subgroup():
 
     g2.spawn(task)
     await g1.async_close()
-    assert g1.closed.done()
-    assert g2.closed.done()
+    assert g1.is_closed
+    assert g2.is_closed
     assert exceptions.empty()
 
 
-@pytest.mark.asyncio
 async def test_group_spawn_when_not_open():
     g = aio.Group()
     g.spawn(asyncio.Future)
@@ -340,14 +328,13 @@ async def test_group_spawn_when_not_open():
 
 def test_group_close_empty_group():
     g = aio.Group()
-    assert not g.closing.done()
-    assert not g.closed.done()
+    assert not g.is_closing
+    assert not g.is_closed
     g.close()
-    assert g.closing.done()
-    assert g.closed.done()
+    assert g.is_closing
+    assert g.is_closed
 
 
-@pytest.mark.asyncio
 async def test_group_context():
     async with aio.Group() as g:
         f = g.spawn(asyncio.Future)
@@ -355,7 +342,6 @@ async def test_group_context():
     assert f.done()
 
 
-@pytest.mark.asyncio
 async def test_group_custom_exception_handler():
 
     def exception_cb(e):
@@ -375,7 +361,6 @@ async def test_group_custom_exception_handler():
     assert e1 is e2
 
 
-@pytest.mark.asyncio
 async def test_group_default_exception_handler():
 
     async def f():
@@ -392,7 +377,6 @@ async def test_group_default_exception_handler():
     assert kwargs['exc_info'] is e
 
 
-@pytest.mark.asyncio
 async def test_uncancellable():
     f1 = asyncio.Future()
 
@@ -407,7 +391,6 @@ async def test_uncancellable():
     assert result == 123
 
 
-@pytest.mark.asyncio
 async def test_uncancellable_vs_shield():
 
     async def set_future(f, value):
@@ -442,7 +425,6 @@ async def test_uncancellable_vs_shield():
     assert future.result() == 1
 
 
-@pytest.mark.asyncio
 async def test_executor():
     executor = aio.create_executor()
     result = await executor(lambda: threading.current_thread().name)

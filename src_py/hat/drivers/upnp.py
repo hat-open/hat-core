@@ -101,14 +101,11 @@ async def get_description(location: str) -> DeviceDescription:
             icons=icons)
 
 
-class DiscoveryServer:
+class DiscoveryServer(aio.Resource):
 
     @property
-    def closed(self) -> asyncio.Future:
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        return self._async_group
 
     async def _discovery_loop(self):
         try:

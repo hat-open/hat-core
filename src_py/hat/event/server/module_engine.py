@@ -50,16 +50,12 @@ async def create(conf, backend_engine):
     return engine
 
 
-class ModuleEngine:
+class ModuleEngine(aio.Resource):
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     def register_events_cb(self, cb):
         """Register events callback
@@ -109,7 +105,7 @@ class ModuleEngine:
             Exception
 
         """
-        if self.closed.done():
+        if self.is_closed:
             raise ModuleEngineClosedError()
         if not events:
             return []
@@ -131,7 +127,7 @@ class ModuleEngine:
             Exception
 
         """
-        if self.closed.done():
+        if self.is_closed:
             raise ModuleEngineClosedError()
         return await self._backend.query(data)
 
@@ -214,7 +210,7 @@ async def _create_module_session(module):
 class _ModuleSession():
 
     async def async_close(self, events):
-        await self._session.async_close(events)
+        await self._session.async_close()
 
     @property
     def has_pending_changes(self):

@@ -21,11 +21,8 @@ async def create(conf, event_client):
 class MockAdapter(hat.gui.common.Adapter):
 
     @property
-    def closed(self):
-        return self._group.closed
-
-    async def async_close(self):
-        await self._group.async_close()
+    def async_group(self):
+        return self._group
 
     async def create_session(self, client):
         session = MockAdapterSession()
@@ -56,11 +53,8 @@ class MockAdapter(hat.gui.common.Adapter):
 class MockAdapterSession(hat.gui.common.AdapterSession):
 
     @property
-    def closed(self):
-        return self._group.closed
-
-    async def async_close(self):
-        await self._group.async_close()
+    def async_group(self):
+        return self._group
 
     def _on_change(self):
         self._event_client.register([hat.event.common.RegisterEvent(

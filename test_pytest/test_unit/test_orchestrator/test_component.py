@@ -60,7 +60,7 @@ async def test_delayed_start_stop(short_start_delay):
     assert (await status_queue.get() == Status.RUNNING)
     assert status_queue.empty()
     await component.async_close()
-    assert component.closed.done()
+    assert component.is_closed
 
 
 @pytest.mark.asyncio
@@ -93,7 +93,7 @@ async def test_revive_on_stop(short_start_delay):
     assert (await status_queue.get() == Status.RUNNING)
     assert status_queue.empty()
     await component.async_close()
-    assert component.closed.done()
+    assert component.is_closed
 
 
 @pytest.mark.asyncio
@@ -114,7 +114,7 @@ async def test_revive_on_component_finish(short_start_delay):
         assert (await status_queue.get() == Status.RUNNING)
     assert status_queue.empty()
     await component.async_close()
-    assert component.closed.done()
+    assert component.is_closed
 
 
 @pytest.mark.asyncio
@@ -146,7 +146,7 @@ async def test_stop_during_delay(short_start_delay):
     assert (await status_queue.get() == Status.STOPPED)
     assert status_queue.empty()
     await component.async_close()
-    assert component.closed.done()
+    assert component.is_closed
 
 
 @pytest.mark.asyncio
@@ -177,9 +177,9 @@ async def test_closed():
         'args': ['sleep', '10'],
         'delay': 0,
         'revive': False})
-    assert not component.closed.done()
+    assert not component.is_closed
     await component.async_close()
-    assert component.closed.done()
+    assert component.is_closed
 
 
 @pytest.mark.asyncio

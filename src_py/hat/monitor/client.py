@@ -6,7 +6,7 @@ interface (run_component) for communication with Monitor Server.
 
 :func:`connect` is used for establishing single chatter based connection
 with Monitor Server which is represented by :class:`Client`. Termination of
-connection is signaled with :meth:`Client.closed`.
+connection is signaled with :meth:`Client.wait_closed`.
 
 Example of low-level interface usage::
 
@@ -17,7 +17,7 @@ Example of low-level interface usage::
         'component_address': None})
     assert client.info in client.components
     try:
-        await client.closed
+        await client.wait_closed()
     finally:
         await client.async_close()
 
@@ -93,12 +93,12 @@ async def connect(conf):
     return client
 
 
-class Client:
+class Client(aio.Resource):
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def info(self):
@@ -123,10 +123,6 @@ class Client:
 
         """
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
 
     def set_ready(self, token):
         """Set ready token
@@ -213,15 +209,17 @@ async def run_component(conf, async_run_cb):
                 _wait_while_blessed_and_ready, client)
             try:
                 done, _ = await asyncio.wait(
-                    [run_future, blessed_and_ready_future, client.closed],
+                    [run_future,
+                     blessed_and_ready_future,
+                     async_group.spawn(client.wait_closed)],
                     return_when=asyncio.FIRST_COMPLETED)
                 if run_future.done():
                     mlog.debug('async_run_cb finished or raised an exception')
                     return run_future.result()
-                if client.closed.done():
+                if client.is_closed:
                     raise Exception('connection to monitor server closed!')
             finally:
-                if not client.closed.done():
+                if not client.is_closed:
                     client.set_ready(None)
                 await async_group.async_close()
     except asyncio.CancelledError:

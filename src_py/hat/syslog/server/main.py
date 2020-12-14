@@ -41,10 +41,11 @@ async def async_main(conf: Conf):
         syslog_server = await create_syslog_server(conf.syslog, backend)
 
         mlog.debug("initialization done")
-        await asyncio.wait([backend.closed,
-                            web_server.closed,
-                            syslog_server.closed],
-                           return_when=asyncio.FIRST_COMPLETED)
+        async with aio.Group() as group:
+            await asyncio.wait([group.spawn(backend.wait_closed),
+                                group.spawn(web_server.wait_closed),
+                                group.spawn(syslog_server.wait_closed)],
+                               return_when=asyncio.FIRST_COMPLETED)
     except asyncio.CancelledError:
         raise
     except Exception as e:

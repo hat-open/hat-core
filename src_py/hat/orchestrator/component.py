@@ -34,7 +34,7 @@ Status = enum.Enum('Status', [
     'STOPPING'])
 
 
-class Component:
+class Component(aio.Resource):
     """Component
 
     Args:
@@ -55,9 +55,9 @@ class Component:
         self._async_group.spawn(self._run_loop)
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def status(self):
@@ -99,10 +99,6 @@ class Component:
 
         """
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
 
     def set_revive(self, revive):
         """Set revive flag

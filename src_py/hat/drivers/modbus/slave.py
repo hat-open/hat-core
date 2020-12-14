@@ -88,21 +88,19 @@ async def create_serial_slave(modbus_type: common.ModbusType,
                          read_cb, write_cb, reader, writer)
 
 
-class TcpServer:
+class TcpServer(aio.Resource):
     """TCP server
 
     For creating new instances of this class see :func:`create_tcp_server`.
 
+    Closing server closes all active associated slaves.
+
     """
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close server and all active associated slaves"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _on_close(self):
         with contextlib.suppress(Exception):
@@ -136,7 +134,7 @@ def _create_slave(async_group, modbus_type, read_cb, write_cb, reader, writer):
     return slave
 
 
-class Slave:
+class Slave(aio.Resource):
     """Modbus slave
 
     For creating new instances of this class see
@@ -145,13 +143,9 @@ class Slave:
     """
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _receive_loop(self):
         try:

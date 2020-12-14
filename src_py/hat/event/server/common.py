@@ -5,6 +5,7 @@ import enum
 import typing
 import itertools
 
+from hat import aio
 from hat import json
 from hat import util
 from hat.event.common import *  # NOQA
@@ -44,7 +45,7 @@ CreateBackend = typing.Callable[[BackendConf], typing.Awaitable['Backend']]
 """Create backend callable"""
 
 
-class Backend(abc.ABC):
+class Backend(aio.Resource):
     """Backend ABC
 
     Backend is implemented as python module which is dynamically imported.
@@ -59,15 +60,6 @@ class Backend(abc.ABC):
     with JSON schema id.
 
     """
-
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
-
-    @abc.abstractmethod
-    async def async_close(self):
-        """Async close"""
 
     async def get_last_event_id(self, server_id):
         """Get last registered event id associated with server id
@@ -146,7 +138,7 @@ CreateModule = typing.Callable[
     typing.Awaitable['Module']]
 
 
-class Module(abc.ABC):
+class Module(aio.Resource):
     """Module ABC
 
     Module is implemented as python module which is dynamically imported.
@@ -169,15 +161,6 @@ class Module(abc.ABC):
     def subscriptions(self):
         """List[EventType]: subscribed event types filter"""
 
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
-
-    @abc.abstractmethod
-    async def async_close(self):
-        """Async close"""
-
     @abc.abstractmethod
     async def create_session(self):
         """Create new module session
@@ -188,28 +171,7 @@ class Module(abc.ABC):
         """
 
 
-class ModuleSession(abc.ABC):
-
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
-
-    @abc.abstractmethod
-    async def async_close(self, events):
-        """Async close
-
-        This method is called with all registered session events without
-        applying subscription filter.
-
-        .. todo::
-
-            do we wan't to apply subscription filter
-
-        Args:
-            events (List[Event]): registered events
-
-        """
+class ModuleSession(aio.Resource):
 
     @abc.abstractmethod
     async def process(self, changes):

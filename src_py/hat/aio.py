@@ -1,24 +1,20 @@
-"""Async utility functions
+"""Async utility functions"""
 
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
-
+import abc
 import asyncio
 import collections
 import collections.abc
 import concurrent.futures
 import contextlib
 import inspect
-import itertools
 import logging
 import signal
 import sys
 import typing
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
 T = typing.TypeVar('T')
@@ -353,9 +349,9 @@ class Queue:
         return self._maxsize
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future."""
-        return asyncio.shield(self._closed)
+    def is_closed(self) -> bool:
+        """Is queue closed."""
+        return self._closed.done()
 
     def empty(self) -> bool:
         """`True` if queue is empty, `False` otherwise."""
@@ -540,14 +536,22 @@ class Group:
         return not self._closing.done()
 
     @property
-    def closing(self) -> asyncio.Future:
-        """Closing Future."""
-        return asyncio.shield(self._closing)
+    def is_closing(self) -> bool:
+        """Is group closing or closed."""
+        return self._closing.done()
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed Future."""
-        return asyncio.shield(self._closed)
+    def is_closed(self) -> bool:
+        """Is group closed."""
+        return self._closed.done()
+
+    async def wait_closing(self):
+        """Wait until closing is ``True``."""
+        await asyncio.shield(self._closing)
+
+    async def wait_closed(self):
+        """Wait until closed is ``True``."""
+        await asyncio.shield(self._closed)
 
     def create_subgroup(self) -> 'Group':
         """Create new Group as a child of this Group. Return the new Group.
@@ -620,9 +624,8 @@ class Group:
         if self._closing.done():
             return
         self._closing.set_result(True)
-        futures = list(itertools.chain(
-            self._tasks,
-            (child.closed for child in self._children)))
+        futures = [*self._tasks,
+                   *(child._closed for child in self._children)]
         if futures:
             waiting_future = asyncio.ensure_future(
                 asyncio.wait(futures), loop=self._loop)
@@ -631,14 +634,14 @@ class Group:
             self._on_closed()
 
     async def async_close(self, cancel: bool = True):
-        """Close Group and wait until closed Future is completed.
+        """Close Group and wait until closed is ``True``.
 
         Args:
             cancel: cancel running tasks
 
         """
         self.close(cancel)
-        await self.closed
+        await self.wait_closed()
 
     async def __aenter__(self):
         return self
@@ -663,3 +666,43 @@ class Group:
 
     def _default_exception_cb(self, e):
         mlog.warning('unhandled exception in async group: %s', e, exc_info=e)
+
+
+class Resource(abc.ABC):
+    """Resource with lifetime control based on `Group`."""
+
+    @property
+    @abc.abstractmethod
+    def async_group(self) -> Group:
+        """Group controlling resource's lifetime."""
+
+    @property
+    def is_open(self) -> bool:
+        """``True`` if not closing or closed, ``False`` otherwise."""
+        return self.async_group.is_open
+
+    @property
+    def is_closing(self) -> bool:
+        """Is resource closing or closed."""
+        return self.async_group.is_closing
+
+    @property
+    def is_closed(self) -> bool:
+        """Is resource closed."""
+        return self.async_group.is_closed
+
+    async def wait_closing(self):
+        """Wait until closing is ``True``."""
+        await self.async_group.wait_closing()
+
+    async def wait_closed(self):
+        """Wait until closed is ``True``."""
+        await self.async_group.wait_closed()
+
+    def close(self):
+        """Close resource."""
+        self.async_group.close()
+
+    async def async_close(self):
+        """Close resource and wait until closed is ``True``."""
+        await self.async_group.async_close()

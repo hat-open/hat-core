@@ -50,7 +50,7 @@ async def backend(conf_db, short_register_delay):
     yield backend
 
     await backend.async_close()
-    assert backend.closed.done()
+    assert backend.is_closed
 
 
 @pytest.fixture
@@ -263,14 +263,14 @@ async def test_archive(conf_db, message_factory, short_register_delay,
     assert count == (1 if enable_archive else 0)
 
     await backend.async_close()
-    assert backend.closed.done()
+    assert backend.is_closed
 
     if enable_archive:
         archive_path = util.first(conf_db.path.parent.glob('*.*'),
                                   lambda i: i.name == 'syslog.db.1')
         conf_db = conf_db._replace(path=archive_path)
         backend = await hat.syslog.server.backend.create_backend(conf_db)
-        assert not backend.closed.done()
+        assert not backend.is_closed
 
         entries_archived = await backend.query(server_common.Filter())
         assert len(entries_archived) == (conf_db.high_size -
@@ -278,7 +278,7 @@ async def test_archive(conf_db, message_factory, short_register_delay,
         assert result + entries_archived == entries
 
         await backend.async_close()
-        assert backend.closed.done()
+        assert backend.is_closed
 
 
 @pytest.mark.asyncio

@@ -43,7 +43,7 @@ async def create_syslog_server(conf: hat.syslog.server.conf.SysLogServerConf,
     return srv
 
 
-class SysLogServer:
+class SysLogServer(aio.Resource):
     """Syslog server
 
     For creating new instance see :func:`create_syslog_server`.
@@ -51,13 +51,9 @@ class SysLogServer:
     """
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
 
 async def _client_loop(backend, reader, writer):

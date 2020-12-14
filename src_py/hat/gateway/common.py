@@ -4,6 +4,7 @@ from pathlib import Path
 import abc
 import typing
 
+from hat import aio
 from hat import json
 import hat.event.common
 import hat.monitor.common
@@ -27,7 +28,7 @@ CreateDevice = typing.Callable[
 """Create device callable"""
 
 
-class Device(abc.ABC):
+class Device(aio.Resource):
     """Device interface
 
     Device is implemented as python module which is dynamically imported.
@@ -47,15 +48,6 @@ class Device(abc.ABC):
     as [``gateway``, `<gateway_name>`, `<device_type>`, `<device_name>`].
 
     """
-
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
-
-    @abc.abstractmethod
-    async def async_close(self):
-        """Async close"""
 
 
 class DeviceEventClient(abc.ABC):

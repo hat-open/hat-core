@@ -62,18 +62,15 @@ def create_module():
         class Module(hat.event.server.common.Module):
 
             def __init__(self):
-                self._closed = asyncio.Future()
+                self._async_group = aio.Group()
+
+            @property
+            def async_group(self):
+                return self._async_group
 
             @property
             def subscriptions(self):
                 return subscriptions
-
-            @property
-            def closed(self):
-                return asyncio.shield(self._closed)
-
-            async def async_close(self):
-                self._closed.set_result(True)
 
             async def create_session(self):
                 return Session()
@@ -81,14 +78,11 @@ def create_module():
         class Session(hat.event.server.common.ModuleSession):
 
             def __init__(self):
-                self._closed = asyncio.Future()
+                self._async_group = aio.Group()
 
             @property
-            def closed(self):
-                return asyncio.shield(self._closed)
-
-            async def async_close(self, events):
-                self._closed.set_result(True)
+            def async_group(self):
+                return self._async_group
 
             async def process(self, changes):
                 return await aio.call(process_cb, changes)
@@ -145,8 +139,8 @@ def assert_events_vs_changes_result(sessions, registered_events, events):
 async def assert_closure(backend_engine, module_engine, modules):
     await backend_engine.async_close()
     await module_engine.async_close()
-    assert module_engine.closed.done()
-    await asyncio.gather(*(module.closed for module in modules))
+    assert module_engine.is_closed
+    await asyncio.gather(*(module.wait_closed() for module in modules))
     assert all(module.session_queue.empty() for module in modules)
 
 
@@ -213,7 +207,7 @@ async def test_register(module_engine_conf, register_events, source_comm):
 
     await backend_engine.async_close()
     await module_engine.async_close()
-    assert module_engine.closed.done()
+    assert module_engine.is_closed
     assert event_queue.empty()
 
 
@@ -241,7 +235,7 @@ async def test_query(module_engine_conf, register_events):
 
     await backend_engine.async_close()
     await module_engine.async_close()
-    assert module_engine.closed.done()
+    assert module_engine.is_closed
 
 
 @pytest.mark.asyncio
@@ -258,7 +252,7 @@ async def test_register_query_on_close(module_engine_conf, register_events,
         register_cb=functools.partial(unresponsive_cb, comm_register))
     module_engine = await hat.event.server.module_engine.create(
         module_engine_conf, backend_engine)
-    assert not module_engine.closed.done()
+    assert not module_engine.is_closed
 
     async with aio.Group() as group:
         register_future = group.spawn(module_engine.register, source_comm,
@@ -268,7 +262,7 @@ async def test_register_query_on_close(module_engine_conf, register_events,
 
         await backend_engine.async_close()
         await module_engine.async_close()
-        assert module_engine.closed.done()
+        assert module_engine.is_closed
 
         with pytest.raises(asyncio.CancelledError):
             await register_future
@@ -297,7 +291,7 @@ async def test_module1(module_engine_conf, register_events, source_comm,
     module = modules[0]
 
     assert len(modules) == 1
-    assert not module.closed.done()
+    assert not module.is_closed
 
     event_queue = aio.Queue()
     module_engine.register_events_cb(
@@ -306,7 +300,7 @@ async def test_module1(module_engine_conf, register_events, source_comm,
                       for i in register_events]
     events_on_register = await module_engine.register(process_events)
     session = await module.session_queue.get()
-    await session.closed
+    await session.wait_closed()
     filtered_events = filter_events_by_subscriptions(
         process_events, module.subscriptions)
     assert session.changes_notified_new == filtered_events
@@ -316,7 +310,6 @@ async def test_module1(module_engine_conf, register_events, source_comm,
     assert events == events_on_register
     assert_events_vs_changes_result([session], process_events, events)
     assert len(events) == len(process_events)
-    assert session.events_on_close == events
 
     await assert_closure(backend_engine, module_engine, modules)
 
@@ -345,7 +338,7 @@ async def test_modules(module_engine_conf, register_events, source_comm):
     modules = [m for ms in modules for m in ms]
 
     assert len(modules) == 3
-    assert all(not module.closed.done() for module in modules)
+    assert all(not module.is_closed for module in modules)
 
     event_queue = aio.Queue()
     module_engine.register_events_cb(
@@ -355,7 +348,7 @@ async def test_modules(module_engine_conf, register_events, source_comm):
                       for i in register_events]
     events_on_register = await module_engine.register(process_events)
     sessions = [await module.session_queue.get() for module in modules]
-    await asyncio.gather(*(session.closed for session in sessions))
+    await asyncio.gather(*(session.wait_closed() for session in sessions))
 
     assert_notified_changes(sessions, process_events)
 
@@ -363,7 +356,6 @@ async def test_modules(module_engine_conf, register_events, source_comm):
 
     assert events == events_on_register
     assert_events_vs_changes_result(sessions, process_events, events)
-    assert all(session.events_on_close == events for session in sessions)
 
     await assert_closure(backend_engine, module_engine, modules)
 
@@ -398,7 +390,6 @@ async def test_module_event_killer(module_engine_conf, register_events,
 
     assert not events
     assert_events_vs_changes_result(sessions, process_events, events)
-    assert all(session.events_on_close == events for session in sessions)
 
     await assert_closure(backend_engine, module_engine, modules)
 
@@ -427,12 +418,12 @@ async def test_sessions(module_engine_conf, register_events, source_comm):
 
     await module_engine.register(source_comm, register_events)
     sessions1 = [await module.session_queue.get() for module in modules]
-    await asyncio.gather(*(session.closed for session in sessions1))
+    await asyncio.gather(*(session.wait_closed() for session in sessions1))
     assert all(module.session_queue.empty() for module in modules)
 
     await module_engine.register(source_comm, register_events)
     sessions2 = [await module.session_queue.get() for module in modules]
-    await asyncio.gather(*(session.closed for session in sessions2))
+    await asyncio.gather(*(session.wait_closed() for session in sessions2))
     assert all(module.session_queue.empty() for module in modules)
 
     assert all(s not in sessions1 for s in sessions2)

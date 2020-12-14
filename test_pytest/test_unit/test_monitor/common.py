@@ -18,8 +18,8 @@ def create_master(mid=0, components=[]):
 class MockMaster(hat.monitor.server.master.Master):
 
     @property
-    def closed(self):
-        return self._async_group.closed
+    def async_group(self):
+        return self._async_group
 
     @property
     def mid(self):
@@ -31,9 +31,6 @@ class MockMaster(hat.monitor.server.master.Master):
 
     def register_change_cb(self, cb):
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        await self._async_group.async_close()
 
     def set_components(self, components):
         self._components_queue.put_nowait(components)

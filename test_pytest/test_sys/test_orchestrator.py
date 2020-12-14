@@ -33,14 +33,15 @@ async def create_client(address):
     client = Client()
     client._conn = await juggler.connect(ws_address)
     client._async_group = aio.Group()
+    client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
     return client
 
 
-class Client:
+class Client(aio.Resource):
 
     @property
-    def closed(self):
-        return self._conn.closed
+    def async_group(self):
+        return self._async_group
 
     @property
     def components(self):
@@ -55,10 +56,6 @@ class Client:
 
     def register_components_change_cb(self, cb):
         return self._conn.register_change_cb(cb)
-
-    async def async_close(self):
-        await self._async_group.async_close()
-        await self._conn.async_close()
 
     def start(self, component_id):
         self._async_group.spawn(self._conn.send,
@@ -183,7 +180,7 @@ async def run_orchestrator_ui_client_factory(conf, tmp_path):
     for process in processes:
         stop_process(process)
     for client in clients:
-        await client.closed
+        await client.wait_closed()
 
 
 def test_orchestrator_kills_children(run_orchestrator_factory):

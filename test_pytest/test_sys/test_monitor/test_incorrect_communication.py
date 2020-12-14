@@ -19,7 +19,7 @@ async def test_ui_malformed_message(monitor_factory):
 
     await incorrect_ui_client.send('JSON serializable data')
 
-    await incorrect_ui_client.closed
+    await incorrect_ui_client.wait_closed()
 
     assert common.process_is_running(monitor.process)
 
@@ -44,7 +44,7 @@ async def test_ui_incorrect_type(cluster_factory):
         'type': 'incorrect_type',
         'payload': None})
 
-    await incorrect_ui_client.closed
+    await incorrect_ui_client.wait_closed()
 
     server_info = cluster.server_info
     assert common.process_is_running(server_info.process)
@@ -105,7 +105,7 @@ async def test_component_malformed_message(monitor_factory):
         module='Test',
         type='T',
         data='Incorrect message'))
-    await incorrect_component_client.closed
+    await incorrect_component_client.wait_closed()
 
     assert common.process_is_running(monitor.process)
 

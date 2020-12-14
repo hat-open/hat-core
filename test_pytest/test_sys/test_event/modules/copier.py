@@ -21,15 +21,12 @@ async def create(conf, engine):
 class CopierModule(hat.event.server.common.Module):
 
     @property
-    def subscriptions(self):
-        return [['*']]
+    def async_group(self):
+        return self._async_group
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def subscriptions(self):
+        return [['*']]
 
     async def create_session(self):
         session = CopierModuleSession()
@@ -41,11 +38,8 @@ class CopierModule(hat.event.server.common.Module):
 class CopierModuleSession(hat.event.server.common.ModuleSession):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self, events):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def process(self, changes):
         new = []

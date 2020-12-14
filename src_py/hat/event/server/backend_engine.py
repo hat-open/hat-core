@@ -2,6 +2,7 @@
 
 import importlib
 
+from hat import aio
 from hat.event.server import common
 
 
@@ -26,16 +27,12 @@ async def create(conf):
     return engine
 
 
-class BackendEngine:
+class BackendEngine(aio.Resource):
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._backend.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._backend.async_close()
+    def async_group(self) -> aio.Resource:
+        """Async group"""
+        return self._backend.async_group
 
     async def get_last_event_id(self):
         """Get last registered event id

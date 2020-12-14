@@ -23,11 +23,8 @@ def create_module_engine(register_cb=lambda _: [], query_cb=lambda _: []):
 class MockModuleEngine(hat.event.server.module_engine.ModuleEngine):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     def register_events_cb(self, cb):
         return self._register_event_cbs.register(cb)
@@ -64,11 +61,8 @@ def create_backend_engine(register_cb=lambda _: [], query_cb=lambda _: []):
 class MockBackendEngine(hat.event.server.backend_engine.BackendEngine):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def get_last_event_id(self):
         return hat.event.common.EventId(server=0, instance=0)

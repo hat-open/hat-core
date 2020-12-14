@@ -92,7 +92,7 @@ async def test_create_tcp(tcp_port, modbus_type):
     slave_queue = aio.Queue()
     srv = await modbus.create_tcp_server(modbus_type, '127.0.0.1', tcp_port,
                                          slave_queue.put_nowait, None, None)
-    assert not srv.closed.done()
+    assert not srv.is_closed
     assert slave_queue.empty()
 
     masters = []
@@ -101,20 +101,20 @@ async def test_create_tcp(tcp_port, modbus_type):
     for _ in range(10):
         master = await modbus.create_tcp_master(modbus_type, '127.0.0.1',
                                                 tcp_port)
-        assert not master.closed.done()
+        assert not master.is_closed
         masters.append(master)
 
         slave = await asyncio.wait_for(slave_queue.get(), 0.1)
-        assert not slave.closed.done()
+        assert not slave.is_closed
         slaves.append(slave)
 
     for master, slave in zip(masters, slaves):
-        assert not master.closed.done()
-        assert not slave.closed.done()
+        assert not master.is_closed
+        assert not slave.is_closed
 
         await master.async_close()
-        assert master.closed.done()
-        await asyncio.wait_for(slave.closed, 0.1)
+        assert master.is_closed
+        await asyncio.wait_for(slave.wait_closed(), 0.1)
 
     masters = []
     slaves = []
@@ -122,17 +122,17 @@ async def test_create_tcp(tcp_port, modbus_type):
     for _ in range(10):
         master = await modbus.create_tcp_master(modbus_type, '127.0.0.1',
                                                 tcp_port)
-        assert not master.closed.done()
+        assert not master.is_closed
         masters.append(master)
 
         slave = await asyncio.wait_for(slave_queue.get(), 0.1)
-        assert not slave.closed.done()
+        assert not slave.is_closed
         slaves.append(slave)
 
     await srv.async_close()
 
     for master, slave in zip(masters, slaves):
-        await asyncio.wait_for(slave.closed, 0.1)
+        await asyncio.wait_for(slave.wait_closed(), 0.1)
         await master.async_close()
 
 
@@ -142,8 +142,8 @@ async def test_create_serial(nullmodem, modbus_type):
     master = await modbus.create_serial_master(modbus_type, nullmodem[0])
     slave = await modbus.create_serial_slave(modbus_type, nullmodem[1],
                                              None, None)
-    assert not master.closed.done()
-    assert not slave.closed.done()
+    assert not master.is_closed
+    assert not slave.is_closed
     await master.async_close()
     await slave.async_close()
 

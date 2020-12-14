@@ -109,45 +109,39 @@ async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
 
     async def wait_cotp_server_closed():
         try:
-            await cotp_server.closed
+            await cotp_server.wait_closed()
         finally:
-            group.close()
+            async_group.close()
 
-    group = aio.Group()
+    async_group = aio.Group()
     cotp_server = await cotp.listen(on_connection, addr)
-    group.spawn(aio.call_on_cancel, cotp_server.async_close)
-    group.spawn(wait_cotp_server_closed)
+    async_group.spawn(aio.call_on_cancel, cotp_server.async_close)
+    async_group.spawn(wait_cotp_server_closed)
 
     srv = Server()
-    srv._group = group
+    srv._async_group = async_group
     srv._cotp_server = cotp_server
     return srv
 
 
-class Server:
+class Server(aio.Resource):
     """COSP listening server
 
     For creating new server see :func:`listen`
 
+    Closing server doesn't close active incomming connections
+
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def addresses(self):
         """List[Address]: listening addresses"""
         return self._cotp_server.addresses
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Close listening socket
-
-        Calling this method doesn't close active incomming connections
-
-        """
-        await self._group.async_close()
 
 
 def _create_connection(cotp_conn, cn_spdu, ac_spdu, local_ssel, remote_ssel):
@@ -160,17 +154,22 @@ def _create_connection(cotp_conn, cn_spdu, ac_spdu, local_ssel, remote_ssel):
                                 **cotp_conn.info._asdict())
     conn._close_spdu = None
     conn._read_queue = aio.Queue()
-    conn._group = aio.Group()
-    conn._group.spawn(conn._read_loop)
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """COSP connection
 
     For creating new connection see :func:`hat.drivers.cosp.connect`
 
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def info(self):
@@ -187,13 +186,8 @@ class Connection:
         """Data: connect response's user data"""
         return self._conn_res_user_data
 
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self, user_data=None):
-        """Async close
+    def close(self, user_data=None):
+        """Close connection
 
         Args:
             user_data (Optional[Data]): finish message user data
@@ -202,7 +196,17 @@ class Connection:
         self._close_spdu = _Spdu(_SpduType.FN,
                                  transport_disconnect=True,
                                  user_data=user_data)
-        await self._group.async_close()
+        self._async_group.close()
+
+    async def async_close(self, user_data=None):
+        """Async close
+
+        Args:
+            user_data (Optional[Data]): finish message user data
+
+        """
+        self.close(user_data)
+        await self.wait_closed()
 
     async def read(self):
         """Read data
@@ -246,7 +250,7 @@ class Connection:
                     self._close_spdu = _ab_spdu
                     break
         finally:
-            self._group.close()
+            self._async_group.close()
             self._read_queue.close()
             await aio.uncancellable(
                 _close_connection(self._cotp_conn, self._close_spdu))

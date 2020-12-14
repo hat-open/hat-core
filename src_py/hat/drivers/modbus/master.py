@@ -64,7 +64,7 @@ def _create_master(modbus_type, reader, writer):
     return master
 
 
-class Master:
+class Master(aio.Resource):
     """Modbus master
 
     For creating new instances of this class see
@@ -73,13 +73,9 @@ class Master:
     """
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def read(self,
                    device_id: int,

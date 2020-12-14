@@ -30,7 +30,7 @@ async def async_main(qt_executor, addr, debug, ui_path):
     srv = await server.create(addr, ui_path)
     await qt_executor(_ext_qt_open_window, srv.addr, debug)
     try:
-        await srv.closed
+        await srv.wait_closed()
     finally:
         aio.uncancellable(srv.async_close())
 

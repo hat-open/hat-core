@@ -90,7 +90,7 @@ def logger(syslog_port, server):
 
 async def test_connect_ui(ui_port, server):
     ui = await create_ui(ui_port)
-    assert not ui.closed.done()
+    assert not ui.is_closed
     await ui.async_close()
 
 

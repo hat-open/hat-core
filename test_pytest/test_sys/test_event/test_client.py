@@ -14,7 +14,7 @@ async def test_connect(create_event_server):
         srv.wait_active(5)
 
         client = await hat.event.client.connect(srv.address)
-        assert not client.closed.done()
+        assert not client.is_closed
         await client.async_close()
 
 
@@ -43,7 +43,7 @@ async def test_register(create_event_server):
         assert resp[0].source_timestamp == register_event.source_timestamp
         assert resp[0].payload == register_event.payload
 
-        assert not client.closed.done()
+        assert not client.is_closed
         await client.async_close()
 
 

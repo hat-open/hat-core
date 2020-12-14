@@ -113,14 +113,16 @@ async def run_with_event(conf, ui_path, client):
                                              adapters, views)
         async_group.spawn(aio.call_on_cancel, server.async_close)
 
-        await asyncio.wait([adapter.closed for adapter in adapters.values()] +
-                           [views.closed, server.closed],
+        await asyncio.wait([*(async_group.spawn(adapter.wait_closed)
+                              for adapter in adapters.values()),
+                            async_group.spawn(views.wait_closed),
+                            async_group.spawn(server.wait_closed)],
                            return_when=asyncio.FIRST_COMPLETED)
     finally:
         await aio.uncancellable(async_group.async_close())
 
 
-class AdapterEventClientFactory:
+class AdapterEventClientFactory(aio.Resource):
     """Adapter event client factory
 
     Args:
@@ -135,13 +137,9 @@ class AdapterEventClientFactory:
         self._async_group.spawn(self._receive_loop)
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     def create(self, event_type_prefix):
         """Create adapter event client

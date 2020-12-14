@@ -54,17 +54,17 @@ async def test_client_connect_disconnect(comm_conf):
 
     engine = common.create_module_engine()
     comm = await hat.event.server.communication.create(comm_conf, engine)
-    assert not comm.closed.done()
+    assert not comm.is_closed
 
     client = await hat.event.client.connect(comm_conf['address'])
-    assert not client.closed.done()
+    assert not client.is_closed
 
     await client.async_close()
     await comm.async_close()
     await engine.async_close()
 
-    assert client.closed.done()
-    assert comm.closed.done()
+    assert client.is_closed
+    assert comm.is_closed
 
     with pytest.raises(Exception):
         await hat.event.client.connect(comm_conf['address'])
@@ -85,10 +85,10 @@ async def test_srv_comm_close(comm_conf, register_events):
         register_cb=functools.partial(unresponsive_cb, comm_register),
         query_cb=functools.partial(unresponsive_cb, comm_query))
     comm = await hat.event.server.communication.create(comm_conf, engine)
-    assert not comm.closed.done()
+    assert not comm.is_closed
 
     client = await hat.event.client.connect(comm_conf['address'])
-    assert not client.closed.done()
+    assert not client.is_closed
 
     async with aio.Group() as group:
         futures = [
@@ -100,13 +100,13 @@ async def test_srv_comm_close(comm_conf, register_events):
 
         await comm.async_close()
         await engine.async_close()
-        assert comm.closed.done()
+        assert comm.is_closed
 
         for f in futures:
             with pytest.raises(hat.chatter.ConnectionClosedError):
                 await f
 
-    await client.closed
+    await client.wait_closed()
 
 
 @pytest.mark.parametrize("subscriptions", [

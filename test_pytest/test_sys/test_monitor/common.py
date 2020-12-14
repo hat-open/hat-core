@@ -107,7 +107,6 @@ class MockComponent:
     async def async_close(self):
         self._queue.close()
         await self._client.async_close()
-        await self._queue.closed
 
 
 async def create_ui_client(address):

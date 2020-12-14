@@ -91,9 +91,9 @@ async def run(conf, monitor):
         async_group.spawn(aio.call_on_cancel,
                           communication.async_close)
 
-        wait_futures = [backend_engine.closed,
-                        module_engine.closed,
-                        communication.closed]
+        wait_futures = [async_group.spawn(backend_engine.wait_closed),
+                        async_group.spawn(module_engine.wait_closed),
+                        async_group.spawn(communication.wait_closed)]
         await asyncio.wait(wait_futures, return_when=asyncio.FIRST_COMPLETED)
     finally:
         await aio.uncancellable(async_group.async_close())

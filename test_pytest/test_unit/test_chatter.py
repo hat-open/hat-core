@@ -56,8 +56,8 @@ async def test_connect(sbs_repo, unused_tcp_port):
     conn = await chatter.connect(sbs_repo, address)
     srv_conn = await srv_conn_future
 
-    assert not conn.closed.done()
-    assert not srv_conn.closed.done()
+    assert not conn.is_closed
+    assert not srv_conn.is_closed
     assert srv.addresses == [address]
     assert conn.remote_address == address
     assert srv_conn.local_address == address
@@ -65,8 +65,8 @@ async def test_connect(sbs_repo, unused_tcp_port):
     await conn.async_close()
     await srv.async_close()
 
-    assert conn.closed.done()
-    assert srv_conn.closed.done()
+    assert conn.is_closed
+    assert srv_conn.is_closed
 
 
 @pytest.mark.asyncio
@@ -76,15 +76,15 @@ async def test_ssl_connect(sbs_repo, unused_tcp_port, pem_path):
                                pem_file=pem_path)
 
     conn_without_cert = await chatter.connect(sbs_repo, address)
-    assert not conn_without_cert.closed.done()
+    assert not conn_without_cert.is_closed
     await conn_without_cert.async_close()
-    assert conn_without_cert.closed.done()
+    assert conn_without_cert.is_closed
 
     conn_with_cert = await chatter.connect(sbs_repo, address,
                                            pem_file=pem_path)
-    assert not conn_with_cert.closed.done()
+    assert not conn_with_cert.is_closed
     await conn_with_cert.async_close()
-    assert conn_with_cert.closed.done()
+    assert conn_with_cert.is_closed
 
     await srv.async_close()
 
@@ -94,13 +94,13 @@ async def test_listen(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
 
     srv = await chatter.listen(sbs_repo, address, lambda conn: None)
-    assert not srv.closed.done()
+    assert not srv.is_closed
 
     conn = await chatter.connect(sbs_repo, address)
     await conn.async_close()
 
     await srv.async_close()
-    assert srv.closed.done()
+    assert srv.is_closed
 
     with pytest.raises(Exception):
         await chatter.connect(sbs_repo, address)
@@ -190,7 +190,7 @@ async def test_invalid_communication(sbs_repo, unused_tcp_port):
     writer.close()
     await writer.wait_closed()
 
-    await conn.closed
+    await conn.wait_closed()
     await srv.async_close()
 
 
@@ -239,7 +239,7 @@ async def test_ping_timeout(sbs_repo, unused_tcp_port):
                                                    unused_tcp_port)
     conn = await conn_future
 
-    await conn.closed
+    await conn.wait_closed()
 
     writer.close()
     await writer.wait_closed()
@@ -265,6 +265,6 @@ async def test_connection_close_when_queue_blocking(sbs_repo, unused_tcp_port):
     await asyncio.sleep(0.01)
 
     await conn1.async_close()
-    await asyncio.wait_for(conn2.closed, 0.1)
+    await asyncio.wait_for(conn2.wait_closed(), 0.1)
 
     await srv.async_close()

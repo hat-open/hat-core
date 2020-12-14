@@ -40,8 +40,8 @@ async def backend_engine_backend(backend_engine_conf):
     yield backend_engine, backend
 
     await backend_engine.async_close()
-    assert backend_engine.closed.done()
-    await backend.closed
+    assert backend_engine.is_closed
+    await backend.wait_closed()
 
 
 async def create_process_events_mock(reg_events, backend_engine):
@@ -71,8 +71,8 @@ async def create_process_events_mock(reg_events, backend_engine):
 async def test_create_backend(backend_engine_backend, backend_engine_conf):
     backend_engine, backend = backend_engine_backend
 
-    assert not backend_engine.closed.done()
-    assert not backend.closed.done()
+    assert not backend_engine.is_closed
+    assert not backend.is_closed
 
     last_event_id = await backend_engine.get_last_event_id()
     assert last_event_id.server == backend_engine_conf['server_id']

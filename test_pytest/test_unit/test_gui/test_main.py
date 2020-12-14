@@ -51,16 +51,14 @@ async def event_client_factory(event_server, event_server_port):
         await client.async_close()
 
 
-class _Closeable:
+class _Closeable(aio.Resource):
+
     def __init__(self):
         self._async_group = aio.Group()
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
 
 @pytest.fixture
@@ -259,4 +257,5 @@ async def test_adapter_close(adapter_factory):
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
         pass
-    await asyncio.wait([adapter.closed for adapter in adapters.values()])
+    await asyncio.wait([adapter.wait_closed()
+                        for adapter in adapters.values()])

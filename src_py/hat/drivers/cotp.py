@@ -89,45 +89,39 @@ async def listen(connection_cb, addr=Address('0.0.0.0', 102)):
 
     async def wait_tpkt_server_closed():
         try:
-            await tpkt_server.closed
+            await tpkt_server.wait_closed()
         finally:
-            group.close()
+            async_group.close()
 
-    group = aio.Group()
+    async_group = aio.Group()
     tpkt_server = await tpkt.listen(on_connection, addr)
-    group.spawn(aio.call_on_cancel, tpkt_server.async_close)
-    group.spawn(wait_tpkt_server_closed)
+    async_group.spawn(aio.call_on_cancel, tpkt_server.async_close)
+    async_group.spawn(wait_tpkt_server_closed)
 
     srv = Server()
-    srv._group = group
+    srv._async_group = async_group
     srv._tpkt_server = tpkt_server
     return srv
 
 
-class Server:
+class Server(aio.Resource):
     """COTP listening server
 
     For creation of new instance see :func:`listen`
 
+    Closing server doesn't close active incomming connections
+
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def addresses(self):
         """List[Address]: listening addresses"""
         return self._tpkt_server.addresses
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Close listening socket
-
-        Calling this method doesn't close active incomming connections
-
-        """
-        await self._group.async_close()
 
 
 def _create_connection(tpkt_conn, max_tpdu, local_tsel, remote_tsel):
@@ -138,12 +132,12 @@ def _create_connection(tpkt_conn, max_tpdu, local_tsel, remote_tsel):
                                 remote_tsel=remote_tsel,
                                 **tpkt_conn.info._asdict())
     conn._read_queue = aio.Queue()
-    conn._group = aio.Group()
-    conn._group.spawn(conn._read_loop)
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """COTP connection
 
     For creation of new instance see :func:`connect`
@@ -151,18 +145,14 @@ class Connection:
     """
 
     @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
+
+    @property
     def info(self):
         """ConnectionInfo: connection info"""
         return self._info
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._group.async_close()
 
     async def read(self):
         """Read data
@@ -199,13 +189,13 @@ class Connection:
                         await self._read_queue.put(bytes(data))
                         data = []
                 elif isinstance(tpdu, _DR) or isinstance(tpdu, _ER):
-                    self._group.close()
+                    self._async_group.close()
                     mlog.info("received disconnect request / error")
                     break
         except Exception as e:
             mlog.error("error while reading: %s", e, exc_info=e)
         finally:
-            self._group.close()
+            self._async_group.close()
             self._read_queue.close()
             await aio.uncancellable(self._tpkt_conn.async_close())
 

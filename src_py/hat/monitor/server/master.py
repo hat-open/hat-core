@@ -71,14 +71,14 @@ async def run(conf, master_change_cb):
                 await local_master_group.async_close()
                 local_master_group = None
             master_change_cb(remote_master)
-            await remote_master.closed
+            await remote_master.wait_closed()
             master_change_cb(None)
     finally:
         await listener.async_close()
         if local_master_group:
             await local_master_group.async_close()
         if remote_master:
-            await remote_master.closed
+            await remote_master.wait_closed()
 
 
 async def _run_local_master(conf, listener, master_change_cb):
@@ -86,7 +86,7 @@ async def _run_local_master(conf, listener, master_change_cb):
     master_change_cb(master)
     try:
         with listener.register(master._on_connection):
-            await master.closed
+            await master.wait_closed()
     finally:
         await master.async_close()
         master_change_cb(None)
@@ -130,14 +130,11 @@ async def _create_listener(address):
     return listener
 
 
-class _Listener:
+class _Listener(aio.Resource):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     def register(self, cb):
         return self._connection_cbs.register(cb)
@@ -152,18 +149,13 @@ class _Listener:
         await aio.uncancellable(conn.async_close(), raise_cancel=False)
 
 
-class Master(abc.ABC):
+class Master(aio.Resource):
     """Master interface
 
     Instances of this class should not be created outside of this module.
     Should not create instances of this class calling its constructor.
 
     """
-
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
 
     @property
     @abc.abstractmethod
@@ -188,10 +180,6 @@ class Master(abc.ABC):
             util.RegisterCallbackHandle
 
         """
-
-    @abc.abstractmethod
-    async def async_close(self):
-        """Close server and all active connections"""
 
     @abc.abstractmethod
     def set_components(self, components):
@@ -232,9 +220,8 @@ class LocalMaster(Master):
     """Local master implementation"""
 
     @property
-    def closed(self):
-        """See :meth:`hat.monitor.master.Master.closed`"""
-        return self._async_group.closed
+    def async_group(self):
+        return self._async_group
 
     @property
     def mid(self):
@@ -249,10 +236,6 @@ class LocalMaster(Master):
     def register_change_cb(self, cb):
         """See :meth:`hat.monitor.master.Master.register_change_cb`"""
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        """See :meth:`hat.monitor.master.Master.async_close`"""
-        await self._async_group.async_close()
 
     def set_components(self, components):
         """See :meth:`hat.monitor.master.Master.set_components`"""
@@ -364,9 +347,8 @@ class RemoteMaster(Master):
     """Remote master interface"""
 
     @property
-    def closed(self):
-        """See :meth:`hat.monitor.master.Master.closed`"""
-        return self._async_group.closed
+    def async_group(self):
+        return self._async_group
 
     @property
     def mid(self):
@@ -381,10 +363,6 @@ class RemoteMaster(Master):
     def register_change_cb(self, cb):
         """See :meth:`hat.monitor.master.Master.register_change_cb`"""
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        """Close connection and master listening socket"""
-        await self._async_group.async_close()
 
     def set_components(self, components):
         """See :meth:`hat.monitor.master.Master.set_components`"""

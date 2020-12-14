@@ -46,7 +46,7 @@ async def create(conf, path, server):
     return srv
 
 
-class WebServer:
+class WebServer(aio.Resource):
     """Web server UI
 
     For creating new instance of this class see :func:`create`
@@ -54,13 +54,9 @@ class WebServer:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Close web server and all active connections"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _connection_loop(self, conn):
         try:

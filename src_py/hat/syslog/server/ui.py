@@ -43,16 +43,12 @@ async def create_web_server(conf: hat.syslog.server.conf.WebServerConf,
     return server
 
 
-class WebServer:
+class WebServer(aio.Resource):
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
 
 async def _run_client(async_group, backend, conn):
@@ -64,7 +60,7 @@ async def _run_client(async_group, backend, conn):
         with backend.register_change_cb(change_queue.put_nowait):
             with conn.register_change_cb(
                     functools.partial(change_queue.put_nowait, [])):
-                await conn.closed
+                await conn.wait_closed()
     finally:
         async_group.close()
 

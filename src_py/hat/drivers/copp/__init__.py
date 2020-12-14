@@ -186,45 +186,39 @@ async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
 
     async def wait_cosp_server_closed():
         try:
-            await cosp_server.closed
+            await cosp_server.wait_closed()
         finally:
-            group.close()
+            async_group.close()
 
-    group = aio.Group()
+    async_group = aio.Group()
     cosp_server = await cosp.listen(on_validate, on_connection, addr)
-    group.spawn(aio.call_on_cancel, cosp_server.async_close)
-    group.spawn(wait_cosp_server_closed)
+    async_group.spawn(aio.call_on_cancel, cosp_server.async_close)
+    async_group.spawn(wait_cosp_server_closed)
 
     srv = Server()
-    srv._group = group
+    srv._async_group = async_group
     srv._cosp_server = cosp_server
     return srv
 
 
-class Server:
+class Server(aio.Resource):
     """COPP listening server
 
     For creating new server see :func:`listen`
 
+    Closing server doesn't close active incomming connections
+
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def addresses(self):
         """List[Address]: listening addresses"""
         return self._cosp_server.addresses
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Close listening socket
-
-        Calling this method doesn't close active incomming connections
-
-        """
-        await self._group.async_close()
 
 
 def _create_connection(syntax_names, cosp_conn, cp_ppdu, cpa_ppdu,
@@ -251,17 +245,22 @@ def _create_connection(syntax_names, cosp_conn, cp_ppdu, cpa_ppdu,
                                 **cosp_conn.info._asdict())
     conn._close_ppdu = _arp_ppdu()
     conn._read_queue = aio.Queue()
-    conn._group = aio.Group()
-    conn._group.spawn(conn._read_loop)
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """COPP connection
 
     For creating new connection see :func:`connect`
 
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def info(self):
@@ -283,10 +282,15 @@ class Connection:
         """IdentifiedEntity: connect response's user data"""
         return self._conn_res_user_data
 
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
+    def close(self, user_data=None):
+        """Close connection
+
+        Args:
+            user_data (Optional[IdentifiedEntity]): closing message user data
+
+        """
+        self._close_ppdu = _aru_ppdu(self._syntax_names, user_data)
+        self._async_group.close()
 
     async def async_close(self, user_data=None):
         """Async close
@@ -295,8 +299,8 @@ class Connection:
             user_data (Optional[IdentifiedEntity]): closing message user data
 
         """
-        self._close_ppdu = _aru_ppdu(self._syntax_names, user_data)
-        await self._group.async_close()
+        self.close(user_data)
+        await self.wait_closed()
 
     async def read(self):
         """Read data
@@ -328,7 +332,7 @@ class Connection:
                 data = pdv_list['presentation-data-values'][1]
                 await self._read_queue.put((syntax_name, data))
         finally:
-            self._group.close()
+            self._async_group.close()
             self._read_queue.close()
             await aio.uncancellable(
                 _close_connection(self._cosp_conn, self._close_ppdu))

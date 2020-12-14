@@ -17,7 +17,7 @@ async def create(evt_srv_addr, ui_path):
 
     srv._client = await client.connect(evt_srv_addr, [['*']])
     srv._async_group.spawn(aio.call_on_cancel, srv._client.async_close)
-    srv._async_group.spawn(aio.call_on_done, srv._client.closed,
+    srv._async_group.spawn(aio.call_on_done, srv._client.wait_closed(),
                            srv._async_group.close)
 
     try:
@@ -28,7 +28,7 @@ async def create(evt_srv_addr, ui_path):
             functools.partial(srv._async_group.spawn, srv._connection_loop),
             static_dir=ui_path)
         srv._async_group.spawn(aio.call_on_cancel, srv._srv.async_close)
-        srv._async_group.spawn(aio.call_on_done, srv._srv.closed,
+        srv._async_group.spawn(aio.call_on_done, srv._srv.wait_closed(),
                                srv._async_group.close)
         srv._async_group.spawn(srv._server_loop)
     except BaseException:
@@ -38,18 +38,15 @@ async def create(evt_srv_addr, ui_path):
     return srv
 
 
-class Server:
+class Server(aio.Resource):
+
+    @property
+    def async_group(self):
+        return self._async_group
 
     @property
     def addr(self):
         return self._addr
-
-    @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_close()
 
     def _on_connection(self, conn):
         self._async_group.spawn(self._connection_loop, conn)

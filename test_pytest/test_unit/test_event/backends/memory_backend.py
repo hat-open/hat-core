@@ -20,11 +20,8 @@ async def create(conf):
 class MemoryBackend(common.Backend):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def get_last_event_id(self, server_id):
         return max(filter(lambda i: i.server == server_id,

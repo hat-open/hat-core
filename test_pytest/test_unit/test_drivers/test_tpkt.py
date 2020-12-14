@@ -18,9 +18,9 @@ async def test_connect_listen(addr):
     conn2 = await tpkt.connect(addr)
     conn1 = await conn1_future
 
-    assert not srv.closed.done()
-    assert not conn1.closed.done()
-    assert not conn2.closed.done()
+    assert not srv.is_closed
+    assert not conn1.is_closed
+    assert not conn2.is_closed
 
     assert conn1.info.local_addr == addr
     assert conn1.info.local_addr == conn2.info.remote_addr
@@ -29,9 +29,9 @@ async def test_connect_listen(addr):
     await asyncio.gather(conn1.async_close(), conn2.async_close(),
                          srv.async_close())
 
-    assert srv.closed.done()
-    assert conn1.closed.done()
-    assert conn2.closed.done()
+    assert srv.is_closed
+    assert conn1.is_closed
+    assert conn2.is_closed
 
 
 @pytest.mark.asyncio

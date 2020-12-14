@@ -13,14 +13,11 @@ async def create_client(address):
     return client
 
 
-class Client:
+class Client(aio.Resource):
 
     @property
-    def closed(self):
-        return self._conn.closed
-
-    async def async_close(self):
-        await self._conn.async_close()
+    def async_group(self):
+        return self._conn.async_group
 
     @property
     def mid(self):
@@ -49,7 +46,7 @@ class Client:
                                'payload': payload})
 
 
-class MockServer():
+class MockServer(aio.Resource):
 
     def __init__(self, mid=0):
         self._async_group = aio.Group()
@@ -59,8 +56,8 @@ class MockServer():
         self._change_cbs = util.CallbackRegistry()
 
     @property
-    def closed(self):
-        return self._async_group.closed
+    def async_group(self):
+        return self._async_group
 
     @property
     def components(self):
@@ -72,9 +69,6 @@ class MockServer():
 
     def register_change_cb(self, cb):
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        await self._async_group.async_close()
 
     def set_master(self, master):
         raise NotImplementedError()
@@ -146,10 +140,10 @@ async def test_backend_to_frontend(server_port, ui_port, tmpdir):
     assert client.mid == 2 and client.components == []
 
     await client.async_close()
-    assert not ui_backend.closed.done()
+    assert not ui_backend.is_closed
     await monitor_server.async_close()
     await ui_backend.async_close()
-    assert ui_backend.closed.done()
+    assert ui_backend.is_closed
 
 
 @pytest.mark.asyncio
@@ -168,7 +162,7 @@ async def test_frontend_to_backend(server_port, ui_port, tmpdir):
     assert await monitor_server._rank_queue.get() == (-1, -2, -3)
 
     await client.async_close()
-    assert not ui_backend.closed.done()
+    assert not ui_backend.is_closed
     await monitor_server.async_close()
     await ui_backend.async_close()
-    assert ui_backend.closed.done()
+    assert ui_backend.is_closed

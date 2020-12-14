@@ -12,13 +12,13 @@ async def test_create(unused_udp_port):
     ep1 = await udp.create(local_addr=addr)
     ep2 = await udp.create(remote_addr=addr)
 
-    assert not ep1.closed.done()
-    assert not ep2.closed.done()
+    assert not ep1.is_closed
+    assert not ep2.is_closed
 
     await asyncio.gather(ep1.async_close(), ep2.async_close())
 
-    assert ep1.closed.done()
-    assert ep2.closed.done()
+    assert ep1.is_closed
+    assert ep2.is_closed
 
 
 @pytest.mark.asyncio

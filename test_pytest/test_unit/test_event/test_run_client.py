@@ -77,7 +77,7 @@ async def event_server_run_cb(address, monitor_client):
         common.process_event_to_event(i) for i in events])
     comm = await hat.event.server.communication.create(conf, engine)
     try:
-        await asyncio.wait([engine.closed, comm.closed],
+        await asyncio.wait([engine.wait_closed(), comm.wait_closed()],
                            return_when=asyncio.FIRST_COMPLETED)
     finally:
         await comm.async_close()

@@ -63,7 +63,7 @@ async def create_engine(conf, client):
     return engine
 
 
-class Engine:
+class Engine(aio.Resource):
     """Engine
 
     For creating new instance of this class see :func:`create_engine`
@@ -71,13 +71,9 @@ class Engine:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _receive_loop(self, client):
         try:
@@ -97,7 +93,7 @@ class Engine:
 
     async def _wait_closed_proxy(self, proxy):
         try:
-            await proxy.closed
+            await proxy.wait_closed()
         finally:
             self._async_group.close()
 
@@ -149,7 +145,7 @@ async def create_device_proxy(conf, client, gateway_name):
     return proxy
 
 
-class DeviceProxy:
+class DeviceProxy(aio.Resource):
     """Device proxy
 
     For creating new instance of this class see :func:`create_device_proxy`
@@ -157,13 +153,9 @@ class DeviceProxy:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     def add_events(self, events):
         """Add newly received events
@@ -195,16 +187,19 @@ class DeviceProxy:
     async def _idle_loop(self, conf, device_module, enabled):
         try:
             while True:
-                new_events_future = self._async_group.spawn(
-                    self._event_queue.get)
-                device_closed_future = (self._device.closed
-                                        if self._device is not None
-                                        else asyncio.Future())
-                await asyncio.wait([new_events_future, device_closed_future],
-                                   return_when=asyncio.FIRST_COMPLETED)
-                if device_closed_future.done():
-                    return
-                events = new_events_future.result()
+                async with self._async_group.create_subgroup() as async_group:
+                    new_events_future = async_group.spawn(
+                        self._event_queue.get)
+                    device_closed_future = (
+                        async_group.spawn(self._device.wait_closed)
+                        if self._device is not None
+                        else asyncio.Future())
+                    await asyncio.wait([new_events_future,
+                                        device_closed_future],
+                                       return_when=asyncio.FIRST_COMPLETED)
+                    if self._device and self._device.is_closed:
+                        return
+                    events = new_events_future.result()
 
                 enable_event_type = [*self._device_identifier_prefix, 'system',
                                      'enable']
@@ -252,16 +247,18 @@ class DeviceProxy:
         mlog.error('device proxy uncaught error: %s', e, exc_info=e)
 
 
-class _DeviceEventClient(hat.gateway.common.DeviceEventClient):
+class _DeviceEventClient(hat.gateway.common.DeviceEventClient, aio.Resource):
+
     def __init__(self, client, group):
         self._queue = aio.Queue()
         self._client = client
         self._async_group = group
         self._async_group.spawn(aio.call_on_cancel, self._queue.close)
 
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    @property
+    def async_group(self):
+        """Async group"""
+        return self._async_group
 
     def add_events(self, events):
         """Add newly received events

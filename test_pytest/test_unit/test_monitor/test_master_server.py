@@ -61,7 +61,7 @@ async def server(server_conf, master):
     yield server
 
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.fixture
@@ -92,14 +92,14 @@ async def create_client(monitor_address, name='client',
 
 @pytest.mark.asyncio
 async def test_master(master):
-    assert not master.closed.done()
+    assert not master.is_closed
     assert master.mid == 0
     assert master.components == []
 
 
 @pytest.mark.asyncio
 async def test_server(server):
-    assert not server.closed.done()
+    assert not server.is_closed
     assert server.mid == 0
     assert server.components == []
 
@@ -107,7 +107,7 @@ async def test_server(server):
 @pytest.mark.asyncio
 async def test_server_without_master(server):
     server.set_master(None)
-    assert not server.closed.done()
+    assert not server.is_closed
     assert server.mid == 0
     assert server.components == []
 

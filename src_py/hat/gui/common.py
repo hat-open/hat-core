@@ -2,6 +2,7 @@ from pathlib import Path
 import abc
 import typing
 
+from hat import aio
 from hat import json
 import hat.monitor.common
 
@@ -19,7 +20,7 @@ CreateAdapter = typing.Callable[[AdapterConf, 'AdapterEventClient'],
                                 typing.Awaitable['Adapter']]
 
 
-class Adapter(abc.ABC):
+class Adapter(aio.Resource):
     """Adapter interface
 
     Adapters are implemented as python modules which are dynamically imported.
@@ -47,15 +48,6 @@ class Adapter(abc.ABC):
 
     """
 
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
-
-    @abc.abstractmethod
-    async def async_close(self):
-        """Async close"""
-
     @abc.abstractmethod
     async def create_session(self, client):
         """Create new adapter session
@@ -69,17 +61,8 @@ class Adapter(abc.ABC):
         """
 
 
-class AdapterSession(abc.ABC):
+class AdapterSession(aio.Resource):
     """Adapter's single client session"""
-
-    @property
-    @abc.abstractmethod
-    def closed(self):
-        """asyncio.Future: closed future"""
-
-    @abc.abstractmethod
-    async def async_close(self):
-        """Async close"""
 
 
 class AdapterSessionClient(abc.ABC):

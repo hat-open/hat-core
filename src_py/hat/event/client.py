@@ -52,7 +52,7 @@ Example of high-level interface usage::
 
     async def event_async_run(client):
         while True:
-            assert not client.closed.done()
+            assert not client.is_closed
             await asyncio.sleep(10)
 
     await hat.monitor.client.run_component(
@@ -123,7 +123,7 @@ async def connect(address, subscriptions=None, **kwargs):
     return client
 
 
-class Client:
+class Client(aio.Resource):
     """Event Server client
 
     For creating new client see :func:`connect`.
@@ -131,13 +131,9 @@ class Client:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def receive(self):
         """Receive subscribed event notifications
@@ -327,10 +323,10 @@ async def run_client(monitor_client, server_group, async_run_cb,
                 address_change.clear()
                 wait_futures = [connect_and_run_future,
                                 subgroup.spawn(address_change.wait),
-                                monitor_client.closed]
+                                subgroup.spawn(monitor_client.wait_closed)]
                 await asyncio.wait(wait_futures,
                                    return_when=asyncio.FIRST_COMPLETED)
-                if monitor_client.closed.done():
+                if monitor_client.is_closed:
                     raise Exception('connection to monitor server closed')
                 elif connect_and_run_future.done():
                     return connect_and_run_future.result()
@@ -353,10 +349,11 @@ async def _connect_and_run_loop(group, address, subscriptions,
         try:
             async with group.create_subgroup() as subgroup:
                 run_future = subgroup.spawn(async_run_cb, client)
-                await asyncio.wait([run_future, client.closed],
+                await asyncio.wait([run_future,
+                                    subgroup.spawn(client.wait_closed)],
                                    return_when=asyncio.FIRST_COMPLETED)
                 # TODO maybe we should check for closing.done()
-                if client.closed.done():
+                if client.is_closed:
                     mlog.warning('connection to event server closed')
                     continue
                 elif run_future.done():

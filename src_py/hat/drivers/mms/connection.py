@@ -145,45 +145,39 @@ async def listen(connection_cb, request_cb, addr=Address('0.0.0.0', 102)):
 
     async def wait_acse_server_closed():
         try:
-            await acse_server.closed
+            await acse_server.wait_closed()
         finally:
-            group.close()
+            async_group.close()
 
-    group = aio.Group()
+    async_group = aio.Group()
     acse_server = await acse.listen(on_validate, on_connection, addr)
-    group.spawn(aio.call_on_cancel, acse_server.async_close)
-    group.spawn(wait_acse_server_closed)
+    async_group.spawn(aio.call_on_cancel, acse_server.async_close)
+    async_group.spawn(wait_acse_server_closed)
 
     srv = Server()
-    srv._group = group
+    srv._async_group = async_group
     srv._acse_server = acse_server
     return srv
 
 
-class Server:
+class Server(aio.Resource):
     """MMS listening server
 
     For creating new server see :func:`listen`
 
+    Closing server doesn't close active incomming connections
+
     """
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def addresses(self):
         """List[Address]: listening addresses"""
         return self._acse_server.addresses
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Close listening socket
-
-        Calling this method doesn't close active incomming connections
-
-        """
-        await self._group.async_close()
 
 
 def _create_connection(request_cb, acse_conn):
@@ -193,12 +187,12 @@ def _create_connection(request_cb, acse_conn):
     conn._last_invoke_id = 0
     conn._unconfirmed_queue = aio.Queue()
     conn._response_futures = {}
-    conn._group = aio.Group()
-    conn._group.spawn(conn._read_loop)
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """MMS connection
 
     For creating new connection see :func:`connect`
@@ -206,18 +200,14 @@ class Connection:
     """
 
     @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
+
+    @property
     def info(self):
         """ConnectionInfo: connection info"""
         return self._acse_conn.info
-
-    @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._group.async_close()
 
     async def receive_unconfirmed(self):
         """Receive unconfirmed message
@@ -259,7 +249,7 @@ class Connection:
             ConnectionError: in case connection is in closing or closed state
 
         """
-        if self._group.closing.done():
+        if self._async_group.is_closing:
             raise ConnectionError('connection is not open')
         invoke_id = self._last_invoke_id + 1
         pdu = 'confirmed-RequestPDU', {
@@ -290,7 +280,7 @@ class Connection:
             # TODO: wait for response
             raise
         finally:
-            self._group.close()
+            self._async_group.close()
             self._unconfirmed_queue.close()
             for response_future in self._response_futures.values():
                 if not response_future.done():

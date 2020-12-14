@@ -162,7 +162,7 @@ async def listen(host: str,
     return server
 
 
-class Server:
+class Server(aio.Resource):
     """Server
 
     For creating new server see :func:`listen`.
@@ -170,13 +170,9 @@ class Server:
     """
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close server and all active connections"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def _ws_handler(self, request):
         ws = aiohttp.web.WebSocketResponse()
@@ -185,7 +181,7 @@ class Server:
                                   autoflush_delay=self._autoflush_delay,
                                   parent_group=self._async_group)
         self._connection_cb(conn)
-        await conn.closed
+        await conn.wait_closed()
         return ws
 
 
@@ -210,7 +206,7 @@ def _create_connection(ws, autoflush_delay, session=None, parent_group=None):
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """Connection
 
     For creating new connection see :func:`connect`.
@@ -218,9 +214,9 @@ class Connection:
     """
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def local_data(self) -> json.Data:
@@ -229,17 +225,13 @@ class Connection:
 
     @property
     def remote_data(self) -> json.Data:
-        """remote data"""
+        """Remote data"""
         return self._remote_data
 
     def register_change_cb(self, cb: typing.Callable[[], None]
                            ) -> util.RegisterCallbackHandle:
         """Register remote data change callback"""
         return self._remote_change_cbs.register(cb)
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
 
     def set_local_data(self, data: json.Data):
         """Set local data
@@ -275,7 +267,7 @@ class Connection:
             ConnectionError
 
         """
-        if self._async_group.closing.done():
+        if self._async_group.is_closing:
             raise ConnectionError()
 
         await self._ws.send_json({'type': 'MESSAGE', 'payload': msg})

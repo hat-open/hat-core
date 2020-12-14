@@ -49,10 +49,10 @@ async def test_client_connect_disconnect(server_conf, client_conf):
             c.blessing is None and
             c.ready is None)
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
     assert await components_queue.get() == []
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -72,9 +72,9 @@ async def test_client_set_ready(server_conf, client_conf):
     client.set_ready(-3)
     assert (await components_queue.get())[0].ready == -3
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -91,9 +91,9 @@ async def test_server_set_rank(server_conf, client_conf):
     server.set_rank(c.cid, c.mid, -11)
     assert (await components_queue.get())[0].rank == -11
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -101,7 +101,7 @@ async def test_server_set_rank_nonexistent(server_conf):
     server = await hat.monitor.server.server.create(server_conf)
     server.set_rank(1, server.mid, 2)
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -126,7 +126,7 @@ async def test_server_rank_cache(server_conf, client_conf):
     server.set_rank(info.cid, info.mid, 2)
     assert (await info_queue.get()).rank == 2
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
 
     client, info_queue = await client_connect_info_queue()
     info = await get_info_until_not_none(info_queue)
@@ -138,7 +138,7 @@ async def test_server_rank_cache(server_conf, client_conf):
     server.set_master(master)
     assert (await info_queue.get()).rank == 3
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
     server.set_master(None)
 
     client, info_queue = await client_connect_info_queue()
@@ -153,14 +153,14 @@ async def test_server_rank_cache(server_conf, client_conf):
     master._set_components([i._replace(rank=5) for i in master.components])
     assert (await info_queue.get()).rank == 5
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
     server.set_master(None)
 
     client, info_queue = await client_connect_info_queue()
     info = await get_info_until_not_none(info_queue)
     assert info.rank == 5
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
 
 
 @pytest.mark.asyncio
@@ -187,7 +187,7 @@ async def test_server_set_master_mid_component(server_conf):
     await server_change_queue.get()
     assert server.mid == 0 and server.components == []
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -200,7 +200,7 @@ async def test_server_master_set_rank(server_conf):
     server.set_rank(3, 2, 5)
     assert (await master._rank_queue.get()) == (3, 2, 5)
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed
 
 
 @pytest.mark.asyncio
@@ -251,6 +251,6 @@ async def test_client_server_master(server_conf, client_conf):
     assert client.info.mid == 0 and client.components == [client.info]
 
     await client.async_close()
-    assert client.closed.done()
+    assert client.is_closed
     await server.async_close()
-    assert server.closed.done()
+    assert server.is_closed

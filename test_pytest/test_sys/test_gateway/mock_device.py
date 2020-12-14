@@ -33,11 +33,8 @@ async def create(conf, client, event_type_prefix):
 class MockDevice(common.Device):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     @property
     def client(self):

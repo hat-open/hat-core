@@ -45,7 +45,9 @@ async def async_main(conf, ui_path):
     ui = None
     try:
         ui = await hat.monitor.server.ui.create(conf['ui'], ui_path, server)
-        wait_futures = [server.closed, master_run_future, ui.closed]
+        wait_futures = [async_group.spawn(server.wait_closed),
+                        master_run_future,
+                        async_group.spawn(ui.wait_closed)]
         await asyncio.wait(wait_futures, return_when=asyncio.FIRST_COMPLETED)
     finally:
         close_futures = [server.async_close(), async_group.async_close()]

@@ -34,8 +34,8 @@ async def create_client(conf_ui):
 class Client:
 
     @property
-    def closed(self):
-        return self._conn.closed
+    def is_closed(self):
+        return self._conn.is_closed
 
     async def async_close(self):
         await self._conn.async_close()
@@ -107,7 +107,7 @@ async def backend_ui(monkeypatch, conf_ui, conf_db):
 
     await backend.async_close()
     await web_server.async_close()
-    assert web_server.closed.done()
+    assert web_server.is_closed
 
 
 @pytest.fixture
@@ -291,7 +291,7 @@ async def test_connect_disconnect(backend_ui, conf_ui, message_factory,
         client = await create_client(conf_ui)
         client_change_queue = aio.Queue()
         client.register_change_cb(lambda: client_change_queue.put_nowait(None))
-        assert not client.closed.done()
+        assert not client.is_closed
         await client_change_queue.get()
         await asyncio.sleep(0.1)
         assert len(client.server_state['entries']) == message_count
@@ -300,9 +300,9 @@ async def test_connect_disconnect(backend_ui, conf_ui, message_factory,
     while clients:
         client = clients.pop()
         await client.async_close()
-        assert client.closed.done()
+        assert client.is_closed
 
     await asyncio.sleep(0.001)
 
-    assert not backend.closed.done()
-    assert not ui.closed.done()
+    assert not backend.is_closed
+    assert not ui.is_closed

@@ -19,11 +19,8 @@ async def create(conf, client):
 class MockAdapter(hat.gui.common.Adapter):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     @property
     def sessions(self):
@@ -49,11 +46,8 @@ class MockSession(hat.gui.common.AdapterSession):
         self._async_group = aio.Group()
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     @property
     def session_client(self):

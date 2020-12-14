@@ -38,16 +38,12 @@ async def create_database(path: Path,
     return db
 
 
-class Database:
+class Database(aio.Resource):
 
     @property
-    def closed(self) -> asyncio.Future:
-        """Closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def get_first_id(self) -> typing.Optional[int]:
         """Get first entry id"""

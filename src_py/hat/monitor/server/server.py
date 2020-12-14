@@ -51,7 +51,7 @@ async def create(conf):
     return server
 
 
-class Server:
+class Server(aio.Resource):
     """Local monitor server
 
     For creating new instance of this class see :func:`create`
@@ -59,9 +59,9 @@ class Server:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     @property
     def components(self):
@@ -91,10 +91,6 @@ class Server:
 
         """
         return self._change_cbs.register(cb)
-
-    async def async_close(self):
-        """Close server and all active connections"""
-        await self._async_group.async_close()
 
     def set_master(self, master):
         """Set master

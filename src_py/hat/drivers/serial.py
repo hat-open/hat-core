@@ -97,7 +97,7 @@ async def open(port: str, *,
     return conn
 
 
-class Connection:
+class Connection(aio.Resource):
     """Serial connection
 
     For creating new instances see :func:`hat.drivers.serial.open`
@@ -105,13 +105,9 @@ class Connection:
     """
 
     @property
-    def closed(self):
-        """asyncio.Future: closed future"""
-        return self._async_group.closed
-
-    async def async_close(self):
-        """Async close"""
-        await self._async_group.async_close()
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
     async def read(self, size):
         """Read

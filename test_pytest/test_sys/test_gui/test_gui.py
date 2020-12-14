@@ -130,14 +130,11 @@ async def create_client(gui_conf, user_conf):
     return client
 
 
-class Client:
+class Client(aio.Resource):
 
     @property
-    def closed(self):
-        return self._conn.closed
-
-    async def async_close(self):
-        await self._conn.async_close()
+    def async_group(self):
+        return self._conn.async_group
 
     @property
     def server_state(self):
@@ -594,7 +591,7 @@ async def test_invalid_message(run_gui, gui_conf, tmp_path,
     await asyncio.sleep(0.01)
     with pytest.raises(ConnectionError):
         await client.login()
-    assert client.closed.done()
+    assert client.is_closed
 
     # invalid message after login
     client = await create_client(gui_conf, user_conf)
@@ -606,7 +603,7 @@ async def test_invalid_message(run_gui, gui_conf, tmp_path,
     await asyncio.sleep(0.01)
     with pytest.raises(ConnectionError):
         await client.login()
-    assert client.closed.done()
+    assert client.is_closed
 
     gui_process.close_and_wait_or_kill()
 
@@ -648,7 +645,7 @@ async def test_users_roles(tmp_path, run_gui, gui_conf,
             assert msg['data'] == {'abc': 1}
             client_adapters.remove(adapter_name)
 
-    assert all(not client.closed.done() for client in clients)
+    assert all(not client.is_closed for client in clients)
 
     for client in clients:
         await client.async_close()

@@ -55,7 +55,8 @@ async def create_monitor_group(server_address, master_address,
         master_run_future = group.spawn(hat.monitor.server.master.run,
                                         master_conf, server.set_master)
         try:
-            await asyncio.wait([server.closed, master_run_future],
+            await asyncio.wait([group.spawn(server.wait_closed),
+                                master_run_future],
                                return_when=asyncio.FIRST_COMPLETED)
         finally:
             group.close()

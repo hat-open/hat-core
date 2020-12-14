@@ -87,7 +87,7 @@ async def run_with_event(conf, client):
     engine = None
     try:
         engine = await hat.gateway.engine.create_engine(conf, client)
-        await engine.closed
+        await engine.wait_closed()
     finally:
         if engine:
             await aio.uncancellable(engine.async_close())

@@ -26,11 +26,8 @@ class Module2(hat.event.server.common.Module):
         return [['a', '*'], ['b', '*']]
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def create_session(self):
         session = Module2Session()
@@ -40,7 +37,6 @@ class Module2(hat.event.server.common.Module):
         session.changes_notified_deleted = []
         session.changes_result_new = []
         session.changes_result_deleted = []
-        session.events_on_close = None
         self.session_queue.put_nowait(session)
         return session
 
@@ -48,12 +44,8 @@ class Module2(hat.event.server.common.Module):
 class Module2Session(hat.event.server.common.ModuleSession):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self, events):
-        self.events_on_close = events
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def process(self, changes):
         self.changes_notified_new += changes.new

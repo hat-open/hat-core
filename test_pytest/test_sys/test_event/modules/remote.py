@@ -23,6 +23,8 @@ async def create(conf, engine):
     module._async_group = aio.Group()
     module._conn = await chatter.connect(sbs_repo, conf['address'])
     module._async_group.spawn(aio.call_on_cancel,
+                              module._send, 'ModuleClose', None)
+    module._async_group.spawn(aio.call_on_cancel,
                               module._conn.async_close)
     module._send('ModuleCreate', None)
     return module
@@ -31,22 +33,20 @@ async def create(conf, engine):
 class RemoteModule(hat.event.server.common.Module):
 
     @property
-    def subscriptions(self):
-        return self._subscriptions
+    def async_group(self):
+        return self._async_group
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        self._send('ModuleClose', None)
-        await self._async_group.async_close()
+    def subscriptions(self):
+        return self._subscriptions
 
     async def create_session(self):
         self._send('SessionCreate', None)
         session = RemoteModuleSession()
         session._module = self
         session._async_group = self._async_group.create_subgroup()
+        session._async_group.spawn(aio.call_on_cancel,
+                                   self._send, 'SessionClose', None)
         return session
 
     def _send(self, msg_type, msg):
@@ -56,12 +56,8 @@ class RemoteModule(hat.event.server.common.Module):
 class RemoteModuleSession(hat.event.server.common.ModuleSession):
 
     @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self, events):
-        self._module._send('SessionClose', None)
-        await self._async_group.async_close()
+    def async_group(self):
+        return self._async_group
 
     async def process(self, changes):
         self._module._send('Process', None)
@@ -83,18 +79,15 @@ async def create_server(address):
     return server
 
 
-class Server:
+class Server(aio.Resource):
+
+    @property
+    def async_group(self):
+        return self._async_group
 
     @property
     def queue(self):
         return self._queue
-
-    @property
-    def closed(self):
-        return self._async_group.closed
-
-    async def async_close(self):
-        await self._async_group.async_close()
 
 
 async def _connection_read_loop(conn, queue):
