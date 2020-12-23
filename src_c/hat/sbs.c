@@ -1,7 +1,6 @@
 #include <string.h>
 #include "sbs.h"
 
-
 static inline _Bool is_little_endian() {
     union {
         uint16_t u;
@@ -15,7 +14,7 @@ static void swap_endians(uint8_t *data, size_t data_len) {
     for (size_t i = 0; i <= (data_len - 1) / 2; ++i) {
         uint8_t temp = data[i];
         data[i] = data[data_len - i - 1];
-        data[data_len - i - 1] = data[i];
+        data[data_len - i - 1] = temp;
     }
 }
 
@@ -35,11 +34,12 @@ size_t hat_sbs_encode_integer(hat_buff_t *buff, int64_t value) {
     for (;;) {
         if (size <= available)
             buff->data[buff->pos + size - 1] =
-                (size == 1 ? 0x00 : 0x80) | (value & 0x7F);
-        if (value == 0 || value == -1)
+                (size == 1 ? 0x80 : 0x00) | (value & 0x7F);
+        _Bool sign = value & 0x40;
+        value >>= 7;
+        if ((value == 0 && !sign) || (value == -1 && sign))
             break;
         size += 1;
-        value >>= 7;
     }
     if (size > available)
         return size;
@@ -98,7 +98,7 @@ int hat_sbs_decode_boolean(hat_buff_t *buff, _Bool *value) {
 int hat_sbs_decode_integer(hat_buff_t *buff, int64_t *value) {
     size_t available = hat_buff_available(buff);
     size_t size = 1;
-    *value = available && (buff->data[buff->pos] & 0x40) ? -1 : 0;
+    *value = ((available && (buff->data[buff->pos] & 0x40)) ? -1 : 0);
     for (;;) {
         if (size > available)
             return HAT_SBS_ERROR;
@@ -112,7 +112,7 @@ int hat_sbs_decode_integer(hat_buff_t *buff, int64_t *value) {
 }
 
 
-int hat_sbs_decode_float(hat_buff_t *buff, float *value) {
+int hat_sbs_decode_float(hat_buff_t *buff, double *value) {
     if (hat_buff_available(buff) < 8)
         return HAT_SBS_ERROR;
     memcpy(value, buff->data + buff->pos, 8);

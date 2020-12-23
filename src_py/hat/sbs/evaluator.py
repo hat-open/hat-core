@@ -1,11 +1,11 @@
 import typing
 
+from hat.sbs import common
 from hat.sbs import parser
-from hat.sbs import serializer
 
 
 def evaluate_modules(modules: typing.Iterable[parser.AstModule]
-                     ) -> typing.Dict[serializer.Ref, serializer.Type]:
+                     ) -> typing.Dict[common.Ref, common.Type]:
     """Evaluate modules."""
     refs = dict(_builtin_refs)
     modules_dict = {module.name: module for module in modules}
@@ -13,7 +13,7 @@ def evaluate_modules(modules: typing.Iterable[parser.AstModule]
         for ast_type_def in module.type_defs.values():
             if ast_type_def.args:
                 continue
-            ref = serializer.Ref(module.name, ast_type_def.name)
+            ref = common.Ref(module.name, ast_type_def.name)
             refs[ref] = _resolve_ref(modules_dict, ref, [])
     return refs
 
@@ -27,14 +27,14 @@ def _resolve_ref(modules_dict, ref, args):
     if len(args) != len(ast_type_def.args):
         raise Exception("number of arguments doesn't match type definition")
 
-    mappings = dict(zip((serializer.Ref(None, arg)
+    mappings = dict(zip((common.Ref(None, arg)
                          for arg in ast_type_def.args),
                         args))
     return _resolve_type(modules_dict, ref.module, ast_type_def.type, mappings)
 
 
 def _resolve_type(modules_dict, module, ast_type, mappings):
-    ref = serializer.Ref(ast_type.module, ast_type.name)
+    ref = common.Ref(ast_type.module, ast_type.name)
     args = [_resolve_type(modules_dict, module, arg, mappings)
             for arg in ast_type.args]
     entries = [(entry.name,
@@ -54,16 +54,16 @@ def _resolve_type(modules_dict, module, ast_type, mappings):
     if ref in _builtin_arg_refs:
         return _resolve_ref(modules_dict, ref, args)
 
-    if ref == serializer.Ref(None, 'Array'):
+    if ref == common.Ref(None, 'Array'):
         if len(args) != 1:
             raise Exception('Array requires one argument')
-        return serializer.ArrayType(args[0])
+        return common.ArrayType(args[0])
 
-    if ref == serializer.Ref(None, 'Tuple'):
-        return serializer.TupleType(entries)
+    if ref == common.Ref(None, 'Tuple'):
+        return common.TupleType(entries)
 
-    if ref == serializer.Ref(None, 'Union'):
-        return serializer.UnionType(entries)
+    if ref == common.Ref(None, 'Union'):
+        return common.UnionType(entries)
 
     if not ref.module:
         ref = ref._replace(module=module)
@@ -74,16 +74,16 @@ def _resolve_type(modules_dict, module, ast_type, mappings):
     return _resolve_ref(modules_dict, ref, args)
 
 
-_builtin_refs = {serializer.Ref(None, 'Boolean'): serializer.BooleanType(),
-                 serializer.Ref(None, 'Integer'): serializer.IntegerType(),
-                 serializer.Ref(None, 'Float'): serializer.FloatType(),
-                 serializer.Ref(None, 'String'): serializer.StringType(),
-                 serializer.Ref(None, 'Bytes'): serializer.BytesType(),
-                 serializer.Ref(None, 'None'): serializer.TupleType([])}
+_builtin_refs = {common.Ref(None, 'Boolean'): common.BooleanType(),
+                 common.Ref(None, 'Integer'): common.IntegerType(),
+                 common.Ref(None, 'Float'): common.FloatType(),
+                 common.Ref(None, 'String'): common.StringType(),
+                 common.Ref(None, 'Bytes'): common.BytesType(),
+                 common.Ref(None, 'None'): common.TupleType([])}
 
 
 _builtin_arg_refs = {
-    serializer.Ref(None, 'Maybe'): parser.AstTypeDef(
+    common.Ref(None, 'Maybe'): parser.AstTypeDef(
         name='Maybe',
         args=['a'],
         type=parser.AstType(

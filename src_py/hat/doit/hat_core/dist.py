@@ -1,5 +1,6 @@
 from pathlib import Path
 import subprocess
+import sys
 
 from hat.doit import common
 from hat.doit.hat_core.jshat.lib import build_dir as jshat_dir
@@ -207,7 +208,7 @@ def _get_task_dist_jshat(name, build_task):
 
 
 def _create_wheel(src_path, dst_path):
-    subprocess.run(['python', 'setup.py', '-q', 'bdist_wheel',
+    subprocess.run([sys.executable, 'setup.py', '-q', 'bdist_wheel',
                     '--dist-dir', str(dst_path.resolve())],
                    cwd=str(src_path),
                    check=True)

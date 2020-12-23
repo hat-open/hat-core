@@ -175,7 +175,7 @@ def test_run_asyncio_with_subprocess(tmp_path):
                 f"    sys.exit(10)\n"
                 f"sys.exit(5)\n")
 
-    p = subprocess.Popen(['python', str(py_path)],
+    p = subprocess.Popen([sys.executable, str(py_path)],
                          creationflags=(subprocess.CREATE_NEW_PROCESS_GROUP
                                         if sys.platform == 'win32' else 0))
     while not run_path.exists():

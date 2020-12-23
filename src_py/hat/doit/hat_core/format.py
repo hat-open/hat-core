@@ -14,7 +14,9 @@ def task_format():
 def task_format_chat():
     """Format - format chat with clang format"""
     files = [*Path('src_c/hat').rglob('*.c'),
-             *Path('src_c/hat').rglob('*.h')]
+             *Path('src_c/hat').rglob('*.h'),
+             *Path('src_c/pymod/sbs').rglob('*.c'),
+             *Path('src_c/pymod/sbs').rglob('*.h')]
     for f in files:
         yield {'name': str(f),
                'actions': ['clang-format -style=file -i ' + str(f)],

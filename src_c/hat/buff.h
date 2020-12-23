@@ -20,7 +20,7 @@ typedef struct {
 
 
 static inline size_t hat_buff_available(hat_buff_t *buff) {
-    return buff && buff->size > buff->pos && buff->size - buff->pos;
+    return (buff && buff->size > buff->pos) ? buff->size - buff->pos : 0;
 }
 
 

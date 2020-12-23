@@ -4,7 +4,8 @@ import shutil
 import sys
 
 from hat.doit import common
-from hat.doit.hat_core.duktape import src_py_lib_path as duktape_lib_path
+from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
+from hat.doit.hat_core.pymod import sbs_mod_path
 from hat.doit.hat_core.pymod import sqlite3_mod_path
 from hat.doit.hat_core.timestamp import timestamp_path
 
@@ -134,13 +135,16 @@ def task_pyhat_sbs():
         dst_dir = _get_build_dst_dir('hat-sbs')
         for i in (src_py_dir / 'hat/sbs').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
+        yield sbs_mod_path, (dst_dir /
+                             sbs_mod_path.relative_to(src_py_dir))
 
     return _get_task_build(name='hat-sbs',
                            description='Hat simple binary serializer',
                            readme_path=Path('README.hat-sbs.rst'),
                            dependencies=['hat-json',
                                          'hat-peg'],
-                           mappings=mappings)
+                           mappings=mappings,
+                           platform_specific=True)
 
 
 def task_pyhat_chatter():

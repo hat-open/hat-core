@@ -53,7 +53,7 @@ Example usage of SBS serializer::
 """
 
 from hat.sbs.repository import Repository
-from hat.sbs.serializer import Data
+from hat.sbs.common import Data
 
 
 __all__ = ['Repository', 'Data']

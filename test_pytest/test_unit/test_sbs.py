@@ -1,9 +1,19 @@
 import pytest
 
 from hat import sbs
+import hat.sbs._cserializer
+import hat.sbs._pyserializer
+import hat.sbs.serializer
 
 
-def test_example():
+serializers = [hat.sbs._cserializer,
+               hat.sbs._pyserializer]
+
+
+@pytest.mark.parametrize("serializer", serializers)
+def test_example(monkeypatch, serializer):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+
     repo = sbs.Repository('''
         module Module
 
@@ -26,6 +36,7 @@ def test_example():
     assert data == decoded_data
 
 
+@pytest.mark.parametrize("serializer", serializers)
 @pytest.mark.parametrize("schema", ["""
     module Module
 
@@ -54,8 +65,9 @@ def test_example():
     T19 = T18(Maybe(Integer))
 
     T20 = Array(Float)
+    T21 = Array(String)
 """])
-@pytest.mark.parametrize("t,v", [
+@pytest.mark.parametrize("t, v", [
     ('T1', True),
     ('T1', False),
     ('T2', 0),
@@ -65,8 +77,8 @@ def test_example():
     ('T2', -128),
     ('T2', 256),
     ('T2', -256),
-    ('T2', 123456789123456789123456789),
-    ('T2', -123456789123456789123456789),
+    ('T2', 123456789123456),
+    ('T2', -123456789123456),
     ('T3', 0),
     ('T3', -1),
     ('T3', 1),
@@ -105,9 +117,12 @@ def test_example():
     ('T15', 1234),
     ('T16', 'abcd'),
     ('T19', [('Nothing', None), ('Just', 1234)]),
-    ('T20', [0, 1.5, -1, 0.005, 1000.1])
+    ('T20', [0, 1.5, -1, 0.005, 1000.1]),
+    ('T21', ['', '', '']),
 ])
-def test_serialization(schema, t, v):
+def test_serialization(monkeypatch, serializer, schema, t, v):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+
     repo = sbs.Repository(schema)
 
     encoded_v = repo.encode('Module', t, v)
@@ -116,7 +131,9 @@ def test_serialization(schema, t, v):
     assert decoded_v == v
 
 
-def test_loading_schema_file(tmp_path):
+@pytest.mark.parametrize("serializer", serializers)
+def test_loading_schema_file(tmp_path, monkeypatch, serializer):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
 
     path = tmp_path / 'schema.sbs'
     with open(path, 'w', encoding='utf-8') as f:
@@ -129,7 +146,10 @@ def test_loading_schema_file(tmp_path):
     assert value == decoded_value
 
 
-def test_parametrized_types():
+@pytest.mark.parametrize("serializer", serializers)
+def test_parametrized_types(monkeypatch, serializer):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+
     repo = sbs.Repository("""
         module M
 
@@ -145,7 +165,10 @@ def test_parametrized_types():
         repo.decode('M', 'T1', encoded)
 
 
-def test_multiple_modules():
+@pytest.mark.parametrize("serializer", serializers)
+def test_multiple_modules(monkeypatch, serializer):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+
     repo = sbs.Repository("""
         module M1
 
@@ -161,6 +184,7 @@ def test_multiple_modules():
     assert value == decoded_value
 
 
+@pytest.mark.parametrize("serializer", serializers)
 @pytest.mark.parametrize("schema", ["""
     module Module
 
@@ -169,7 +193,9 @@ def test_multiple_modules():
 @pytest.mark.parametrize("t,v", [
     ('T1', ('b', 1))
 ])
-def test_invalid_serialization(schema, t, v):
+def test_invalid_serialization(monkeypatch, serializer, schema, t, v):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+
     repo = sbs.Repository(schema)
     with pytest.raises(Exception):
         encoded_v = repo.encode('Module', t, v)
@@ -202,7 +228,10 @@ def test_invalid_schema(schema):
         sbs.Repository(schema)
 
 
-def test_repository_initialization_with_repository():
+@pytest.mark.parametrize("serializer", serializers)
+def test_repository_initialization_with_repository(monkeypatch, serializer):
+    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+
     repo1 = sbs.Repository("""
         module M
 

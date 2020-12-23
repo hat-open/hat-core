@@ -2,6 +2,7 @@ import pathlib
 import typing
 
 from hat import json
+from hat.sbs import common
 from hat.sbs import evaluator
 from hat.sbs import parser
 from hat.sbs import serializer
@@ -25,19 +26,19 @@ class Repository:
     def encode(self,
                module_name: typing.Optional[str],
                type_name: str,
-               value: serializer.Data
+               value: common.Data
                ) -> bytes:
         """Encode value."""
-        ref = serializer.Ref(module_name, type_name)
+        ref = common.Ref(module_name, type_name)
         return serializer.encode(self._refs, ref, value)
 
     def decode(self,
                module_name: typing.Optional[str],
                type_name: str,
                data: typing.Union[bytes, bytearray, memoryview]
-               ) -> serializer.Data:
+               ) -> common.Data:
         """Decode data."""
-        ref = serializer.Ref(module_name, type_name)
+        ref = common.Ref(module_name, type_name)
         return serializer.decode(self._refs, ref, memoryview(data))[0]
 
     def to_json(self) -> json.Data:
@@ -51,7 +52,7 @@ class Repository:
         return [parser.module_to_json(module) for module in self._modules]
 
     @staticmethod
-    def from_json(data: typing.Union[pathlib.PurePath, serializer.Data]
+    def from_json(data: typing.Union[pathlib.PurePath, common.Data]
                   ) -> 'Repository':
         """Create new repository from content exported as json serializable
         data.

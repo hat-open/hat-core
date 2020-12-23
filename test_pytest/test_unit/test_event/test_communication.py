@@ -138,7 +138,7 @@ async def test_srv_comm_close(comm_conf, register_events):
     [['a'], ['a', 'b']],
     [['b'], ['a', 'b']],
     [['a'], ['a', 'b'], ['a', 'b', 'c']],
-    ['', '', '']])
+    [['', '', '']]])
 @pytest.mark.asyncio
 async def test_subscribe(comm_conf, subscriptions):
     event_types = [
@@ -198,7 +198,7 @@ async def test_register(comm_conf, register_events):
     comm = await hat.event.server.communication.create(comm_conf, engine)
 
     client = await hat.event.client.connect(comm_conf['address'],
-                                            subscriptions=['test', '*'])
+                                            subscriptions=[['test', '*']])
 
     client.register(register_events)
     process_events = await register_queue.get()
@@ -233,7 +233,7 @@ async def test_register_with_response(comm_conf, register_events):
     comm = await hat.event.server.communication.create(comm_conf, engine)
 
     client = await hat.event.client.connect(comm_conf['address'],
-                                            subscriptions=['test', '*'])
+                                            subscriptions=[['test', '*']])
 
     client_events = await client.register_with_response(register_events)
     process_events = await register_queue.get()

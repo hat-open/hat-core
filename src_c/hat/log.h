@@ -70,7 +70,7 @@ typedef enum {
 } hat_log_level_t;
 
 void hat_log_init(hat_log_facility_t facility, hat_log_level_t level,
-                  char *appname, char *syslog_host, uint16_t syslog_port) ;
+                  char *appname, char *syslog_host, uint16_t syslog_port);
 void hat_log_destroy();
 hat_log_level_t hat_log_get_level();
 int hat_log_log(hat_log_level_t level, char *id, char *file_name,

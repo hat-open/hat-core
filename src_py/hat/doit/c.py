@@ -18,9 +18,9 @@ cc = os.environ.get('CC', 'cc')
 ld = os.environ.get('LD', 'cc')
 
 
-def get_task_lib(lib_path, src_paths, src_dir, dst_dir, *,
+def get_task_lib(lib_path, src_paths, src_dir, build_dir, *,
                  ld=ld, ld_flags=[], libs=[]):
-    obj_paths = [_get_obj_path(src_path, src_dir, dst_dir)
+    obj_paths = [_get_obj_path(src_path, src_dir, build_dir)
                  for src_path in src_paths]
     shared_flag = '-mdll' if sys.platform == 'win32' else '-shared'
     return {'actions': [(common.mkdir_p, [lib_path.parent]),
@@ -30,11 +30,11 @@ def get_task_lib(lib_path, src_paths, src_dir, dst_dir, *,
             'targets': [lib_path]}
 
 
-def get_task_objs(src_paths, src_dir, dst_dir, *,
+def get_task_objs(src_paths, src_dir, build_dir, *,
                   cc=cc, cpp_flags=[], cc_flags=[]):
     for src_path in src_paths:
-        dep_path = _get_dep_path(src_path, src_dir, dst_dir)
-        obj_path = _get_obj_path(src_path, src_dir, dst_dir)
+        dep_path = _get_dep_path(src_path, src_dir, build_dir)
+        obj_path = _get_obj_path(src_path, src_dir, build_dir)
         header_paths = _parse_dep(dep_path)
         yield {'name': str(obj_path),
                'actions': [(common.mkdir_p, [obj_path.parent]),
@@ -44,10 +44,10 @@ def get_task_objs(src_paths, src_dir, dst_dir, *,
                'targets': [obj_path]}
 
 
-def get_task_deps(src_paths, src_dir, dst_dir, *,
+def get_task_deps(src_paths, src_dir, build_dir, *,
                   cpp=cpp, cpp_flags=[]):
     for src_path in src_paths:
-        dep_path = _get_dep_path(src_path, src_dir, dst_dir)
+        dep_path = _get_dep_path(src_path, src_dir, build_dir)
         yield {'name': str(dep_path),
                'actions': [(common.mkdir_p, [dep_path.parent]),
                            [cpp, *cpp_flags, '-MM', '-o', str(dep_path),
@@ -56,12 +56,12 @@ def get_task_deps(src_paths, src_dir, dst_dir, *,
                'targets': [dep_path]}
 
 
-def _get_dep_path(src_path, src_dir, dst_dir):
-    return (dst_dir / src_path.relative_to(src_dir)).with_suffix('.d')
+def _get_dep_path(src_path, src_dir, build_dir):
+    return (build_dir / src_path.relative_to(src_dir)).with_suffix('.d')
 
 
-def _get_obj_path(src_path, src_dir, dst_dir):
-    return (dst_dir / src_path.relative_to(src_dir)).with_suffix('.o')
+def _get_obj_path(src_path, src_dir, build_dir):
+    return (build_dir / src_path.relative_to(src_dir)).with_suffix('.o')
 
 
 def _parse_dep(path):
