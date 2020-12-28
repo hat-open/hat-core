@@ -1,5 +1,6 @@
 import enum
 import subprocess
+import sys
 
 from hat.doit import common
 
@@ -11,7 +12,7 @@ class SphinxOutputType(enum.Enum):
 
 def sphinx_build(out_type, src, dest):
     common.mkdir_p(dest)
-    subprocess.run(['sphinx-build', '-q', '-b', out_type.value,
+    subprocess.run([sys.executable, '-m', 'sphinx', '-q', '-b', out_type.value,
                     str(src), str(dest)],
                    check=True)
 

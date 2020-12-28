@@ -1,5 +1,6 @@
 from pathlib import Path
 import subprocess
+import sys
 
 from hat import asn1
 from hat.doit import common
@@ -40,7 +41,8 @@ def task_docs_pyhat():
 
     def build():
         common.mkdir_p(pyhat_dst_dir.parent)
-        subprocess.run(['pdoc', '--html', '--skip-errors', '-f',
+        subprocess.run([sys.executable, '-m', 'pdoc',
+                        '--html', '--skip-errors', '-f',
                         '-o', str(pyhat_dst_dir),
                         'hat'],
                        stdout=subprocess.DEVNULL,
