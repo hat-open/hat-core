@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 
 __all__ = ['task_check',
@@ -18,10 +19,10 @@ def task_check():
 def task_check_pyhat():
     """Check - check pyhat with flake8"""
     def check():
-        subprocess.run(['python', '-m', 'flake8', '.'],
+        subprocess.run([sys.executable, '-m', 'flake8', '.'],
                        cwd='src_py',
                        check=True)
-        subprocess.run(['python', '-m', 'flake8', '.'],
+        subprocess.run([sys.executable, '-m', 'flake8', '.'],
                        cwd='test_pytest',
                        check=True)
 
