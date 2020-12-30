@@ -78,9 +78,14 @@ async def uncancellable(f: asyncio.Future,
 class _AsyncCallableType(type(typing.Callable), _root=True):
 
     def __init__(self):
-        super().__init__(origin=collections.abc.Callable,
-                         params=(..., typing.Optional[typing.Awaitable]),
-                         special=True)
+        if sys.version_info[:2] == (3, 8):
+            kwargs = {'origin': collections.abc.Callable,
+                      'params': (..., typing.Optional[typing.Awaitable]),
+                      'special': True}
+        else:
+            kwargs = {'origin': collections.abc.Callable,
+                      'nparams': (..., typing.Optional[typing.Awaitable])}
+        super().__init__(**kwargs)
 
     def __getitem__(self, params):
         if len(params) == 2:

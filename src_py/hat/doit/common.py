@@ -1,12 +1,10 @@
 from pathlib import Path
-import contextlib
+import datetime
 import enum
 import functools
 import shutil
-import socket
 import subprocess
 import sys
-import datetime
 
 import packaging.version
 
@@ -37,12 +35,6 @@ def cp_r(src, dest):
         shutil.copytree(str(src), str(dest))
     else:
         shutil.copy2(str(src), str(dest))
-
-
-def get_free_tcp_port():
-    with contextlib.closing(socket.socket()) as s:
-        s.bind(('127.0.0.1', 0))
-        return s.getsockname()[1]
 
 
 class StaticWebServer:

@@ -505,6 +505,7 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                      optional_dependencies, console_scripts, gui_scripts,
                      platform_specific):
     plat_name = _get_plat_name() if platform_specific else 'any'
+    python_tag = f'cp{sys.version_info.major}{sys.version_info.minor}'
     version = common.get_version(common.VersionType.PIP, timestamp_path)
     readme = _get_readme(readme_path)
     with open(path, 'w', encoding='utf-8') as f:
@@ -529,8 +530,8 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                 f"      ],\n"
                 f"      options={{\n"
                 f"          'bdist_wheel': {{\n"
-                f"              'python_tag': 'cp38',\n"
-                f"              'py_limited_api': 'cp38',\n"
+                f"              'python_tag': {repr(python_tag)},\n"
+                f"              'py_limited_api': {repr(python_tag)},\n"
                 f"              'plat_name': '{plat_name}'\n"
                 f"          }}\n"
                 f"      }},\n"

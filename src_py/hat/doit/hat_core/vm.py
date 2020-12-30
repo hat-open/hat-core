@@ -6,6 +6,8 @@ import sys
 import tempfile
 import time
 
+from hat import util
+
 from hat.doit import common
 from hat.doit.hat_core.cache.vm.archlinux import img_path as archlinux_img_path
 from hat.doit.hat_core.cache.vm.win10 import img_path as win10_img_path
@@ -116,7 +118,7 @@ class _VM:
                         str(tmp_img_path)],
                        check=True)
         self._user = user
-        self._ssh_port = common.get_free_tcp_port()
+        self._ssh_port = util.get_unused_tcp_port()
         self._known_hosts_path = tmpdir / 'known_hosts'
 
         cmd = ['qemu-system-x86_64',

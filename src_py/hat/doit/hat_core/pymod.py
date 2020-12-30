@@ -1,5 +1,6 @@
 from pathlib import Path
 import sys
+import sysconfig
 
 from hat.doit import c
 
@@ -14,35 +15,35 @@ __all__ = ['task_pymod',
 
 
 def _get_cpp_flags():
+    include_path = sysconfig.get_path('include')
+
     if sys.platform == 'linux':
-        return ['-I/usr/include/python3.8']
+        return [f'-I{include_path}']
 
     elif sys.platform == 'darwin':
         return []
 
     elif sys.platform == 'win32':
-        python_dir = Path(sys.executable).parent
-        return [f"-I{python_dir / 'include'}"]
+        return [f'-I{include_path}']
 
     raise Exception('unsupported platform')
 
 
 def _get_ld_flags():
+    stdlib_path = sysconfig.get_path('stdlib')
+
     if sys.platform == 'linux':
         return []
 
     elif sys.platform == 'darwin':
-        python_dir = Path(sys.executable).parent.parent
         python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
-        conf_path = (f"lib/python{python_version}"
-                     f"/config-{python_version}-darwin/")
-        return [f"-L{python_dir / conf_path}",
-                "-lpython3.8"]
+        return [f"-L{stdlib_path}",
+                f"-lpython{python_version}"]
 
     elif sys.platform == 'win32':
-        python_dir = Path(sys.executable).parent
-        return [f"-L{python_dir / 'libs'}",
-                "-lpython38"]
+        python_version = f'{sys.version_info.major}{sys.version_info.minor}'
+        return [f"-L{stdlib_path}",
+                f"-lpython{python_version}"]
 
     raise Exception('unsupported platform')
 
