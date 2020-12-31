@@ -22,20 +22,20 @@ static PyObject *decode_generic(hat_buff_t *buff, module_state_t *module_state,
                                 PyObject *refs, PyObject *t);
 
 
+static inline _Bool is_type(PyObject *inst, PyObject *cls) {
+    return Py_TYPE(inst) == (PyTypeObject *)cls;
+}
+
+
 static PyObject *resolve_ref(module_state_t *module_state, PyObject *refs,
                              PyObject *t) {
-    for (;;) {
-        int result = PyObject_IsInstance(t, module_state->common_Ref);
-        if (result < 0)
-            return NULL;
-        if (!result)
-            return t;
-
+    while (is_type(t, module_state->common_Ref)) {
         t = PyObject_GetItem(refs, t);
         if (!t)
             return NULL;
         Py_DECREF(t);
     }
+    return t;
 }
 
 
@@ -433,52 +433,28 @@ static ssize_t encode_generic(hat_buff_t *buff, module_state_t *module_state,
     if (!t)
         return -1;
 
-    result = PyObject_IsInstance(t, module_state->common_BooleanType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_BooleanType))
         return encode_boolean(buff, value);
 
-    result = PyObject_IsInstance(t, module_state->common_IntegerType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_IntegerType))
         return encode_integer(buff, value);
 
-    result = PyObject_IsInstance(t, module_state->common_FloatType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_FloatType))
         return encode_float(buff, value);
 
-    result = PyObject_IsInstance(t, module_state->common_StringType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_StringType))
         return encode_string(buff, value);
 
-    result = PyObject_IsInstance(t, module_state->common_BytesType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_BytesType))
         return encode_bytes(buff, value);
 
-    result = PyObject_IsInstance(t, module_state->common_ArrayType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_ArrayType))
         return encode_array(buff, module_state, refs, t, value);
 
-    result = PyObject_IsInstance(t, module_state->common_TupleType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_TupleType))
         return encode_tuple(buff, module_state, refs, t, value);
 
-    result = PyObject_IsInstance(t, module_state->common_UnionType);
-    if (result < 0)
-        return -1;
-    if (result)
+    if (is_type(t, module_state->common_UnionType))
         return encode_union(buff, module_state, refs, t, value);
 
     PyErr_SetNone(PyExc_ValueError);
@@ -494,52 +470,28 @@ static PyObject *decode_generic(hat_buff_t *buff, module_state_t *module_state,
     if (!t)
         return NULL;
 
-    result = PyObject_IsInstance(t, module_state->common_BooleanType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_BooleanType))
         return decode_boolean(buff);
 
-    result = PyObject_IsInstance(t, module_state->common_IntegerType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_IntegerType))
         return decode_integer(buff);
 
-    result = PyObject_IsInstance(t, module_state->common_FloatType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_FloatType))
         return decode_float(buff);
 
-    result = PyObject_IsInstance(t, module_state->common_StringType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_StringType))
         return decode_string(buff);
 
-    result = PyObject_IsInstance(t, module_state->common_BytesType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_BytesType))
         return decode_bytes(buff);
 
-    result = PyObject_IsInstance(t, module_state->common_ArrayType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_ArrayType))
         return decode_array(buff, module_state, refs, t);
 
-    result = PyObject_IsInstance(t, module_state->common_TupleType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_TupleType))
         return decode_tuple(buff, module_state, refs, t);
 
-    result = PyObject_IsInstance(t, module_state->common_UnionType);
-    if (result < 0)
-        return NULL;
-    if (result)
+    if (is_type(t, module_state->common_UnionType))
         return decode_union(buff, module_state, refs, t);
 
     PyErr_SetNone(PyExc_ValueError);
