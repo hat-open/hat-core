@@ -22,7 +22,8 @@ T = typing.TypeVar('T')
 
 async def first(xs: typing.AsyncIterable[T],
                 fn: typing.Callable[[T], bool] = lambda _: True,
-                default: typing.Optional[T] = None) -> typing.Optional[T]:
+                default: typing.Optional[T] = None
+                ) -> typing.Optional[T]:
     """Return the first element from async iterable that satisfies
     predicate `fn`, or `default` if no such element exists.
 
@@ -39,7 +40,8 @@ async def first(xs: typing.AsyncIterable[T],
 
 
 async def uncancellable(f: asyncio.Future,
-                        raise_cancel: bool = True) -> typing.Any:
+                        raise_cancel: bool = True
+                        ) -> typing.Any:
     """Uncancellable execution of a Future.
 
     Future is shielded and its execution cannot be interrupted.
@@ -75,6 +77,7 @@ async def uncancellable(f: asyncio.Future,
     return task.result()
 
 
+# TODO: AsyncCallable rewrite needed
 class _AsyncCallableType(type(typing.Callable), _root=True):
 
     def __init__(self):
@@ -209,21 +212,34 @@ def create_executor(*args: typing.Any,
     return executor_wrapper
 
 
-def init_asyncio():
+def init_asyncio(policy: typing.Optional[asyncio.AbstractEventLoopPolicy] = None):  # NOQA
     """Initialize asyncio.
 
-    Sets event loop policy to :class:`uvloop.EventLoopPolicy` if possible.
+    Sets event loop policy (if ``None``, instance of
+    `asyncio.DefaultEventLoopPolicy` is used).
 
-    On Windows, sets policy to :class:`asyncio.WindowsProactorEventLoopPolicy`.
+    After policy is set, new event loop is created and associated with current
+    thread.
+
+    On Windows, `asyncio.WindowsProactorEventLoopPolicy` is used as default
+    policy.
 
     """
-    try:
-        import uvloop
-        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    except ModuleNotFoundError:
+
+    def get_default_policy():
         if sys.platform == 'win32':
-            asyncio.set_event_loop_policy(
-                asyncio.WindowsProactorEventLoopPolicy())
+            return asyncio.WindowsProactorEventLoopPolicy()
+
+        # TODO: evaluate usage of uvloop
+        # with contextlib.suppress(ModuleNotFoundError):
+        #     import uvloop
+        #     return uvloop.EventLoopPolicy()
+
+        return asyncio.DefaultEventLoopPolicy()
+
+    asyncio.set_event_loop_policy(policy or get_default_policy())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
 
 def run_asyncio(future: typing.Awaitable, *,
