@@ -1,19 +1,13 @@
 import pytest
 
 from hat import sbs
-import hat.sbs._cserializer
-import hat.sbs._pyserializer
-import hat.sbs.serializer
 
 
-serializers = [hat.sbs._cserializer,
-               hat.sbs._pyserializer]
+serializers = [sbs.CSerializer,
+               sbs.PySerializer]
 
 
-@pytest.mark.parametrize("serializer", serializers)
-def test_example(monkeypatch, serializer):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
-
+def test_example():
     repo = sbs.Repository('''
         module Module
 
@@ -36,7 +30,8 @@ def test_example(monkeypatch, serializer):
     assert data == decoded_data
 
 
-@pytest.mark.parametrize("serializer", serializers)
+@pytest.mark.parametrize("encode_serializer", serializers)
+@pytest.mark.parametrize("decode_serializer", serializers)
 @pytest.mark.parametrize("schema", ["""
     module Module
 
@@ -120,26 +115,23 @@ def test_example(monkeypatch, serializer):
     ('T20', [0, 1.5, -1, 0.005, 1000.1]),
     ('T21', ['', '', '']),
 ])
-def test_serialization(monkeypatch, serializer, schema, t, v):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
+def test_serialization(encode_serializer, decode_serializer, schema, t, v):
+    encode_repo = sbs.Repository(schema, serializer=encode_serializer)
+    decode_repo = sbs.Repository(schema, serializer=decode_serializer)
 
-    repo = sbs.Repository(schema)
-
-    encoded_v = repo.encode('Module', t, v)
-    decoded_v = repo.decode('Module', t, encoded_v)
+    encoded_v = encode_repo.encode('Module', t, v)
+    decoded_v = decode_repo.decode('Module', t, encoded_v)
 
     assert decoded_v == v
 
 
 @pytest.mark.parametrize("serializer", serializers)
-def test_loading_schema_file(tmp_path, monkeypatch, serializer):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
-
+def test_loading_schema_file(tmp_path, serializer):
     path = tmp_path / 'schema.sbs'
     with open(path, 'w', encoding='utf-8') as f:
         f.write("module M T = Integer")
 
-    repo = sbs.Repository(path)
+    repo = sbs.Repository(path, serializer=serializer)
     value = 123
     encoded_value = repo.encode('M', 'T', value)
     decoded_value = repo.decode('M', 'T', encoded_value)
@@ -147,14 +139,12 @@ def test_loading_schema_file(tmp_path, monkeypatch, serializer):
 
 
 @pytest.mark.parametrize("serializer", serializers)
-def test_parametrized_types(monkeypatch, serializer):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
-
+def test_parametrized_types(serializer):
     repo = sbs.Repository("""
         module M
 
         T1(x) = Integer
-    """)
+    """, serializer=serializer)
 
     encoded = repo.encode(None, 'Integer', 1)
 
@@ -166,9 +156,7 @@ def test_parametrized_types(monkeypatch, serializer):
 
 
 @pytest.mark.parametrize("serializer", serializers)
-def test_multiple_modules(monkeypatch, serializer):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
-
+def test_multiple_modules(serializer):
     repo = sbs.Repository("""
         module M1
 
@@ -177,7 +165,7 @@ def test_multiple_modules(monkeypatch, serializer):
         module M2
 
         T = M1.T
-    """)
+    """, serializer=serializer)
     value = 1
     encoded_value = repo.encode('M2', 'T', value)
     decoded_value = repo.decode('M2', 'T', encoded_value)
@@ -193,10 +181,8 @@ def test_multiple_modules(monkeypatch, serializer):
 @pytest.mark.parametrize("t,v", [
     ('T1', ('b', 1))
 ])
-def test_invalid_serialization(monkeypatch, serializer, schema, t, v):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
-
-    repo = sbs.Repository(schema)
+def test_invalid_serialization(serializer, schema, t, v):
+    repo = sbs.Repository(schema, serializer=serializer)
     with pytest.raises(Exception):
         encoded_v = repo.encode('Module', t, v)
         decoded_v = repo.decode('Module', t, encoded_v)
@@ -229,15 +215,13 @@ def test_invalid_schema(schema):
 
 
 @pytest.mark.parametrize("serializer", serializers)
-def test_repository_initialization_with_repository(monkeypatch, serializer):
-    monkeypatch.setattr(hat.sbs.serializer, '_serializer', serializer)
-
+def test_repository_initialization_with_repository(serializer):
     repo1 = sbs.Repository("""
         module M
 
         T = Integer
-    """)
-    repo2 = sbs.Repository(repo1)
+    """, serializer=serializer)
+    repo2 = sbs.Repository(repo1, serializer=serializer)
 
     assert repo1.encode('M', 'T', 1) == repo2.encode('M', 'T', 1)
 

@@ -169,6 +169,7 @@ def _get_task_sbs(src_paths, dst_paths):
 
     return {'actions': [generate],
             'file_dep': src_paths,
+            'task_dep': ['pymod_sbs'],
             'targets': dst_paths}
 
 

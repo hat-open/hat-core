@@ -1,38 +1,53 @@
+import abc
 import typing
 
 from hat.sbs import common
+from hat.sbs import _pyserializer
 
 try:
-    from hat.sbs import _cserializer as _serializer
-except Exception:
-    from hat.sbs import _pyserializer as _serializer
+    from hat.sbs import _cserializer
+except ImportError:
+    _cserializer = None
 
 
-def encode(refs: typing.Dict[common.Ref, common.Type],
-           t: common.Type,
-           value: common.Data
-           ) -> bytes:
-    """Encode value.
+class Serializer(abc.ABC):
 
-    Args:
-        refs: type references
-        t: SBS type
-        value: value
+    @staticmethod
+    @abc.abstractmethod
+    def encode(refs: typing.Dict[common.Ref, common.Type],
+               t: common.Type,
+               value: common.Data
+               ) -> bytes:
+        """Encode value"""
 
-    """
-    return _serializer.encode(refs, t, value)
+    @staticmethod
+    @abc.abstractmethod
+    def decode(refs: typing.Dict[common.Ref, common.Type],
+               t: common.Type,
+               data: memoryview
+               ) -> common.Data:
+        """Decode data"""
 
 
-def decode(refs: typing.Dict[common.Ref, common.Type],
-           t: common.Type,
-           data: memoryview
-           ) -> typing.Tuple[common.Data, memoryview]:
-    """Decode data.
+class CSerializer(Serializer):
+    """Serializer implementation in C"""
 
-    Args:
-        refs: type references
-        t: SBS type
-        data: data
+    def encode(refs, t, value):
+        if not _cserializer:
+            raise Exception('implementation not available')
+        return _cserializer.encode(refs, t, value)
 
-    """
-    return _serializer.decode(refs, t, data)
+    def decode(refs, t, data):
+        if not _cserializer:
+            raise Exception('implementation not available')
+        return _cserializer.decode(refs, t, data)
+
+
+class PySerializer(Serializer):
+    """Serializer implementation in Python"""
+
+    def encode(refs, t, value):
+        return _pyserializer.encode(refs, t, value)
+
+    def decode(refs, t, data):
+        return _pyserializer.decode(refs, t, data)

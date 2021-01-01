@@ -556,39 +556,7 @@ static PyObject *decode(PyObject *self, PyObject *args) {
                        .size = PyMemoryView_GET_BUFFER(data)->len,
                        .pos = 0};
 
-    PyObject *value = NULL;
-    PyObject *rest = NULL;
-    PyObject *result = NULL;
-
-    value = decode_generic(&buff, module_state, refs, t);
-    if (!value)
-        goto cleanup;
-
-    rest = PySequence_GetSlice(data, buff.pos, buff.size + 1);
-    if (!rest)
-        goto cleanup;
-
-    result = PyTuple_New(2);
-    if (!result)
-        goto cleanup;
-
-    if (PyTuple_SetItem(result, 0, value))
-        goto cleanup;
-    value = NULL;
-
-    if (PyTuple_SetItem(result, 1, rest))
-        goto cleanup;
-    rest = NULL;
-
-cleanup:
-
-    Py_XDECREF(value);
-    Py_XDECREF(rest);
-
-    if (PyErr_Occurred())
-        Py_CLEAR(result);
-
-    return result;
+    return decode_generic(&buff, module_state, refs, t);
 }
 
 

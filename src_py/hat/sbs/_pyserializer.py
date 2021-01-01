@@ -10,6 +10,18 @@ def encode(refs: typing.Dict[common.Ref, common.Type],
            t: common.Type,
            value: common.Data
            ) -> bytes:
+    return _encode_generic(refs, t, value)
+
+
+def decode(refs: typing.Dict[common.Ref, common.Type],
+           t: common.Type,
+           data: memoryview
+           ) -> common.Data:
+    data, _ = _decode_generic(refs, t, data)
+    return data
+
+
+def _encode_generic(refs, t, value):
     while isinstance(t, common.Ref) and t in refs:
         t = refs[t]
     if isinstance(t, common.BooleanType):
@@ -31,11 +43,7 @@ def encode(refs: typing.Dict[common.Ref, common.Type],
     raise ValueError()
 
 
-def decode(refs: typing.Dict[common.Ref, common.Type],
-           t: common.Type,
-           data: memoryview
-           ) -> typing.Tuple[common.Data, memoryview]:
-
+def _decode_generic(refs, t, data):
     while isinstance(t, common.Ref) and t in refs:
         t = refs[t]
     if isinstance(t, common.BooleanType):
@@ -68,10 +76,12 @@ def _decode_Boolean(data):
 def _encode_Integer(value):
     ret = collections.deque()
     while True:
-        temp = (value & 0x7F) | (0x80 if ret else 0)
+        temp = value & 0x7F
+        if not ret:
+            temp |= 0x80
         ret.appendleft(temp)
         value = value >> 7
-        if not value and not (temp & 0x40):
+        if value == 0 and not (temp & 0x40):
             break
         if value == -1 and (temp & 0x40):
             break
@@ -82,7 +92,7 @@ def _decode_Integer(data):
     ret = -1 if data[0] & 0x40 else 0
     while True:
         ret = (ret << 7) | (data[0] & 0x7F)
-        if not (data[0] & 0x80):
+        if data[0] & 0x80:
             return ret, data[1:]
         data = data[1:]
 
@@ -117,23 +127,24 @@ def _decode_Bytes(data):
 def _encode_Array(refs, t, value):
     return bytes(itertools.chain(
         _encode_Integer(len(value)),
-        itertools.chain.from_iterable(encode(refs, t.t, i) for i in value)))
+        itertools.chain.from_iterable(
+            _encode_generic(refs, t.t, i) for i in value)))
 
 
 def _decode_Array(refs, t, data):
     count, data = _decode_Integer(data)
-    ret = []
+    ret = collections.deque()
     for _ in range(count):
-        i, data = decode(refs, t.t, data)
+        i, data = _decode_generic(refs, t.t, data)
         ret.append(i)
-    return ret, data
+    return list(ret), data
 
 
 def _encode_Tuple(refs, t, value):
     if not t.entries:
         return b''
     return bytes(itertools.chain.from_iterable(
-        encode(refs, entry_type, value[entry_name])
+        _encode_generic(refs, entry_type, value[entry_name])
         for entry_name, entry_type in t.entries))
 
 
@@ -142,7 +153,7 @@ def _decode_Tuple(refs, t, data):
         return None, data
     ret = {}
     for entry_name, entry_type in t.entries:
-        ret[entry_name], data = decode(refs, entry_type, data)
+        ret[entry_name], data = _decode_generic(refs, entry_type, data)
     return ret, data
 
 
@@ -156,7 +167,7 @@ def _encode_Union(refs, t, value):
         raise Exception()
     return bytes(itertools.chain(
         _encode_Integer(i),
-        encode(refs, entry_type, value[1])))
+        _encode_generic(refs, entry_type, value[1])))
 
 
 def _decode_Union(refs, t, data):
@@ -164,5 +175,5 @@ def _decode_Union(refs, t, data):
         return None, data
     i, data = _decode_Integer(data)
     entry_name, entry_type = t.entries[i]
-    value, data = decode(refs, entry_type, data)
+    value, data = _decode_generic(refs, entry_type, data)
     return (entry_name, value), data

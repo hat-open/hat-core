@@ -19,7 +19,10 @@ class Repository:
 
     """
 
-    def __init__(self, *args: typing.Union['Repository', pathlib.Path, str]):
+    def __init__(self,
+                 *args: typing.Union['Repository', pathlib.Path, str],
+                 serializer=serializer.CSerializer):
+        self._serializer = serializer
         self._modules = list(_parse_args(args))
         self._refs = evaluator.evaluate_modules(self._modules)
 
@@ -30,7 +33,7 @@ class Repository:
                ) -> bytes:
         """Encode value."""
         ref = common.Ref(module_name, type_name)
-        return serializer.encode(self._refs, ref, value)
+        return self._serializer.encode(self._refs, ref, value)
 
     def decode(self,
                module_name: typing.Optional[str],
@@ -39,7 +42,7 @@ class Repository:
                ) -> common.Data:
         """Decode data."""
         ref = common.Ref(module_name, type_name)
-        return serializer.decode(self._refs, ref, memoryview(data))[0]
+        return self._serializer.decode(self._refs, ref, memoryview(data))
 
     def to_json(self) -> json.Data:
         """Export repository content as json serializable data.
