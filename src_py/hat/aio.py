@@ -169,6 +169,11 @@ async def call_on_done(f: typing.Awaitable,
     When `f` is done, `fn` is called with `args` and `kwargs` by using
     :func:`call`.
 
+    If this coroutine is canceled before `f` is done, `f` is canceled and `fn`
+    is not called.
+
+    If this corotuine is canceled after `f` is done, `fn` call is canceled.
+
     Args:
         f: awaitable future
         fn: function or coroutine
@@ -517,6 +522,10 @@ class Queue:
                 waiter.set_result(None)
 
 
+ExceptionCb = typing.Callable[[Exception], None]
+"""Exception callback"""
+
+
 class Group:
     """Group of asyncio Tasks.
 
@@ -532,14 +541,10 @@ class Group:
     If `exception_cb` handler is `None`, exceptions are logged with level
     WARNING.
 
-    Args:
-        exception_cb: exception handler
-        loop: asyncio loop
-
     """
 
     def __init__(self,
-                 exception_cb: typing.Optional[typing.Callable[[Exception], None]] = None,  # NOQA
+                 exception_cb: typing.Optional[ExceptionCb] = None,
                  *,
                  loop: typing.Optional[asyncio.AbstractEventLoop] = None):
         self._exception_cb = exception_cb
@@ -610,14 +615,9 @@ class Group:
         """Wrap the result of a `fn` into a Task and schedule its execution.
         Return the Task object.
 
-        Function is called with provided `args` and `kwargs`.
+        Function `fn` is called with provided `args` and `kwargs`.
         Resulting Task is shielded and can be canceled only with
         :meth:`Group.async_close`.
-
-        Args:
-            fn: function
-            args: function arguments
-            kwargs: function keyword arguments
 
         """
         if self._closing.done():
@@ -632,8 +632,7 @@ class Group:
         running tasks are optionally canceled. Once closing of all subgroups
         and execution of all tasks is completed, closed Future is set.
 
-        Args:
-            cancel: cancel running tasks
+        Tasks are canceled if `cancel` is ``True``.
 
         """
         for child in list(self._children):
@@ -655,12 +654,7 @@ class Group:
             self._on_closed()
 
     async def async_close(self, cancel: bool = True):
-        """Close Group and wait until closed is ``True``.
-
-        Args:
-            cancel: cancel running tasks
-
-        """
+        """Close Group and wait until closed is ``True``."""
         self.close(cancel)
         await self.wait_closed()
 

@@ -1,5 +1,4 @@
 import asyncio
-import builtins
 import collections
 import signal
 import subprocess
@@ -40,99 +39,127 @@ async def test_first():
     assert queue.empty()
 
 
-async def test_queue():
-    queue = aio.Queue()
-    assert not queue.is_closed
-    f = asyncio.ensure_future(queue.get())
-    assert not f.done()
-    queue.put_nowait(1)
-    assert 1 == await f
-    for _ in range(5):
-        queue.close()
-        assert queue.is_closed
-    with pytest.raises(aio.QueueClosedError):
-        await queue.get()
+async def test_uncancellable():
+    f1 = asyncio.Future()
+
+    async def f():
+        return await f1
+
+    f2 = aio.uncancellable(f(), raise_cancel=False)
+    f3 = asyncio.ensure_future(f2)
+    asyncio.get_event_loop().call_soon(f3.cancel)
+    f1.set_result(123)
+    result = await f3
+    assert result == 123
 
 
-async def test_queue_get_until_empty():
-    queue = aio.Queue()
-    queue.put_nowait(1)
-    queue.put_nowait(2)
-    queue.put_nowait(3)
-    result = await queue.get_until_empty()
-    assert result == 3
+async def test_uncancellable_exception():
+    f1 = asyncio.Future()
+    e = Exception()
+
+    async def f():
+        await asyncio.sleep(0)
+        return await f1
+
+    f2 = aio.uncancellable(f(), raise_cancel=False)
+    f3 = asyncio.ensure_future(f2)
+    asyncio.get_event_loop().call_soon(f3.cancel)
+    f1.set_exception(e)
+    try:
+        await f3
+    except Exception as ex:
+        exc = ex
+    assert exc is e
 
 
-def test_queue_get_nowait_until_empty():
-    queue = aio.Queue()
-    queue.put_nowait(1)
-    queue.put_nowait(2)
-    queue.put_nowait(3)
-    result = queue.get_nowait_until_empty()
-    assert result == 3
+async def test_uncancellable_vs_shield():
 
+    async def set_future(f, value):
+        await asyncio.sleep(0.001)
+        f.set_result(value)
 
-async def test_queue_with_size():
-    queue_size = 5
-    queue = aio.Queue(queue_size)
-    assert queue.maxsize == queue_size
-
-    for _ in range(queue_size):
-        queue.put_nowait(None)
-
-    with pytest.raises(aio.QueueFullError):
-        queue.put_nowait(None)
-
-
-async def test_queue_put():
-    queue = aio.Queue(1)
-    await queue.put(1)
-    put_future = asyncio.ensure_future(queue.put(1))
-    asyncio.get_event_loop().call_soon(queue.close)
-    with pytest.raises(aio.QueueClosedError):
-        await put_future
-
-
-async def test_queue_put_cancel():
-    queue = aio.Queue(1)
-    await queue.put(1)
-    put_future = asyncio.ensure_future(queue.put(1))
-    asyncio.get_event_loop().call_soon(put_future.cancel)
+    future = asyncio.Future()
+    t1 = asyncio.shield(set_future(future, 1))
+    t2 = asyncio.ensure_future(t1)
+    asyncio.get_event_loop().call_soon(t2.cancel)
     with pytest.raises(asyncio.CancelledError):
-        await put_future
+        await t2
+    assert not future.done()
+    await future
+    assert future.result() == 1
+
+    future = asyncio.Future()
+    t1 = aio.uncancellable(set_future(future, 1), raise_cancel=True)
+    t2 = asyncio.ensure_future(t1)
+    asyncio.get_event_loop().call_soon(t2.cancel)
+    with pytest.raises(asyncio.CancelledError):
+        await t2
+    assert future.done()
+    assert future.result() == 1
+
+    future = asyncio.Future()
+    t1 = aio.uncancellable(set_future(future, 1), raise_cancel=False)
+    t2 = asyncio.ensure_future(t1)
+    asyncio.get_event_loop().call_soon(t2.cancel)
+    await t2
+    assert future.done()
+    assert future.result() == 1
 
 
-async def test_queue_async_iterable():
-    queue = aio.Queue()
-    data = collections.deque()
+async def test_call():
 
-    for i in range(10):
-        queue.put_nowait(i)
-        data.append(i)
+    def f1(x):
+        return x
 
-    queue.close()
+    async def f2(x):
+        await asyncio.sleep(0)
+        return x
 
-    async for i in queue:
-        assert i == data.popleft()
+    result = await aio.call(f1, 123)
+    assert result == 123
 
-    assert queue.empty()
-    assert len(data) == 0
+    result = await aio.call(f2, 123)
+    assert result == 123
 
 
-def test_init_asyncio_without_libuv(monkeypatch):
+async def test_call_on_cancel():
+    exceptions = aio.Queue()
+    called = asyncio.Future()
+    group = aio.Group(exceptions.put_nowait)
 
-    def invalid_import(*args, **kwargs):
-        raise ModuleNotFoundError
+    async def closing(called):
+        called.set_result(True)
+        assert group.is_closing
+        assert not group.is_closed
 
-    platform = sys.platform
-    with monkeypatch.context() as ctx:
-        ctx.setattr(sys, 'platform', 'win32')
-        ctx.setattr(builtins, '__import__', invalid_import)
-        if platform == 'win32':
-            aio.init_asyncio()
-        else:
-            with pytest.raises(AttributeError):
-                aio.init_asyncio()
+    group.spawn(aio.call_on_cancel, closing, called)
+    assert not called.done()
+
+    await group.async_close()
+    assert called.done()
+    assert exceptions.empty()
+
+
+async def test_call_on_done():
+    f1 = asyncio.Future()
+    f2 = asyncio.Future()
+    f3 = asyncio.ensure_future(aio.call_on_done(f1, f2.set_result, 123))
+
+    await asyncio.sleep(0)
+    assert not f1.done()
+    assert not f2.done()
+    assert not f3.done()
+
+    f1.set_result(None)
+    await asyncio.wait_for(f3, 0.001)
+    assert f2.result() == 123
+    assert f3.result() is None
+
+
+async def test_executor():
+    executor = aio.create_executor()
+    result = await executor(lambda: threading.current_thread().name)
+    assert threading.current_thread().name != result
 
 
 @pytest.mark.skipif(sys.platform == 'win32',
@@ -209,38 +236,116 @@ def test_run_asyncio_with_multiple_signals():
     t.join()
 
 
-async def test_call():
-
-    def f1(x):
-        return x
-
-    async def f2(x):
-        await asyncio.sleep(0)
-        return x
-
-    result = await aio.call(f1, 123)
-    assert result == 123
-
-    result = await aio.call(f2, 123)
-    assert result == 123
+# TODO: test run_asyncio with `handle_signals` and `create_loop`
 
 
-async def test_call_on_cancel():
-    exceptions = aio.Queue()
-    called = asyncio.Future()
-    group = aio.Group(exceptions.put_nowait)
+async def test_queue():
+    queue = aio.Queue()
+    assert not queue.is_closed
+    f = asyncio.ensure_future(queue.get())
+    assert not f.done()
+    queue.put_nowait(1)
+    assert 1 == await f
+    for _ in range(5):
+        queue.close()
+        assert queue.is_closed
+    with pytest.raises(aio.QueueClosedError):
+        await queue.get()
 
-    async def closing(called):
-        called.set_result(True)
-        assert group.is_closing
-        assert not group.is_closed
 
-    group.spawn(aio.call_on_cancel, closing, called)
-    assert not called.done()
+def test_queue_str():
+    queue = aio.Queue()
+    result = str(queue)
+    assert isinstance(result, str)
+    assert result
 
-    await group.async_close()
-    assert called.done()
-    assert exceptions.empty()
+
+def test_queue_len():
+    count = 10
+    queue = aio.Queue()
+    assert len(queue) == 0
+
+    for i in range(count):
+        queue.put_nowait(None)
+        assert len(queue) == i + 1
+        assert queue.qsize() == i + 1
+
+    for i in range(count):
+        queue.get_nowait()
+        assert queue.qsize() == count - i - 1
+
+    assert len(queue) == 0
+
+
+def test_queue_get_nowait():
+    queue = aio.Queue()
+    with pytest.raises(aio.QueueEmptyError):
+        queue.get_nowait()
+
+
+async def test_queue_get_until_empty():
+    queue = aio.Queue()
+    queue.put_nowait(1)
+    queue.put_nowait(2)
+    queue.put_nowait(3)
+    result = await queue.get_until_empty()
+    assert result == 3
+
+
+def test_queue_get_nowait_until_empty():
+    queue = aio.Queue()
+    queue.put_nowait(1)
+    queue.put_nowait(2)
+    queue.put_nowait(3)
+    result = queue.get_nowait_until_empty()
+    assert result == 3
+
+
+async def test_queue_with_size():
+    queue_size = 5
+    queue = aio.Queue(queue_size)
+    assert queue.maxsize == queue_size
+
+    for _ in range(queue_size):
+        queue.put_nowait(None)
+
+    with pytest.raises(aio.QueueFullError):
+        queue.put_nowait(None)
+
+
+async def test_queue_put():
+    queue = aio.Queue(1)
+    await queue.put(1)
+    put_future = asyncio.ensure_future(queue.put(1))
+    asyncio.get_event_loop().call_soon(queue.close)
+    with pytest.raises(aio.QueueClosedError):
+        await put_future
+
+
+async def test_queue_put_cancel():
+    queue = aio.Queue(1)
+    await queue.put(1)
+    put_future = asyncio.ensure_future(queue.put(1))
+    asyncio.get_event_loop().call_soon(put_future.cancel)
+    with pytest.raises(asyncio.CancelledError):
+        await put_future
+
+
+async def test_queue_async_iterable():
+    queue = aio.Queue()
+    data = collections.deque()
+
+    for i in range(10):
+        queue.put_nowait(i)
+        data.append(i)
+
+    queue.close()
+
+    async for i in queue:
+        assert i == data.popleft()
+
+    assert queue.empty()
+    assert len(data) == 0
 
 
 async def test_group():
@@ -249,6 +354,9 @@ async def test_group():
     assert not any(future.done() for future in futures)
     await group.async_close()
     assert all(future.done() for future in futures)
+    assert not group.is_open
+    assert group.is_closing
+    assert group.is_closed
 
 
 async def test_group_spawn_async_close():
@@ -375,57 +483,3 @@ async def test_group_default_exception_handler():
 
     _, kwargs = mock.call_args
     assert kwargs['exc_info'] is e
-
-
-async def test_uncancellable():
-    f1 = asyncio.Future()
-
-    async def f():
-        return await f1
-
-    f2 = aio.uncancellable(f(), raise_cancel=False)
-    f3 = asyncio.ensure_future(f2)
-    asyncio.get_event_loop().call_soon(f3.cancel)
-    f1.set_result(123)
-    result = await f3
-    assert result == 123
-
-
-async def test_uncancellable_vs_shield():
-
-    async def set_future(f, value):
-        await asyncio.sleep(0.001)
-        f.set_result(value)
-
-    future = asyncio.Future()
-    t1 = asyncio.shield(set_future(future, 1))
-    t2 = asyncio.ensure_future(t1)
-    asyncio.get_event_loop().call_soon(t2.cancel)
-    with pytest.raises(asyncio.CancelledError):
-        await t2
-    assert not future.done()
-    await future
-    assert future.result() == 1
-
-    future = asyncio.Future()
-    t1 = aio.uncancellable(set_future(future, 1), raise_cancel=True)
-    t2 = asyncio.ensure_future(t1)
-    asyncio.get_event_loop().call_soon(t2.cancel)
-    with pytest.raises(asyncio.CancelledError):
-        await t2
-    assert future.done()
-    assert future.result() == 1
-
-    future = asyncio.Future()
-    t1 = aio.uncancellable(set_future(future, 1), raise_cancel=False)
-    t2 = asyncio.ensure_future(t1)
-    asyncio.get_event_loop().call_soon(t2.cancel)
-    await t2
-    assert future.done()
-    assert future.result() == 1
-
-
-async def test_executor():
-    executor = aio.create_executor()
-    result = await executor(lambda: threading.current_thread().name)
-    assert threading.current_thread().name != result
