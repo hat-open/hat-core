@@ -109,27 +109,19 @@ class Connection(aio.Resource):
         """Async group"""
         return self._async_group
 
-    async def read(self, size):
+    async def read(self, size: int) -> bytes:
         """Read
 
         Args:
-            size (int): number of bytes to read
-
-        Returns:
-            bytes
+            size: number of bytes to read
 
         """
         result = asyncio.Future()
         await self._read_queue.put(([_ext_read, self._s, size], result))
         return await result
 
-    async def write(self, data):
-        """Write
-
-        Args:
-            data (bytes): data
-
-        """
+    async def write(self, data: bytes):
+        """Write"""
         result = asyncio.Future()
         await self._write_queue.put(([_ext_write, self._s, data], result))
         await result

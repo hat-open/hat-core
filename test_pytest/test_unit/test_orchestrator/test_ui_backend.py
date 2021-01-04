@@ -1,24 +1,24 @@
-import pytest
-import aiohttp
 import asyncio
 import contextlib
+import typing
 import urllib
+
+import aiohttp
+import pytest
 
 from hat import aio
 from hat import json
 from hat import juggler
-from hat import util
 import hat.orchestrator.component
 import hat.orchestrator.ui
 
 
-Component = util.namedtuple(
-    'Component',
-    ['id', 'int'],
-    ['name', 'str'],
-    ['delay', 'float'],
-    ['revive', 'bool'],
-    ['status', 'str'])
+class Component(typing.NamedTuple):
+    id: int
+    name: str
+    delay: float
+    revive: bool
+    status: str
 
 
 status_ui_delay = 0.1

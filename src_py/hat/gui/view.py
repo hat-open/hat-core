@@ -1,6 +1,7 @@
 from pathlib import Path
 import base64
 import logging
+import typing
 
 from hat import aio
 from hat import json
@@ -11,11 +12,10 @@ import hat.gui.vt
 mlog = logging.getLogger(__name__)
 
 
-View = util.namedtuple(
-    'View',
-    ['name', 'str'],
-    ['conf', 'json.Data'],
-    ['data', 'Dict[str,json.Data]'])
+class View(typing.NamedTuple):
+    name: str
+    conf: json.Data
+    data: typing.Dict[str, json.Data]
 
 
 async def create_view_manager(conf):

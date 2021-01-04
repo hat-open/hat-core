@@ -6,10 +6,6 @@ To implement communication with other Hat components, user should always
 implement independent communication service (or use one of predefined
 services).
 
-Attributes:
-    mlog (logging.Logger): module logger
-    sbs_repo (sbs.Repository): chatter message definition SBS repository
-
 """
 
 from pathlib import Path
@@ -18,46 +14,57 @@ import contextlib
 import logging
 import math
 import ssl
+import typing
 import urllib.parse
 
 from hat import aio
 from hat import sbs
-from hat import util
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
-sbs_repo = sbs.Repository.from_json(Path(__file__).parent / 'sbs_repo.json')
+sbs_repo: sbs.Repository = sbs.Repository.from_json(Path(__file__).parent /
+                                                    'sbs_repo.json')
+"""Chatter message definition SBS repository"""
 
 
-Msg = util.namedtuple(['Msg', "Received message"],
-                      ['conn', "Connection: connection"],
-                      ['data', "Data: data"],
-                      ['conv', "Conversation: conversation"],
-                      ['first', "bool: first flag"],
-                      ['last', "bool: last flag"],
-                      ['token', "bool: token flag"])
+class Data(typing.NamedTuple):
+    module: typing.Optional[str]
+    """SBS module name"""
+    type: str
+    """SBS type name"""
+    data: sbs.Data
 
 
-Data = util.namedtuple(['Data', "Message data"],
-                       ['module', "Optional[str]: SBS module name"],
-                       ['type', "str: SBS type name"],
-                       ['data', "sbs.Data: data"])
+class Conversation(typing.NamedTuple):
+    conn: 'Connection'
+    owner: bool
+    first_id: int
 
 
-Conversation = util.namedtuple(['Conversation', "Conversation"],
-                               ['conn', "Connection: connection"],
-                               ['owner', "bool: owner flag"],
-                               ['first_id', "int: first message id"])
+class Msg(typing.NamedTuple):
+    conn: 'Connection'
+    data: Data
+    conv: Conversation
+    first: bool
+    last: bool
+    token: bool
 
 
 class ConnectionClosedError(Exception):
     """Error signaling closed connection"""
 
 
-async def connect(sbs_repo, address, *, pem_file=None, ping_timeout=20,
-                  connect_timeout=5, queue_maxsize=0):
+async def connect(sbs_repo: sbs.Repository,
+                  address: str,
+                  *,
+                  pem_file: typing.Optional[str] = None,
+                  ping_timeout: float = 20,
+                  connect_timeout: float = 5,
+                  queue_maxsize: int = 0
+                  ) -> 'Connection':
     """Connect to remote server
 
     `sbs_repo` should include `hat.chatter.sbs_repo` and aditional message data
@@ -72,18 +79,13 @@ async def connect(sbs_repo, address, *, pem_file=None, ping_timeout=20,
     PEM file is used only for ssl connection. If PEM file is not defined,
     certificate's authenticity is not established.
 
-    If `ping_timeout` is ``None`` or 0, ping service is not registered.
+    If `ping_timeout` is ``None`` or 0, ping service is not registered,
+    otherwise it represents ping timeout in seconds.
 
-    Args:
-        sbs_repo (hat.sbs.Repository): chatter SBS repository
-        address (str): address
-        pem_file (Optional[str]): path to pem file
-        ping_timeout (float): ping timeout in seconds
-        connect_timeout (float): connect timeout in seconds
-        queue_maxsize (int): receive message queue maximum size (0 - unlimited)
+    `connect_timeout` represents connect timeout in seconds.
 
-    Returns:
-        Connection: newly created connection
+    `queue_maxsize` represents receive message queue maximum size. If set to
+    ``0``, queue size is unlimited.
 
     Raises:
         OSError: could not connect to specified address
@@ -111,8 +113,14 @@ async def connect(sbs_repo, address, *, pem_file=None, ping_timeout=20,
     return conn
 
 
-async def listen(sbs_repo, address, on_connection_cb, *, pem_file=None,
-                 ping_timeout=20, queue_maxsize=0):
+async def listen(sbs_repo: sbs.Repository,
+                 address: str,
+                 on_connection_cb: typing.Callable[['Connection'], None],
+                 *,
+                 pem_file: typing.Optional[str] = None,
+                 ping_timeout: float = 20,
+                 queue_maxsize: int = 0
+                 ) -> 'Server':
     """Create listening server.
 
     `sbs_repo` is same as for :meth:`connect`.
@@ -121,18 +129,9 @@ async def listen(sbs_repo, address, on_connection_cb, *, pem_file=None,
 
     If ssl connection is used, pem_file is required.
 
-    If `ping_timeout` is ``None`` or 0, ping service is not registered.
+    `ping_timeout` is same as for :meth:`connect`.
 
-    Args:
-        sbs_repo (hat.sbs.Repository): chatter SBS repository
-        address (str): address
-        on_connection_cb (Callable[[Connection], None]): on connection callback
-        pem_file (Optional[str]): path to pem file
-        ping_timeout (float): ping timeout in seconds
-        queue_maxsize (int): receive message queue maximum size (0 - unlimited)
-
-    Returns:
-        Server
+    `queue_maxsize` is same as for :meth:`connect`.
 
     Raises:
         OSError: could not listen on specified address
@@ -190,8 +189,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[str]: listening addresses"""
+    def addresses(self) -> typing.List[str]:
+        """Listening addresses"""
         return self._addresses
 
 
@@ -224,20 +223,17 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def local_address(self):
-        """str: Local address"""
+    def local_address(self) -> str:
+        """Local address"""
         return self._transport.local_address
 
     @property
-    def remote_address(self):
-        """str: Remote address"""
+    def remote_address(self) -> str:
+        """Remote address"""
         return self._transport.remote_address
 
-    async def receive(self):
+    async def receive(self) -> Msg:
         """Receive incomming message
-
-        Returns:
-            Msg
 
         Raises:
             ConnectionClosedError
@@ -248,29 +244,25 @@ class Connection(aio.Resource):
         except aio.QueueClosedError:
             raise ConnectionClosedError()
 
-    def send(self, msg_data, *, conv=None, last=True, token=True,
-             timeout=None, timeout_cb=None):
+    def send(self,
+             msg_data: Data,
+             *,
+             conv: typing.Optional[Conversation] = None,
+             last: bool = True,
+             token: bool = True,
+             timeout: typing.Optional[float] = None,
+             timeout_cb: typing.Optional[typing.Callable[[Conversation],
+                                                         None]] = None
+             ) -> Conversation:
         """Send message
 
-        Conversation timeout callbacks are triggered only for opened
-        connection. Once connection is closed, all active conversations are
-        closed without triggering timeout callbacks.
+        If `conv` is ``None``, new conversation is created.
 
-        Sending message on closed connection will silently discard message.
-
-        Args:
-            msg_data (Data): message data
-            conv (Optional[Conversation]): existing conversation
-                or None for new conversation
-            last (bool): conversation's last flag
-            token (bool): conversation's token flag
-            timeout (Optional[float]): conversation timeout in seconds or None
-                for unlimited timeout
-            conv_timeout_cb (Optional[Callable[[Conversation],None]]):
-                conversation timeout callback
-
-        Returns:
-            Conversation
+        `timeout` represents conversation timeout in seconds. If this argument
+        is ``None``, conversation timeout will not be triggered. Conversation
+        timeout callbacks are triggered only for opened connection. Once
+        connection is closed, all active conversations are closed without
+        triggering timeout callbacks.
 
         Raises:
             ConnectionClosedError

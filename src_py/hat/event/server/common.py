@@ -2,12 +2,11 @@
 
 import abc
 import enum
-import typing
 import itertools
+import typing
 
 from hat import aio
 from hat import json
-from hat import util
 from hat.event.common import *  # NOQA
 
 
@@ -16,26 +15,25 @@ SourceType = enum.Enum('SourceType', [
     'MODULE'])
 
 
-Source = util.namedtuple(
-    'Source',
-    ['type', 'SourceType: source type'],
-    ['name', 'Optional[str]: source name (module name)'],
-    ['id', 'int: identifier'])
+class Source(typing.NamedTuple):
+    type: SourceType
+    name: typing.Optional[str]
+    id: int
 
 
-ProcessEvent = util.namedtuple(
-    'ProcessEvent',
-    ['event_id', 'EventId: event identifier'],
-    ['source', 'Source: source'],
-    ['event_type', 'EventType: event type'],
-    ['source_timestamp', 'Optional[Timestamp]: source timestamp'],
-    ['payload', 'Optional[EventPayload]: payload'])
+class ProcessEvent(typing.NamedTuple):
+    event_id: EventId  # NOQA
+    source: Source
+    event_type: EventType  # NOQA
+    source_timestamp: typing.Optional[Timestamp]  # NOQA
+    payload: typing.Optional[EventPayload]  # NOQA
 
 
-SessionChanges = util.namedtuple(
-    'SessionChanges',
-    ['new', 'List[ProcessEvent]: new register events'],
-    ['deleted', 'List[ProcessEvent]: deleted register events'])
+class SessionChanges(typing.NamedTuple):
+    new: typing.List[ProcessEvent]
+    """new process events"""
+    deleted: typing.List[ProcessEvent]
+    """deleted process events"""
 
 
 BackendConf = json.Data
@@ -51,8 +49,9 @@ class Backend(aio.Resource):
     Backend is implemented as python module which is dynamically imported.
     It is expected that this module implements:
 
-    * json_schema_id (Optional[str]): JSON schema id
-    * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
+    * json_schema_id (typing.Optional[str]): JSON schema id
+    * json_schema_repo (typing.Optional[json.SchemaRepository]):
+        JSON schema repo
     * create (CreateBackend): create new backend instance
 
     If module defines JSON schema repositoy and JSON schema id, JSON schema
@@ -61,41 +60,25 @@ class Backend(aio.Resource):
 
     """
 
-    async def get_last_event_id(self, server_id):
-        """Get last registered event id associated with server id
-
-        Args:
-            server_id (int): server identifier
-
-        Returns:
-            common.EventId
-
-        """
+    @abc.abstractmethod
+    async def get_last_event_id(self,
+                                server_id: int
+                                ) -> EventId:  # NOQA
+        """Get last registered event id associated with server id"""
 
     @abc.abstractmethod
-    async def register(self, events):
+    async def register(self, events: typing.List[Event]):  # NOQA
         """Register events
 
         .. todo::
 
             do we need list of success flags as result?
 
-        Args:
-            events (List[Event]): events
-
         """
 
     @abc.abstractmethod
-    async def query(self, data):
-        """Query events
-
-        Args:
-            data (QueryData): query data
-
-        Returns:
-            List[Event]
-
-        """
+    async def query(self, data: QueryData) -> typing.List[Event]:  # NOQA
+        """Query events"""
 
 
 class EventTypeRegistryStorage(abc.ABC):
@@ -107,26 +90,21 @@ class EventTypeRegistryStorage(abc.ABC):
     """
 
     @abc.abstractmethod
-    async def get_event_type_mappings(self):
+    async def get_event_type_mappings(self) -> typing.Dict[int, EventType]:  # NOQA
         """Get all event type mappings
 
         Returned dict has event type ids as keys and associated event types as
         values.
 
-        Returns:
-            Dict[int,EventType]
-
         """
 
     @abc.abstractmethod
-    async def add_event_type_mappings(self, mappings):
+    async def add_event_type_mappings(self,
+                                      mappings: typing.Dict[int, EventType]):  # NOQA
         """Add new event type mappings
 
         `mappings` dict has event type ids as keys and associated event types
         as values. New mappings are appended to allready existing mappings.
-
-        Args:
-            mappings (Dict[int,EventType]): event type mappings
 
         """
 
@@ -144,8 +122,9 @@ class Module(aio.Resource):
     Module is implemented as python module which is dynamically imported.
     It is expected that this module implements:
 
-        * json_schema_id (Optional[str]): JSON schema id
-        * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
+        * json_schema_id (typing.Optional[str]): JSON schema id
+        * json_schema_repo (typing.Optional[json.SchemaRepository]):
+            JSON schema repo
         * create (CreateModule): create new module instance
 
     If module defines JSON schema repositoy and JSON schema id, JSON schema
@@ -158,35 +137,24 @@ class Module(aio.Resource):
 
     @property
     @abc.abstractmethod
-    def subscriptions(self):
-        """List[EventType]: subscribed event types filter"""
+    def subscriptions(self) -> typing.List[EventType]:  # NOQA
+        """Subscribed event types filter"""
 
     @abc.abstractmethod
-    async def create_session(self):
-        """Create new module session
-
-        Returns:
-            ModuleSession
-
-        """
+    async def create_session(self) -> 'ModuleSession':
+        """Create new module session"""
 
 
 class ModuleSession(aio.Resource):
 
     @abc.abstractmethod
-    async def process(self, changes):
+    async def process(self, changes: SessionChanges) -> SessionChanges:
         """Process session changes
 
         Changes include only process events which are matched by modules
         subscription filter.
 
         Single module session process is always called sequentially.
-
-        Args:
-            changes (SessionChanges): session changes
-
-        Returns:
-            SessionChanges
 
         """
 
@@ -231,7 +199,7 @@ class EventTypeRegistry:
             event_types (Iterable[EventType]): event types
 
         Returns:
-            List[int]
+            typing.List[int]
 
         """
         new_mappings = {}
@@ -326,7 +294,6 @@ class EventTypeRegistry:
                     yield from self._query_nodes(subnode.nodes, event_subtype)
 
 
-_EventTypeRegistryNode = util.namedtuple(
-    '_EventTypeRegistryNode',
-    ['id', 'int'],
-    ['nodes', 'Dict[str,_EventTypeRegistryNode]'])
+class _EventTypeRegistryNode(typing.NamedTuple):
+    id: int
+    nodes: typing.Dict[str, '_EventTypeRegistryNode']

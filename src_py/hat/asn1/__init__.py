@@ -46,6 +46,7 @@ Value mapping:
 
 import enum
 import pathlib
+import typing
 
 from hat import json
 from hat.asn1 import ber
@@ -101,127 +102,6 @@ __all__ = ['Data',
 Encoding = enum.Enum('Encoding', ['BER'])
 
 
-class Encoder:
-    """ASN1 Encoder
-
-    Args:
-        encoding (Encoding): encoding
-        repository (Repository): repository
-
-    """
-
-    def __init__(self, encoding, repository):
-        self._encoding = encoding
-        self._repository = repository
-
-    @property
-    def syntax_name(self):
-        """ObjectIdentifier: encoder syntax name"""
-        if self._encoding == Encoding.BER:
-            return ber.syntax_name
-        raise ValueError('invalid encoding')
-
-    def encode(self, module, name, value):
-        """Encode value to data
-
-        Args:
-            module (str): module name
-            name (str): type name
-            value (Value): value
-
-        Returns:
-            Data
-
-        """
-        entity = self.encode_value(module, name, value)
-        data = self.encode_entity(entity)
-        return data
-
-    def decode(self, module, name, data):
-        """Decode value from data
-
-        Args:
-            module (str): module name
-            name (str): type name
-            data (Data): data
-
-        Returns:
-            Tuple[Value,Data]: value and remaining data
-
-        """
-        entity, rest = self.decode_entity(data)
-        value = self.decode_value(module, name, entity)
-        return value, rest
-
-    def encode_value(self, module, name, value):
-        """Encode value to entity
-
-        Args:
-            module (str): module name
-            name (str): type name
-            value (Value): value
-
-        Returns:
-            Entity
-
-        """
-        if self._encoding == Encoding.BER:
-            return ber.encode_value(self._repository._refs,
-                                    common.TypeRef(module, name),
-                                    value)
-        raise ValueError('invalid encoding')
-
-    def decode_value(self, module, name, entity):
-        """Decode value from entity
-
-        Args:
-            module (str): module name
-            name (str): type name
-            entity (Entity): entity
-
-        Returns:
-            Value
-
-        """
-        if self._encoding == Encoding.BER:
-            return ber.decode_value(self._repository._refs,
-                                    common.TypeRef(module, name),
-                                    entity)
-        raise ValueError('invalid encoding')
-
-    def encode_entity(self, entity):
-        """Encode entity to data
-
-        Args:
-            module (str): module name
-            name (str): type name
-            entity (Entity): entity
-
-        Returns:
-            Data
-
-        """
-        if self._encoding == Encoding.BER:
-            return ber.encode_entity(entity)
-        raise ValueError('invalid encoding')
-
-    def decode_entity(self, data):
-        """Decode entity from data
-
-        Args:
-            module (str): module name
-            name (str): type name
-            data (Data): data
-
-        Returns:
-            Tuple[Entity,Data]: entity and remaining data
-
-        """
-        if self._encoding == Encoding.BER:
-            return ber.decode_entity(data)
-        raise ValueError('invalid encoding')
-
-
 class Repository:
     """ASN.1 type definition repository.
 
@@ -243,12 +123,11 @@ class Repository:
     the new repository. Previously added type definitions with the
     same references are replaced.
 
-    Args:
-        args (Union[pathlib.PurePath,str,Repository]): init arguments
-
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args: typing.Union[pathlib.PurePath,
+                                           str,
+                                           'Repository']):
         self._refs = {}
         for arg in args:
             if isinstance(arg, pathlib.PurePath):
@@ -261,16 +140,9 @@ class Repository:
                 raise ValueError('invalid argument')
 
     @staticmethod
-    def from_json(data):
-        """Create repository from JSON data representation
-
-        Args:
-            data (Union[pathlib.PurePath,json.Data]): repository data
-
-        Returns:
-            Repository
-
-        """
+    def from_json(data: typing.Union[pathlib.PurePath, json.Data]
+                  ) -> 'Repository':
+        """Create repository from JSON data representation"""
         if isinstance(data, pathlib.PurePath):
             data = json.decode_file(data)
         repo = Repository()
@@ -278,23 +150,13 @@ class Repository:
                       for k, v in data}
         return repo
 
-    def to_json(self):
-        """Represent repository as JSON data
-
-        Returns:
-            json.Data
-
-        """
+    def to_json(self) -> json.Data:
+        """Represent repository as JSON data"""
         return [[common.type_to_json(k), common.type_to_json(v)]
                 for k, v in self._refs.items()]
 
-    def generate_html_doc(self):
-        """Generate HTML documentation
-
-        Returns:
-            str
-
-        """
+    def generate_html_doc(self) -> str:
+        """Generate HTML documentation"""
         return doc.generate_html(self._refs)
 
     def _load_path(self, path):
@@ -308,3 +170,88 @@ class Repository:
         from hat.asn1 import parser
         refs = parser.parse(asn1_def)
         self._refs.update(refs)
+
+
+class Encoder:
+    """ASN1 Encoder"""
+
+    def __init__(self,
+                 encoding: Encoding,
+                 repository: Repository):
+        self._encoding = encoding
+        self._repository = repository
+
+    @property
+    def syntax_name(self) -> ObjectIdentifier:
+        """Encoder syntax name"""
+        if self._encoding == Encoding.BER:
+            return ber.syntax_name
+        raise ValueError('invalid encoding')
+
+    def encode(self,
+               module: str,
+               name: str,
+               value: Value
+               ) -> Data:
+        """Encode value to data"""
+        entity = self.encode_value(module, name, value)
+        data = self.encode_entity(entity)
+        return data
+
+    def decode(self,
+               module: str,
+               name: str,
+               data: Data
+               ) -> typing.Tuple[Value, Data]:
+        """Decode value from data
+
+        Returns value and remaining data.
+
+        """
+        entity, rest = self.decode_entity(data)
+        value = self.decode_value(module, name, entity)
+        return value, rest
+
+    def encode_value(self,
+                     module: str,
+                     name: str,
+                     value: Value
+                     ) -> Entity:
+        """Encode value to entity"""
+        if self._encoding == Encoding.BER:
+            return ber.encode_value(self._repository._refs,
+                                    common.TypeRef(module, name),
+                                    value)
+        raise ValueError('invalid encoding')
+
+    def decode_value(self,
+                     module: str,
+                     name: str,
+                     entity: Entity
+                     ) -> Value:
+        """Decode value from entity"""
+        if self._encoding == Encoding.BER:
+            return ber.decode_value(self._repository._refs,
+                                    common.TypeRef(module, name),
+                                    entity)
+        raise ValueError('invalid encoding')
+
+    def encode_entity(self,
+                      entity: Entity
+                      ) -> Data:
+        """Encode entity to data"""
+        if self._encoding == Encoding.BER:
+            return ber.encode_entity(entity)
+        raise ValueError('invalid encoding')
+
+    def decode_entity(self,
+                      data: Data
+                      ) -> typing.Tuple[Entity, Data]:
+        """Decode entity from data
+
+        Returns entity and remaining data.
+
+        """
+        if self._encoding == Encoding.BER:
+            return ber.decode_entity(data)
+        raise ValueError('invalid encoding')

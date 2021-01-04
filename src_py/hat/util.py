@@ -2,7 +2,6 @@
 
 import collections
 import contextlib
-import enum
 import socket
 import sys
 import typing
@@ -14,7 +13,8 @@ T = typing.TypeVar('T')
 
 def first(xs: typing.Iterable[T],
           fn: typing.Callable[[T], bool] = lambda _: True,
-          default: typing.Optional[T] = None) -> typing.Optional[T]:
+          default: typing.Optional[T] = None
+          ) -> typing.Optional[T]:
     """Return the first element from iterable that satisfies predicate `fn`,
     or `default` if no such element exists.
 
@@ -46,6 +46,7 @@ def namedtuple(name: typing.Union[str, typing.Tuple[str, str]],
         field_props: tuple field properties
 
     """
+    warnings.warn("namedtuple is deprecated", DeprecationWarning)
     field_props = [(i, None) if isinstance(i, str) else list(i)
                    for i in field_props]
     cls = collections.namedtuple(name if isinstance(name, str) else name[0],
@@ -68,29 +69,21 @@ def namedtuple(name: typing.Union[str, typing.Tuple[str, str]],
     return cls
 
 
-def extend_enum_doc(cls: enum.EnumMeta,
-                    description: str = None) -> enum.EnumMeta:
-    """Extend enumeration documentation with a list of all members."""
-    warnings.warn("extend_enum_doc is deprecated", DeprecationWarning)
-    doc = description or cls.__doc__
-    cls.__doc__ = doc + "\n\n" + "\n".join("* " + i.name for i in cls)
-    return cls
-
-
 class RegisterCallbackHandle(typing.NamedTuple):
-    """Handle for canceling callback registration.
+    """Handle for canceling callback registration."""
 
-    Args:
-        cancel: cancel callback registration
-
-    """
     cancel: typing.Callable[[], None]
+    """cancel callback registration"""
 
     def __enter__(self):
         return self
 
     def __exit__(self, *args):
         self.cancel()
+
+
+ExceptionCb = typing.Callable[[Exception], None]
+"""Exception callback"""
 
 
 class CallbackRegistry:
@@ -102,24 +95,17 @@ class CallbackRegistry:
     subsequent callbacks is not interrupted. If handler is `None`, the
     exception is reraised and no subsequent callback is notified.
 
-    Args:
-        exception_cb: exception handler
-
     """
 
     def __init__(self,
-                 exception_cb: typing.Optional[typing.Callable[[Exception], None]] = None):  # NOQA
+                 exception_cb: typing.Optional[ExceptionCb] = None):
         self._exception_cb = exception_cb
         self._cbs = []
 
-    def register(self, cb: typing.Callable) -> RegisterCallbackHandle:
-        """Register a callback. A handle for registration canceling is
-        returned.
-
-        Args:
-            cb: callback
-
-        """
+    def register(self,
+                 cb: typing.Callable
+                 ) -> RegisterCallbackHandle:
+        """Register a callback."""
         self._cbs.append(cb)
         return RegisterCallbackHandle(lambda: self._cbs.remove(cb))
 

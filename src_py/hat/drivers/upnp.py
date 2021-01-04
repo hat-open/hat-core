@@ -6,41 +6,37 @@ import xml.sax.handler
 import aiohttp
 
 from hat import aio
-from hat import util
 from hat.drivers import udp
 
 
-DeviceInfo = util.namedtuple(
-    'DeviceInfo',
-    ['addr', 'udp.Address'],
-    ['location', 'str'],
-    ['server', 'str'],
-    ['service', 'str'])
+class DeviceInfo(typing.NamedTuple):
+    addr: udp.Address
+    location: str
+    server: str
+    service: str
 
 
-Icon = util.namedtuple(
-    'Icon',
-    ['mimetype', 'str'],
-    ['width', 'int'],
-    ['height', 'int'],
-    ['depth', 'int'],
-    ['url', 'str'])
+class Icon(typing.NamedTuple):
+    mimetype: str
+    width: int
+    height: int
+    depth: int
+    url: str
 
 
-DeviceDescription = util.namedtuple(
-    'DeviceDescription',
-    ['url', 'Optional[str]'],
-    ['dev_type', 'str'],
-    ['dev_name', 'str'],
-    ['manufacturer', 'str'],
-    ['manufacturer_url', 'Optional[str]'],
-    ['model_desc', 'Optional[str]'],
-    ['model_name', 'str'],
-    ['model_number', 'Optional[str]'],
-    ['model_url', 'Optional[str]'],
-    ['serial_number', 'Optional[str]'],
-    ['unique_dev_name', 'str'],
-    ['icons', 'List[Icon]'])
+class DeviceDescription(typing.NamedTuple):
+    url: typing.Optional[str]
+    dev_type: str
+    dev_name: str
+    manufacturer: str
+    manufacturer_url: typing.Optional[str]
+    model_desc: typing.Optional[str]
+    model_name: str
+    model_number: typing.Optional[str]
+    model_url: typing.Optional[str]
+    serial_number: typing.Optional[str]
+    unique_dev_name: str
+    icons: typing.List[Icon]
 
 
 DeviceInfoCb = typing.Callable[[DeviceInfo], None]

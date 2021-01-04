@@ -5,8 +5,6 @@ import contextlib
 import enum
 import typing
 
-from hat import util
-
 
 class DataType(enum.Enum):
     COIL = 1
@@ -34,106 +32,88 @@ class Direction(enum.Enum):
     RESPONSE = 1
 
 
-class ReqPdu(abc.ABC):
-    pass
+class ReadReqPdu(typing.NamedTuple):
+    data_type: DataType
+    address: int
+    quantity: typing.Optional[int]
 
 
-class ResPdu(abc.ABC):
-    pass
+class ReadResPdu(typing.NamedTuple):
+    data_type: DataType
+    values: typing.List[int]
 
 
-class ErrPdu(abc.ABC):
-    pass
+class ReadErrPdu(typing.NamedTuple):
+    data_type: DataType
+    error: Error
 
 
-ReadReqPdu = util.namedtuple(
-    'ReadReqPdu',
-    ['data_type', 'DataType'],
-    ['address', 'int'],
-    ['quantity', 'Optional[int]'])
+class WriteSingleReqPdu(typing.NamedTuple):
+    data_type: DataType
+    address: int
+    value: int
+
+
+class WriteSingleResPdu(typing.NamedTuple):
+    data_type: DataType
+    address: int
+    value: int
+
+
+class WriteSingleErrPdu(typing.NamedTuple):
+    data_type: DataType
+    error: Error
+
+
+class WriteMultipleReqPdu(typing.NamedTuple):
+    data_type: DataType
+    address: int
+    values: typing.List[int]
+
+
+class WriteMultipleResPdu(typing.NamedTuple):
+    data_type: DataType
+    address: int
+    quantity: int
+
+
+class WriteMultipleErrPdu(typing.NamedTuple):
+    data_type: DataType
+    error: Error
+
+
+ReqPdu = type('ReqPdu', (abc.ABC, ), {})
 ReqPdu.register(ReadReqPdu)
-
-
-ReadResPdu = util.namedtuple(
-    'ReadResPdu',
-    ['data_type', 'DataType'],
-    ['values', 'List[int]'])
-ResPdu.register(ReadResPdu)
-
-
-ReadErrPdu = util.namedtuple(
-    'ReadErrPdu',
-    ['data_type', 'DataType'],
-    ['error', 'Error'])
-ErrPdu.register(ReadErrPdu)
-
-
-WriteSingleReqPdu = util.namedtuple(
-    'WriteSingleReqPdu',
-    ['data_type', 'DataType'],
-    ['address', 'int'],
-    ['value', 'int'])
 ReqPdu.register(WriteSingleReqPdu)
-
-
-WriteSingleResPdu = util.namedtuple(
-    'WriteSingleResPdu',
-    ['data_type', 'DataType'],
-    ['address', 'int'],
-    ['value', 'int'])
-ResPdu.register(WriteSingleResPdu)
-
-
-WriteSingleErrPdu = util.namedtuple(
-    'WriteSingleErrPdu',
-    ['data_type', 'DataType'],
-    ['error', 'Error'])
-ErrPdu.register(WriteSingleErrPdu)
-
-
-WriteMultipleReqPdu = util.namedtuple(
-    'WriteMultipleReqPdu',
-    ['data_type', 'DataType'],
-    ['address', 'int'],
-    ['values', 'List[int]'])
 ReqPdu.register(WriteMultipleReqPdu)
 
-
-WriteMultipleResPdu = util.namedtuple(
-    'WriteMultipleResPdu',
-    ['data_type', 'DataType'],
-    ['address', 'int'],
-    ['quantity', 'int'])
+ResPdu = type('ResPdu', (abc.ABC, ), {})
+ResPdu.register(ReadResPdu)
+ResPdu.register(WriteSingleResPdu)
 ResPdu.register(WriteMultipleResPdu)
 
-
-WriteMultipleErrPdu = util.namedtuple(
-    'WriteMultipleErrPdu',
-    ['data_type', 'DataType'],
-    ['error', 'Error'])
+ErrPdu = type('ErrPdu', (abc.ABC, ), {})
+ErrPdu.register(ReadErrPdu)
+ErrPdu.register(WriteSingleErrPdu)
 ErrPdu.register(WriteMultipleErrPdu)
-
 
 Pdu = typing.Union[ReqPdu, ResPdu, ErrPdu]
 
 
-TcpAdu = util.namedtuple(
-    'TcpAdu',
-    ['transaction_id', 'int'],
-    ['device_id', 'int'],
-    ['pdu', 'Pdu'])
+class TcpAdu(typing.NamedTuple):
+    transaction_id: int
+    device_id: int
+    pdu: Pdu
 
 
-RtuAdu = util.namedtuple(
-    'RtuAdu',
-    ['device_id', 'int'],
-    ['pdu', 'Pdu'])
+class RtuAdu(typing.NamedTuple):
+    device_id: int
+    pdu: Pdu
 
 
-AsciiAdu = util.namedtuple(
-    'AsciiAdu',
-    ['device_id', 'int'],
-    ['pdu', 'Pdu'])
+class AsciiAdu(typing.NamedTuple):
+    device_id: int
+    pdu: Pdu
 
 
 Adu = typing.Union[TcpAdu, RtuAdu, AsciiAdu]

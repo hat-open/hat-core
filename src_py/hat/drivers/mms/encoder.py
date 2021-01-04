@@ -1,19 +1,12 @@
 import datetime
 import struct
 
+from hat import asn1
 from hat.drivers.mms import common
 
 
-def encode_request(req):
-    """Encode request
-
-    Args:
-        req (common.Request): request
-
-    Returns:
-        hat.asn1.Value
-
-    """
+def encode_request(req: common.Request) -> asn1.Value:
+    """Encode request"""
     if isinstance(req, common.StatusRequest):
         return 'status', False
 
@@ -75,16 +68,8 @@ def encode_request(req):
     raise ValueError()
 
 
-def decode_request(req):
-    """Decode request
-
-    Args:
-        req (hat.asn1.Value): request
-
-    Returns:
-        common.Request
-
-    """
+def decode_request(req: asn1.Value) -> common.Request:
+    """Decode request"""
     name, data = req
 
     if name == 'status':
@@ -157,16 +142,10 @@ def decode_request(req):
     raise ValueError()
 
 
-def encode_response(res):
+def encode_response(res: common.Response) -> asn1.Value:
     """Encode response
 
     `common.ErrorResponse` is not supported.
-
-    Args:
-        res (common.Response): response
-
-    Returns:
-        hat.asn1.Value
 
     """
     if isinstance(res, common.StatusResponse):
@@ -223,16 +202,10 @@ def encode_response(res):
     raise ValueError()
 
 
-def decode_response(res):
+def decode_response(res: asn1.Value) -> common.Response:
     """Decode response
 
     `common.ErrorResponse` is not supported.
-
-    Args:
-        res (hat.asn1.Value): response
-
-    Returns:
-        common.Response
 
     """
     name, data = res
@@ -287,16 +260,8 @@ def decode_response(res):
     raise ValueError()
 
 
-def encode_unconfirmed(unconfirmed):
-    """Encode unconfirmed
-
-    Args:
-        unconfirmed (common.Unconfirmed): unconfirmed
-
-    Returns:
-        hat.asn1.Value
-
-    """
+def encode_unconfirmed(unconfirmed: common.Unconfirmed) -> asn1.Value:
+    """Encode unconfirmed"""
     if isinstance(unconfirmed, common.EventNotificationUnconfirmed):
         if unconfirmed.time is None:
             transition_time = 'undefined', None
@@ -334,16 +299,8 @@ def encode_unconfirmed(unconfirmed):
     raise ValueError()
 
 
-def decode_unconfirmed(unconfirmed):
-    """Decode unconfirmed
-
-    Args:
-        unconfirmed (hat.asn1.Value): unconfirmed
-
-    Returns:
-        common.Unconfirmed
-
-    """
+def decode_unconfirmed(unconfirmed: asn1.Value) -> common.Unconfirmed:
+    """Decode unconfirmed"""
     name, data = unconfirmed
 
     if name == 'eventNotification':

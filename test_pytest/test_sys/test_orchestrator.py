@@ -1,10 +1,11 @@
-import time
 import asyncio
-import sys
-import subprocess
-import signal
 import psutil
 import pytest
+import signal
+import subprocess
+import sys
+import time
+import typing
 import urllib
 
 from hat import aio
@@ -17,13 +18,12 @@ no_change_delay = 1
 ui_timeout = 0.25
 
 
-Component = util.namedtuple(
-    'Component',
-    ['id', 'int'],
-    ['name', 'str'],
-    ['delay', 'float'],
-    ['revive', 'bool'],
-    ['status', 'str'])
+class Component(typing.NamedTuple):
+    id: int
+    name: str
+    delay: float
+    revive: bool
+    status: str
 
 
 async def create_client(address):

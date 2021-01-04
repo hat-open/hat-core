@@ -13,36 +13,28 @@ syntax_name = [('joint-iso-itu-t', 2),
                ('basic-encoding', 1)]
 
 
-Entity = util.namedtuple(
-    'Entity',
-    ['class_type', 'common.ClassType'],
-    ['tag_number', 'int'],
-    ['content', 'Union[PrimitiveContent,ConstructedContent]'])
+class PrimitiveContent(typing.NamedTuple):
+    value: common.Data
+
+
+class ConstructedContent(typing.NamedTuple):
+    elements: typing.List['Entity']
+
+
+class Entity(typing.NamedTuple):
+    class_type: common.ClassType
+    tag_number: int
+    content: typing.Union[PrimitiveContent, ConstructedContent]
+
+
 common.Entity.register(Entity)
 
 
-PrimitiveContent = util.namedtuple(
-    'PrimitiveContent',
-    ['value', 'Data'])
-
-
-ConstructedContent = util.namedtuple(
-    'ConstructedContent',
-    ['elements', 'List[Entity]'])
-
-
-def encode_value(refs, t, value):
-    """Encode value to entity
-
-    Args:
-        refs (Dict[common.TypeRef,common.Type])
-        t (common.Type): type
-        value (common.Value): value
-
-    Returns:
-        Entity
-
-    """
+def encode_value(refs: typing.Dict[common.TypeRef, common.Type],
+                 t: common.Type,
+                 value: common.Value
+                 ) -> Entity:
+    """Encode value to entity"""
     while isinstance(t, common.TypeRef):
         t = refs[t]
 
@@ -134,18 +126,11 @@ def encode_value(refs, t, value):
     raise ValueError('invalid type definition')
 
 
-def decode_value(refs, t, entity):
-    """Decode value from entity
-
-    Args:
-        refs (Dict[common.TypeRef,common.Type])
-        t (common.Type): type
-        entity (Entity): entity
-
-    Returns:
-        common.Value
-
-    """
+def decode_value(refs: typing.Dict[common.TypeRef, common.Type],
+                 t: common.Type,
+                 entity: Entity
+                 ) -> common.Value:
+    """Decode value from entity"""
     while isinstance(t, common.TypeRef):
         t = refs[t]
 
@@ -233,16 +218,8 @@ def decode_value(refs, t, entity):
     raise ValueError('invalid type definition')
 
 
-def encode_entity(entity):
-    """Encode entity
-
-    Args:
-        entity (Entity): entity
-
-    Returns:
-        common.Data
-
-    """
+def encode_entity(entity: Entity) -> common.Data:
+    """Encode entity"""
     is_primitive = isinstance(entity.content, PrimitiveContent)
     is_constructed = isinstance(entity.content, ConstructedContent)
     entity_bytes = []
@@ -284,14 +261,10 @@ def encode_entity(entity):
     return bytes(entity_bytes)
 
 
-def decode_entity(data):
+def decode_entity(data: common.Data) -> typing.Tuple[Entity, common.Data]:
     """Decode entity
 
-    Args:
-        data (common.Data): data
-
-    Returns:
-        Tuple[Entity,common.Data]: entity and remaining data
+    Returns entity and remaining data.
 
     """
     class_type = common.ClassType(data[0] >> 6)

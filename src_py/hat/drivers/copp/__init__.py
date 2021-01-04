@@ -26,16 +26,15 @@ Address = cosp.Address
 """Address"""
 
 
-ConnectionInfo = util.namedtuple(
-    'ConnectionInfo',
-    ['local_addr', "Address: local address"],
-    ['local_tsel', "Optional[int]: local COTP selector"],
-    ['local_ssel', "Optional[int]: local COSP selector"],
-    ['local_psel', "Optional[int]: local COPP selector"],
-    ['remote_addr', "Address: remote address"],
-    ['remote_tsel', "Optional[int]: remote COTP selector"],
-    ['remote_ssel', "Optional[int]: remote COSP selector"],
-    ['remote_psel', "Optional[int]: remote COPP selector"])
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    local_psel: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
+    remote_psel: typing.Optional[int]
 
 
 ValidateResult = typing.Optional[IdentifiedEntity]
@@ -60,64 +59,36 @@ class SyntaxNames:
     """Syntax name registry
 
     Args:
-        syntax_names (List[asn1.ObjectIdentifier]):
-            list of ASN.1 ObjectIdentifiers representing syntax names
+        syntax_names: list of ASN.1 ObjectIdentifiers representing syntax names
 
     """
 
-    def __init__(self, syntax_names):
+    def __init__(self, syntax_names: typing.List[asn1.ObjectIdentifier]):
         self._syntax_names = {(i * 2 + 1): name
                               for i, name in enumerate(syntax_names)}
 
-    def get_name(self, syntax_id):
-        """Get syntax name associated with id
-
-        Args:
-            syntax_id (int): syntax id
-
-        Returns:
-            asn1.ObjectIdentifier
-
-        """
+    def get_name(self, syntax_id: int) -> asn1.ObjectIdentifier:
+        """Get syntax name associated with id"""
         return self._syntax_names[syntax_id]
 
-    def get_id(self, syntax_name):
-        """Get syntax id associated with name
-
-        Args:
-            syntax_name (asn1.ObjectIdentifier): syntax name
-
-        Returns:
-            int
-
-        """
+    def get_id(self, syntax_name: asn1.ObjectIdentifier) -> int:
+        """Get syntax id associated with name"""
         syntax_id, _ = util.first(self._syntax_names.items(),
                                   lambda i: asn1.is_oid_eq(i[1], syntax_name))
         return syntax_id
 
 
-async def connect(syntax_names, addr,
-                  local_tsel=None, remote_tsel=None,
-                  local_ssel=None, remote_ssel=None,
-                  local_psel=None, remote_psel=None,
-                  user_data=None):
-    """Connect to COPP server
-
-    Args:
-        syntax_names (SyntaxNames): syntax names
-        addr (Address): remote address
-        local_tsel (Optional[int]): local COTP selector
-        remote_tsel (Optional[int]): remote COTP selector
-        local_ssel (Optional[int]): local COSP selector
-        remote_ssel (Optional[int]): remote COSP selector
-        local_psel (Optional[int]): local COPP selector
-        remote_psel (Optional[int]): remote COPP selector
-        user_data (Optional[IdentifiedEntity]): connect request user data
-
-    Returns:
-        Connection
-
-    """
+async def connect(syntax_names: SyntaxNames,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -> 'Connection':
+    """Connect to COPP server"""
     cp_ppdu = _cp_ppdu(syntax_names, local_psel, remote_psel, user_data)
     cp_ppdu_data = _encode('CP-type', cp_ppdu)
     cosp_conn = await cosp.connect(addr=addr,
@@ -137,17 +108,17 @@ async def connect(syntax_names, addr,
         raise
 
 
-async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
+async def listen(validate_cb: ValidateCb,
+                 connection_cb: ConnectionCb,
+                 addr: Address = Address('0.0.0.0', 102)
+                 ) -> 'Server':
     """Create COPP listening server
 
     Args:
-        validate_cb (ValidateCb): callback function or coroutine called on new
+        validate_cb: callback function or coroutine called on new
             incomming connection request prior to creating connection object
-        connection_cb (ConnectionCb): new connection callback
-        addr (Address): local listening address
-
-    Returns:
-        Server
+        connection_cb: new connection callback
+        addr: local listening address
 
     """
 
@@ -216,8 +187,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[Address]: listening addresses"""
+    def addresses(self) -> typing.List[Address]:
+        """Listening addresses"""
         return self._cosp_server.addresses
 
 
@@ -263,61 +234,42 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """ConnectionInfo: connection info"""
+    def info(self) -> ConnectionInfo:
+        """Connection info"""
         return self._info
 
     @property
-    def syntax_names(self):
-        """SyntaxNames: syntax names"""
+    def syntax_names(self) -> SyntaxNames:
+        """Syntax names"""
         return self._syntax_names
 
     @property
-    def conn_req_user_data(self):
-        """IdentifiedEntity: connect request's user data"""
+    def conn_req_user_data(self) -> IdentifiedEntity:
+        """Connect request's user data"""
         return self._conn_req_user_data
 
     @property
-    def conn_res_user_data(self):
-        """IdentifiedEntity: connect response's user data"""
+    def conn_res_user_data(self) -> IdentifiedEntity:
+        """Connect response's user data"""
         return self._conn_res_user_data
 
-    def close(self, user_data=None):
-        """Close connection
-
-        Args:
-            user_data (Optional[IdentifiedEntity]): closing message user data
-
-        """
+    def close(self, user_data: typing.Optional[IdentifiedEntity] = None):
+        """Close connection"""
         self._close_ppdu = _aru_ppdu(self._syntax_names, user_data)
         self._async_group.close()
 
-    async def async_close(self, user_data=None):
-        """Async close
-
-        Args:
-            user_data (Optional[IdentifiedEntity]): closing message user data
-
-        """
+    async def async_close(self,
+                          user_data: typing.Optional[IdentifiedEntity] = None):
+        """Async close"""
         self.close(user_data)
         await self.wait_closed()
 
-    async def read(self):
-        """Read data
-
-        Returns:
-            IdentifiedEntity
-
-        """
+    async def read(self) -> IdentifiedEntity:
+        """Read data"""
         return await self._read_queue.get()
 
-    def write(self, data):
-        """Write data
-
-        Args:
-            data (IdentifiedEntity): data
-
-        """
+    def write(self, data: IdentifiedEntity):
+        """Write data"""
         ppdu_data = _encode('User-data', _user_data(self._syntax_names, data))
         self._cosp_conn.write(ppdu_data)
 

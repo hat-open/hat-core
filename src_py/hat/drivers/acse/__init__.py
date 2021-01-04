@@ -6,7 +6,6 @@ import typing
 
 from hat import aio
 from hat import asn1
-from hat import util
 from hat.drivers import copp
 
 
@@ -25,20 +24,19 @@ SyntaxNames = copp.SyntaxNames
 """Syntax names"""
 
 
-ConnectionInfo = util.namedtuple(
-    'ConnectionInfo',
-    ['local_addr', "Address: local address"],
-    ['local_tsel', "Optional[int]: local COTP selector"],
-    ['local_ssel', "Optional[int]: local COSP selector"],
-    ['local_psel', "Optional[int]: local COPP selector"],
-    ['local_ap_title', "Optional[asn1.ObjectIdentifier]: local AP title"],
-    ['local_ae_qualifier', "Optional[int]: local AE qualifier"],
-    ['remote_addr', "Address: remote address"],
-    ['remote_tsel', "Optional[int]: remote COTP selector"],
-    ['remote_ssel', "Optional[int]: remote COSP selector"],
-    ['remote_psel', "Optional[int]: remote COPP selector"],
-    ['remote_ap_title', "Optional[asn1.ObjectIdentifier]: remote AP title"],
-    ['remote_ae_qualifier', "Optional[int]: remote AE qualifier"])
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    local_psel: typing.Optional[int]
+    local_ap_title: typing.Optional[asn1.ObjectIdentifier]
+    local_ae_qualifier: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
+    remote_psel: typing.Optional[int]
+    remote_ap_title: typing.Optional[asn1.ObjectIdentifier]
+    remote_ae_qualifier: typing.Optional[int]
 
 
 ValidateResult = typing.Optional[IdentifiedEntity]
@@ -63,35 +61,22 @@ _encoder = asn1.Encoder(asn1.Encoding.BER,
                                                   'asn1_repo.json'))
 
 
-async def connect(syntax_name_list, app_context_name, addr,
-                  local_tsel=None, remote_tsel=None,
-                  local_ssel=None, remote_ssel=None,
-                  local_psel=None, remote_psel=None,
-                  local_ap_title=None, remote_ap_title=None,
-                  local_ae_qualifier=None, remote_ae_qualifier=None,
-                  user_data=None):
-    """Connect to ACSE server
-
-    Args:
-        syntax_name_list (List[asn1.ObjectIdentifier]): syntax names
-        app_context_name (asn1.ObjectIdentifier): application context name
-        addr (Address): remote address
-        local_tsel (Optional[int]): local COTP selector
-        remote_tsel (Optional[int]): remote COTP selector
-        local_ssel (Optional[int]): local COSP selector
-        remote_ssel (Optional[int]): remote COSP selector
-        local_psel (Optional[int]): local COPP selector
-        remote_psel (Optional[int]): remote COPP selector
-        local_ap_title (Optional[asn1.ObjectIdentifier]): local AP title
-        remote_ap_title (Optional[asn1.ObjectIdentifier]): remote AP title
-        local_ae_qualifier (Optional[int]): local AE qualifier
-        remote_ae_qualifier (Optional[int]): remote AE qualifier
-        user_data (Optional[IdentifiedEntity]]): connect request user data
-
-    Returns:
-        Connection
-
-    """
+async def connect(syntax_name_list: typing.List[asn1.ObjectIdentifier],
+                  app_context_name: asn1.ObjectIdentifier,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  local_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  remote_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  local_ae_qualifier: typing.Optional[int] = None,
+                  remote_ae_qualifier: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -> 'Connection':
+    """Connect to ACSE server"""
     syntax_names = SyntaxNames([_acse_syntax_name, *syntax_name_list])
     aarq_apdu = _aarq_apdu(syntax_names, app_context_name,
                            local_ap_title, remote_ap_title,
@@ -126,17 +111,17 @@ async def connect(syntax_name_list, app_context_name, addr,
         raise
 
 
-async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
+async def listen(validate_cb: ValidateCb,
+                 connection_cb: ConnectionCb,
+                 addr: Address = Address('0.0.0.0', 102)
+                 ) -> 'Server':
     """Create ACSE listening server
 
     Args:
-        validate_cb (ValidateCb): callback function or coroutine called on new
+        validate_cb: callback function or coroutine called on new
             incomming connection request prior to creating connection object
-        connection_cb (ConnectionCb): new connection callback
-        addr (Address): local listening address
-
-    Returns:
-        Server
+        connection_cb: new connection callback
+        addr: local listening address
 
     """
 
@@ -220,8 +205,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[Address]: listening addresses"""
+    def addresses(self) -> typing.List[Address]:
+        """Listening addresses"""
         return self._copp_server.addresses
 
 
@@ -265,36 +250,26 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """ConnectionInfo: connection info"""
+    def info(self) -> ConnectionInfo:
+        """Connection info"""
         return self._info
 
     @property
-    def conn_req_user_data(self):
-        """IdentifiedEntity: connect request's user data"""
+    def conn_req_user_data(self) -> IdentifiedEntity:
+        """Connect request's user data"""
         return self._conn_req_user_data
 
     @property
-    def conn_res_user_data(self):
-        """IdentifiedEntity: connect response's user data"""
+    def conn_res_user_data(self) -> IdentifiedEntity:
+        """Connect response's user data"""
         return self._conn_res_user_data
 
-    async def read(self):
-        """Read data
-
-        Returns:
-            IdentifiedEntity
-
-        """
+    async def read(self) -> IdentifiedEntity:
+        """Read data"""
         return await self._read_queue.get()
 
-    def write(self, data):
-        """Write data
-
-        Args:
-            data (IdentifiedEntity): data
-
-        """
+    def write(self, data: IdentifiedEntity):
+        """Write data"""
         self._copp_conn.write(data)
 
     async def _read_loop(self):

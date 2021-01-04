@@ -1,8 +1,7 @@
 import enum
 import json
 import yaml
-
-from hat import util
+import typing
 
 
 class SerializationMethod(enum.Enum):
@@ -12,11 +11,10 @@ class SerializationMethod(enum.Enum):
     BINARY = 4
 
 
-FileDescriptor = util.namedtuple(
-    'FileDescriptor',
-    ['relative_path', 'str'],
-    ['serialization_method', 'SerializationMethod'],
-    ['content', 'Any'])
+class FileDescriptor(typing.NamedTuple):
+    relative_path: str
+    serialization_method: SerializationMethod
+    content: typing.Any
 
 
 def write_file(path, content, serialization_method):

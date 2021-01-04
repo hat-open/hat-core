@@ -2,6 +2,7 @@ import subprocess
 import sys
 import psutil
 import signal
+import typing
 
 from hat import aio
 from hat import json
@@ -10,23 +11,21 @@ import hat.juggler
 import hat.monitor.client
 
 
-ServerInfo = util.namedtuple(
-    'ServerInfo',
-    ['process', 'psutil.Process'],
-    ['monitor_port', 'str'],
-    ['master_port', 'str'],
-    ['ui_port', 'str'],
-    ['parents_ports', 'List[str]'],
-    ['default_algorithm', 'str'],
-    ['group_algorithms', 'Dict[str, List[str]]'],
-    ['default_rank', 'int'])
+class ServerInfo(typing.NamedTuple):
+    process: psutil.Process
+    monitor_port: str
+    master_port: str
+    ui_port: str
+    parents_ports: typing.List[str]
+    default_algorithm: str
+    group_algorithms: typing.Dict[str, typing.List[str]]
+    default_rank: int
 
 
-Cluster = util.namedtuple(
-    'Cluster',
-    ['server_info', 'ServerInfo'],
-    ['components', 'Dict[str, Dict[str, MockComponent]]'],
-    ['ui_client', 'MockUIClient'])
+class Cluster(typing.NamedTuple):
+    server_info: ServerInfo
+    components: typing.Dict[str, typing.Dict[str, 'MockComponent']]
+    ui_client: 'MockUIClient'
 
 
 def create_monitor_conf(monitor_port, default_rank, master_port,

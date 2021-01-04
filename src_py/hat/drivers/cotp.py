@@ -8,9 +8,9 @@ Attributes:
 import enum
 import logging
 import math
+import typing
 
 from hat import aio
-from hat import util
 from hat.drivers import tpkt
 
 
@@ -25,30 +25,22 @@ Address = tpkt.Address
 """Address"""
 
 
-ConnectionInfo = util.namedtuple(
-    'ConnectionInfo',
-    ['local_addr', "Address: local address"],
-    ['local_tsel', "Optional[int]: local COTP selector"],
-    ['remote_addr', "Address: remote address"],
-    ['remote_tsel', "Optional[int]: remote COTP selector"])
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
 
 
-async def connect(addr, local_tsel=None, remote_tsel=None):
-    """Create new COTP connection
-
-    Args:
-        addr (Address): remote address
-        local_tsel (Optional[int]): local COTP selector
-        remote_tsel (Optional[int]): remote COTP selector
-
-    Returns:
-        Connection
-
-    """
+async def connect(addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None
+                  ) -> 'Connection':
+    """Create new COTP connection"""
     tpkt_conn = await tpkt.connect(addr)
     try:
         conn = await _create_outgoing_connection(tpkt_conn, local_tsel,
@@ -59,15 +51,14 @@ async def connect(addr, local_tsel=None, remote_tsel=None):
         raise
 
 
-async def listen(connection_cb, addr=Address('0.0.0.0', 102)):
+async def listen(connection_cb: ConnectionCb,
+                 addr: Address = Address('0.0.0.0', 102)
+                 ) -> 'Server':
     """Create new COTP listening server
 
     Args:
-        connection_cb (ConnectionCb): new connection callback
-        addr (Address): local listening address
-
-    Returns:
-        Server
+        connection_cb: new connection callback
+        addr: local listening address
 
     """
 
@@ -119,8 +110,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[Address]: listening addresses"""
+    def addresses(self) -> typing.List[Address]:
+        """Listening addresses"""
         return self._tpkt_server.addresses
 
 
@@ -150,26 +141,16 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """ConnectionInfo: connection info"""
+    def info(self) -> ConnectionInfo:
+        """Connection info"""
         return self._info
 
-    async def read(self):
-        """Read data
-
-        Returns:
-            Data
-
-        """
+    async def read(self) -> Data:
+        """Read data"""
         return await self._read_queue.get()
 
-    def write(self, data):
-        """Write data
-
-        Args:
-            data (bytes): data
-
-        """
+    def write(self, data: bytes):
+        """Write data"""
         max_size = self._max_tpdu - 3
         while len(data) > 0:
             single_data, data = data[:max_size], data[max_size:]
@@ -254,48 +235,63 @@ class _TpduType(enum.Enum):
     ER = 0x70
 
 
-_DT = util.namedtuple(
-    ['_DT', "Data TPDU"],
-    ['eot', "bool: end of transmition flag"],
-    ['data', "Data: data"])
+class _DT(typing.NamedTuple):
+    """Data TPDU"""
+    eot: bool
+    """end of transmition flag"""
+    data: Data
 
 
-_CR = util.namedtuple(
-    ['_CR', "Connection request TPDU"],
-    ['src', "int: connection reference selectet by initiator of "
-            "connection request"],
-    ['cls', "int: transport protocol class"],
-    ['calling_tsel', "Optional[int]: calling transport selector"],
-    ['called_tsel', "Optional[int]: responding transport selector"],
-    ['max_tpdu', "int: max tpdu size in octets"],
-    ['pref_max_tpdu', "int: preferred max tpdu size in octets"])
+class _CR(typing.NamedTuple):
+    """Connection request TPDU"""
+    src: int
+    """connection reference selectet by initiator of connection request"""
+    cls: int
+    """transport protocol class"""
+    calling_tsel: typing.Optional[int]
+    """calling transport selector"""
+    called_tsel: typing.Optional[int]
+    """responding transport selector"""
+    max_tpdu: int
+    """max tpdu size in octets"""
+    pref_max_tpdu: int
+    """preferred max tpdu size in octets"""
 
 
-_CC = util.namedtuple(
-    ['_CC', "Connection confirm TPDU"],
-    ['dst', "int: connection reference selected by initiator of "
-            "connection request"],
-    ['src', "int: connection reference selected by initiator of "
-            "connection confirm"],
-    ['cls', "int: transport protocol class"],
-    ['calling_tsel', "Optional[int]: calling transport selector"],
-    ['called_tsel', "Optional[int]: responding transport selector"],
-    ['max_tpdu', "int: max tpdu size in octets"],
-    ['pref_max_tpdu', "int: preferred max tpdu size in octets"])
+class _CC(typing.NamedTuple):
+    """Connection confirm TPDU"""
+    dst: int
+    """connection reference selected by initiator of connection request"""
+    src: int
+    """connection reference selected by initiator of connection confirm"""
+    cls: int
+    """transport protocol class"""
+    calling_tsel: typing.Optional[int]
+    """calling transport selector"""
+    called_tsel: typing.Optional[int]
+    """responding transport selector"""
+    max_tpdu: int
+    """max tpdu size in octets"""
+    pref_max_tpdu: int
+    """preferred max tpdu size in octets"""
 
 
-_DR = util.namedtuple(
-    ['_DR', "Disconnect request TPDU"],
-    ['dst', "int: connection reference selected by remote entity"],
-    ['src', "int: connection reference selected by initiator of "
-            "disconnect request"],
-    ['reason', "int: reason for disconnection"])
+class _DR(typing.NamedTuple):
+    """Disconnect request TPDU"""
+    dst: int
+    """connection reference selected by remote entity"""
+    src: int
+    """connection reference selected by initiator of disconnect request"""
+    reason: int
+    """reason for disconnection"""
 
 
-_ER = util.namedtuple(
-    ['_ER', "Error TPDU"],
-    ['dst', "int: connection reference selected by remote entity"],
-    ['cause', "int: reject cause"])
+class _ER(typing.NamedTuple):
+    """Error TPDU"""
+    dst: int
+    """connection reference selected by remote entity"""
+    cause: int
+    """reject cause"""
 
 
 def _validate_connect_request(cr_tpdu):

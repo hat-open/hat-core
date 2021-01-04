@@ -82,16 +82,26 @@ def test_callback_registry_without_exception_cb(cb_count):
     assert call_count == 1
 
 
-@pytest.mark.parametrize("query,params", [
-    ('', {}),
-    ('a=1&b=2', {'a': '1', 'b': '2'}),
-    ('a&b=&&=2&c=1', {'a': None, 'b': '', 'c': '1'})
+@pytest.mark.parametrize("query, params", [
+    ('',
+     {}),
+    ('a=1&b=2',
+     {'a': '1', 'b': '2'}),
+    ('a&b=&&=2&c=1',
+     {'a': None, 'b': '', 'c': '1'})
 ])
 def test_parse_url_query(query, params):
     result = util.parse_url_query(query)
     assert result == params
 
 
-def test_namedtuple():
-    with pytest.raises(Exception):
-        util.namedtuple('T', ('a', '', 0), 'b')
+def test_get_unused_tcp_port():
+    port = util.get_unused_tcp_port()
+    assert isinstance(port, int)
+    assert 0 < port <= 0xFFFF
+
+
+def test_get_unused_udp_port():
+    port = util.get_unused_udp_port()
+    assert isinstance(port, int)
+    assert 0 < port <= 0xFFFF

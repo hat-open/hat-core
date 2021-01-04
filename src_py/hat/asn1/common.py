@@ -2,7 +2,7 @@ import abc
 import enum
 import typing
 
-from hat import util
+from hat import json
 
 
 class ClassType(enum.Enum):
@@ -12,17 +12,15 @@ class ClassType(enum.Enum):
     PRIVATE = 3
 
 
-TypeProperty = util.namedtuple(
-    'TypeProperty',
-    ['name', 'str'],
-    ['type', 'Type'],
-    ['optional', 'bool', False])
+class TypeProperty(typing.NamedTuple):
+    name: str
+    type: 'Type'
+    optional: bool = False
 
 
-TypeRef = util.namedtuple(
-    'TypeRef',
-    ['module', 'str: module name'],
-    ['name', 'str: type name'])
+class TypeRef(typing.NamedTuple):
+    module: str
+    name: str
 
 
 Type = typing.Union[TypeRef,
@@ -48,22 +46,28 @@ Type = typing.Union[TypeRef,
 """Type"""
 
 
-BooleanType = util.namedtuple('BooleanType')
+class BooleanType(typing.NamedTuple):
+    pass
 
 
-IntegerType = util.namedtuple('IntegerType')
+class IntegerType(typing.NamedTuple):
+    pass
 
 
-BitStringType = util.namedtuple('BitStringType')
+class BitStringType(typing.NamedTuple):
+    pass
 
 
-OctetStringType = util.namedtuple('OctetStringType')
+class OctetStringType(typing.NamedTuple):
+    pass
 
 
-NullType = util.namedtuple('NullType')
+class NullType(typing.NamedTuple):
+    pass
 
 
-ObjectIdentifierType = util.namedtuple('ObjectIdentifierType')
+class ObjectIdentifierType(typing.NamedTuple):
+    pass
 
 
 class StringType(enum.Enum):
@@ -84,55 +88,57 @@ class StringType(enum.Enum):
     BMPString = 30
 
 
-ExternalType = util.namedtuple('ExternalType')
+class ExternalType(typing.NamedTuple):
+    pass
 
 
-RealType = util.namedtuple('RealType')
+class RealType(typing.NamedTuple):
+    pass
 
 
-EnumeratedType = util.namedtuple('EnumeratedType')
+class EnumeratedType(typing.NamedTuple):
+    pass
 
 
-EmbeddedPDVType = util.namedtuple('EmbeddedPDVType')
+class EmbeddedPDVType(typing.NamedTuple):
+    pass
 
 
-ChoiceType = util.namedtuple(
-    'ChoiceType',
-    ['choices', 'List[TypeProperty]'])
+class ChoiceType(typing.NamedTuple):
+    choices: typing.List[TypeProperty]
 
 
-SetType = util.namedtuple(
-    'SetType',
-    ['elements', 'List[TypeProperty]'])
+class SetType(typing.NamedTuple):
+    elements: typing.List[TypeProperty]
 
 
-SetOfType = util.namedtuple(
-    'SetOfType',
-    ['type', "Type: elements type definition"])
+class SetOfType(typing.NamedTuple):
+    type: Type
+    "elements type definition"
 
 
-SequenceType = util.namedtuple(
-    'SequenceType',
-    ['elements', 'List[TypeProperty]'])
+class SequenceType(typing.NamedTuple):
+    elements: typing.List[TypeProperty]
 
 
-SequenceOfType = util.namedtuple(
-    'SequenceOfType',
-    ['type', "Type: elements type definition"])
+class SequenceOfType(typing.NamedTuple):
+    type: Type
+    "elements type definition"
 
 
-EntityType = util.namedtuple('EntityType')
+class EntityType(typing.NamedTuple):
+    pass
 
 
-UnsupportedType = util.namedtuple('UnsupportedType')
+class UnsupportedType(typing.NamedTuple):
+    pass
 
 
-PrefixedType = util.namedtuple(
-    'PrefixedType',
-    ['type', 'Type'],
-    ['class_type', 'ClassType'],
-    ['tag_number', 'int'],
-    ['implicit', 'bool'])
+class PrefixedType(typing.NamedTuple):
+    type: Type
+    class_type: ClassType
+    tag_number: int
+    implicit: bool
 
 
 Data = typing.Union[bytes, bytearray, memoryview]
@@ -187,11 +193,10 @@ String = str
 """String"""
 
 
-External = util.namedtuple(
-    'External',
-    ['data', 'Union[Entity,Data,List[bool]]'],
-    ['direct_ref', 'Optional[ObjectIdentifier]'],
-    ['indirect_ref', 'Optional[int]'])
+class External(typing.NamedTuple):
+    data: typing.Union['Entity', Data, typing.List[bool]]
+    direct_ref: typing.Optional[ObjectIdentifier]
+    indirect_ref: typing.Optional[int]
 
 
 Real = float
@@ -201,12 +206,12 @@ Real = float
 Enumerated = int
 """Enumerated"""
 
+
 # TODO: if abstract is ObjectIdentifier then transfer must be defined
-EmbeddedPDV = util.namedtuple(
-    'EmbeddedPDV',
-    ['abstract', 'Optional[Union[int,ObjectIdentifier]]'],
-    ['transfer', 'Optional[ObjectIdentifier]'],
-    ['data', 'Data'])
+class EmbeddedPDV(typing.NamedTuple):
+    abstract: typing.Optional[typing.Union[int, ObjectIdentifier]]
+    transfer: typing.Optional[ObjectIdentifier]
+    data: Data
 
 
 Choice = typing.Tuple[str, Value]
@@ -233,17 +238,10 @@ class Entity(abc.ABC):
     """Encoding independent ASN.1 Entity"""
 
 
-def is_oid_eq(x, y):
-    """Check if two ASN.1 object identifiers are equal
-
-    Args:
-        x (ObjectIdentifier): object identifier
-        y (ObjectIdentifier): object identifier
-
-    Returns:
-        bool
-
-    """
+def is_oid_eq(x: ObjectIdentifier,
+              y: ObjectIdentifier
+              ) -> bool:
+    """Check if two ASN.1 object identifiers are equal"""
     if len(x) != len(y):
         return False
     for i, j in zip(x, y):
@@ -254,16 +252,8 @@ def is_oid_eq(x, y):
     return True
 
 
-def type_to_json(t):
-    """Convert type definition to JSON data
-
-    Args:
-        t (Type): type
-
-    Returns:
-        hat.json.Data
-
-    """
+def type_to_json(t: Type) -> json.Data:
+    """Convert type definition to JSON data"""
     if isinstance(t, TypeRef):
         return ['TypeRef', t.module, t.name]
 
@@ -331,16 +321,8 @@ def type_to_json(t):
     raise ValueError('invalid type definition')
 
 
-def type_from_json(data):
-    """Convert JSON data to type definition
-
-    Args:
-        data (hat.json.Data): data
-
-    Returns:
-        Type
-
-    """
+def type_from_json(data: json.Data) -> Type:
+    """Convert JSON data to type definition"""
     if data[0] == 'TypeRef':
         return TypeRef(module=data[1],
                        name=data[2])

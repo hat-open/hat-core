@@ -12,7 +12,6 @@ import logging
 import typing
 
 from hat import aio
-from hat import util
 
 
 mlog = logging.getLogger(__name__)
@@ -22,32 +21,22 @@ Data = typing.Union[bytes, bytearray, memoryview]
 """Data"""
 
 
-Address = util.namedtuple(
-    'Address',
-    ['host', 'str: host name'],
-    ['port', 'int: TCP port', 102])
+class Address(typing.NamedTuple):
+    host: str
+    port: int = 102
 
 
-ConnectionInfo = util.namedtuple(
-    'ConnectionInfo',
-    ['local_addr', "Address: local address"],
-    ['remote_addr', "Address: remote address"])
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    remote_addr: Address
 
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
 
 
-async def connect(addr):
-    """Create new TPKT connection
-
-    Args:
-        addr (Address): remote address
-
-    Returns:
-        Connection
-
-    """
+async def connect(addr: Address) -> 'Connection':
+    """Create new TPKT connection"""
     reader, writer = await asyncio.open_connection(addr.host, addr.port)
     try:
         return _create_connection(reader, writer)
@@ -56,15 +45,14 @@ async def connect(addr):
         raise
 
 
-async def listen(connection_cb, addr=Address('0.0.0.0', 102)):
+async def listen(connection_cb: ConnectionCb,
+                 addr: Address = Address('0.0.0.0', 102)
+                 ) -> 'Server':
     """Create new TPKT listening server
 
     Args:
-        connection_cb (ConnectionCb): new connection callback
-        addr (Address): local listening address
-
-    Returns:
-        Server
+        connection_cb: new connection callback
+        addr: local listening address
 
     """
     def on_connection(reader, writer):
@@ -115,8 +103,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[Address]: listening addresses"""
+    def addresses(self) -> typing.List[Address]:
+        """Listening addresses"""
         return self._addresses
 
 
@@ -149,26 +137,16 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """ConnectionInfo: connection info"""
+    def info(self) -> ConnectionInfo:
+        """Connection info"""
         return self._info
 
-    async def read(self):
-        """Read data
-
-        Returns:
-            Data
-
-        """
+    async def read(self) -> Data:
+        """Read data"""
         return await self._read_queue.get()
 
-    def write(self, data):
-        """Write data
-
-        Args:
-            data (Data): data
-
-        """
+    def write(self, data: Data):
+        """Write data"""
         data_len = len(data)
         if data_len > 0xFFFB:
             raise Exception("data length greater than 0xFFFB")

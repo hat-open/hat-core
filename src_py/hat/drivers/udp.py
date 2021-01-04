@@ -1,29 +1,29 @@
 """Asyncio UDP endpoint wrapper"""
 
 import asyncio
+import typing
 
 from hat import aio
-from hat import util
 
 
-Address = util.namedtuple(
-    'Address',
-    ['host', 'str'],
-    ['port', 'int'])
+class Address(typing.NamedTuple):
+    host: str
+    port: int
 
 
-async def create(local_addr=None, remote_addr=None, queue_size=0, **kwargs):
+async def create(local_addr: typing.Optional[Address] = None,
+                 remote_addr: typing.Optional[Address] = None,
+                 queue_size: int = 0,
+                 **kwargs
+                 ) -> 'Endpoint':
     """Create new UDP endpoint
 
     Args:
-        local_addr (Optional[Address]): local address
-        remote_addr (Optional[Address]): remote address
-        queue_size (int): receive queue max size
+        local_addr: local address
+        remote_addr: remote address
+        queue_size: receive queue max size
         kwargs: additional arguments passed to
             :meth:`asyncio.AbstractEventLoop.create_datagram_endpoint`
-
-    Returns:
-        Endpoint
 
     """
     endpoint = Endpoint()
@@ -58,29 +58,22 @@ class Endpoint(aio.Resource):
         return self._async_group
 
     @property
-    def empty(self):
-        """bool: is receive queue empty"""
+    def empty(self) -> bool:
+        """Is receive queue empty"""
         return self._queue.empty()
 
-    def send(self, data, remote_addr=None):
+    def send(self,
+             data: bytes,
+             remote_addr: typing.Optional[Address] = None):
         """Send datagram
 
         If `remote_addr` is not set, `remote_addr` passed to :func:`create`
         is used.
 
-        Args:
-            data (bytes): data
-            remote_addr (Optional[Address]): address
-
         """
         self._transport.sendto(data, remote_addr or self._remote_addr)
 
-    async def receive(self):
-        """Receive datagram
-
-        Returns:
-            Tuple[bytes,Address]
-
-        """
+    async def receive(self) -> typing.Tuple[bytes, Address]:
+        """Receive datagram"""
         data, addr = await self._queue.get()
         return data, addr

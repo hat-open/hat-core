@@ -1,11 +1,11 @@
 """Common functionality shared between clients and monitor server"""
 
 from pathlib import Path
+import typing
 
 from hat import chatter
 from hat import json
 from hat import sbs
-from hat import util
 
 
 package_path = Path(__file__).parent
@@ -19,16 +19,15 @@ sbs_repo = sbs.Repository(
     sbs.Repository.from_json(package_path / 'sbs_repo.json'))
 
 
-ComponentInfo = util.namedtuple(
-    'ComponentInfo',
-    ['cid', "int: component id"],
-    ['mid', "int: monitor id"],
-    ['name', "str: component name"],
-    ['group', "str: component group"],
-    ['address', "Optional[str]: address"],
-    ['rank', "int: component rank"],
-    ['blessing', "Optional[int]: blessing token"],
-    ['ready', "Optional[int]: ready token"])
+class ComponentInfo(typing.NamedTuple):
+    cid: int
+    mid: int
+    name: str
+    group: str
+    address: typing.Optional[str]
+    rank: int
+    blessing: typing.Optional[int]
+    ready: typing.Optional[int]
 
 
 def component_info_to_sbs(info):

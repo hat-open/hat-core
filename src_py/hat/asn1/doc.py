@@ -1,16 +1,11 @@
+import typing
+
 from hat.asn1 import common
 
 
-def generate_html(refs):
-    """Generate HTML documentation
-
-    Args:
-        refs (Dict[common.TypeRef,common.Type])
-
-    Returns:
-        str: HTML document content
-
-    """
+def generate_html(refs: typing.Dict[common.TypeRef, common.Type]
+                  ) -> str:
+    """Generate HTML documentation"""
     modules = {}
     for ref, t in refs.items():
         if ref.module not in modules:

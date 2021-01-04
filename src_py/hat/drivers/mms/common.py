@@ -1,7 +1,9 @@
 import abc
 import enum
+import typing
+import datetime
 
-from hat import util
+from hat import asn1
 
 
 class DataAccessError(enum.Enum):
@@ -43,49 +45,45 @@ class ErrorClass(enum.Enum):
     VMD_STATE = 'vmd-state'
 
 
-StatusRequest = util.namedtuple('StatusRequest')
+class StatusRequest(typing.NamedTuple):
+    pass
 
 
-GetNameListRequest = util.namedtuple(
-    'GetNameListRequest',
-    ['object_class', 'ObjectClass'],
-    ['object_scope', 'ObjectScope'],
-    ['continue_after', 'Optional[str]'])
+class GetNameListRequest(typing.NamedTuple):
+    object_class: ObjectClass
+    object_scope: 'ObjectScope'
+    continue_after: typing.Optional[str]
 
 
-IdentifyRequest = util.namedtuple('IdentifyRequest')
+class IdentifyRequest(typing.NamedTuple):
+    pass
 
 
-GetVariableAccessAttributesRequest = util.namedtuple(
-    'GetVariableAccessAttributesRequest',
-    ['value', 'Union[ObjectName,int,str,hat.asn1.Data]'])
+class GetVariableAccessAttributesRequest(typing.NamedTuple):
+    value: typing.Union['ObjectName', int, str, asn1.Data]
 
 
-GetNamedVariableListAttributesRequest = util.namedtuple(
-    'GetNamedVariableListAttributesRequest',
-    ['value', 'ObjectName'])
+class GetNamedVariableListAttributesRequest(typing.NamedTuple):
+    value: 'ObjectName'
 
 
-ReadRequest = util.namedtuple(
-    'ReadRequest',
-    ['value', 'Union[List[VariableSpecification],ObjectName]'])
+class ReadRequest(typing.NamedTuple):
+    value: typing.Union[typing.List['VariableSpecification'], 'ObjectName']
 
 
-WriteRequest = util.namedtuple(
-    'WriteRequest',
-    ['specification', 'Union[List[VariableSpecification],ObjectName]'],
-    ['data', 'List[Data]'])
+class WriteRequest(typing.NamedTuple):
+    specification: typing.Union[typing.List['VariableSpecification'],
+                                'ObjectName']
+    data: typing.List['Data']
 
 
-DefineNamedVariableListRequest = util.namedtuple(
-    'DefineNamedVariableListRequest',
-    ['name', 'ObjectName'],
-    ['specification', 'List[VariableSpecification]'])
+class DefineNamedVariableListRequest(typing.NamedTuple):
+    name: 'ObjectName'
+    specification: typing.List['VariableSpecification']
 
 
-DeleteNamedVariableListRequest = util.namedtuple(
-    'DeleteNamedVariableListRequest',
-    ['names', 'List[ObjectName]'])
+class DeleteNamedVariableListRequest(typing.NamedTuple):
+    names: typing.List['ObjectName']
 
 
 Request = type('Request', (abc.ABC, ), {})
@@ -100,62 +98,53 @@ Request.register(DefineNamedVariableListRequest)
 Request.register(DeleteNamedVariableListRequest)
 
 
-ErrorResponse = util.namedtuple(
-    'ErrorResponse',
-    ['error_class', 'ErrorClass'],
-    ['value', 'int'])
+class ErrorResponse(typing.NamedTuple):
+    error_class: ErrorClass
+    value: int
 
 
-StatusResponse = util.namedtuple(
-    'StatusResponse',
-    ['logical', 'int'],
-    ['physical', 'int'])
+class StatusResponse(typing.NamedTuple):
+    logical: int
+    physical: int
 
 
-GetNameListResponse = util.namedtuple(
-    'GetNameListResponse',
-    ['identifiers', 'List[str]'],
-    ['more_follows', 'bool'])
+class GetNameListResponse(typing.NamedTuple):
+    identifiers: typing.List[str]
+    more_follows: bool
 
 
-IdentifyResponse = util.namedtuple(
-    'IdentifyResponse',
-    ['vendor', 'str'],
-    ['model', 'str'],
-    ['revision', 'str'],
-    ['syntaxes', 'Optional[List[asn1.ObjectIdentifier]]'])
+class IdentifyResponse(typing.NamedTuple):
+    vendor: str
+    model: str
+    revision: str
+    syntaxes: typing.Optional[typing.List[asn1.ObjectIdentifier]]
 
 
-GetVariableAccessAttributesResponse = util.namedtuple(
-    'GetVariableAccessAttributesResponse',
-    ['mms_deletable', 'bool'],
-    ['type_description', 'TypeDescription'])
+class GetVariableAccessAttributesResponse(typing.NamedTuple):
+    mms_deletable: bool
+    type_description: 'TypeDescription'
 
 
-GetNamedVariableListAttributesResponse = util.namedtuple(
-    'GetNamedVariableListAttributesResponse',
-    ['mms_deletable', 'bool'],
-    ['specification', 'List[VariableSpecification'])
+class GetNamedVariableListAttributesResponse(typing.NamedTuple):
+    mms_deletable: bool
+    specification: typing.List['VariableSpecification']
 
 
-ReadResponse = util.namedtuple(
-    'ReadResponse',
-    ['results', 'List[Union[DataAccessError,Data]]'])
+class ReadResponse(typing.NamedTuple):
+    results: typing.List[typing.Union[DataAccessError, 'Data']]
 
 
-WriteResponse = util.namedtuple(
-    'WriteResponse',
-    ['results', 'List[Optional[DataAccessError]]'])
+class WriteResponse(typing.NamedTuple):
+    results: typing.List[typing.Optional[DataAccessError]]
 
 
-DefineNamedVariableListResponse = util.namedtuple(
-    'DefineNamedVariableListResponse')
+class DefineNamedVariableListResponse(typing.NamedTuple):
+    pass
 
 
-DeleteNamedVariableListResponse = util.namedtuple(
-    'DeleteNamedVariableListResponse',
-    ['matched', 'int'],
-    ['deleted', 'int'])
+class DeleteNamedVariableListResponse(typing.NamedTuple):
+    matched: int
+    deleted: int
 
 
 Response = type('Response', (abc.ABC, ), {})
@@ -171,24 +160,22 @@ Response.register(DefineNamedVariableListResponse)
 Response.register(DeleteNamedVariableListResponse)
 
 
-EventNotificationUnconfirmed = util.namedtuple(
-    'EventNotificationUnconfirmed',
-    ['enrollment', 'ObjectName'],
-    ['condition', 'ObjectName'],
-    ['severity', 'int'],
-    ['time', 'Optional[Union[Data,int]]'])
+class EventNotificationUnconfirmed(typing.NamedTuple):
+    enrollment: 'ObjectName'
+    condition: 'ObjectName'
+    severity: int
+    time: typing.Optional[typing.Union['Data', int]]
 
 
-InformationReportUnconfirmed = util.namedtuple(
-    'InformationReportUnconfirmed',
-    ['specification', 'Union[List[VariableSpecification],ObjectName]'],
-    ['data', 'List[Union[DataAccessError,Data]]'])
+class InformationReportUnconfirmed(typing.NamedTuple):
+    specification: typing.Union[typing.List['VariableSpecification'],
+                                'ObjectName']
+    data: typing.List[typing.Union[DataAccessError, 'Data']]
 
 
-UnsolicitedStatusUnconfirmed = util.namedtuple(
-    'UnsolicitedStatusUnconfirmed',
-    ['logical', 'int'],
-    ['physical', 'int'])
+class UnsolicitedStatusUnconfirmed(typing.NamedTuple):
+    logical: int
+    physical: int
 
 
 Unconfirmed = type('Unconfirmed', (abc.ABC, ), {})
@@ -197,88 +184,73 @@ Unconfirmed.register(InformationReportUnconfirmed)
 Unconfirmed.register(UnsolicitedStatusUnconfirmed)
 
 
-ArrayData = util.namedtuple(
-    'ArrayData',
-    ['elements', 'List[Data]'])
+class ArrayData(typing.NamedTuple):
+    elements: typing.List['Data']
 
 
-BcdData = util.namedtuple(
-    'BcdData',
-    ['value', 'int'])
+class BcdData(typing.NamedTuple):
+    value: int
 
 
-BinaryTimeData = util.namedtuple(
-    'BinaryTimeData',
-    ['value', 'datetime.datetime'])
+class BinaryTimeData(typing.NamedTuple):
+    value: datetime.datetime
 
 
-BitStringData = util.namedtuple(
-    'BitStringData',
-    ['value', 'List[bool]'])
+class BitStringData(typing.NamedTuple):
+    value: typing.List[bool]
 
 
-BooleanData = util.namedtuple(
-    'BooleanData',
-    ['value', 'bool'])
+class BooleanData(typing.NamedTuple):
+    value: bool
 
 
-BooleanArrayData = util.namedtuple(
-    'BooleanArrayData',
-    ['value', 'List[bool]'])
+class BooleanArrayData(typing.NamedTuple):
+    value: typing.List[bool]
 
 
-FloatingPointData = util.namedtuple(
-    'FloatingPointData',
-    ['value', 'float'])
+class FloatingPointData(typing.NamedTuple):
+    value: float
 
 
-GeneralizedTimeData = util.namedtuple(
-    'GeneralizedTimeData',
-    ['value', 'str'])
+class GeneralizedTimeData(typing.NamedTuple):
+    value: str
 
 
-IntegerData = util.namedtuple(
-    'IntegerData',
-    ['value', 'int'])
+class IntegerData(typing.NamedTuple):
+    value: int
 
 
-MmsStringData = util.namedtuple(
-    'MmsStringData',
-    ['value', 'str'])
+class MmsStringData(typing.NamedTuple):
+    value: str
 
 
-ObjIdData = util.namedtuple(
-    'ObjIdData',
-    ['value', 'asn1.ObjectIdentifier'])
+class ObjIdData(typing.NamedTuple):
+    value: asn1.ObjectIdentifier
 
 
-OctetStringData = util.namedtuple(
-    'OctetStringData',
-    ['value', 'hat.asn1.Data'])
+class OctetStringData(typing.NamedTuple):
+    value: asn1.Data
 
 
-StructureData = util.namedtuple(
-    'StructureData',
-    ['elements', 'List[Data]'])
+class StructureData(typing.NamedTuple):
+    elements: typing.List['Data']
 
 
-UnsignedData = util.namedtuple(
-    'UnsignedData',
-    ['value', 'int'])
+class UnsignedData(typing.NamedTuple):
+    value: int
 
 
-UtcTimeData = util.namedtuple(
-    'UtcTimeData',
-    ['value', 'datetime.datetime'],
-    ['leap_second', 'bool'],
-    ['clock_failure', 'bool'],
-    ['not_synchronized', 'bool'],
-    ['accuracy', 'Optional[int]: accurate fraction bits [0,24]'])
+class UtcTimeData(typing.NamedTuple):
+    value: datetime.datetime
+    leap_second: bool
+    clock_failure: bool
+    not_synchronized: bool
+    accuracy: typing.Optional[int]
+    """accurate fraction bits [0,24]"""
 
 
-VisibleStringData = util.namedtuple(
-    'VisibleStringData',
-    ['value', 'str'])
+class VisibleStringData(typing.NamedTuple):
+    value: str
 
 
 Data = type('Data', (abc.ABC, ), {})
@@ -300,74 +272,68 @@ Data.register(UtcTimeData)
 Data.register(VisibleStringData)
 
 
-ArrayTypeDescription = util.namedtuple(
-    'ArrayTypeDescription',
-    ['number_of_elements', 'int'],
-    ['element_type', 'Union[TypeDescription,ObjectName]'])
+class ArrayTypeDescription(typing.NamedTuple):
+    number_of_elements: int
+    element_type: typing.Union['TypeDescription', 'ObjectName']
 
 
-BcdTypeDescription = util.namedtuple(
-    'BcdTypeDescription',
-    ['xyz', 'int'])
+class BcdTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
-BinaryTimeTypeDescription = util.namedtuple(
-    'BinaryTimeTypeDescription',
-    ['xyz', 'bool'])
+class BinaryTimeTypeDescription(typing.NamedTuple):
+    xyz: bool
 
 
-BitStringTypeDescription = util.namedtuple(
-    'BitStringTypeDescription',
-    ['xyz', 'int'])
+class BitStringTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
-BooleanTypeDescription = util.namedtuple('BooleanTypeDescription')
+class BooleanTypeDescription(typing.NamedTuple):
+    pass
 
 
-FloatingPointTypeDescription = util.namedtuple(
-    'FloatingPointTypeDescription',
-    ['format_width', 'int'],
-    ['exponent_width', 'int'])
+class FloatingPointTypeDescription(typing.NamedTuple):
+    format_width: int
+    exponent_width: int
 
 
-GeneralizedTimeTypeDescription = util.namedtuple(
-    'GeneralizedTimeTypeDescription')
+class GeneralizedTimeTypeDescription(typing.NamedTuple):
+    pass
 
 
-IntegerTypeDescription = util.namedtuple(
-    'IntegerTypeDescription',
-    ['xyz', 'int'])
+class IntegerTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
-MmsStringTypeDescription = util.namedtuple(
-    'MmsStringTypeDescription',
-    ['xyz', 'int'])
+class MmsStringTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
-ObjIdTypeDescription = util.namedtuple('ObjIdTypeDescription')
+class ObjIdTypeDescription(typing.NamedTuple):
+    pass
 
 
-OctetStringTypeDescription = util.namedtuple(
-    'OctetStringTypeDescription',
-    ['xyz', 'int'])
+class OctetStringTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
-StructureTypeDescription = util.namedtuple(
-    'StructureTypeDescription',
-    ['components', 'List[Tuple[Optional[str],Union[TypeDescription,ObjectName]]]'])  # NOQA
+class StructureTypeDescription(typing.NamedTuple):
+    components: typing.List[typing.Tuple[typing.Optional[str],
+                                         typing.Union['TypeDescription',
+                                                      'ObjectName']]]
 
 
-UnsignedTypeDescription = util.namedtuple(
-    'UnsignedTypeDescription',
-    ['xyz', 'int'])
+class UnsignedTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
-UtcTimeTypeDescription = util.namedtuple('UtcTimeTypeDescription')
+class UtcTimeTypeDescription(typing.NamedTuple):
+    pass
 
 
-VisibleStringTypeDescription = util.namedtuple(
-    'VisibleStringTypeDescription',
-    ['xyz', 'int'])
+class VisibleStringTypeDescription(typing.NamedTuple):
+    xyz: int
 
 
 TypeDescription = type('TypeDescription', (abc.ABC, ), {})
@@ -388,20 +354,17 @@ TypeDescription.register(UtcTimeTypeDescription)
 TypeDescription.register(VisibleStringTypeDescription)
 
 
-AaSpecificObjectName = util.namedtuple(
-    'AaSpecificObjectName',
-    ['identifier', 'str'])
+class AaSpecificObjectName(typing.NamedTuple):
+    identifier: str
 
 
-DomainSpecificObjectName = util.namedtuple(
-    'DomainSpecificObjectName',
-    ['domain_id', 'str'],
-    ['item_id', 'str'])
+class DomainSpecificObjectName(typing.NamedTuple):
+    domain_id: str
+    item_id: str
 
 
-VmdSpecificObjectName = util.namedtuple(
-    'VmdSpecificObjectName',
-    ['identifier', 'str'])
+class VmdSpecificObjectName(typing.NamedTuple):
+    identifier: str
 
 
 ObjectName = type('ObjectName', (abc.ABC, ), {})
@@ -410,15 +373,16 @@ ObjectName.register(DomainSpecificObjectName)
 ObjectName.register(VmdSpecificObjectName)
 
 
-AaSpecificObjectScope = util.namedtuple('AaSpecificObjectScope')
+class AaSpecificObjectScope(typing.NamedTuple):
+    pass
 
 
-DomainSpecificObjectScope = util.namedtuple(
-    'DomainSpecificObjectScope',
-    ['identifier', 'str'])
+class DomainSpecificObjectScope(typing.NamedTuple):
+    identifier: str
 
 
-VmdSpecificObjectScope = util.namedtuple('VmdSpecificObjectScope')
+class VmdSpecificObjectScope(typing.NamedTuple):
+    pass
 
 
 ObjectScope = type('ObjectScope', (abc.ABC, ), {})
@@ -427,29 +391,25 @@ ObjectScope.register(DomainSpecificObjectScope)
 ObjectScope.register(VmdSpecificObjectScope)
 
 
-AddressVariableSpecification = util.namedtuple(
-    'AddressVariableSpecification',
-    ['address', 'Union[int,str,hat.asn1.Data]'])
+class AddressVariableSpecification(typing.NamedTuple):
+    address: typing.Union[int, str, asn1.Data]
 
 
-InvalidatedVariableSpecification = util.namedtuple(
-    'InvalidatedVariableSpecification')
+class InvalidatedVariableSpecification(typing.NamedTuple):
+    pass
 
 
-NameVariableSpecification = util.namedtuple(
-    'NameVariableSpecification',
-    ['name', 'ObjectName'])
+class NameVariableSpecification(typing.NamedTuple):
+    name: ObjectName
 
 
-ScatteredAccessDescriptionVariableSpecification = util.namedtuple(
-    'ScatteredAccessDescriptionVariableSpecification',
-    ['specifications', 'List[VariableSpecification]'])
+class ScatteredAccessDescriptionVariableSpecification(typing.NamedTuple):
+    specifications: typing.List['VariableSpecification']
 
 
-VariableDescriptionVariableSpecification = util.namedtuple(
-    'VariableDescriptionVariableSpecification',
-    ['address', 'Union[int,str,hat.asn1.Data]'],
-    ['type_specification', 'Union[TypeDescription,ObjectName]'])
+class VariableDescriptionVariableSpecification(typing.NamedTuple):
+    address: typing.Union[int, str, asn1.Data]
+    type_specification: typing.Union[TypeDescription, ObjectName]
 
 
 VariableSpecification = type('VariableSpecification', (abc.ABC, ), {})

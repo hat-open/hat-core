@@ -3,6 +3,7 @@
 from pathlib import Path
 import asyncio
 import logging
+import typing
 
 from hat import aio
 from hat import asn1
@@ -18,6 +19,10 @@ Address = acse.Address
 """Address"""
 
 
+IdentifiedEntity = acse.IdentifiedEntity
+"""Identified entity"""
+
+
 ConnectionInfo = acse.ConnectionInfo
 """Connection info"""
 
@@ -30,34 +35,21 @@ ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
 
 
-async def connect(request_cb, addr,
-                  local_tsel=None, remote_tsel=None,
-                  local_ssel=None, remote_ssel=None,
-                  local_psel=None, remote_psel=None,
-                  local_ap_title=None, remote_ap_title=None,
-                  local_ae_qualifier=None, remote_ae_qualifier=None,
-                  user_data=None):
-    """Connect to ACSE server
-
-    Args:
-        request_cb (RequestCb): received request callback
-        addr (Address): remote address
-        local_tsel (Optional[int]): local COTP selector
-        remote_tsel (Optional[int]): remote COTP selector
-        local_ssel (Optional[int]): local COSP selector
-        remote_ssel (Optional[int]): remote COSP selector
-        local_psel (Optional[int]): local COPP selector
-        remote_psel (Optional[int]): remote COPP selector
-        local_ap_title (Optional[asn1.ObjectIdentifier]): local AP title
-        remote_ap_title (Optional[asn1.ObjectIdentifier]): remote AP title
-        local_ae_qualifier (Optional[int]): local AE qualifier
-        remote_ae_qualifier (Optional[int]): remote AE qualifier
-        user_data (Optional[IdentifiedEntity]]): connect request user data
-
-    Returns:
-        Connection
-
-    """
+async def connect(request_cb: RequestCb,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  local_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  remote_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  local_ae_qualifier: typing.Optional[int] = None,
+                  remote_ae_qualifier: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -> 'Connection':
+    """Connect to ACSE server"""
     initiate_req = 'initiate-RequestPDU', {
         'proposedMaxServOutstandingCalling': 5,
         'proposedMaxServOutstandingCalled': 5,
@@ -93,16 +85,16 @@ async def connect(request_cb, addr,
         raise
 
 
-async def listen(connection_cb, request_cb, addr=Address('0.0.0.0', 102)):
+async def listen(connection_cb: ConnectionCb,
+                 request_cb: RequestCb,
+                 addr: Address = Address('0.0.0.0', 102)
+                 ) -> 'Server':
     """Create MMS listening server
 
     Args:
-        connection_cb (ConnectionCb): new connection callback
-        request_cb (RequestCb): received request callback
-        addr (Address): local listening address
-
-    Returns:
-        Server
+        connection_cb: new connection callback
+        request_cb: received request callback
+        addr: local listening address
 
     """
 
@@ -175,8 +167,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[Address]: listening addresses"""
+    def addresses(self) -> typing.List[Address]:
+        """Listening addresses"""
         return self._acse_server.addresses
 
 
@@ -205,18 +197,15 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """ConnectionInfo: connection info"""
+    def info(self) -> ConnectionInfo:
+        """Connection info"""
         return self._acse_conn.info
 
-    async def receive_unconfirmed(self):
+    async def receive_unconfirmed(self) -> common.Unconfirmed:
         """Receive unconfirmed message
 
-        Returns:
-            common.Unconfirmed
-
         Raises:
-            ConnectionError: in case connection is in closing or closed state
+            ConnectionError: in case connection is not open
 
         """
         try:
@@ -224,29 +213,20 @@ class Connection(aio.Resource):
         except aio.QueueClosedError:
             raise ConnectionError('connection is not open')
 
-    def send_unconfirmed(self, unconfirmed):
-        """Send unconfirmed message
-
-        Args:
-            unconfirmed (common.Unconfirmed): unconfirmed message
-
-        """
+    def send_unconfirmed(self, unconfirmed: common.Unconfirmed):
+        """Send unconfirmed message"""
         pdu = 'unconfirmed-PDU', {
             'service': encoder.encode_unconfirmed(unconfirmed)}
         data = _mms_syntax_name, _encode(pdu)
         self._acse_conn.write(data)
 
-    async def send_confirmed(self, req):
+    async def send_confirmed(self,
+                             req: common.Request
+                             ) -> common.Response:
         """Send confirmed request and wait for response
 
-        Args:
-            req (common.Request): request
-
-        Returns:
-            common.Response
-
         Raises:
-            ConnectionError: in case connection is in closing or closed state
+            ConnectionError: in case connection is not open
 
         """
         if self._async_group.is_closing:

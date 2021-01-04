@@ -11,7 +11,6 @@ import logging
 import typing
 
 from hat import aio
-from hat import util
 from hat.drivers import cotp
 
 
@@ -26,14 +25,13 @@ Address = cotp.Address
 """Address"""
 
 
-ConnectionInfo = util.namedtuple(
-    'ConnectionInfo',
-    ['local_addr', "Address: local address"],
-    ['local_tsel', "Optional[int]: local COTP selector"],
-    ['local_ssel', "Optional[int]: local COSP selector"],
-    ['remote_addr', "Address: remote address"],
-    ['remote_tsel', "Optional[int]: remote COTP selector"],
-    ['remote_ssel', "Optional[int]: remote COSP selector"])
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
 
 
 ValidateResult = typing.Optional[Data]
@@ -48,22 +46,14 @@ ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
 
 
-async def connect(addr, local_tsel=None, remote_tsel=None,
-                  local_ssel=None, remote_ssel=None, user_data=None):
-    """Connect to COSP server
-
-    Args:
-        addr (Address): remote address
-        local_tsel (Optional[int]): local COTP selector
-        remote_tsel (Optional[int]): remote COTP selector
-        local_ssel (Optional[int]): local COSP selector
-        remote_ssel (Optional[int]): remote COSP selector
-        user_data (Optional[Data]): connect request user data
-
-    Returns:
-        Connection
-
-    """
+async def connect(addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  user_data: typing.Optional[Data] = None
+                  ) -> 'Connection':
+    """Connect to COSP server"""
     cotp_conn = await cotp.connect(addr=addr,
                                    local_tsel=local_tsel,
                                    remote_tsel=remote_tsel)
@@ -76,17 +66,17 @@ async def connect(addr, local_tsel=None, remote_tsel=None,
         raise
 
 
-async def listen(validate_cb, connection_cb, addr=Address('0.0.0.0', 102)):
+async def listen(validate_cb: ValidateCb,
+                 connection_cb: ConnectionCb,
+                 addr: Address = Address('0.0.0.0', 102)
+                 ) -> 'Server':
     """Create COSP listening server
 
     Args:
-        validate_cb (ValidateCb): callback function or coroutine called on new
+        validate_cb: callback function or coroutine called on new
             incomming connection request prior to creating new connection
-        connection_cb (ConnectionCb): new connection callback
-        addr (Address): local listening address
-
-    Returns:
-        Server
+        connection_cb: new connection callback
+        addr: local listening address
 
     """
 
@@ -139,8 +129,8 @@ class Server(aio.Resource):
         return self._async_group
 
     @property
-    def addresses(self):
-        """List[Address]: listening addresses"""
+    def addresses(self) -> typing.List[Address]:
+        """Listening addresses"""
         return self._cotp_server.addresses
 
 
@@ -172,58 +162,38 @@ class Connection(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """ConnectionInfo: connection info"""
+    def info(self) -> ConnectionInfo:
+        """Connection info"""
         return self._info
 
     @property
-    def conn_req_user_data(self):
-        """Data: connect request's user data"""
+    def conn_req_user_data(self) -> Data:
+        """Connect request's user data"""
         return self._conn_req_user_data
 
     @property
-    def conn_res_user_data(self):
-        """Data: connect response's user data"""
+    def conn_res_user_data(self) -> Data:
+        """Connect response's user data"""
         return self._conn_res_user_data
 
-    def close(self, user_data=None):
-        """Close connection
-
-        Args:
-            user_data (Optional[Data]): finish message user data
-
-        """
+    def close(self, user_data: typing.Optional[Data] = None):
+        """Close connection"""
         self._close_spdu = _Spdu(_SpduType.FN,
                                  transport_disconnect=True,
                                  user_data=user_data)
         self._async_group.close()
 
-    async def async_close(self, user_data=None):
-        """Async close
-
-        Args:
-            user_data (Optional[Data]): finish message user data
-
-        """
+    async def async_close(self, user_data: typing.Optional[Data] = None):
+        """Async close"""
         self.close(user_data)
         await self.wait_closed()
 
-    async def read(self):
-        """Read data
-
-        Returns:
-            Data
-
-        """
+    async def read(self) -> Data:
+        """Read data"""
         return await self._read_queue.get()
 
-    def write(self, data):
-        """Write data
-
-        Args:
-            data (Data): data
-
-        """
+    def write(self, data: Data):
+        """Write data"""
         buff = bytearray(_give_tokens_spdu_data)
         buff.extend(_encode(_Spdu(type=_SpduType.DT,
                                   data=data)))
@@ -341,19 +311,18 @@ class _SpduType(enum.Enum):
     DT = 1
 
 
-_Spdu = util.namedtuple(
-    '_Spdu',
-    ['type', "_SpduType"],
-    ['extended_spdus', "Optional[bool]", None],
-    ['version_number', "Optional[int]", None],
-    ['transport_disconnect', "Optional[bool]", None],
-    ['requirements', "Optional[Data]", None],
-    ['beginning', "Optional[bool]", None],
-    ['end', "Optional[bool]", None],
-    ['calling_ssel', "Optional[int]", None],
-    ['called_ssel', "Optional[int]", None],
-    ['user_data', "Optional[Data]", None],
-    ['data', "Data", b''])
+class _Spdu(typing.NamedTuple):
+    type: _SpduType
+    extended_spdus: typing.Optional[bool] = None
+    version_number: typing.Optional[int] = None
+    transport_disconnect: typing.Optional[bool] = None
+    requirements: typing.Optional[Data] = None
+    beginning: typing.Optional[bool] = None
+    end: typing.Optional[bool] = None
+    calling_ssel: typing.Optional[int] = None
+    called_ssel: typing.Optional[int] = None
+    user_data: typing.Optional[Data] = None
+    data: Data = b''
 
 
 def _encode(spdu):
