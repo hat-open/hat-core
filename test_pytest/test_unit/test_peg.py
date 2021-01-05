@@ -28,7 +28,7 @@ def test_example():
     assert result == 8
 
 
-@pytest.mark.parametrize("grammar,starting", [
+@pytest.mark.parametrize("grammar, starting", [
     (r"x -> 'x'", 'x')
 ])
 def test_invalid_grammar(grammar, starting):
