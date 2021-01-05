@@ -510,7 +510,7 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
     readme = _get_readme(readme_path)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(f"from setuptools import setup\n\n\n"
-                f"readme = r\"\"\"\n{readme}\n\"\"\"\n\n"
+                f"readme = {repr(readme)}  # NOQA\n\n"
                 f"setup(name={repr(name)},\n"
                 f"      version={repr(version)},\n"
                 f"      description={repr(description)},\n"
