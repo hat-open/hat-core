@@ -152,5 +152,6 @@ async def test_clients(short_timeout, async_group,
                     10)
 
         _, group, clients = monitors.popleft()
-        await asyncio.wait([client.async_close() for client in clients])
+        for client in list(clients):
+            await client.async_close()
         await group.async_close()

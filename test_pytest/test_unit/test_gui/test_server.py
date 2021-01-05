@@ -3,6 +3,7 @@ import contextlib
 import hashlib
 import pytest
 
+from hat import aio
 import hat.gui.server
 import hat.juggler
 
@@ -593,6 +594,12 @@ async def test_server_shutdown(unused_tcp_port, server_factory, monkeypatch):
 
     await conn.wait_closed()
     await conn2.wait_closed()
-    await asyncio.wait([session.wait_closed() for session in sessions])
-    await asyncio.wait([session.wait_closed() for session in adapter.sessions])
+
+    async_group = aio.Group()
+    for session in sessions:
+        async_group.spawn(session.wait_closed)
+    for session in adapter.sessions:
+        async_group.spawn(session.wait_closed)
+    await async_group.async_close(cancel=False)
+
     assert not adapter.is_closed

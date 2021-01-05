@@ -257,5 +257,7 @@ async def test_adapter_close(adapter_factory):
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
         pass
-    await asyncio.wait([adapter.wait_closed()
-                        for adapter in adapters.values()])
+    async_group = aio.Group()
+    for adapter in adapters.values():
+        async_group.spawn(adapter.wait_closed)
+    await async_group.async_close(cancel=False)

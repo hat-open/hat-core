@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import pytest
 import math
 
+from hat import aio
 from hat.drivers import mms
 
 
@@ -22,8 +23,11 @@ def server_factory(unused_tcp_port_factory):
             on_connection, request_cb,
             addr=mms.Address('0.0.0.0', unused_tcp_port_factory()))
         yield server
-        await asyncio.wait([server.async_close(),
-                            *(conn.async_close() for conn in connections)])
+        async_group = aio.Group()
+        async_group.spawn(server.async_close)
+        for conn in connections:
+            async_group.spawn(conn.async_close)
+        await async_group.async_close(cancel=False)
 
     return factory
 
@@ -62,7 +66,10 @@ async def test_can_connect(connection_count, server_factory):
 
         assert len(server_connections) == connection_count
 
-    await asyncio.wait([conn.async_close() for conn in client_connections])
+    async_group = aio.Group()
+    for conn in client_connections:
+        async_group.spawn(conn.async_close)
+    await async_group.async_close(cancel=False)
 
 
 @pytest.mark.asyncio
