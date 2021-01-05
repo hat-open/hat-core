@@ -50,6 +50,7 @@ Common utility functions not available as part of standard library.
 
         """
 
+
 * `hat.util.CallbackRegistry`::
 
     class RegisterCallbackHandle(typing.NamedTuple):
@@ -104,6 +105,7 @@ Common utility functions not available as part of standard library.
         def notify(self, *args, **kwargs):
             """Notify all registered callbacks."""
 
+
 * `hat.util.parse_url_query`::
 
     def parse_url_query(query: str) -> typing.Dict[str, str]:
@@ -121,6 +123,7 @@ Common utility functions not available as part of standard library.
             assert args == {'q': 'hat-util'}
 
         """
+
 
 * `hat.util.get_unused_tcp_port` and `hat.util.get_unused_udp_port`::
 

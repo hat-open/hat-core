@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from hat.doit import c
+from hat.doit import common
 
 
 __all__ = ['task_duktape',
@@ -8,25 +8,25 @@ __all__ = ['task_duktape',
            'task_duktape_dep']
 
 
-src_dir = Path('src_c')
-build_dir = Path('build/duktape')
-src_paths = list((src_dir / 'duktape').rglob('*.c'))
-lib_path = Path(f'src_py/hat/duktape/duktape{c.lib_suffix}')
+lib_path = Path(f'src_py/hat/duktape/duktape{common.lib_suffix}')
 
-cc_flags = ['-fPIC', '-O2']
+build = common.CBuild(
+    src_paths=list(Path('src_c/duktape').rglob('*.c')),
+    src_dir=Path('src_c'),
+    build_dir=Path('build/duktape'),
+    cc_flags=['-fPIC', '-O2'])
 
 
 def task_duktape():
     """Duktape - build dynamic library"""
-    return c.get_task_lib(lib_path, src_paths, src_dir, build_dir)
+    return build.get_task_lib(lib_path)
 
 
 def task_duktape_obj():
     """Duktape - build .o files"""
-    yield from c.get_task_objs(src_paths, src_dir, build_dir,
-                               cc_flags=cc_flags)
+    yield from build.get_task_objs()
 
 
 def task_duktape_dep():
     """Duktape - build .d files"""
-    yield from c.get_task_deps(src_paths, src_dir, build_dir)
+    yield from build.get_task_deps()

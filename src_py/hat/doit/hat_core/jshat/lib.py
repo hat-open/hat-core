@@ -3,7 +3,6 @@ import shutil
 
 from hat import json
 from hat.doit import common
-from hat.doit.hat_core.timestamp import timestamp_path
 
 
 __all__ = ['task_jshat_lib_util',
@@ -86,8 +85,7 @@ def _get_task_lib(name, desc, readme_path, mappings, deps={}):
                         (_copy_files, [mappings]),
                         (_create_package_json, [name, desc, deps])],
             'file_dep': src_paths,
-            'targets': dst_paths,
-            'task_dep': ['timestamp']}
+            'targets': dst_paths}
 
 
 def _get_dst_dir(name):
@@ -102,7 +100,7 @@ def _copy_files(mappings):
 
 
 def _create_package_json(name, desc, deps):
-    version = common.get_version(common.VersionType.SEMVER, timestamp_path)
+    version = common.get_version(common.VersionType.SEMVER)
     dst_dir = _get_dst_dir(name)
     package = {'name': name,
                'version': version,

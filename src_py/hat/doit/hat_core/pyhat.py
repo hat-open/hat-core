@@ -7,7 +7,6 @@ from hat.doit import common
 from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
 from hat.doit.hat_core.pymod import sbs_mod_path
 from hat.doit.hat_core.pymod import sqlite3_mod_path
-from hat.doit.hat_core.timestamp import timestamp_path
 
 
 __all__ = ['task_pyhat_util',
@@ -486,8 +485,7 @@ def _get_task_build(name, description, readme_path, dependencies, mappings, *,
                                             platform_specific])],
             'file_dep': src_paths,
             'targets': dst_paths,
-            'task_dep': ['timestamp',
-                         *task_dep]}
+            'task_dep': [*task_dep]}
 
 
 def _get_build_dst_dir(name):
@@ -506,7 +504,7 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                      platform_specific):
     plat_name = _get_plat_name() if platform_specific else 'any'
     python_tag = f'cp{sys.version_info.major}{sys.version_info.minor}'
-    version = common.get_version(common.VersionType.PIP, timestamp_path)
+    version = common.get_version(common.VersionType.PIP)
     readme = _get_readme(readme_path)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(f"from setuptools import setup\n\n\n"

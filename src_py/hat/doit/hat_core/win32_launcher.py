@@ -2,7 +2,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from hat.doit import c
+from hat.doit import common
 
 
 __all__ = ['task_win32_launcher']
@@ -12,7 +12,7 @@ src_path = Path('src_c/hat/win32_launcher.c')
 dst_dir = Path('build/win32_launcher')
 
 if sys.platform == 'win32':
-    cc = c.cc
+    cc = common.cc
     windres = 'windres'
 else:
     cc = 'i686-w64-mingw32-gcc'

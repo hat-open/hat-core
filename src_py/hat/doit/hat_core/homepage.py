@@ -2,7 +2,6 @@ from pathlib import Path
 import xml.etree.ElementTree
 
 from hat.doit import common
-from hat.doit import tmpl
 from hat.doit.hat_core.articles import dst_dir as articles_src_dir
 from hat.doit.hat_core.articles import get_article_names
 from hat.doit.hat_core.docs import dst_dir as docs_src_dir
@@ -42,8 +41,8 @@ def task_homepage_pages():
         dst_path = dst_dir / f"{name}.html"
         params = {'get_articles': _get_articles}
         yield {'name': str(dst_path),
-               'actions': [(tmpl.mako_build, [src_dir, src_path, dst_path,
-                                              params])],
+               'actions': [(common.mako_build, [src_dir, src_path, dst_path,
+                                                params])],
                'targets': [dst_path],
                'task_dep': ['homepage_articles']}
 

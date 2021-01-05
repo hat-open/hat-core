@@ -4,7 +4,6 @@ import sys
 
 from hat import asn1
 from hat.doit import common
-import hat.doit.docs
 
 
 __all__ = ['task_docs',
@@ -23,8 +22,8 @@ asn1_dst_dir = dst_dir / 'asn1'
 
 def task_docs():
     """Docs - build documentation"""
-    return {'actions': [(hat.doit.docs.sphinx_build, [
-                            hat.doit.docs.SphinxOutputType.HTML,
+    return {'actions': [(common.sphinx_build, [
+                            common.SphinxOutputType.HTML,
                             src_dir,
                             dst_dir])],
             'task_dep': ['cache_tools_plantuml',
