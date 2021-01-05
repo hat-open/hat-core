@@ -14,25 +14,33 @@ import jsonschema.validators
 import yaml
 
 
-Array = typing.List['Data']
-Object = typing.Dict[str, 'Data']
-Data = typing.Union[None, bool, int, float, str, Array, Object]
+Array: typing.Type = typing.List['Data']
+Object: typing.Type = typing.Dict[str, 'Data']
+Data: typing.Type = typing.Union[None, bool, int, float, str, Array, Object]
 """JSON data type identifier."""
 
 Format = enum.Enum('Format', ['JSON', 'YAML'])
 """Encoding format"""
 
-Path = typing.Union[int, str, typing.List['Path']]
+Path: typing.Type = typing.Union[int, str, typing.List['Path']]
 """Data path"""
 
 
-def equals(a: Data, b: Data) -> bool:
+def equals(a: Data,
+           b: Data
+           ) -> bool:
     """Equality comparison of json serializable data.
 
     Tests for equality of data according to JSON format. Notably, ``bool``
     values are not considered equal to numeric values in any case. This is
     different from default equality comparison, which considers `False`
     equal to `0` and `0.0`; and `True` equal to `1` and `1.0`.
+
+    Example::
+
+        assert equals(0, 0.0) is True
+        assert equals({'a': 1, 'b': 2}, {'b': 2, 'a': 1}) is True
+        assert equals(1, True) is False
 
     """
     if isinstance(a, bool) != isinstance(b, bool):
@@ -48,12 +56,19 @@ def equals(a: Data, b: Data) -> bool:
         return True
 
 
-def flatten(data: Data) -> typing.Iterable[Data]:
+def flatten(data: Data
+            ) -> typing.Iterable[Data]:
     """Flatten JSON data
 
     If `data` is array, this generator recursively yields result of `flatten`
     call with each element of input list. For other `Data` types, input data is
     yielded.
+
+    Example::
+
+        data = [1, [], [2], {'a': [3]}]
+        result = [1, 2, {'a': [3]}]
+        assert list(flatten(data)) == result
 
     """
     if isinstance(data, list):
@@ -63,8 +78,22 @@ def flatten(data: Data) -> typing.Iterable[Data]:
         yield data
 
 
-def get(data: Data, path: Path) -> Data:
-    """Get data element referenced by path"""
+def get(data: Data,
+        path: Path
+        ) -> Data:
+    """Get data element referenced by path
+
+    Example::
+
+        data = {'a': [1, 2, [3, 4]]}
+        path = ['a', 2, 0]
+        assert get(data, path) == 3
+
+        data = [1, 2, 3]
+        assert get(data, 0) == 1
+        assert get(data, 5) is None
+
+    """
     for i in flatten(path):
         if isinstance(i, str):
             data = data.get(i) if isinstance(data, dict) else None
@@ -81,8 +110,25 @@ def get(data: Data, path: Path) -> Data:
     return data
 
 
-def set_(data: Data, path: Path, value: Data):
-    """Create new data by setting data path element value"""
+def set_(data: Data,
+         path: Path,
+         value: Data
+         ) -> Data:
+    """Create new data by setting data path element value
+
+    Example::
+
+        data = [1, {'a': 2, 'b': 3}, 4]
+        path = [1, 'b']
+        result = set_(data, path, 5)
+        assert result == [1, {'a': 2, 'b': 5}, 4]
+        assert result is not data
+
+        data = [1, 2, 3]
+        result = set_(data, 4, 4)
+        assert result == [1, 2, 3, None, 4]
+
+    """
     parents = collections.deque()
 
     for i in flatten(path):
@@ -134,19 +180,42 @@ def set_(data: Data, path: Path, value: Data):
     return value
 
 
-def diff(src: Data, dst: Data) -> Data:
-    """Generate JSON Patch diff."""
+def diff(src: Data,
+         dst: Data
+         ) -> Data:
+    """Generate JSON Patch diff.
+
+    Example::
+
+        src = [1, {'a': 2}, 3]
+        dst = [1, {'a': 4}, 3]
+        result = diff(src, dst)
+        assert result == [{'op': 'replace', 'path': '/1/a', 'value': 4}]
+
+    """
     return jsonpatch.JsonPatch.from_diff(src, dst).patch
 
 
-def patch(data: Data, diff: Data) -> Data:
-    """Apply JSON Patch diff."""
+def patch(data: Data,
+          diff: Data
+          ) -> Data:
+    """Apply JSON Patch diff.
+
+    Example::
+
+        data = [1, {'a': 2}, 3]
+        d = [{'op': 'replace', 'path': '/1/a', 'value': 4}]
+        result = patch(data, d)
+        assert result == [1, {'a': 4}, 3]
+
+    """
     return jsonpatch.apply_patch(data, diff)
 
 
 def encode(data: Data,
            format: Format = Format.JSON,
-           indent: typing.Optional[int] = None) -> str:
+           indent: typing.Optional[int] = None
+           ) -> str:
     """Encode JSON data.
 
     Args:
@@ -166,7 +235,9 @@ def encode(data: Data,
     raise ValueError()
 
 
-def decode(data_str: str, format: Format = Format.JSON) -> Data:
+def decode(data_str: str,
+           format: Format = Format.JSON
+           ) -> Data:
     """Decode JSON data.
 
     Args:
@@ -191,7 +262,7 @@ def encode_file(data: Data,
                 indent: typing.Optional[int] = 4):
     """Encode JSON data to file.
 
-    If format is `None`, encoding format is derived from path suffix.
+    If `format` is ``None``, encoding format is derived from path suffix.
 
     Args:
         data: JSON data
@@ -223,10 +294,11 @@ def encode_file(data: Data,
 
 
 def decode_file(path: pathlib.PurePath,
-                format: typing.Optional[Format] = None) -> Data:
+                format: typing.Optional[Format] = None
+                ) -> Data:
     """Decode JSON data from file.
 
-    If format is `None`, encoding format is derived from path suffix.
+    If `format` is ``None``, encoding format is derived from path suffix.
 
     Args:
         path: file path
@@ -290,7 +362,9 @@ class SchemaRepository:
             else:
                 self._load_schema(arg)
 
-    def validate(self, schema_id: str, data: Data):
+    def validate(self,
+                 schema_id: str,
+                 data: Data):
         """Validate data against JSON schema.
 
         Args:
@@ -383,9 +457,11 @@ class SchemaRepository:
 _json_schema_repo_path = (pathlib.Path(__file__).parent /
                           'json_schema_repo.json')
 
-json_schema_repo = (SchemaRepository.from_json(_json_schema_repo_path)
-                    if _json_schema_repo_path.exists()
-                    else SchemaRepository())
+json_schema_repo: SchemaRepository = (
+    SchemaRepository.from_json(_json_schema_repo_path)
+    if _json_schema_repo_path.exists()
+    else SchemaRepository())
+"""JSON Schema repository with generic schemas"""
 
 
 # check upstream changes in jsonpatch and validate performance inpact

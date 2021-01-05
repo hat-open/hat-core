@@ -50,6 +50,12 @@ def test_equals(params, is_equal):
         assert json.equals(a, b) == is_equal
 
 
+def test_equals_example():
+    assert json.equals(0, 0.0) is True
+    assert json.equals({'a': 1, 'b': 2}, {'b': 2, 'a': 1}) is True
+    assert json.equals(1, True) is False
+
+
 @pytest.mark.parametrize("data, result", [
     (None,
      [None]),
@@ -81,6 +87,12 @@ def test_equals(params, is_equal):
 def test_flatten(data, result):
     x = list(json.flatten(data))
     assert json.equals(x, result)
+
+
+def test_flatten_example():
+    data = [1, [], [2], {'a': [3]}]
+    result = [1, 2, {'a': [3]}]
+    assert list(json.flatten(data)) == result
 
 
 @pytest.mark.parametrize("data, path, result", [
@@ -117,6 +129,21 @@ def test_get(data, path, result):
     assert json.equals(x, result)
 
 
+def test_get_example():
+    data = {'a': [1, 2, [3, 4]]}
+    path = ['a', 2, 0]
+    assert json.get(data, path) == 3
+
+    data = [1, 2, 3]
+    assert json.get(data, 0) == 1
+    assert json.get(data, 5) is None
+
+
+def test_get_invalid_path():
+    with pytest.raises(ValueError):
+        json.get(None, True)
+
+
 @pytest.mark.parametrize("data, path, value, result", [
     (123,
      [],
@@ -146,6 +173,23 @@ def test_get(data, path, result):
 def test_set_(data, path, value, result):
     x = json.set_(data, path, value)
     assert json.equals(x, result)
+
+
+def test_set_example():
+    data = [1, {'a': 2, 'b': 3}, 4]
+    path = [1, 'b']
+    result = json.set_(data, path, 5)
+    assert result == [1, {'a': 2, 'b': 5}, 4]
+    assert result is not data
+
+    data = [1, 2, 3]
+    result = json.set_(data, 4, 4)
+    assert result == [1, 2, 3, None, 4]
+
+
+def test_set_invalid_path():
+    with pytest.raises(ValueError):
+        json.set_(None, True, 1)
 
 
 @pytest.mark.parametrize("x, y, diff", [
@@ -193,6 +237,67 @@ def test_set_(data, path, value, result):
 def test_diff(x, y, diff):
     result = json.diff(x, y)
     assert result == diff
+
+
+def test_diff_example():
+    src = [1, {'a': 2}, 3]
+    dst = [1, {'a': 4}, 3]
+    result = json.diff(src, dst)
+    assert result == [{'op': 'replace', 'path': '/1/a', 'value': 4}]
+
+
+def test_patch_example():
+    data = [1, {'a': 2}, 3]
+    d = [{'op': 'replace', 'path': '/1/a', 'value': 4}]
+    result = json.patch(data, d)
+    assert result == [1, {'a': 4}, 3]
+
+
+@pytest.mark.parametrize('format', list(json.Format))
+@pytest.mark.parametrize('indent', [None, 4])
+@pytest.mark.parametrize('data', [
+    None,
+    True,
+    False,
+    1,
+    1.0,
+    'abc',
+    [1, 2, 3],
+    {'a': [[], []]}
+])
+def test_encode_decode(format, indent, data):
+    encoded = json.encode(data, format, indent)
+    decoded = json.decode(encoded, format)
+    assert data == decoded
+
+
+@pytest.mark.parametrize('format', list(json.Format))
+@pytest.mark.parametrize('indent', [None, 4])
+@pytest.mark.parametrize('data', [
+    None,
+    True,
+    False,
+    1,
+    1.0,
+    'abc',
+    [1, 2, 3],
+    {'a': [[], []]}
+])
+def test_encode_decode_file(tmp_path, format, indent, data):
+    path = tmp_path / 'data'
+    json.encode_file(data, path, format, indent)
+    decoded = json.decode_file(path, format)
+    assert data == decoded
+
+    if format == json.Format.JSON:
+        path = path.with_suffix('.json')
+    elif format == json.Format.YAML:
+        path = path.with_suffix('.yaml')
+    else:
+        raise NotImplementedError()
+    json.encode_file(data, path, None, indent)
+    decoded = json.decode_file(path, None)
+    assert data == decoded
 
 
 def test_schema_repository_init_empty():
