@@ -23,6 +23,13 @@ def first(xs: typing.Iterable[T],
         fn: predicate
         default: default value
 
+    Example::
+
+        assert first(range(3)) == 0
+        assert first(range(3), lambda x: x > 1) == 2
+        assert first(range(3), lambda x: x > 2) is None
+        assert first(range(3), lambda x: x > 2, 123) == 123
+
     """
     return next((i for i in xs if fn(i)), default)
 
@@ -34,6 +41,8 @@ def namedtuple(name: typing.Union[str, typing.Tuple[str, str]],
                     typing.Tuple[str, str, typing.Any]
                ]]) -> typing.Type[collections.namedtuple]:
     """Create a documented Type[collections.namedtuple]`.
+
+    **DEPRECATED** - this function will be removed in future versions.
 
     The `name` can be a string; or a tuple containing name and documentation.
 
@@ -82,7 +91,7 @@ class RegisterCallbackHandle(typing.NamedTuple):
         self.cancel()
 
 
-ExceptionCb = typing.Callable[[Exception], None]
+ExceptionCb: typing.Type = typing.Callable[[Exception], None]
 """Exception callback"""
 
 
@@ -94,6 +103,23 @@ class CallbackRegistry:
     exception is caught and `exception_cb` handler is called. Notification of
     subsequent callbacks is not interrupted. If handler is `None`, the
     exception is reraised and no subsequent callback is notified.
+
+    Example::
+
+        x = []
+        y = []
+        registry = CallbackRegistry()
+
+        registry.register(x.append)
+        registry.notify(1)
+
+        with registry.register(y.append):
+            registry.notify(2)
+
+        registry.notify(3)
+
+        assert x == [1, 2, 3]
+        assert y == [2]
 
     """
 
@@ -128,6 +154,12 @@ def parse_url_query(query: str) -> typing.Dict[str, str]:
 
     Args:
         query: url query string
+
+    Example::
+
+        url = urllib.parse.urlparse('https://pypi.org/search/?q=hat-util')
+        args = parse_url_query(url.query)
+        assert args == {'q': 'hat-util'}
 
     """
     ret = {}

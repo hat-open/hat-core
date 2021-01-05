@@ -1,3 +1,5 @@
+import urllib.parse
+
 import pytest
 
 from hat import util
@@ -10,6 +12,13 @@ def test_first():
     assert util.first(x, lambda x: x > 1) == 2
     assert util.first(x, lambda x: x > 3) is None
     assert util.first([], default=4) == 4
+
+
+def test_first_example():
+    assert util.first(range(3)) == 0
+    assert util.first(range(3), lambda x: x > 1) == 2
+    assert util.first(range(3), lambda x: x > 2) is None
+    assert util.first(range(3), lambda x: x > 2, 123) == 123
 
 
 def test_callback_registry():
@@ -31,6 +40,21 @@ def test_callback_registry():
     registry.notify()
 
     assert counter == 1
+
+
+def test_callback_registry_example():
+    x = []
+    y = []
+    registry = util.CallbackRegistry()
+
+    registry.register(x.append)
+    registry.notify(1)
+    with registry.register(y.append):
+        registry.notify(2)
+    registry.notify(3)
+
+    assert x == [1, 2, 3]
+    assert y == [2]
 
 
 @pytest.mark.parametrize('value_count', [1, 2, 10])
@@ -93,6 +117,12 @@ def test_callback_registry_without_exception_cb(cb_count):
 def test_parse_url_query(query, params):
     result = util.parse_url_query(query)
     assert result == params
+
+
+def test_parse_url_query_example():
+    url = urllib.parse.urlparse('https://pypi.org/search/?q=hat-util')
+    args = util.parse_url_query(url.query)
+    assert args == {'q': 'hat-util'}
 
 
 def test_get_unused_tcp_port():

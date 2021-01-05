@@ -15,7 +15,6 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 
 For more information see:
 
-    * Hat Open homepage - ``in development``
     * Hat Core homepage - `<https://core.hat-open.com>`_
     * Hat Core documentation - `<https://core.hat-open.com/docs>`_
     * Hat Core git repository - `<https://github.com/hat-open/hat-core.git>`_
