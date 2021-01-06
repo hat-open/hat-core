@@ -3,4 +3,4 @@
 . ./env.sh
 
 cd $CORE_PATH
-doit schemas pymod jshat_app jshat_view
+$PYTHON -m doit schemas pymod jshat_app jshat_view

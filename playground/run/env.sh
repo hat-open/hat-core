@@ -1,5 +1,6 @@
 #!/bin/sh
 
+PYTHON=${PYTHON:-python}
 RUN_PATH=$(cd $(dirname -- "$0") && pwd)
 CORE_PATH=$RUN_PATH/../..
 SCHEMAS_JSON_PATH=$CORE_PATH/schemas_json
