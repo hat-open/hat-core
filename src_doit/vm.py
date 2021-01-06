@@ -7,11 +7,11 @@ import tempfile
 import time
 
 from hat import util
-
 from hat.doit import common
-from hat.doit.hat_core.cache.vm.archlinux import img_path as archlinux_img_path
-from hat.doit.hat_core.cache.vm.win10 import img_path as win10_img_path
-from hat.doit.hat_core.cache.vm.key import ssh_key_path
+
+from .cache.vm.archlinux import img_path as archlinux_img_path
+from .cache.vm.win10 import img_path as win10_img_path
+from .cache.vm.key import ssh_key_path
 
 
 __all__ = ['task_vm_archlinux',

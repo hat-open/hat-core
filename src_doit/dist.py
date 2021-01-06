@@ -3,8 +3,9 @@ import subprocess
 import sys
 
 from hat.doit import common
-from hat.doit.hat_core.jshat.lib import build_dir as jshat_dir
-from hat.doit.hat_core.pyhat import build_dir as pyhat_dir
+
+from .jshat.lib import build_dir as jshat_dir
+from .pyhat import build_dir as pyhat_dir
 
 
 __all__ = ['task_dist',

@@ -3,36 +3,36 @@ import itertools
 
 from hat.doit import common
 
-from hat.doit.hat_core.articles import *  # NOQA
-from hat.doit.hat_core.cache import *  # NOQA
-from hat.doit.hat_core.check import *  # NOQA
-from hat.doit.hat_core.dist import *  # NOQA
-from hat.doit.hat_core.docs import *  # NOQA
-from hat.doit.hat_core.duktape import *  # NOQA
-from hat.doit.hat_core.format import *  # NOQA
-from hat.doit.hat_core.homepage import *  # NOQA
-from hat.doit.hat_core.jshat import *  # NOQA
-from hat.doit.hat_core.pyhat import *  # NOQA
-from hat.doit.hat_core.pymod import *  # NOQA
-from hat.doit.hat_core.schemas import *  # NOQA
-from hat.doit.hat_core.test import *  # NOQA
-from hat.doit.hat_core.vm import *  # NOQA
-from hat.doit.hat_core.win32_launcher import *  # NOQA
-from hat.doit.hat_core import articles
-from hat.doit.hat_core import cache
-from hat.doit.hat_core import check
-from hat.doit.hat_core import dist
-from hat.doit.hat_core import docs
-from hat.doit.hat_core import duktape
-from hat.doit.hat_core import format
-from hat.doit.hat_core import homepage
-from hat.doit.hat_core import jshat
-from hat.doit.hat_core import pyhat
-from hat.doit.hat_core import pymod
-from hat.doit.hat_core import schemas
-from hat.doit.hat_core import test
-from hat.doit.hat_core import vm
-from hat.doit.hat_core import win32_launcher
+from .articles import *  # NOQA
+from .cache import *  # NOQA
+from .check import *  # NOQA
+from .dist import *  # NOQA
+from .docs import *  # NOQA
+from .duktape import *  # NOQA
+from .format import *  # NOQA
+from .homepage import *  # NOQA
+from .jshat import *  # NOQA
+from .pyhat import *  # NOQA
+from .pymod import *  # NOQA
+from .schemas import *  # NOQA
+from .test import *  # NOQA
+from .vm import *  # NOQA
+from .win32_launcher import *  # NOQA
+from . import articles
+from . import cache
+from . import check
+from . import dist
+from . import docs
+from . import duktape
+from . import format
+from . import homepage
+from . import jshat
+from . import pyhat
+from . import pymod
+from . import schemas
+from . import test
+from . import vm
+from . import win32_launcher
 
 
 __all__ = (['task_clean_all'] +

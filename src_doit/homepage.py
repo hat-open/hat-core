@@ -2,9 +2,10 @@ from pathlib import Path
 import xml.etree.ElementTree
 
 from hat.doit import common
-from hat.doit.hat_core.articles import dst_dir as articles_src_dir
-from hat.doit.hat_core.articles import get_article_names
-from hat.doit.hat_core.docs import dst_dir as docs_src_dir
+
+from .articles import dst_dir as articles_src_dir
+from .articles import get_article_names
+from .docs import dst_dir as docs_src_dir
 
 
 __all__ = ['task_homepage',

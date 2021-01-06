@@ -5,7 +5,8 @@ import contextlib
 import tempfile
 
 from hat.doit import common
-from hat.doit.hat_core.cache.vm.key import authorized_keys_path
+
+from .key import authorized_keys_path
 
 
 __all__ = ['task_cache_vm_archlinux',

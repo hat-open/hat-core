@@ -17,13 +17,14 @@ DOIT_CONFIG = {'backend': 'sqlite3',
                'num_process': num_process}
 
 pythonpath = os.environ.get('PYTHONPATH')
-src_py_path = str(Path('src_py').resolve())
+package_path = Path(__file__).parent.resolve()
+src_py_path = package_path / 'src_py'
 
-sys.path += [src_py_path]
+sys.path = [str(src_py_path), *sys.path]
 if pythonpath:
     os.environ['PYTHONPATH'] = f'{src_py_path}{os.pathsep}{pythonpath}'
 else:
-    os.environ['PYTHONPATH'] = src_py_path
+    os.environ['PYTHONPATH'] = str(src_py_path)
 
 
-from hat.doit.hat_core import *  # NOQA
+from src_doit import *  # NOQA

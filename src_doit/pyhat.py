@@ -4,9 +4,10 @@ import shutil
 import sys
 
 from hat.doit import common
-from hat.doit.hat_core.duktape import lib_path as duktape_lib_path
-from hat.doit.hat_core.pymod import sbs_mod_path
-from hat.doit.hat_core.pymod import sqlite3_mod_path
+
+from .duktape import lib_path as duktape_lib_path
+from .pymod import sbs_mod_path
+from .pymod import sqlite3_mod_path
 
 
 __all__ = ['task_pyhat_util',
