@@ -77,21 +77,16 @@ async def event_server_run_cb(address, monitor_client):
         common.process_event_to_event(i) for i in events])
     comm = await hat.event.server.communication.create(conf, engine)
 
-    await asyncio.wait([engine.wait_closed(), comm.wait_closed()],
-                       return_when=asyncio.FIRST_COMPLETED)
-    await comm.async_close()
-    await engine.async_close()
+    group = aio.Group()
+    group.spawn(aio.call_on_cancel, comm.async_close)
+    group.spawn(aio.call_on_cancel, engine.async_close)
+    group.spawn(aio.call_on_done, comm.wait_closing(), group.close)
+    group.spawn(aio.call_on_done, engine.wait_closing(), group.close)
 
-    # group = aio.Group()
-    # group.spawn(aio.call_on_cancel, comm.async_close)
-    # group.spawn(aio.call_on_cancel, engine.async_close)
-    # group.spawn(aio.call_on_done, comm.wait_closing, group.close)
-    # group.spawn(aio.call_on_done, engine.wait_closing, group.close)
-
-    # try:
-    #     await group.wait_closing()
-    # finally:
-    #     await group.async_close()
+    try:
+        await group.wait_closing()
+    finally:
+        await group.async_close()
 
 
 @pytest.fixture
@@ -120,7 +115,6 @@ async def client_run_cb(server_group, run_cb, monitor_client):
                                              server_group, run_cb)
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.parametrize("server_count", [1, 2, 10])
 @pytest.mark.asyncio
 async def test_run_client(event_server_factory, client_factory,
@@ -157,7 +151,6 @@ async def test_run_client(event_server_factory, client_factory,
         assert (await client_queue.get()) is None
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.asyncio
 async def test_run_client_result(event_server_factory, client_factory,
                                  short_client_reconnect_delay):
@@ -171,7 +164,6 @@ async def test_run_client_result(event_server_factory, client_factory,
     assert (await client_future) == 'test'
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.asyncio
 async def test_run_client_exception(event_server_factory, client_factory,
                                     short_client_reconnect_delay):
@@ -186,7 +178,6 @@ async def test_run_client_exception(event_server_factory, client_factory,
         await client_future
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.parametrize("run_count", [1, 2, 10])
 @pytest.mark.asyncio
 async def test_run_client_close_from_cb(event_server_factory, client_factory,
@@ -209,7 +200,6 @@ async def test_run_client_close_from_cb(event_server_factory, client_factory,
     assert n == run_count
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.parametrize("run_count", [1, 2, 10])
 @pytest.mark.asyncio
 async def test_run_client_cancel_cb(event_server_factory, client_factory,
@@ -231,7 +221,6 @@ async def test_run_client_cancel_cb(event_server_factory, client_factory,
     assert n == run_count
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.asyncio
 async def test_run_client_change_while_connecting(
         async_group, unused_tcp_port_factory, monitor_server,
@@ -259,7 +248,6 @@ async def test_run_client_change_while_connecting(
     assert (await client_future) == 'test'
 
 
-# @pytest.mark.skip(reason="WIP regresion failure")
 @pytest.mark.asyncio
 async def test_run_client_register_on_cancel(event_server_factory,
                                              client_factory,
