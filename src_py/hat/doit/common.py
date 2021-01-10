@@ -190,6 +190,8 @@ class CBuild:
             return []
         with open(path, 'r') as f:
             content = f.readlines()
+        if not content:
+            return []
         content[0] = content[0][content[0].find(':')+1:]
         return list(itertools.chain.from_iterable(
             (Path(path) for path in i.replace(' \\\n', '').strip().split(' '))
