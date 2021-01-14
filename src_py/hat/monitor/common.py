@@ -10,11 +10,11 @@ from hat import sbs
 
 package_path = Path(__file__).parent
 
-json_schema_repo = json.SchemaRepository(
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
     json.json_schema_repo,
     json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
 
-sbs_repo = sbs.Repository(
+sbs_repo: sbs.Repository = sbs.Repository(
     chatter.sbs_repo,
     sbs.Repository.from_json(package_path / 'sbs_repo.json'))
 
@@ -22,71 +22,81 @@ sbs_repo = sbs.Repository(
 class ComponentInfo(typing.NamedTuple):
     cid: int
     mid: int
-    name: str
-    group: str
+    name: typing.Optional[str]
+    group: typing.Optional[str]
     address: typing.Optional[str]
     rank: int
     blessing: typing.Optional[int]
     ready: typing.Optional[int]
 
 
-def component_info_to_sbs(info):
-    """Convert component info to SBS data
+class MsgClient(typing.NamedTuple):
+    name: str
+    group: str
+    address: typing.Optional[str]
+    ready: typing.Optional[int]
 
-    Args:
-        info (ComponentInfo): component info
 
-    Returns:
-        hat.sbs.Data: SBS data
+class MsgServer(typing.NamedTuple):
+    cid: int
+    mid: int
+    components: typing.List[ComponentInfo]
 
-    """
+
+def component_info_to_sbs(info: ComponentInfo) -> sbs.Data:
+    """Convert component info to SBS data"""
     return {'cid': info.cid,
             'mid': info.mid,
-            'name': info.name,
-            'group': info.group,
+            'name': _value_to_sbs_maybe(info.name),
+            'group': _value_to_sbs_maybe(info.group),
             'address': _value_to_sbs_maybe(info.address),
             'rank': info.rank,
             'blessing': _value_to_sbs_maybe(info.blessing),
             'ready': _value_to_sbs_maybe(info.ready)}
 
 
-def component_info_from_sbs(data):
-    """Convert SBS data to component info
-
-    Args:
-        data (hat.sbs.Data): SBS data
-
-    Returns:
-        ComponentInfo
-
-    """
+def component_info_from_sbs(data: sbs.Data) -> ComponentInfo:
+    """Convert SBS data to component info"""
     return ComponentInfo(cid=data['cid'],
                          mid=data['mid'],
-                         name=data['name'],
-                         group=data['group'],
+                         name=_value_from_sbs_maybe(data['name']),
+                         group=_value_from_sbs_maybe(data['group']),
                          address=_value_from_sbs_maybe(data['address']),
                          rank=data['rank'],
                          blessing=_value_from_sbs_maybe(data['blessing']),
                          ready=_value_from_sbs_maybe(data['ready']))
 
 
-def create_msg_client_sbs(name, group, address, ready):
-    """Create MsgClient SBS data
+def msg_client_to_sbs(msg: MsgClient) -> sbs.Data:
+    """Convert MsgClient to SBS data"""
+    return {'name': msg.name,
+            'group': msg.group,
+            'address': _value_to_sbs_maybe(msg.address),
+            'ready': _value_to_sbs_maybe(msg.ready)}
 
-    Args:
-        name (str): component name
-        group (str): component group
-        address (Optional[str]): address
-        ready (Optional[int]): ready token
 
-    Returns:
-        hat.sbs.Data: SBS data
+def msg_client_from_sbs(data: sbs.Data) -> MsgClient:
+    """Convert SBS data to MsgClient"""
+    return MsgClient(name=data['name'],
+                     group=data['group'],
+                     address=_value_from_sbs_maybe(data['address']),
+                     ready=_value_from_sbs_maybe(data['ready']))
 
-    """
-    return {'name': name,
-            'group': group,
-            'address': _value_to_sbs_maybe(address),
-            'ready': _value_to_sbs_maybe(ready)}
+
+def msg_server_to_sbs(msg: MsgServer) -> sbs.Data:
+    """Convert MsgServer to SBS data"""
+    return {'cid': msg.cid,
+            'mid': msg.mid,
+            'components': [component_info_to_sbs(info)
+                           for info in msg.components]}
+
+
+def msg_server_from_sbs(data: sbs.Data) -> MsgServer:
+    """Convert SBS data to MsgServer"""
+    return MsgServer(cid=data['cid'],
+                     mid=data['mid'],
+                     components=[component_info_from_sbs(info)
+                                 for info in data['components']])
 
 
 def _value_to_sbs_maybe(value):

@@ -320,6 +320,7 @@ def task_pyhat_monitor():
         description='Hat Monitor Server and client',
         readme_path=Path('README.rst'),
         dependencies=['appdirs',
+                      'click',
                       'hat-util',
                       'hat-json',
                       'hat-aio',

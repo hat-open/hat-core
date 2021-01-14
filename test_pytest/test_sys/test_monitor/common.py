@@ -39,10 +39,11 @@ def create_monitor_conf(monitor_port, default_rank, master_port,
             'default_rank': default_rank},
         'master': {
             'address': f'tcp+sbs://0.0.0.0:{master_port}',
-            'parents': [f'tcp+sbs://127.0.0.1:{parent_port}'
-                        for parent_port in parents_ports],
             'default_algorithm': default_algorithm,
             'group_algorithms': group_algorithms},
+        'slave': {
+            'parents': [f'tcp+sbs://127.0.0.1:{parent_port}'
+                        for parent_port in parents_ports]},
         'ui': {'address': f'tcp+sbs://0.0.0.0:{ui_port}'}}
 
 
@@ -52,7 +53,8 @@ def run_monitor_subprocess(conf, conf_folder_path):
     creationflags = (subprocess.CREATE_NEW_PROCESS_GROUP
                      if sys.platform == 'win32' else 0)
     return psutil.Popen(
-        ['python', '-m', 'hat.monitor.server.main', '--conf', str(conf_path),
+        [sys.executable, '-m', 'hat.monitor.server.main',
+         '--conf', str(conf_path),
          '--ui-path', ''],
         creationflags=creationflags)
 
@@ -120,7 +122,7 @@ async def create_ui_client(address):
 
 
 def find_ui_info(ui_state, info):
-    return util.first(ui_state['components'],
+    return util.first(ui_state['global_components'],
                       lambda comp: (comp['cid'] == info.cid
                                     and comp['mid'] == info.mid))
 

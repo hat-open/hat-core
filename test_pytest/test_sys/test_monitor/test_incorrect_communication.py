@@ -14,7 +14,7 @@ from test_sys.test_monitor import common
 async def test_ui_malformed_message(monitor_factory):
     monitor = monitor_factory()
     incorrect_ui_client = await hat.juggler.connect(
-        f'ws://localhost:{monitor.ui_port}/ws')
+        f'ws://127.0.0.1:{monitor.ui_port}/ws')
     await asyncio.sleep(0.5)
 
     await incorrect_ui_client.send('JSON serializable data')
@@ -37,7 +37,7 @@ async def test_ui_incorrect_type(cluster_factory):
         'group': {
             'components': ['c1', 'c2']}})
     incorrect_ui_client = await hat.juggler.connect(
-        f'ws://localhost:{cluster.server_info.ui_port}/ws')
+        f'ws://127.0.0.1:{cluster.server_info.ui_port}/ws')
     await asyncio.sleep(0.5)
 
     await incorrect_ui_client.send({
@@ -63,7 +63,7 @@ async def test_ui_incorrect_cid_mid(cluster_factory):
         'group': {
             'components': ['c1', 'c2']}})
     incorrect_ui_client = await hat.juggler.connect(
-        f'ws://localhost:{cluster.server_info.ui_port}/ws')
+        f'ws://127.0.0.1:{cluster.server_info.ui_port}/ws')
     await asyncio.sleep(0.5)
 
     try:
@@ -71,7 +71,6 @@ async def test_ui_incorrect_cid_mid(cluster_factory):
             'type': 'set_rank',
             'payload': {
                 'cid': 150,
-                'mid': 29,
                 'rank': 2}})
 
         server_info = cluster.server_info
@@ -100,7 +99,7 @@ async def test_component_malformed_message(monitor_factory):
         """))
 
     incorrect_component_client = await hat.chatter.connect(
-        sbs_repo, f'tcp+sbs://localhost:{monitor.monitor_port}')
+        sbs_repo, f'tcp+sbs://127.0.0.1:{monitor.monitor_port}')
     incorrect_component_client.send(hat.chatter.Data(
         module='Test',
         type='T',

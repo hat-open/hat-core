@@ -1,8 +1,10 @@
 """Implementation of blessing calculation algorithms"""
 
 import enum
+import typing
 
 from hat import util
+from hat.monitor.server import common
 
 
 Algorithm = enum.Enum('Algorithm', [
@@ -13,18 +15,19 @@ Algorithm = enum.Enum('Algorithm', [
 _last_token_id = 0
 
 
-def calculate_blessing(group_algorithms, components,
-                       default_algorithm=Algorithm.BLESS_ONE):
+def calculate(components: typing.List[common.ComponentInfo],
+              group_algorithms: typing.Dict[str, Algorithm],
+              default_algorithm: Algorithm
+              ) -> typing.List[common.ComponentInfo]:
     """Calculate blessing
 
     Args:
-        group_algorithms (Dict[str,Algorithm]):
-            association of algorith to group
-        components (List[common.ComponentInfo]):
-            components state with previous blessing tokens
+        components: components state with previous blessing tokens
+        group_algorithms: association of algorithm to group
+        default_algorithm: default algorithm
 
     Returns:
-        List[common.ComponentInfo]: components state with updated blessing
+        components state with updated blessing
 
     """
     if not components:

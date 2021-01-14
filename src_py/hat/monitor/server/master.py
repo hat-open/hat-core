@@ -1,414 +1,223 @@
-"""Implementations of interface to master monitor server
+"""Master communication implementation"""
 
-Attributes:
-    mlog (logging.Logger): module logger
-    connect_retry_delay (float): delay before retrying to connect to remote
-        master in seconds
-    connect_retry_count (int): number of trials for connecting to remote
-        master until waiting for `connect_retry_delay`
-    connected_timeout (float): timeout (in seconds) on initial trial for
-        connecting to remote master. If connection is not established until
-        the timeout, local master is run and trial for connection to remote
-        master is restarted again.
-
-"""
-
-import abc
-import asyncio
 import contextlib
+import itertools
 import logging
+import typing
 
 from hat import aio
 from hat import chatter
+from hat import json
 from hat import util
-from hat.monitor import common
 from hat.monitor.server import blessing
+from hat.monitor.server import common
+import hat.monitor.server.server
 
 
-mlog = logging.getLogger(__name__)
-
-connect_retry_delay = 0.5
-
-connect_retry_count = 3
-
-connected_timeout = 2
-
-_last_mid = 0
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
-async def run(conf, master_change_cb):
-    """Run connect to master loop
-
-    This method runs indefinitely trying to establish connection with parent
-    master monitor. Based on connection availability, `master_change_cb`
-    is called when new instance of Master interface is created or existing
-    is closed. Connection to remote master is considered established once
-    first `MsgMaster` is received.
+async def create(conf: json.Data
+                 ) -> 'Master':
+    """Create master
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://monitor/main.yaml#/definitions/master``
-        master_change_cb (Callable[[Optional[Master]],None]):
-            master change callback
 
     """
-    local_master_group = None
-    remote_master = None
-    listener = await _create_listener(conf['address'])
-    try:
-        if not conf['parents']:
-            await _run_local_master(conf, listener, master_change_cb)
-            return
-        while True:
-            remote_master = await _connect_remote_with_timeout(
-                conf['parents'], connected_timeout)
-            if not remote_master:
-                local_master_group = aio.Group()
-                local_master_group.spawn(_run_local_master, conf,
-                                         listener, master_change_cb)
-                remote_master = await _connect_remote_loop(conf['parents'])
-            if local_master_group:
-                await local_master_group.async_close()
-                local_master_group = None
-            master_change_cb(remote_master)
-            await remote_master.wait_closed()
-            master_change_cb(None)
-    finally:
-        await listener.async_close()
-        if local_master_group:
-            await local_master_group.async_close()
-        if remote_master:
-            await remote_master.wait_closed()
+    master = Master()
+    master._last_mid = 0
+    master._group_algorithms = {
+        group: blessing.Algorithm[algorithm]
+        for group, algorithm in conf['group_algorithms'].items()}
+    master._default_algorithm = blessing.Algorithm[conf['default_algorithm']]
+    master._components = []
+    master._mid_components = {}
+    master._change_cbs = util.CallbackRegistry()
+    master._active_subgroup = aio.Group()
+    master._active_subgroup.close()
 
+    master._srv = await chatter.listen(
+        sbs_repo=common.sbs_repo,
+        address=conf['address'],
+        on_connection_cb=master._create_slave)
 
-async def _run_local_master(conf, listener, master_change_cb):
-    master = _create_local_master(conf)
-    master_change_cb(master)
-    try:
-        with listener.register(master._on_connection):
-            await master.wait_closed()
-    finally:
-        await master.async_close()
-        master_change_cb(None)
-
-
-async def _connect_remote_loop(parents):
-    loop_counter = 0
-    while True:
-        if loop_counter >= connect_retry_count:
-            await asyncio.sleep(connect_retry_delay)
-            loop_counter = 0
-        for parent in parents:
-            try:
-                return await _create_remote_master(parent)
-            except asyncio.CancelledError:
-                raise
-            except Exception as e:
-                mlog.debug("error on connection to parent monitor %s: "
-                           "%s", parent, e, exc_info=e)
-                continue
-        loop_counter += 1
-
-
-async def _connect_remote_with_timeout(parents, timeout):
-    try:
-        return await asyncio.wait_for(_connect_remote_loop(parents),
-                                      connected_timeout)
-    except asyncio.TimeoutError:
-        return
-
-
-async def _create_listener(address):
-    listener = _Listener()
-    listener._cbs = set()
-    listener._connection_cbs = util.CallbackRegistry()
-    listener._async_group = aio.Group(
-        lambda e: mlog.error("error in listener: %s", e, exc_info=e))
-    chatter_server = await chatter.listen(
-        common.sbs_repo, address, listener._on_connection)
-    listener._async_group.spawn(aio.call_on_cancel, chatter_server.async_close)
-    return listener
-
-
-class _Listener(aio.Resource):
-
-    @property
-    def async_group(self):
-        return self._async_group
-
-    def register(self, cb):
-        return self._connection_cbs.register(cb)
-
-    def _on_connection(self, conn):
-        if not self._connection_cbs._cbs:
-            self._async_group.spawn(self._close_connection, conn)
-            return
-        self._connection_cbs.notify(conn)
-
-    async def _close_connection(self, conn):
-        await aio.uncancellable(conn.async_close(), raise_cancel=False)
+    mlog.debug('master listens slaves on %s', conf['address'])
+    return master
 
 
 class Master(aio.Resource):
-    """Master interface
-
-    Instances of this class should not be created outside of this module.
-    Should not create instances of this class calling its constructor.
-
-    """
 
     @property
-    @abc.abstractmethod
-    def mid(self):
-        """int: local monitor id"""
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._srv.async_group
 
     @property
-    @abc.abstractmethod
-    def components(self):
-        """List[common.ComponentInfo]: global components state"""
-
-    @abc.abstractmethod
-    def register_change_cb(self, cb):
-        """Register change callback
-
-        Change callback is called once mid and/or components property changes.
-
-        Args:
-            cb (Callable[[],None]): change callback
-
-        Returns:
-            util.RegisterCallbackHandle
-
-        """
-
-    @abc.abstractmethod
-    def set_components(self, components):
-        """Set local components info
-
-        Args:
-            components (List[common.ComponentInfo]): local components info
-
-        """
-
-    @abc.abstractmethod
-    def set_rank(self, cid, mid, rank):
-        """Set component's rank
-
-        Args:
-            cid (int): component id
-            mid (int): component's local monitor id
-            rank (int): component's rank
-
-        """
-
-
-def _create_local_master(conf):
-    master = LocalMaster()
-    master._async_group = aio.Group(exception_cb=master._on_exception)
-    master._change_cbs = util.CallbackRegistry()
-    master._mid = 0
-    master._connections = {}
-    master._global_components = []
-    master._default_algorithm = blessing.Algorithm[conf['default_algorithm']]
-    master._group_algorithms = {
-        group: blessing.Algorithm[alg]
-        for group, alg in conf['group_algorithms'].items()}
-    return master
-
-
-class LocalMaster(Master):
-    """Local master implementation"""
+    def active(self) -> bool:
+        """Is active"""
+        return self._active_subgroup.is_open
 
     @property
-    def async_group(self):
-        return self._async_group
-
-    @property
-    def mid(self):
-        """See :meth:`hat.monitor.master.Master.mid`"""
-        return self._mid
-
-    @property
-    def components(self):
-        """See :meth:`hat.monitor.master.Master.components`"""
-        return self._global_components
-
-    def register_change_cb(self, cb):
-        """See :meth:`hat.monitor.master.Master.register_change_cb`"""
-        return self._change_cbs.register(cb)
-
-    def set_components(self, components):
-        """See :meth:`hat.monitor.master.Master.set_components`"""
-        self._update_global_on_local_components(components, self._mid)
-
-    def set_rank(self, cid, mid, rank):
-        """See :meth:`hat.monitor.master.Master.set_rank`"""
-        self._calculate_global_components([
-            i._replace(rank=rank) if i.cid == cid and i.mid == mid else i
-            for i in self._global_components])
-
-    def _send_msg_master(self, conn):
-        conn.send(chatter.Data(
-            module='HatMonitor',
-            type='MsgMaster',
-            data={'mid': self._connections[conn],
-                  'components': [common.component_info_to_sbs(i)
-                                 for i in self._global_components]}))
-
-    def _calculate_global_components(self, new_components):
-        new_global_components = blessing.calculate_blessing(
-            group_algorithms=self._group_algorithms,
-            components=new_components,
-            default_algorithm=self._default_algorithm)
-        if new_global_components == self._global_components:
-            return
-        self._global_components = new_global_components
-        mlog.debug('blessing changed')
-        for conn in self._connections:
-            with contextlib.suppress(chatter.ConnectionClosedError):
-                self._send_msg_master(conn)
-        self._change_cbs.notify()
-
-    def _on_connection(self, conn):
-        self._async_group.spawn(self._connection_loop, conn)
-
-    async def _connection_loop(self, conn):
-        global _last_mid
-        mid = _last_mid + 1
-        _last_mid += 1
-        self._connections[conn] = mid
-        self._send_msg_master(conn)
-        try:
-            while True:
-                msg = await conn.receive()
-                if (msg.data.module != 'HatMonitor' or
-                        not(msg.data.type == 'MsgSlave' or
-                            msg.data.type == 'MsgSetRank')):
-                    raise Exception('Message received from slave malformed: '
-                                    'message MsgSlave or MsgSetRank from '
-                                    'HatMonitor module expected')
-                {'MsgSlave': self._process_msg_slave,
-                 'MsgSetRank': self._process_msg_set_rank
-                 }[msg.data.type](conn, msg)
-        except chatter.ConnectionClosedError:
-            mlog.debug("connection with mid=%s closed", mid)
-        finally:
-            await conn.async_close()
-            del self._connections[conn]
-            self._calculate_global_components(
-                [i for i in self._global_components if i.mid != mid])
-
-    def _process_msg_slave(self, conn, msg):
-        slave_components = [common.component_info_from_sbs(i)
-                            for i in msg.data.data['components']]
-        slave_mid = self._connections[conn]
-        self._update_global_on_local_components(slave_components, slave_mid)
-
-    def _process_msg_set_rank(self, conn, msg):
-        self.set_rank(msg.data.data['cid'],
-                      msg.data.data['mid'],
-                      msg.data.data['rank'])
-
-    def _update_global_on_local_components(self, local_components, mid):
-        new_global_components = [i for i in self._global_components
-                                 if i.mid != mid]
-        for c in local_components:
-            old_c = util.first(self._global_components,
-                               lambda i: i.cid == c.cid and i.mid == c.mid)
-            if old_c:
-                new_global_components.append(
-                    c._replace(blessing=old_c.blessing))
-            else:
-                new_global_components.append(c)
-        self._calculate_global_components(new_global_components)
-
-    def _on_exception(self, e):
-        mlog.error("exception in local master connection loop: %s",
-                   e, exc_info=e)
-
-
-async def _create_remote_master(parent_address):
-    master = RemoteMaster()
-    master._async_group = aio.Group(exception_cb=master._on_exception)
-    master._change_cbs = util.CallbackRegistry()
-    master._local_components = []
-    master._mid = None
-    master._components = []
-    master._parent_address = parent_address
-    master._conn = await chatter.connect(common.sbs_repo, parent_address)
-    msg_master = await master._conn.receive()
-    master._process_msg_master(msg_master)
-    master._async_group.spawn(aio.call_on_cancel, master._conn.async_close)
-    master._async_group.spawn(master._receive_loop)
-    return master
-
-
-class RemoteMaster(Master):
-    """Remote master interface"""
-
-    @property
-    def async_group(self):
-        return self._async_group
-
-    @property
-    def mid(self):
-        """See :meth:`hat.monitor.master.Master.mid`"""
-        return self._mid
-
-    @property
-    def components(self):
-        """See :meth:`hat.monitor.master.Master.components`"""
+    def components(self) -> typing.List[common.ComponentInfo]:
+        """Global components"""
         return self._components
 
-    def register_change_cb(self, cb):
-        """See :meth:`hat.monitor.master.Master.register_change_cb`"""
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -> util.RegisterCallbackHandle:
+        """Register change callback
+
+        Change callback is called once active and/or components property
+        changes.
+
+        """
         return self._change_cbs.register(cb)
 
-    def set_components(self, components):
-        """See :meth:`hat.monitor.master.Master.set_components`"""
-        self._local_components = components
-        self._send_msg_slave()
+    async def set_server(self, server: hat.monitor.server.server.Server):
+        """Set server
 
-    def set_rank(self, cid, mid, rank):
-        """See :meth:`hat.monitor.master.Master.set_rank`"""
-        self._send_msg_set_rank(cid, mid, rank)
+        If `server` is not ``None``, master is activated. Otherwise master is
+        deactivated.
 
-    def _send_msg_slave(self):
-        self._conn.send(chatter.Data(
-            module='HatMonitor',
-            type='MsgSlave',
-            data={'components': [common.component_info_to_sbs(i)
-                                 for i in self._local_components]}))
+        """
+        await self._active_subgroup.async_close()
+        if not server:
+            return
 
-    def _send_msg_set_rank(self, cid, mid, rank):
-        self._conn.send(chatter.Data(
-            module='HatMonitor',
-            type='MsgSetRank',
-            data={'cid': cid,
-                  'mid': mid,
-                  'rank': rank}))
-
-    def _process_msg_master(self, msg_master):
-        if (msg_master.data.module != 'HatMonitor' or
-                msg_master.data.type != 'MsgMaster'):
-            raise Exception('Message received from master malformed: '
-                            'message MsgMaster from HatMonitor module '
-                            'expected')
-        self._mid = msg_master.data.data['mid']
-        self._components = [common.component_info_from_sbs(i)
-                            for i in msg_master.data.data['components']]
+        self._active_subgroup = self.async_group.create_subgroup()
+        self._active_subgroup.spawn(self._active_loop, server)
+        self._components = []
+        self._mid_components[0] = []
         self._change_cbs.notify()
 
-    async def _receive_loop(self):
-        try:
-            while True:
-                msg = await self._conn.receive()
-                self._process_msg_master(msg)
-        except chatter.ConnectionClosedError:
-            mlog.debug("connection to %s closed", self._parent_address)
-        finally:
-            self._async_group.close()
+    async def _active_loop(self, server):
 
-    def _on_exception(self, e):
-        mlog.error("exception in remote master receive loop: %s",
-                   e, exc_info=e)
+        def on_server_change():
+            self._set_components(0, server.local_components)
+
+        def on_master_change():
+            server.update(0, self._components)
+
+        try:
+            mlog.debug('master activated')
+
+            with server.register_change_cb(on_server_change):
+                with self.register_change_cb(on_master_change):
+                    on_master_change()
+                    on_server_change()
+                    await server.wait_closing()
+
+        except Exception as e:
+            mlog.warning('active loop error: %s', e, exc_info=e)
+
+        finally:
+            self._active_subgroup.close()
+            self._components = []
+            self._mid_components = {}
+            self._change_cbs.notify()
+            on_master_change()
+            mlog.debug('master deactivated')
+
+    def _create_slave(self, conn):
+        if not self.active:
+            conn.close()
+            return
+
+        self._last_mid += 1
+        mid = self._last_mid
+
+        slave = _Slave(self, conn, mid)
+        self._active_subgroup.spawn(slave.slave_loop)
+        self._mid_components[mid] = []
+
+    def _remove_slave(self, mid):
+        components = self._mid_components.pop(mid, [])
+        if not components:
+            return
+        self._update_components()
+
+    def _set_components(self, mid, components):
+        components = [i._replace(mid=mid) for i in components
+                      if i.name is not None and i.group is not None]
+        if self._mid_components.get(mid, []) == components:
+            return
+
+        self._mid_components[mid] = components
+        self._update_components()
+
+    def _update_components(self):
+        blessings = {(i.mid, i.cid): i.blessing
+                     for i in self._components}
+        components = itertools.chain.from_iterable(
+            self._mid_components.values())
+        components = [i._replace(blessing=blessings.get((i.mid, i.cid)))
+                      for i in components]
+        components = blessing.calculate(components, self._group_algorithms,
+                                        self._default_algorithm)
+        if components == self._components:
+            return
+
+        self._components = components
+        self._change_cbs.notify()
+
+
+class _Slave:
+
+    def __init__(self, master, conn, mid):
+        self._master = master
+        self._conn = conn
+        self._mid = mid
+        self._components = master.components
+
+    async def slave_loop(self):
+        try:
+            mlog.debug('connection %s established', self._mid)
+
+            self._components = self._master.components
+            self._send_msg_master()
+
+            with self._master.register_change_cb(self._on_change):
+                while True:
+                    msg = await self._conn.receive()
+                    msg_type = msg.data.module, msg.data.type
+
+                    if msg_type == ('HatMonitor', 'MsgSlave'):
+                        msg = common.msg_slave_from_sbs(msg.data.data)
+                        self._process_msg_slave(msg)
+
+                    else:
+                        raise Exception('unsupported message type')
+
+        except ConnectionError:
+            pass
+
+        except Exception as e:
+            mlog.warning('connection loop error: %s', e, exc_info=e)
+
+        finally:
+            self._conn.close()
+            self._master._remove_slave(self._mid)
+            mlog.debug('connection %s closed', self._mid)
+
+    def _on_change(self):
+        if self._master.components == self._components:
+            return
+
+        self._components = self._master.components
+        self._send_msg_master()
+
+    def _send_msg_master(self):
+        msg = common.MsgMaster(mid=self._mid,
+                               components=self._components)
+
+        with contextlib.suppress(ConnectionError):
+            self._conn.send(chatter.Data(
+                module='HatMonitor',
+                type='MsgMaster',
+                data=common.msg_master_to_sbs(msg)))
+
+    def _process_msg_slave(self, msg_slave):
+        self._master._set_components(self._mid, msg_slave.components)

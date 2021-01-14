@@ -1,48 +1,47 @@
-"""Implementation of web server UI
+"""Implementation of web server UI"""
 
-Attributes:
-    mlog (logging.Logger): module logger
-    autoflush_delay (float): juggler autoflush delay
-
-"""
-
-import contextlib
+from pathlib import Path
 import logging
 import urllib
 
 from hat import aio
+from hat import json
 from hat import juggler
+import hat.monitor.server.server
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
+
+autoflush_delay: float = 0.2
+"""Juggler autoflush delay"""
 
 
-autoflush_delay = 0.2
-
-
-async def create(conf, path, server):
+async def create(conf: json.Data,
+                 path: Path,
+                 server: hat.monitor.server.server.Server
+                 ) -> 'WebServer':
     """Create user interface
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://monitor/main.yaml#/definitions/ui``
-        path (pathlib.Path): web ui directory path
-        server (hat.monitor.server.Server): local monitor server
-
-    Returns:
-        WebServer
+        path: web ui directory path
+        server: local monitor server
 
     """
-    srv = WebServer()
-    srv._monitor_server = server
-    srv._async_group = aio.Group()
     addr = urllib.parse.urlparse(conf['address'])
-    juggler_srv = await juggler.listen(
-        addr.hostname, addr.port,
-        lambda conn: srv._async_group.spawn(srv._connection_loop, conn),
-        static_dir=path,
-        autoflush_delay=autoflush_delay)
-    srv._async_group.spawn(aio.call_on_cancel, juggler_srv.async_close)
+
+    srv = WebServer()
+    srv._server = server
+
+    srv._srv = await juggler.listen(host=addr.hostname,
+                                    port=addr.port,
+                                    connection_cb=srv._on_connection,
+                                    static_dir=path,
+                                    autoflush_delay=autoflush_delay)
+
+    mlog.debug("web server listening on %s", conf['address'])
     return srv
 
 
@@ -56,36 +55,65 @@ class WebServer(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
 
-    async def _connection_loop(self, conn):
+    def _on_connection(self, conn):
+        connection = _Connection(conn, self._server)
+        self.async_group.spawn(connection.connection_loop)
+
+
+class _Connection:
+
+    def __init__(self, conn, server):
+        self._conn = conn
+        self._server = server
+
+    async def connection_loop(self):
         try:
-            self._set_data(conn)
-            with self._monitor_server.register_change_cb(
-                    lambda: self._set_data(conn)):
+            mlog.debug('connection established')
+
+            with self._server.register_change_cb(self._on_server_change):
+                self._on_server_change()
+
                 while True:
-                    msg = await conn.receive()
-                    if msg['type'] != 'set_rank':
-                        raise Exception('received invalid message type')
-                    self._monitor_server.set_rank(cid=msg['payload']['cid'],
-                                                  mid=msg['payload']['mid'],
-                                                  rank=msg['payload']['rank'])
+                    msg = await self._conn.receive()
+
+                    if msg['type'] == 'set_rank':
+                        self._process_set_rank(msg['payload'])
+
+                    else:
+                        raise Exception('unsupported message type')
+
         except ConnectionError:
             pass
-        finally:
-            await conn.async_close()
 
-    def _set_data(self, conn):
-        data = {'mid': self._monitor_server.mid,
-                'components': [{
-                    'cid': component.cid,
-                    'mid': component.mid,
-                    'name': component.name,
-                    'group': component.group,
-                    'address': component.address,
-                    'rank': component.rank,
-                    'blessing': component.blessing,
-                    'ready': component.ready
-                } for component in self._monitor_server.components]}
-        with contextlib.suppress(Exception):
-            conn.set_local_data(data)
+        except Exception as e:
+            mlog.warning('connection loop error: %s', e, exc_info=e)
+
+        finally:
+            self._conn.close()
+            mlog.debug('connection closed')
+
+    def _on_server_change(self):
+        local_components = [{'cid': i.cid,
+                             'name': i.name,
+                             'group': i.group,
+                             'address': i.address,
+                             'rank': i.rank}
+                            for i in self._server.local_components]
+        global_components = [{'cid': i.cid,
+                              'mid': i.mid,
+                              'name': i.name,
+                              'group': i.group,
+                              'address': i.address,
+                              'rank': i.rank,
+                              'blessing': i.blessing,
+                              'ready': i.ready}
+                             for i in self._server.global_components]
+        data = {'mid': self._server.mid,
+                'local_components': local_components,
+                'global_components': global_components}
+        self._conn.set_local_data(data)
+
+    def _process_set_rank(self, payload):
+        self._server.set_rank(payload['cid'], payload['rank'])

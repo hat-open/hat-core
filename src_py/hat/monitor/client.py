@@ -1,12 +1,11 @@
 """Library used by components for communication with Monitor Server
 
-This module provides low-level interface (connect/Client) and high-level
-interface (run_component) for communication with Monitor Server.
+This module provides low-level interface (`connect`/`Client`) and high-level
+interface (`run_component`) for communication with Monitor Server.
 
-
-:func:`connect` is used for establishing single chatter based connection
-with Monitor Server which is represented by :class:`Client`. Termination of
-connection is signaled with :meth:`Client.wait_closed`.
+`connect` is used for establishing single chatter based connection
+with Monitor Server which is represented by `Client`. Termination of
+connection is signaled with `Client.wait_closed`.
 
 Example of low-level interface usage::
 
@@ -21,7 +20,7 @@ Example of low-level interface usage::
     finally:
         await client.async_close()
 
-:func:`run_component` provide high-level interface for communication with
+`run_component` provide high-level interface for communication with
 Monitor Server. This function first establishes connection to Monitor
 Server and then listens component changes and in regard to blessing
 and ready tokens calls or cancels `async_run_cb` callback.
@@ -45,40 +44,35 @@ Example of high-level interface usage::
         async_run_cb=monitor_async_run)
     assert res == 13
 
-Attributes:
-    mlog (logging.Logger): module logger
-
 """
 
 import asyncio
 import logging
+import typing
 
 from hat import aio
 from hat import chatter
+from hat import json
 from hat import util
 from hat.monitor import common
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
-async def connect(conf):
+async def connect(conf: json.Data
+                  ) -> 'Client':
     """Connect to local monitor server
 
     Connection is established once chatter communication is established.
 
     Args:
-        conf (hat.json.Data): configuration as defined by
-            ``hat://monitor/client.yaml#``
-
-    Returns:
-        Client
+        conf: configuration as defined by ``hat://monitor/client.yaml#``
 
     """
     client = Client()
-    client._name = conf['name']
-    client._group = conf['group']
-    client._address = conf['component_address']
+    client._conf = conf
     client._components = []
     client._info = None
     client._ready = None
@@ -88,8 +82,9 @@ async def connect(conf):
     client._conn = await chatter.connect(common.sbs_repo,
                                          conf['monitor_address'])
     client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
-    mlog.debug("connected to local monitor server %s", conf['monitor_address'])
     client._async_group.spawn(client._receive_loop)
+
+    mlog.debug("connected to local monitor server %s", conf['monitor_address'])
     return client
 
 
@@ -101,82 +96,94 @@ class Client(aio.Resource):
         return self._async_group
 
     @property
-    def info(self):
-        """Optional[common.ComponentInfo]: client's component info"""
+    def info(self) -> typing.Optional[common.ComponentInfo]:
+        """Client's component info"""
         return self._info
 
     @property
-    def components(self):
-        """List[common.ComponentInfo]: global component state"""
+    def components(self) -> typing.List[common.ComponentInfo]:
+        """Global component state"""
         return self._components
 
-    def register_change_cb(self, cb):
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -> util.RegisterCallbackHandle:
         """Register change callback
 
         Registered callback is called once info and/or components changes.
 
-        Args:
-            cb (Callable[[],None]): callback
-
-        Returns:
-            util.RegisterCallbackHandle
-
         """
         return self._change_cbs.register(cb)
 
-    def set_ready(self, token):
-        """Set ready token
-
-        Args:
-            token (Optional[int]): ready token
-
-        """
+    def set_ready(self, token: typing.Optional[int]):
+        """Set ready token"""
         if token == self._ready:
             return
+
         self._ready = token
         self._send_msg_client()
-
-    def _send_msg_client(self):
-        self._conn.send(chatter.Data(
-            module='HatMonitor',
-            type='MsgClient',
-            data=common.create_msg_client_sbs(
-                name=self._name,
-                group=self._group,
-                address=self._address,
-                ready=self._ready)))
-
-    def _set_components(self, msg_server):
-        if (msg_server.data.module != 'HatMonitor' or
-                msg_server.data.type != 'MsgServer'):
-            raise Exception('Message received from server malformed: message '
-                            'MsgServer from HatMonitor module expected')
-        self._components = [common.component_info_from_sbs(i)
-                            for i in msg_server.data.data['components']]
-        self._info = util.first(
-            self._components,
-            lambda i:
-                i.cid == msg_server.data.data['cid'] and
-                i.mid == msg_server.data.data['mid'])
-        self._change_cbs.notify()
 
     async def _receive_loop(self):
         try:
             self._send_msg_client()
+
             while True:
                 msg = await self._conn.receive()
-                self._set_components(msg)
-        except chatter.ConnectionClosedError:
-            mlog.debug('connection closed')
+                msg_type = msg.data.module, msg.data.type
+
+                if msg_type == ('HatMonitor', 'MsgServer'):
+                    msg_server = common.msg_server_from_sbs(msg.data.data)
+                    self._process_msg_server(msg_server)
+
+                else:
+                    raise Exception('unsupported message type')
+
+        except ConnectionError:
+            mlog.debug("connection closed")
+
+        except Exception as e:
+            mlog.warning("monitor client error: %s", e, exc_info=e)
+
         finally:
             self._async_group.close()
 
+    def _send_msg_client(self):
+        msg_client = common.MsgClient(name=self._conf['name'],
+                                      group=self._conf['group'],
+                                      address=self._conf['component_address'],
+                                      ready=self._ready)
+        self._conn.send(chatter.Data(
+            module='HatMonitor',
+            type='MsgClient',
+            data=common.msg_client_to_sbs(msg_client)))
 
-async def run_component(conf, async_run_cb):
+    def _process_msg_server(self, msg_server):
+        components = msg_server.components
+        info = util.first(components, lambda i: (i.cid == msg_server.cid and
+                                                 i.mid == msg_server.mid))
+
+        if (self._components == components and self._info == info):
+            return
+
+        self._components = components
+        self._info = info
+        self._change_cbs.notify()
+
+
+T = typing.TypeVar('T')
+
+
+async def run_component(conf: json.Data,
+                        async_run_cb: typing.Callable[[Client],
+                                                      typing.Awaitable[T]]
+                        ) -> T:
     """Run component
 
     This method opens new connection to Monitor server and starts client's
-    loop which manages blessing/ready states.
+    loop which manages blessing/ready states. This implementation
+    sets ready token immediately after blessing token is detected.
+
+    `conf` argument is directly passed to `connect` function.
 
     When blessing token matches ready token, `async_run_cb` is called. While
     `async_run_cb` is running, if blessing token changes, `async_run_cb` is
@@ -184,69 +191,82 @@ async def run_component(conf, async_run_cb):
 
     If `async_run_cb` finishes or raises exception, this function closes
     connection to monitor server and returns `async_run_cb` result. If
-    connection to monitor server is closed, this function raises exception.
-
-    TODO:
-        * provide opportunity for user to react to blessing token prior to
-          setting ready token (additional async_ready_cb)
-
-    Args:
-        conf (hat.json.Data): configuration as defined by
-            ``hat://monitor/client.yaml#``
-        async_run_cb (Callable[[Client],None]): run callback
-
-    Returns:
-        Any
+    connection to monitor server is closed, this function raises
+    `ConnectionError`.
 
     """
+    change_queue = aio.Queue()
+    async_group = aio.Group()
+
+    def on_client_change():
+        change_queue.put_nowait(None)
+
     client = await connect(conf)
+    closing_future = async_group.spawn(client.wait_closing)
+    change_handler = client.register_change_cb(on_client_change)
+    async_group.spawn(aio.call_on_cancel, change_handler.cancel)
+    async_group.spawn(aio.call_on_cancel, client.async_close)
+
+    async def wait_until_blessed_and_ready():
+        while True:
+            blessing = client.info.blessing if client.info else None
+            ready = client.info.ready if client.info else None
+
+            client.set_ready(blessing)
+            if blessing is not None and blessing == ready:
+                break
+
+            await change_queue.get_until_empty()
+
+    async def wait_while_blessed_and_ready():
+        while True:
+            blessing = client.info.blessing if client.info else None
+            ready = client.info.ready if client.info else None
+
+            if blessing is None or blessing != ready:
+                client.set_ready(None)
+                break
+
+            await change_queue.get_until_empty()
+
     try:
         while True:
-            await _wait_until_blessed_and_ready(client)
-            async_group = aio.Group()
-            run_future = async_group.spawn(async_run_cb, client)
-            blessed_and_ready_future = async_group.spawn(
-                _wait_while_blessed_and_ready, client)
-            try:
-                done, _ = await asyncio.wait(
-                    [run_future,
-                     blessed_and_ready_future,
-                     async_group.spawn(client.wait_closed)],
-                    return_when=asyncio.FIRST_COMPLETED)
+            async with async_group.create_subgroup() as subgroup:
+                mlog.debug("waiting blessing and ready")
+
+                ready_future = subgroup.spawn(wait_until_blessed_and_ready)
+
+                await asyncio.wait([ready_future,
+                                    closing_future],
+                                   return_when=asyncio.FIRST_COMPLETED)
+
+                if closing_future.done():
+                    raise ConnectionError()
+
+            async with async_group.create_subgroup() as subgroup:
+                mlog.debug("running component's async_run_cb")
+
+                run_future = subgroup.spawn(async_run_cb, client)
+                ready_future = subgroup.spawn(wait_while_blessed_and_ready)
+
+                await asyncio.wait([run_future,
+                                    ready_future,
+                                    closing_future],
+                                   return_when=asyncio.FIRST_COMPLETED)
+
                 if run_future.done():
-                    mlog.debug('async_run_cb finished or raised an exception')
                     return run_future.result()
-                if client.is_closed:
-                    raise Exception('connection to monitor server closed!')
-            finally:
-                if not client.is_closed:
-                    client.set_ready(None)
-                await async_group.async_close()
-    except asyncio.CancelledError:
+
+                if closing_future.done():
+                    raise ConnectionError()
+
+    except ConnectionError:
         raise
+
     except Exception as e:
-        mlog.error('run component exception: %s', e, exc_info=e)
+        mlog.warning("run component error: %s", e, exc_info=e)
         raise
+
     finally:
-        await client.async_close()
-        mlog.debug('component closed')
-
-
-async def _wait_until_blessed_and_ready(client):
-    queue = aio.Queue()
-    with client.register_change_cb(lambda: queue.put_nowait(None)):
-        while (client.info is None or client.info.blessing is None or
-               client.info.blessing != client.info.ready):
-            await queue.get_until_empty()
-            if client.info is None:
-                continue
-            client.set_ready(client.info.blessing)
-
-
-async def _wait_while_blessed_and_ready(client):
-    queue = aio.Queue()
-    with client.register_change_cb(lambda: queue.put_nowait(None)):
-        while (client.info is not None and
-               client.info.blessing is not None and
-               client.info.blessing == client.info.ready):
-            await queue.get_until_empty()
+        await aio.uncancellable(async_group.async_close())
+        mlog.debug("component closed")

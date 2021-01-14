@@ -1,52 +1,43 @@
-"""Implementation of local monitor server
-
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
+"""Implementation of local monitor server communication"""
 
 import contextlib
 import logging
+import typing
 
 from hat import aio
 from hat import chatter
+from hat import json
 from hat import util
-from hat.monitor import common
+from hat.monitor.server import common
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
-_last_cid = 0
 
-
-async def create(conf):
+async def create(conf: json.Data
+                 ) -> 'Server':
     """Create local monitor server
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://monitor/main.yaml#/definitions/server``
-
-    Returns:
-        Server
 
     """
     server = Server()
     server._default_rank = conf['default_rank']
-    server._rank_cache = {}
-    server._master = None
+    server._last_cid = 0
     server._mid = 0
-    server._components = []
-    server._async_group = aio.Group(server._on_exception)
-    server._change_cbs = util.CallbackRegistry()
-    server._master_change_handler = None
-    server._connections = {}
+    server._rank_cache = {}
     server._local_components = []
-    chatter_server = await chatter.listen(
+    server._global_components = []
+    server._change_cbs = util.CallbackRegistry()
+
+    server._srv = await chatter.listen(
         sbs_repo=common.sbs_repo,
         address=conf['address'],
-        on_connection_cb=lambda conn: server._async_group.spawn(
-            server._connection_loop, conn))
-    server._async_group.spawn(aio.call_on_cancel, chatter_server.async_close)
+        on_connection_cb=server._create_client)
+
     mlog.debug('monitor server listens clients on %s', conf['address'])
     return server
 
@@ -54,182 +45,176 @@ async def create(conf):
 class Server(aio.Resource):
     """Local monitor server
 
-    For creating new instance of this class see :func:`create`
+    For creating new instance of this class see `create` function.
 
     """
 
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
 
     @property
-    def components(self):
-        """List[common.ComponentInfo]: global components state
-
-        If connection to monitor is not established, this propertry provides
-        list of local components state.
-
-        """
-        return self._components
-
-    @property
-    def mid(self):
-        """int: monitor id"""
+    def mid(self) -> int:
+        """Server's monitor id"""
         return self._mid
 
-    def register_change_cb(self, cb):
+    @property
+    def local_components(self) -> typing.List[common.ComponentInfo]:
+        """Local components"""
+        return self._local_components
+
+    @property
+    def global_components(self) -> typing.List[common.ComponentInfo]:
+        """Global components"""
+        return self._global_components
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -> util.RegisterCallbackHandle:
         """Register change callback
 
-        Change callback is called once mid and/or components property changes.
-
-        Args:
-            cb (Callable[[],None]): change callback
-
-        Returns:
-            util.RegisterCallbackHandle
+        Change callback is called once mid and/or local_components and/or
+        global_components property changes.
 
         """
         return self._change_cbs.register(cb)
 
-    def set_master(self, master):
-        """Set master
-
-        Args:
-            master (Optional[hat.monitor.master.Master]): master
-
-        """
-        if self._master is master:
+    def update(self,
+               mid: int,
+               global_components: typing.List[common.ComponentInfo]):
+        """Update server's monitor id and global components"""
+        if self._mid == mid and self._global_components == global_components:
             return
-        if self._master_change_handler:
-            self._master_change_handler.cancel()
-            self._master_change_handler = None
-        self._master = master
-        if self._master:
-            self._on_master_change()
-            self._master_change_handler = master.register_change_cb(
-                self._on_master_change)
-            self._master.set_components(self._local_components)
-        else:
-            if self._mid == 0:
-                return
-            self._mid = 0
-            self._local_components = [i._replace(mid=0)
+
+        self._global_components = global_components
+        if self._mid != mid:
+            self._mid = mid
+            self._local_components = [i._replace(mid=mid)
                                       for i in self._local_components]
-            self._handle_local_changes()
-
-    def set_rank(self, cid, mid, rank):
-        """Set component's rank
-
-        Args:
-            cid (int): component id
-            mid (int): component's local monitor id
-            rank (int): component's rank
-
-        """
-        if self._master:
-            self._master.set_rank(cid, mid, rank)
-        if mid != self.mid:
-            return
-        self._change_local_component(cid, rank=rank)
-        if not self._master:
-            self._handle_local_changes()
-        info = util.first(self._local_components, lambda i: i.cid == cid)
-        if info is None:
-            return
-        self._rank_cache[info.name, info.group] = info.rank
-
-    def _handle_local_changes(self):
-        if self._master:
-            self._master.set_components(self._local_components)
-        else:
-            if self._components == self._local_components:
-                return
-            self._components = list(self._local_components)
-            self._send_msg_server_to_clients()
-            self._change_cbs.notify()
-
-    async def _connection_loop(self, conn):
-        global _last_cid
-        cid = _last_cid + 1
-        _last_cid += 1
-        self._connections[conn] = cid
-        try:
-            self._send_msg_server(conn)
-            while True:
-                msg_client = await conn.receive()
-                if (msg_client.data.module != 'HatMonitor' or
-                        msg_client.data.type != 'MsgClient'):
-                    raise Exception('Message received from client malformed: '
-                                    'message MsgClient from HatMonitor module '
-                                    'expected')
-                self._process_msg_client(msg_client, cid)
-                self._handle_local_changes()
-        except chatter.ConnectionClosedError:
-            mlog.debug('connection %s closed', cid)
-        finally:
-            await conn.async_close()
-            del self._connections[conn]
-            self._local_components = [i for i in self._local_components
-                                      if i.cid != cid]
-            self._handle_local_changes()
-
-    def _send_msg_server_to_clients(self):
-        for conn in self._connections.keys():
-            with contextlib.suppress(chatter.ConnectionClosedError):
-                self._send_msg_server(conn)
-
-    def _send_msg_server(self, conn):
-        conn.send(chatter.Data(
-            module='HatMonitor',
-            type='MsgServer',
-            data={'cid': self._connections[conn],
-                  'mid': self.mid,
-                  'components': [common.component_info_to_sbs(info)
-                                 for info in self.components]}))
-
-    def _on_master_change(self):
-        if (self._mid == self._master.mid and
-                self._components == self._master.components):
-            return
-        for i in self._master.components:
-            if i.mid == self._master.mid:
-                self._rank_cache[i.name, i.group] = i.rank
-        self._local_components = [
-            i._replace(mid=self._master.mid,
-                       rank=self._rank_cache.get((i.name, i.group),
-                                                 self._default_rank))
-            for i in self._local_components]
-        self._mid = self._master.mid
-        self._components = list(self._master.components)
-        self._send_msg_server_to_clients()
         self._change_cbs.notify()
 
-    def _process_msg_client(self, msg_client, cid):
-        if util.first(self._local_components, lambda i: i.cid == cid):
-            self._change_local_component(
-                cid,
-                name=msg_client.data.data['name'],
-                group=msg_client.data.data['group'],
-                address=msg_client.data.data['address'][1],
-                ready=msg_client.data.data['ready'][1])
-        else:
-            self._local_components.append(
-                common.ComponentInfo(
-                    cid=cid,
-                    mid=self.mid,
-                    name=msg_client.data.data['name'],
-                    group=msg_client.data.data['group'],
-                    address=msg_client.data.data['address'][1],
-                    rank=self._rank_cache.get((msg_client.data.data['name'],
-                                               msg_client.data.data['group']),
-                                              self._default_rank),
-                    blessing=None,
-                    ready=msg_client.data.data['ready'][1]))
+    def set_rank(self,
+                 cid: int,
+                 rank: int):
+        """Set component rank"""
+        info = util.first(self._local_components, lambda i: i.cid == cid)
+        if not info or info.rank == rank:
+            return
 
-    def _change_local_component(self, cid, **kwargs):
-        self._local_components = [i._replace(**kwargs) if i.cid == cid else i
+        updated_info = info._replace(rank=rank)
+        self._local_components = [(updated_info if i is info else i)
                                   for i in self._local_components]
+        if info.name is not None:
+            self._rank_cache[info.name, info.group] = rank
+        self._change_cbs.notify()
 
-    def _on_exception(self, e):
-        mlog.error('error in server receive loop: %s', e, exc_info=e)
+    def _create_client(self, conn):
+        self._last_cid += 1
+        cid = self._last_cid
+
+        client = _Client(self, conn, cid)
+        self.async_group.spawn(client.client_loop)
+
+        info = common.ComponentInfo(cid=cid,
+                                    mid=self._mid,
+                                    name=None,
+                                    group=None,
+                                    address=None,
+                                    rank=self._default_rank,
+                                    blessing=None,
+                                    ready=None)
+        self._local_components = [*self._local_components, info]
+        self._change_cbs.notify()
+
+    def _set_client(self, cid, name, group, address, ready):
+        info = util.first(self._local_components, lambda i: i.cid == cid)
+        updated_info = info._replace(name=name,
+                                     group=group,
+                                     address=address,
+                                     ready=ready)
+
+        if info.name is None:
+            rank_cache_key = name, group
+            rank = self._rank_cache.get(rank_cache_key, info.rank)
+            updated_info = updated_info._replace(rank=rank)
+
+        if info == updated_info:
+            return
+
+        self._local_components = [(updated_info if i is info else i)
+                                  for i in self._local_components]
+        self._change_cbs.notify()
+
+    def _remove_client(self, cid):
+        self._local_components = [i for i in self._local_components
+                                  if i.cid != cid]
+        self._change_cbs.notify()
+
+
+class _Client:
+
+    def __init__(self, server, conn, cid):
+        self._server = server
+        self._conn = conn
+        self._cid = cid
+        self._mid = server.mid
+        self._global_components = server.global_components
+
+    async def client_loop(self):
+        try:
+            mlog.debug('connection %s established', self._cid)
+
+            self._mid = self._server.mid
+            self._global_components = self._server.global_components
+            self._send_msg_server()
+
+            with self._server.register_change_cb(self._on_change):
+                while True:
+                    msg = await self._conn.receive()
+                    msg_type = msg.data.module, msg.data.type
+
+                    if msg_type == ('HatMonitor', 'MsgClient'):
+                        msg_client = common.msg_client_from_sbs(msg.data.data)
+                        self._process_msg_client(msg_client)
+
+                    else:
+                        raise Exception('unsupported message type')
+
+        except ConnectionError:
+            pass
+
+        except Exception as e:
+            mlog.warning('connection loop error: %s', e, exc_info=e)
+
+        finally:
+            self._conn.close()
+            self._server._remove_client(self._cid)
+            mlog.debug('connection %s closed', self._cid)
+
+    def _on_change(self):
+        if (self._mid == self._server.mid and
+                self._global_components == self._server.global_components):
+            return
+
+        self._mid = self._server.mid
+        self._global_components = self._server.global_components
+        self._send_msg_server()
+
+    def _send_msg_server(self):
+        msg = common.MsgServer(cid=self._cid,
+                               mid=self._mid,
+                               components=self._global_components)
+
+        with contextlib.suppress(ConnectionError):
+            self._conn.send(chatter.Data(
+                module='HatMonitor',
+                type='MsgServer',
+                data=common.msg_server_to_sbs(msg)))
+
+    def _process_msg_client(self, msg_client):
+        self._server._set_client(cid=self._cid,
+                                 name=msg_client.name,
+                                 group=msg_client.group,
+                                 address=msg_client.address,
+                                 ready=msg_client.ready)

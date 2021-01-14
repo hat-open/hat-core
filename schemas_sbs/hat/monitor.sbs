@@ -22,17 +22,11 @@ MsgMaster = Tuple {
     components: Array(ComponentInfo)
 }
 
-MsgSetRank = Tuple {
-    cid:        Integer
-    mid:        Integer
-    rank:       Integer
-}
-
 ComponentInfo = Tuple {
     cid:        Integer
     mid:        Integer
-    name:       String
-    group:      String
+    name:       Maybe(String)
+    group:      Maybe(String)
     address:    Maybe(String)
     rank:       Integer
     blessing:   Maybe(Integer)

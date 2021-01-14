@@ -20,19 +20,21 @@ html, body {
     table {
         @extend table.grid;
 
+        th.col-id { width: 70px; }
         th.col-name {}
         th.col-group { width: 150px; }
         th.col-address { width: 150px; }
-        th.col-local { width: 70px; }
         th.col-blessing { width: 70px; }
         th.col-ready { width: 70px; }
         th.col-rank { width: 120px; }
 
-        td.col-local { text-align: center; }
-        td.col-blessing { text-align: right; }
-        td.col-ready { text-align: right; }
+        td.col-id { text-align: center; }
+        td.col-blessing { text-align: center; }
+        td.col-ready { text-align: center; }
         td.col-rank {
-            & > * {
+            text-align: center;
+
+            & > div {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;

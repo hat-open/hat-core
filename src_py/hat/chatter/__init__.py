@@ -53,7 +53,7 @@ class Msg(typing.NamedTuple):
     token: bool
 
 
-class ConnectionClosedError(Exception):
+class ConnectionClosedError(ConnectionError):
     """Error signaling closed connection"""
 
 

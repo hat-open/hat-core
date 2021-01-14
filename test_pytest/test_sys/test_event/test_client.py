@@ -153,7 +153,8 @@ async def test_multiple_clients(create_event_server, client_count):
                 evts = await asyncio.wait_for(receiver.receive(), 1)
                 assert evts[0].payload.data == i
 
-        await asyncio.wait([client.async_close() for client in clients])
+        for client in clients:
+            await client.async_close()
 
 
 @pytest.mark.parametrize("client_count", [1, 2, 5])
@@ -176,4 +177,5 @@ async def test_multiple_clients_comm_event(create_event_server, client_count):
                 evts[0].event_type == ['event', 'communication', 'connected']
                 evts[0].event_id.instance == i + 2
 
-        await asyncio.wait([client.async_close() for client in clients])
+        for client in clients:
+            await client.async_close()

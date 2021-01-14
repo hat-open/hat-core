@@ -39,9 +39,10 @@ async def monitor_server(async_group, unused_tcp_port_factory, tmpdir):
             'default_rank': 1},
         'master': {
             'address': f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}',
-            'parents': [],
             'default_algorithm': 'BLESS_ALL',
             'group_algorithms': {'event': 'BLESS_ONE'}},
+        'slave': {
+            'parents': []},
         'ui': {
             'address': f'http://127.0.0.1:{unused_tcp_port_factory()}'}}
     async_group.spawn(hat.monitor.server.main.async_main, monitor_server_conf,

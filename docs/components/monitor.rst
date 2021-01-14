@@ -174,8 +174,8 @@ Properties included in a component information:
     * `rank`
 
         Component's rank - used by `Blessing algorithm`_. This property is
-        initially assigned by local Monitor Server but can later be changed by
-        any Monitor Server.
+        initially assigned by local Monitor Server but can later be changed
+        only by local Monitor Server.
 
     * `blessing`
 
@@ -212,7 +212,9 @@ Once a slave Monitor Server connects to the Master Monitor server it sends its
 local state to the master and keeps notifying the master about any change in
 its local state while the connection is active. The master gathers all local
 states and generates its global state which it then transmits to all its
-slaves and keeps notifying them of any change. Master also identifies each
+slaves and keeps notifying them of any change. Global state contains all
+component informations received from local states except for those where
+component's name or group are not set. Master also identifies each
 Monitor Server with unique monitor identifier (`mid`) which is provided to
 slave together with global state. It is important to note that only master
 Monitor Server calculates blessing token state for each component.
@@ -233,8 +235,6 @@ Messages used in master slave communications are:
     | MsgSlave           | T     | T    | T     | s |arr| m |
     +--------------------+-------+------+-------+-----------+
     | MsgMaster          | T     | T    | T     | m |arr| s |
-    +--------------------+-------+------+-------+-----------+
-    | MsgSetRank         | T     | T    | T     | s |arr| m |
     +--------------------+-------+------+-------+-----------+
 
 where `s` |arr| `m` represents slave to master communication and `m` |arr| `s`
@@ -365,18 +365,18 @@ Currently supported algorithms:
 Components rank
 ---------------
 
-Association of component's rank is initial responsibility of component's
-local Monitor Server. Each Monitor Server should associate same rank as was
-last rank value associated with previously active client connection with
-same `name` and `group` values as newly established connection. If such
+Association of component's rank is responsibility of component's local Monitor
+Server for all of it's local components. Monitor Server should associate same
+rank as was last rank value associated with previously active client connection
+with same `name` and `group` values as newly established connection. If such
 previously active connection does not exist, default rank value, as specified
 by Monitor Server's configuration, is applied. After initial rank value is
-associated with client and its `ComponentInfo`, all Monitor Servers can
-request change of rank for all `ComponentInfo` s. These changes should be
-monitored and cached by local Monitor Servers in case connection to component
-is lost and same component tries to establish new connection. This cache is
-maintained for duration of single Monitor Server process execution and is not
-persisted between different Monitor Server processes.
+associated with client and its `ComponentInfo`, local Monitor Servers can
+later change rank's value. These changes should be cached by local Monitor
+Servers in case connection to component is lost and same component tries to
+establish new connection. This cache is maintained for duration of single
+Monitor Server process execution and is not persisted between different Monitor
+Server processes.
 
 
 User interface
@@ -406,11 +406,39 @@ juggler local data defined by JSON schema:
     type: object
     required:
         - mid
-        - components
+        - local_components
+        - global_components
     properties:
         mid:
             type: integer
-        components:
+        local_components:
+            type: array
+            items:
+                type: object
+                required:
+                    - cid
+                    - name
+                    - group
+                    - address
+                    - rank
+                properties:
+                    cid:
+                        type: integer
+                    name:
+                        type:
+                            - string
+                            - "null"
+                    group:
+                        type:
+                            - string
+                            - "null"
+                    address:
+                        type:
+                            - string
+                            - "null"
+                    rank:
+                        type: integer
+        global_components:
             type: array
             items:
                 type: object
@@ -429,9 +457,13 @@ juggler local data defined by JSON schema:
                     mid:
                         type: integer
                     name:
-                        type: string
+                        type:
+                            - string
+                            - "null"
                     group:
-                        type: string
+                        type:
+                            - string
+                            - "null"
                     address:
                         type:
                             - string
@@ -455,9 +487,8 @@ Frontend to backend communication
 
 This communication is used primary for enabling user control of components'
 ranks. At any time, frontend can send `set_rank` message to backend requesting
-change of rank for any available component (event those that are not local to
-backend's Monitor Server). These massages are transmitted as juggler's
-`MESSAGE` messages defined by JSON schema:
+change of rank for any available local component. These massages are
+transmitted as juggler's `MESSAGE` messages defined by JSON schema:
 
 .. code:: yaml
 
@@ -478,12 +509,9 @@ backend's Monitor Server). These massages are transmitted as juggler's
                     type: object
                     required:
                         - cid
-                        - mid
                         - rank
                     properties:
                         cid:
-                            type: integer
-                        mid:
                             type: integer
                         rank:
                             type: integer

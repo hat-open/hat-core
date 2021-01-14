@@ -97,9 +97,10 @@ def monitor_conf(monitor_address, unused_tcp_port_factory):
                 'default_rank': 1},
             'master': {
                 'address': f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}',
-                'parents': [],
                 'default_algorithm': 'BLESS_ONE',
                 'group_algorithms': {}},
+            'slave': {
+                'parents': []},
             'ui': {
                 'address': f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}'}}
 
