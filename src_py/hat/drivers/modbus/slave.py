@@ -73,15 +73,15 @@ async def create_serial_slave(modbus_type: common.ModbusType,
 
     Args:
         modbus_type: modbus type
-        port: port name (see :func:`hat.drivers.serial.open`)
+        port: port name (see `serial.create`)
         read_cb: read callback
         write_cb: write callback
-        silent_interval: silent interval (see :func:`hat.drivers.serial.open`)
+        silent_interval: silent interval (see `serial.create`)
         kwargs: additional arguments used for opening serial connection
-            (see :func:`hat.drivers.serial.open`)
+            (see `serial.create`)
 
     """
-    conn = await serial.open(port, silent_interval=silent_interval, **kwargs)
+    conn = await serial.create(port, silent_interval=silent_interval, **kwargs)
     reader = common.SerialReader(conn)
     writer = common.SerialWriter(conn)
     return _create_slave(aio.Group(exception_cb=_on_exception), modbus_type,

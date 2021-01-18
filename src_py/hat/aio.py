@@ -6,6 +6,7 @@ import collections
 import collections.abc
 import concurrent.futures
 import contextlib
+import functools
 import inspect
 import logging
 import signal
@@ -248,9 +249,10 @@ def create_executor(*args: typing.Any,
     """
     executor = executor_cls(*args)
 
-    async def executor_wrapper(fn, *fn_args):
+    async def executor_wrapper(func, /, *args, **kwargs):
         _loop = loop or asyncio.get_event_loop()
-        return await _loop.run_in_executor(executor, fn, *fn_args)
+        fn = functools.partial(func, *args, **kwargs)
+        return await _loop.run_in_executor(executor, fn)
 
     return executor_wrapper
 

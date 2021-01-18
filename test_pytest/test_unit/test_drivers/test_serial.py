@@ -32,10 +32,10 @@ def nullmodem(request, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_open(nullmodem):
-    conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
-                                         rtscts=True,
-                                         dsrdtr=True)
+async def test_create(nullmodem):
+    conn = await hat.drivers.serial.create(port=str(nullmodem[0]),
+                                           rtscts=True,
+                                           dsrdtr=True)
     assert not conn.is_closed
     await conn.async_close()
     assert conn.is_closed
@@ -43,12 +43,12 @@ async def test_open(nullmodem):
 
 @pytest.mark.asyncio
 async def test_read_write(nullmodem):
-    conn1 = await hat.drivers.serial.open(port=str(nullmodem[0]),
-                                          rtscts=True,
-                                          dsrdtr=True)
-    conn2 = await hat.drivers.serial.open(port=str(nullmodem[1]),
-                                          rtscts=True,
-                                          dsrdtr=True)
+    conn1 = await hat.drivers.serial.create(port=str(nullmodem[0]),
+                                            rtscts=True,
+                                            dsrdtr=True)
+    conn2 = await hat.drivers.serial.create(port=str(nullmodem[1]),
+                                            rtscts=True,
+                                            dsrdtr=True)
 
     data = b'test1'
     await conn1.write(data)
@@ -58,37 +58,45 @@ async def test_read_write(nullmodem):
     await conn2.write(data)
     assert data == await conn1.read(len(data))
 
-    await asyncio.gather(conn1.async_close(), conn2.async_close())
+    await conn1.async_close()
+    await conn2.async_close()
 
-    with pytest.raises(Exception):
-        await conn2.read(1)
+    with pytest.raises(ConnectionError):
+        await conn1.read(1)
+
+    with pytest.raises(ConnectionError):
+        await conn2.write(b'')
 
 
 @pytest.mark.asyncio
 async def test_close_while_reading(nullmodem):
-    conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
-                                         rtscts=True,
-                                         dsrdtr=True)
+    conn = await hat.drivers.serial.create(port=str(nullmodem[0]),
+                                           rtscts=True,
+                                           dsrdtr=True)
 
     read_future = asyncio.ensure_future(conn.read(1))
 
     await conn.async_close()
 
-    with pytest.raises(Exception):
+    with pytest.raises(ConnectionError):
         read_future.result()
 
 
 @pytest.mark.asyncio
 async def test_close_nullmodem(nullmodem):
-    conn = await hat.drivers.serial.open(port=str(nullmodem[0]),
-                                         rtscts=True,
-                                         dsrdtr=True)
+    conn = await hat.drivers.serial.create(port=str(nullmodem[0]),
+                                           rtscts=True,
+                                           dsrdtr=True)
 
     read_future = asyncio.ensure_future(conn.read(1))
+    write_future = asyncio.ensure_future(conn.write(b'123'))
 
     nullmodem[2].terminate()
 
-    with pytest.raises(Exception):
-        read_future.result()
+    with pytest.raises(ConnectionError):
+        await read_future
+
+    with pytest.raises(ConnectionError):
+        await write_future
 
     await conn.async_close()

@@ -6,14 +6,10 @@
     if connection is closed by user - better way of canceling active read
     operation is needed
 
-Attributes:
-    mlog (logging.Logger): module logger
-
 """
 
 import asyncio
 import enum
-import functools
 import logging
 
 import serial
@@ -21,7 +17,8 @@ import serial
 from hat import aio
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
 class ByteSize(enum.Enum):
@@ -45,15 +42,15 @@ class StopBits(enum.Enum):
     TWO = 'STOPBITS_TWO'
 
 
-async def open(port: str, *,
-               baudrate: int = 9600,
-               bytesize: ByteSize = ByteSize.EIGHTBITS,
-               parity: Parity = Parity.NONE,
-               stopbits: StopBits = StopBits.ONE,
-               rtscts: bool = False,
-               dsrdtr: bool = False,
-               silent_interval: float = 0
-               ) -> 'Connection':
+async def create(port: str, *,
+                 baudrate: int = 9600,
+                 bytesize: ByteSize = ByteSize.EIGHTBITS,
+                 parity: Parity = Parity.NONE,
+                 stopbits: StopBits = StopBits.ONE,
+                 rtscts: bool = False,
+                 dsrdtr: bool = False,
+                 silent_interval: float = 0
+                 ) -> 'Connection':
     """Open serial port
 
     Args:
@@ -69,38 +66,35 @@ async def open(port: str, *,
             consecutive messages
 
     """
-    executor = aio.create_executor()
-    s = await executor(functools.partial(
-            serial.Serial,
-            port=port,
-            baudrate=baudrate,
-            bytesize=getattr(serial, bytesize.value),
-            parity=getattr(serial, parity.value),
-            stopbits=getattr(serial, stopbits.value),
-            rtscts=rtscts,
-            dsrdtr=dsrdtr,
-            timeout=1))
-
-    read_queue = aio.Queue()
-    write_queue = aio.Queue()
-    async_group = aio.Group()
-    async_group.spawn(_action_loop, async_group, executor, read_queue, 0)
-    async_group.spawn(_action_loop, async_group, executor, write_queue,
-                      silent_interval)
-    async_group.spawn(aio.call_on_cancel, executor, _ext_close, s)
-
     conn = Connection()
-    conn._s = s
-    conn._read_queue = read_queue
-    conn._write_queue = write_queue
-    conn._async_group = async_group
+    conn._silent_interval = silent_interval
+    conn._read_queue = aio.Queue()
+    conn._write_queue = aio.Queue()
+    conn._executor = aio.create_executor()
+
+    conn._serial = await conn._executor(
+        serial.Serial,
+        port=port,
+        baudrate=baudrate,
+        bytesize=getattr(serial, bytesize.value),
+        parity=getattr(serial, parity.value),
+        stopbits=getattr(serial, stopbits.value),
+        rtscts=rtscts,
+        dsrdtr=dsrdtr,
+        timeout=1)
+
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(aio.call_on_cancel, conn._on_close)
+    conn._async_group.spawn(conn._read_loop)
+    conn._async_group.spawn(conn._write_loop)
+
     return conn
 
 
 class Connection(aio.Resource):
     """Serial connection
 
-    For creating new instances see :func:`hat.drivers.serial.open`
+    For creating new instances see `create` coroutine.
 
     """
 
@@ -115,58 +109,75 @@ class Connection(aio.Resource):
         Args:
             size: number of bytes to read
 
+        Raises:
+            ConnectionError
+
         """
         result = asyncio.Future()
-        await self._read_queue.put(([_ext_read, self._s, size], result))
+        try:
+            self._read_queue.put_nowait((size, result))
+        except aio.QueueClosedError:
+            raise ConnectionError()
         return await result
 
     async def write(self, data: bytes):
-        """Write"""
+        """Write
+
+        Raises:
+            ConnectionError
+
+        """
         result = asyncio.Future()
-        await self._write_queue.put(([_ext_write, self._s, data], result))
+        try:
+            self._write_queue.put_nowait((data, result))
+        except aio.QueueClosedError:
+            raise ConnectionError()
         await result
 
+    async def _on_close(self):
+        await self._executor(self._serial.close)
 
-async def _action_loop(async_group, executor, queue, delay):
-    result = None
-    try:
-        while True:
-            await asyncio.sleep(delay)
-            args, result = await queue.get()
-            data = await async_group.spawn(executor, *args)
-            result.set_result(data)
-            result = None
-    except asyncio.CancelledError:
-        pass
-    except Exception as e:
-        if result:
-            result.set_exception(e)
-            result = None
-    finally:
-        async_group.close()
-        queue.close()
-        if result:
-            result.set_exception(EOFError())
-        while not queue.empty():
-            _, result = queue.get_nowait()
-            result.set_exception(EOFError())
-
-
-def _ext_read(s, size):
-    buff = b''
-    while True:
+    async def _read_loop(self):
+        result = None
         try:
-            buff += s.read(size - len(buff))
+            async for size, result in self._read_queue:
+                data = bytearray()
+                while len(data) < size:
+                    temp = await self._executor(self._serial.read,
+                                                size - len(data))
+                    data.extend(temp)
+                result.set_result(bytes(data))
+
         except Exception as e:
-            raise EOFError() from e
-        if len(buff) >= size:
-            return buff
+            mlog.warning('read loop error: %s', e, exc_info=e)
+
+        finally:
+            self._async_group.close()
+            _close_queue(self._read_queue)
+            if result and not result.done():
+                result.set_exception(ConnectionError())
+
+    async def _write_loop(self):
+        result = None
+        try:
+            async for data, result in self._write_queue:
+                await self._executor(self._serial.write, data)
+                await self._executor(self._serial.flush)
+                result.set_result(None)
+                await asyncio.sleep(self._silent_interval)
+
+        except Exception as e:
+            mlog.warning('read loop error: %s', e, exc_info=e)
+
+        finally:
+            self._async_group.close()
+            _close_queue(self._write_queue)
+            if result and not result.done():
+                result.set_exception(ConnectionError())
 
 
-def _ext_write(s, data):
-    s.write(data)
-    s.flush()
-
-
-def _ext_close(s):
-    s.close()
+def _close_queue(queue):
+    queue.close()
+    while not queue.empty():
+        _, result = queue.get_nowait()
+        result.set_exception(ConnectionError())
