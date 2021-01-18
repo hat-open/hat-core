@@ -26,7 +26,9 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 <article>
     <h2>Components</h2>
     <ul>
-    % for title, description in [('hat-orchestrator', \
+    % for title, description in [('hat-syslog', \
+                                  'Syslog server'), \
+                                 ('hat-orchestrator', \
                                   'Simple cross-platform daemon/service manager'), \
                                  ('hat-monitor', \
                                   'Redundancy and service discovery server'), \
@@ -35,9 +37,7 @@ Končar - Power Plant and Electric Traction Engineering Inc.
                                  ('hat-gateway', \
                                   'Remote communication device gateway'), \
                                  ('hat-gui', \
-                                  'GUI server'), \
-                                 ('hat-syslog', \
-                                  'Syslog server')]:
+                                  'GUI server')]:
         <li>
             <h3>${title}</h3>
             ${description}

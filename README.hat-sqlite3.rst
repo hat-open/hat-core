@@ -1,5 +1,5 @@
-Hat Core - Statechart library
-=============================
+Hat Core - Python Sqlite3 wrapper
+=================================
 
 This library is part of Hat Open project - open-source framework of tools and
 libraries for developing applications used for remote monitoring, control and
@@ -12,7 +12,6 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 
 For more information see:
 
-    * `hat-stc` documentation - `<https://core.hat-open.com/docs/libraries/stc.html>`_
     * Hat Core homepage - `<https://core.hat-open.com>`_
     * Hat Core git repository - `<https://github.com/hat-open/hat-core.git>`_
 

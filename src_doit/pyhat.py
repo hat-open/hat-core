@@ -23,12 +23,12 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_sqlite3',
            'task_pyhat_asn1',
            'task_pyhat_drivers',
+           'task_pyhat_syslog',
            'task_pyhat_orchestrator',
            'task_pyhat_monitor',
            'task_pyhat_event',
            'task_pyhat_gateway',
-           'task_pyhat_gui',
-           'task_pyhat_syslog']
+           'task_pyhat_gui']
 
 
 build_dir = Path('build/pyhat')
@@ -173,7 +173,7 @@ def task_pyhat_juggler():
 
     return _get_task_build(name='hat-juggler',
                            description='Hat Juggler protocol',
-                           readme_path=Path('README.rst'),
+                           readme_path=Path('README.hat-juggler.rst'),
                            dependencies=['aiohttp',
                                          'hat-util'],
                            mappings=mappings)
@@ -190,7 +190,7 @@ def task_pyhat_duktape():
 
     return _get_task_build(name='hat-duktape',
                            description='Hat Python Duktape JS wrapper',
-                           readme_path=Path('README.rst'),
+                           readme_path=Path('README.hat-duktape.rst'),
                            dependencies=[],
                            mappings=mappings,
                            platform_specific=True)
@@ -207,7 +207,7 @@ def task_pyhat_sqlite3():
 
     return _get_task_build(name='hat-sqlite3',
                            description='Hat Sqlite3 build',
-                           readme_path=Path('README.rst'),
+                           readme_path=Path('README.hat-sqlite3.rst'),
                            dependencies=[],
                            mappings=mappings,
                            platform_specific=True)
@@ -222,7 +222,7 @@ def task_pyhat_asn1():
 
     return _get_task_build(name='hat-asn1',
                            description='Hat ASN.1 parser and encoder',
-                           readme_path=Path('README.rst'),
+                           readme_path=Path('README.hat-asn1.rst'),
                            dependencies=['hat-util',
                                          'hat-json',
                                          'hat-peg'],
@@ -250,7 +250,7 @@ def task_pyhat_drivers():
     return _get_task_build(
         name='hat-drivers',
         description='Hat communication drivers',
-        readme_path=Path('README.rst'),
+        readme_path=Path('README.hat-drivers.rst'),
         dependencies=['pyserial',
                       'hat-util',
                       'hat-aio',
@@ -264,6 +264,38 @@ def task_pyhat_drivers():
                                                'hat-juggler']},
         gui_scripts=['hat-hue-manager = hat.drivers.hue.manager.main:main'],
         task_dep=['jshat_app_hue_manager'])
+
+
+def task_pyhat_syslog():
+    """PyHat - build hat-syslog"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-syslog')
+        json_schema_repo = (src_py_dir /
+                            'hat/syslog/json_schema_repo.json')
+        jshat_build = Path('build/jshat/app/syslog')
+        for i in (src_py_dir / 'hat/syslog').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
+        for i in jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/syslog/server/ui'
+                              / i.relative_to(jshat_build))
+
+    return _get_task_build(
+        name='hat-syslog',
+        description='Hat Syslog',
+        readme_path=Path('README.hat-syslog.rst'),
+        dependencies=['appdirs',
+                      'hat-util',
+                      'hat-aio',
+                      'hat-json',
+                      'hat-juggler',
+                      'hat-sqlite3'],
+        mappings=mappings,
+        console_scripts=['hat-syslog = hat.syslog.server.main:main'],
+        task_dep=['jshat_app_syslog'])
 
 
 def task_pyhat_orchestrator():
@@ -286,7 +318,7 @@ def task_pyhat_orchestrator():
     return _get_task_build(
         name='hat-orchestrator',
         description='Hat Orchestrator',
-        readme_path=Path('README.rst'),
+        readme_path=Path('README.hat-orchestrator.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-aio',
@@ -318,7 +350,7 @@ def task_pyhat_monitor():
     return _get_task_build(
         name='hat-monitor',
         description='Hat Monitor Server and client',
-        readme_path=Path('README.rst'),
+        readme_path=Path('README.hat-monitor.rst'),
         dependencies=['appdirs',
                       'click',
                       'hat-util',
@@ -353,7 +385,7 @@ def task_pyhat_event():
     return _get_task_build(
         name='hat-event',
         description='Hat Event Server and client',
-        readme_path=Path('README.rst'),
+        readme_path=Path('README.hat-event.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-aio',
@@ -383,7 +415,7 @@ def task_pyhat_gateway():
     return _get_task_build(
         name='hat-gateway',
         description='Hat remote communication device gateway',
-        readme_path=Path('README.rst'),
+        readme_path=Path('README.hat-gateway.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-aio',
@@ -421,7 +453,7 @@ def task_pyhat_gui():
     return _get_task_build(
         name='hat-gui',
         description='Hat GUI server',
-        readme_path=Path('README.rst'),
+        readme_path=Path('README.hat-gui.rst'),
         dependencies=['appdirs',
                       'hat-util',
                       'hat-aio',
@@ -435,38 +467,6 @@ def task_pyhat_gui():
         console_scripts=['hat-gui = hat.gui.main:main'],
         task_dep=['jshat_app_gui',
                   'jshat_view'])
-
-
-def task_pyhat_syslog():
-    """PyHat - build hat-syslog"""
-    def mappings():
-        dst_dir = _get_build_dst_dir('hat-syslog')
-        json_schema_repo = (src_py_dir /
-                            'hat/syslog/json_schema_repo.json')
-        jshat_build = Path('build/jshat/app/syslog')
-        for i in (src_py_dir / 'hat/syslog').rglob('*.py'):
-            yield i, dst_dir / i.relative_to(src_py_dir)
-        yield json_schema_repo, (dst_dir /
-                                 json_schema_repo.relative_to(src_py_dir))
-        for i in jshat_build.rglob('*'):
-            if i.is_dir():
-                continue
-            yield i, (dst_dir / 'hat/syslog/server/ui'
-                              / i.relative_to(jshat_build))
-
-    return _get_task_build(
-        name='hat-syslog',
-        description='Hat Syslog',
-        readme_path=Path('README.rst'),
-        dependencies=['appdirs',
-                      'hat-util',
-                      'hat-aio',
-                      'hat-json',
-                      'hat-juggler',
-                      'hat-sqlite3'],
-        mappings=mappings,
-        console_scripts=['hat-syslog = hat.syslog.server.main:main'],
-        task_dep=['jshat_app_syslog'])
 
 
 def _get_task_build(name, description, readme_path, dependencies, mappings, *,

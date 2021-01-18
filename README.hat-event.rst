@@ -1,7 +1,7 @@
-Hat Core - Statechart library
-=============================
+Hat Core - Event server and client
+==================================
 
-This library is part of Hat Open project - open-source framework of tools and
+This component is part of Hat Open project - open-source framework of tools and
 libraries for developing applications used for remote monitoring, control and
 management of intelligent electronic devices such as IoT devices, PLCs,
 industrial automation or home automation systems.
@@ -12,7 +12,7 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 
 For more information see:
 
-    * `hat-stc` documentation - `<https://core.hat-open.com/docs/libraries/stc.html>`_
+    * `hat-event` documentation - `<https://core.hat-open.com/docs/components/event.html>`_
     * Hat Core homepage - `<https://core.hat-open.com>`_
     * Hat Core git repository - `<https://github.com/hat-open/hat-core.git>`_
 

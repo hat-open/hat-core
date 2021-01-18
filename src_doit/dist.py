@@ -23,12 +23,12 @@ __all__ = ['task_dist',
            'task_dist_pyhat_sqlite3',
            'task_dist_pyhat_asn1',
            'task_dist_pyhat_drivers',
+           'task_dist_pyhat_syslog',
            'task_dist_pyhat_orchestrator',
            'task_dist_pyhat_monitor',
            'task_dist_pyhat_event',
            'task_dist_pyhat_gateway',
            'task_dist_pyhat_gui',
-           'task_dist_pyhat_syslog',
            'task_dist_jshat_util',
            'task_dist_jshat_renderer',
            'task_dist_jshat_future',
@@ -56,12 +56,12 @@ def task_dist():
                          'dist_pyhat_sqlite3',
                          'dist_pyhat_asn1',
                          'dist_pyhat_drivers',
+                         'dist_pyhat_syslog',
                          'dist_pyhat_orchestrator',
                          'dist_pyhat_monitor',
                          'dist_pyhat_event',
                          'dist_pyhat_gateway',
                          'dist_pyhat_gui',
-                         'dist_pyhat_syslog',
                          'dist_jshat_util',
                          'dist_jshat_renderer',
                          'dist_jshat_future',
@@ -142,6 +142,11 @@ def task_dist_pyhat_drivers():
     return _get_task_dist_pyhat('hat-drivers', 'pyhat_drivers')
 
 
+def task_dist_pyhat_syslog():
+    """Dist - create pyhat hat-syslog distribution"""
+    return _get_task_dist_pyhat('hat-syslog', 'pyhat_syslog')
+
+
 def task_dist_pyhat_orchestrator():
     """Dist - create pyhat hat-orchestrator distribution"""
     return _get_task_dist_pyhat('hat-orchestrator', 'pyhat_orchestrator')
@@ -165,11 +170,6 @@ def task_dist_pyhat_gateway():
 def task_dist_pyhat_gui():
     """Dist - create pyhat hat-gui distribution"""
     return _get_task_dist_pyhat('hat-gui', 'pyhat_gui')
-
-
-def task_dist_pyhat_syslog():
-    """Dist - create pyhat hat-syslog distribution"""
-    return _get_task_dist_pyhat('hat-syslog', 'pyhat_syslog')
 
 
 def task_dist_jshat_util():

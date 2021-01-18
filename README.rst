@@ -95,6 +95,10 @@ where ``package-name`` is one of following:
 
         Communication drivers
 
+    * `hat-syslog <https://pypi.org/project/hat-syslog>`_
+
+        Syslog server and logging handler
+
     * `hat-orchestrator <https://pypi.org/project/hat-orchestrator>`_
 
         Simple cross-platform daemon/service manager
@@ -114,10 +118,6 @@ where ``package-name`` is one of following:
     * `hat-gui <https://pypi.org/project/hat-gui>`_
 
         GUI server
-
-    * `hat-syslog <https://pypi.org/project/hat-syslog>`_
-
-        Syslog server and logging handler
 
 
 JavaScript packages

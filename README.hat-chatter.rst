@@ -1,5 +1,5 @@
-Hat Core - Simple binary serialization
-======================================
+Hat Core - Chatter communication protocol
+=========================================
 
 This library is part of Hat Open project - open-source framework of tools and
 libraries for developing applications used for remote monitoring, control and
