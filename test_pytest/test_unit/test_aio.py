@@ -39,6 +39,19 @@ async def test_first():
     assert queue.empty()
 
 
+async def test_first_example():
+
+    async def async_range(x):
+        for i in range(x):
+            await asyncio.sleep(0)
+            yield i
+
+    assert await aio.first(async_range(3)) == 0
+    assert await aio.first(async_range(3), lambda x: x > 1) == 2
+    assert await aio.first(async_range(3), lambda x: x > 2) is None
+    assert await aio.first(async_range(3), lambda x: x > 2, 123) == 123
+
+
 async def test_uncancellable():
     f1 = asyncio.Future()
 
@@ -140,6 +153,15 @@ async def test_call_on_cancel():
     assert exceptions.empty()
 
 
+async def test_call_on_cancel_example():
+    f = asyncio.Future()
+    group = aio.Group()
+    group.spawn(aio.call_on_cancel, f.set_result, 123)
+    assert not f.done()
+    await group.async_close()
+    assert f.result() == 123
+
+
 async def test_call_on_done():
     f1 = asyncio.Future()
     f2 = asyncio.Future()
@@ -156,10 +178,28 @@ async def test_call_on_done():
     assert f3.result() is None
 
 
-async def test_executor():
+async def test_call_on_done_example():
+    f = asyncio.Future()
+    group = aio.Group()
+    group.spawn(aio.call_on_done, f, group.close)
+    assert group.is_open
+    f.set_result(None)
+    await group.wait_closed()
+    assert group.is_closed
+
+
+async def test_create_executor():
     executor = aio.create_executor()
     result = await executor(lambda: threading.current_thread().name)
     assert threading.current_thread().name != result
+
+
+async def test_create_executor_example():
+    executor1 = aio.create_executor()
+    executor2 = aio.create_executor()
+    tid1 = await executor1(threading.get_ident)
+    tid2 = await executor2(threading.get_ident)
+    assert tid1 != tid2
 
 
 @pytest.mark.skipif(sys.platform == 'win32',
@@ -237,6 +277,16 @@ def test_run_asyncio_with_multiple_signals():
 
 
 # TODO: test run_asyncio with `handle_signals` and `create_loop`
+
+
+def test_run_async_example():
+
+    async def run():
+        await asyncio.sleep(0)
+        return 123
+
+    result = aio.run_asyncio(run())
+    assert result == 123
 
 
 async def test_queue():
@@ -346,6 +396,24 @@ async def test_queue_async_iterable():
 
     assert queue.empty()
     assert len(data) == 0
+
+
+async def test_queue_example():
+
+    async def async_sum():
+        result = 0
+        async for i in queue:
+            result += i
+        return result
+
+    queue = aio.Queue(maxsize=1)
+    f = asyncio.ensure_future(async_sum())
+    await queue.put(1)
+    await queue.put(2)
+    await queue.put(3)
+    assert not f.done()
+    queue.close()
+    assert 6 == await f
 
 
 async def test_group():

@@ -16,7 +16,6 @@ import typing
 mlog: logging.Logger = logging.getLogger(__name__)
 """Module logger"""
 
-
 T = typing.TypeVar('T')
 
 
@@ -31,6 +30,18 @@ async def first(xs: typing.AsyncIterable[T],
         xs: async collection
         fn: predicate
         default: default value
+
+    Example::
+
+        async def async_range(x):
+            for i in range(x):
+                await asyncio.sleep(0)
+                yield i
+
+        assert await first(async_range(3)) == 0
+        assert await first(async_range(3), lambda x: x > 1) == 2
+        assert await first(async_range(3), lambda x: x > 2) is None
+        assert await first(async_range(3), lambda x: x > 2, 123) == 123
 
     """
     async for i in xs:
@@ -47,11 +58,11 @@ async def uncancellable(f: asyncio.Future,
     Future is shielded and its execution cannot be interrupted.
 
     If `raise_cancel` is `True` and the Future gets canceled,
-    :exc:`asyncio.CancelledError` is reraised after the Future finishes.
+    `asyncio.CancelledError` is reraised after the Future finishes.
 
     Warning:
         If `raise_cancel` is `False`, this method suppresses
-        :exc:`asyncio.CancelledError` and stops its propagation. Use with
+        `asyncio.CancelledError` and stops its propagation. Use with
         caution.
 
     Args:
@@ -144,7 +155,7 @@ async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
     """Call a function or a coroutine when canceled.
 
     When canceled, `fn` is called with `args` and `kwargs` by using
-    :func:`call`.
+    `call` coroutine.
 
     Args:
         fn: function or coroutine
@@ -153,6 +164,15 @@ async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
 
     Returns:
         function result
+
+    Example::
+
+        f = asyncio.Future()
+        group = Group()
+        group.spawn(call_on_cancel, f.set_result, 123)
+        assert not f.done()
+        await group.async_close()
+        assert f.result() == 123
 
     """
     with contextlib.suppress(asyncio.CancelledError):
@@ -167,12 +187,12 @@ async def call_on_done(f: typing.Awaitable,
     """Call a function or a coroutine when awaitable is done.
 
     When `f` is done, `fn` is called with `args` and `kwargs` by using
-    :func:`call`.
+    `call` coroutine.
 
     If this coroutine is canceled before `f` is done, `f` is canceled and `fn`
     is not called.
 
-    If this corotuine is canceled after `f` is done, `fn` call is canceled.
+    If this coroutine is canceled after `f` is done, `fn` call is canceled.
 
     Args:
         f: awaitable future
@@ -182,6 +202,16 @@ async def call_on_done(f: typing.Awaitable,
 
     Returns:
         function result
+
+    Example::
+
+        f = asyncio.Future()
+        group = Group()
+        group.spawn(call_on_done, f, group.close)
+        assert group.is_open
+        f.set_result(None)
+        await group.wait_closed()
+        assert group.is_closed
 
     """
     with contextlib.suppress(Exception):
@@ -193,7 +223,7 @@ def create_executor(*args: typing.Any,
                     executor_cls: typing.Type = concurrent.futures.ThreadPoolExecutor,  # NOQA
                     loop: typing.Optional[asyncio.AbstractEventLoop] = None
                     ) -> typing.Callable[..., typing.Awaitable]:
-    """Create :meth:`asyncio.loop.run_in_executor` wrapper.
+    """Create `asyncio.loop.run_in_executor` wrapper.
 
     Returns a coroutine that takes a function and its arguments, executes the
     function using executor created from `executor_cls` and `args`; and
@@ -206,6 +236,14 @@ def create_executor(*args: typing.Any,
 
     Returns:
         executor coroutine
+
+    Example::
+
+        executor1 = create_executor()
+        executor2 = create_executor()
+        tid1 = await executor1(threading.get_ident)
+        tid2 = await executor2(threading.get_ident)
+        assert tid1 != tid2
 
     """
     executor = executor_cls(*args)
@@ -272,6 +310,15 @@ def run_asyncio(future: typing.Awaitable, *,
     Returns:
         future's result
 
+    Example::
+
+        async def run():
+            await asyncio.sleep(0)
+            return 123
+
+        result = run_asyncio(run())
+        assert result == 123
+
     """
     if create_loop:
         loop = asyncio.new_event_loop()
@@ -336,12 +383,29 @@ class QueueFullError(Exception):
 class Queue:
     """Asyncio queue which implements AsyncIterable and can be closed.
 
-    Interface and implementation are based on :class:`asyncio.Queue`.
+    Interface and implementation are based on `asyncio.Queue`.
 
     If `maxsize` is less than or equal to zero, the queue size is infinite.
 
     Args:
         maxsize: maximum number of items in the queue
+
+    Example::
+
+        async def async_sum():
+            result = 0
+            async for i in queue:
+                result += i
+            return result
+
+        queue = Queue(maxsize=1)
+        f = asyncio.ensure_future(async_sum())
+        await queue.put(1)
+        await queue.put(2)
+        await queue.put(3)
+        assert not f.done()
+        queue.close()
+        assert 6 == await f
 
     """
 
@@ -380,11 +444,11 @@ class Queue:
         return self._closed.done()
 
     def empty(self) -> bool:
-        """`True` if queue is empty, `False` otherwise."""
+        """``True`` if queue is empty, ``False`` otherwise."""
         return not self._queue
 
     def full(self) -> bool:
-        """`True` if queue is full, `False` otherwise."""
+        """``True`` if queue is full, ``False`` otherwise."""
         return (len(self._queue) >= self._maxsize if self._maxsize > 0
                 else False)
 
@@ -402,7 +466,7 @@ class Queue:
 
     def get_nowait(self) -> typing.Any:
         """Return an item if one is immediately available, else raise
-        :exc:`QueueEmptyError`.
+        `QueueEmptyError`.
 
         Raises:
             QueueEmptyError
@@ -417,7 +481,7 @@ class Queue:
     def put_nowait(self, item: typing.Any):
         """Put an item into the queue without blocking.
 
-        If no free slot is immediately available, raise :exc:`QueueFullError`.
+        If no free slot is immediately available, raise `QueueFullError`.
 
         Raises:
             QueueFullError
@@ -497,7 +561,7 @@ class Queue:
 
     def get_nowait_until_empty(self) -> typing.Any:
         """Empty the queue and return the last item if at least one
-        item is immediately available, else raise :exc:`QueueEmptyError`.
+        item is immediately available, else raise `QueueEmptyError`.
 
         Raises:
             QueueEmptyError
@@ -538,7 +602,7 @@ class Group:
 
     If a Task raises exception, other Tasks continue to execute.
 
-    If `exception_cb` handler is `None`, exceptions are logged with level
+    If `exception_cb` handler is ``None``, exceptions are logged with level
     WARNING.
 
     """
@@ -558,7 +622,7 @@ class Group:
 
     @property
     def is_open(self) -> bool:
-        """`True` if group is not closing or closed, `False` otherwise."""
+        """``True`` if group is not closing or closed, ``False`` otherwise."""
         return not self._closing.done()
 
     @property
@@ -600,7 +664,7 @@ class Group:
         Task object.
 
         Resulting task is shielded and can be canceled only with
-        :meth:`Group.async_close`.
+        `Group.async_close`.
 
         """
         if self._closing.done():
@@ -617,7 +681,7 @@ class Group:
 
         Function `fn` is called with provided `args` and `kwargs`.
         Resulting Task is shielded and can be canceled only with
-        :meth:`Group.async_close`.
+        `Group.async_close`.
 
         """
         if self._closing.done():
