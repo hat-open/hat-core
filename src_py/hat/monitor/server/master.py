@@ -42,7 +42,7 @@ async def create(conf: json.Data
     master._srv = await chatter.listen(
         sbs_repo=common.sbs_repo,
         address=conf['address'],
-        on_connection_cb=master._create_slave)
+        connection_cb=master._create_slave)
 
     mlog.debug('master listens slaves on %s', conf['address'])
     return master

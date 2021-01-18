@@ -145,9 +145,9 @@ async def test_send_receive(sbs_repo, unused_tcp_port):
     await conn2.async_close()
     await srv.async_close()
 
-    with pytest.raises(chatter.ConnectionClosedError):
+    with pytest.raises(ConnectionError):
         conn1.send(data)
-    with pytest.raises(chatter.ConnectionClosedError):
+    with pytest.raises(ConnectionError):
         await conn2.receive()
 
 
@@ -184,7 +184,7 @@ async def test_invalid_communication(sbs_repo, unused_tcp_port):
 
     writer.write(b'\x01\x02\x03\x04')
     await writer.drain()
-    with pytest.raises(chatter.ConnectionClosedError):
+    with pytest.raises(ConnectionError):
         await conn.receive()
 
     writer.close()

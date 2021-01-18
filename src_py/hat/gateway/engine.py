@@ -84,7 +84,7 @@ class Engine(aio.Resource):
                                     if ev.event_type[3] == device_name]
                     if proxy_events:
                         proxy.add_events(proxy_events)
-        except hat.chatter.ConnectionClosedError:
+        except ConnectionError:
             mlog.info('connection to event server closed')
         except asyncio.CancelledError:
             mlog.debug('engine receive loop cancelled')
@@ -180,7 +180,7 @@ class DeviceProxy(aio.Resource):
         self._device_event_client = None
         try:
             self._register_device_running_event(False)
-        except hat.chatter.ConnectionClosedError:
+        except ConnectionError:
             mlog.warning('device was destroyed but running event registration '
                          'failed')
 

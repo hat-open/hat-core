@@ -36,7 +36,7 @@ async def create(conf: json.Data
     server._srv = await chatter.listen(
         sbs_repo=common.sbs_repo,
         address=conf['address'],
-        on_connection_cb=server._create_client)
+        connection_cb=server._create_client)
 
     mlog.debug('monitor server listens clients on %s', conf['address'])
     return server

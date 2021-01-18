@@ -40,7 +40,7 @@ async def create(conf, engine):
     chatter_server = await chatter.listen(
         sbs_repo=common.sbs_repo,
         address=conf['address'],
-        on_connection_cb=lambda conn: comm._async_group.spawn(
+        connection_cb=lambda conn: comm._async_group.spawn(
             comm._connection_loop, conn))
     comm._async_group.spawn(aio.call_on_cancel, chatter_server.async_close)
     comm._async_group.spawn(comm._run_engine)
@@ -66,7 +66,7 @@ class Communication(aio.Resource):
                         'MsgSubscribe', 'MsgRegisterReq', 'MsgQueryReq']:
                     raise Exception('Message received from client malformed!')
                 self._process_msg(msg, conn)
-        except chatter.ConnectionClosedError:
+        except ConnectionError:
             mlog.debug('connection %s closed', _source_id)
         finally:
             await aio.uncancellable(self._close_connection(conn))
@@ -141,7 +141,7 @@ class Communication(aio.Resource):
             for conn in self._subs_registry.find(event.event_type):
                 conn_notify[conn] = (conn_notify.get(conn, []) + [event])
         for conn, notify_events in conn_notify.items():
-            with contextlib.suppress(chatter.ConnectionClosedError):
+            with contextlib.suppress(ConnectionError):
                 conn.send(chatter.Data(module='HatEvent',
                                        type='MsgNotify',
                                        data=[common.event_to_sbs(e)

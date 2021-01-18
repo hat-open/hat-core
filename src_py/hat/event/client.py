@@ -142,13 +142,13 @@ class Client(aio.Resource):
             List[common.Event]
 
         Raises:
-            chatter.ConnectionClosedError: closed chatter connection
+            ConnectionError
 
         """
         try:
             return await self._event_queue.get()
         except aio.QueueClosedError:
-            raise chatter.ConnectionClosedError
+            raise ConnectionError()
 
     def register(self, events):
         """Register events
@@ -157,8 +157,7 @@ class Client(aio.Resource):
             events (List[common.RegisterEvent]): register events
 
         Raises:
-            chatter.ConnectionClosedError: closed chatter connection
-            Exception
+            ConnectionError
 
         """
         self._conn.send(chatter.Data(
@@ -180,8 +179,7 @@ class Client(aio.Resource):
             List[Optional[common.Event]]
 
         Raises:
-            chatter.ConnectionClosedError: closed chatter connection
-            Exception
+            ConnectionError
 
         """
         conv = self._conn.send(chatter.Data(
@@ -203,8 +201,7 @@ class Client(aio.Resource):
             List[common.Event]
 
         Raises:
-            chatter.ConnectionClosedError: closed chatter connection
-            Exception
+            ConnectionError
 
         """
         conv = self._conn.send(chatter.Data(
@@ -220,13 +217,13 @@ class Client(aio.Resource):
             while True:
                 msg = await self._conn.receive()
                 self._process_received_msg(msg)
-        except chatter.ConnectionClosedError:
+        except ConnectionError:
             mlog.debug('connection closed')
         finally:
             self._async_group.close()
             self._event_queue.close()
             for f in self._conv_futures.values():
-                f.set_exception(chatter.ConnectionClosedError)
+                f.set_exception(ConnectionError())
 
     def _process_received_msg(self, msg):
         if msg.data.module != 'HatEvent':

@@ -103,7 +103,7 @@ async def test_srv_comm_close(comm_conf, register_events):
         assert comm.is_closed
 
         for f in futures:
-            with pytest.raises(hat.chatter.ConnectionClosedError):
+            with pytest.raises(ConnectionError):
                 await f
 
     await client.wait_closed()
