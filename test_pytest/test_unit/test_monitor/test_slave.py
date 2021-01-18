@@ -39,12 +39,12 @@ def secondary_address(secondary_port):
 
 @pytest.fixture
 def patch_connect_timeout(monkeypatch):
-    monkeypatch.setattr(hat.monitor.server.slave, 'connect_timeout', 0.01)
+    monkeypatch.setattr(hat.monitor.server.slave, 'connect_timeout', 0.1)
 
 
 @pytest.fixture
 def patch_connect_retry_delay(monkeypatch):
-    monkeypatch.setattr(hat.monitor.server.slave, 'connect_retry_delay', 0.001)
+    monkeypatch.setattr(hat.monitor.server.slave, 'connect_retry_delay', 0.1)
 
 
 async def create_master(address):
@@ -169,7 +169,7 @@ async def test_connect(patch_connect_timeout, patch_connect_retry_delay,
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(hat.monitor.server.slave.connect(
             addresses=[secondary_address] * 3,
-            retry_count=None), 0.1)
+            retry_count=None), 0.2)
 
     conn = await hat.monitor.server.slave.connect(
         addresses=[secondary_address, primary_address],
@@ -181,8 +181,7 @@ async def test_connect(patch_connect_timeout, patch_connect_retry_delay,
     await master.async_close()
 
 
-async def test_slave(patch_connect_timeout, patch_connect_retry_delay,
-                     primary_address):
+async def test_slave(primary_address):
     info = common.ComponentInfo(cid=1,
                                 mid=2,
                                 name='name',
