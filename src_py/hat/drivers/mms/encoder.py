@@ -391,8 +391,8 @@ def _encode_data(data):
         decimal = ts - int(ts)
         fraction = bytearray([0, 0, 0])
         for i in range(24):
-            if decimal >= 2 ** -i:
-                decimal -= 2 ** -i
+            if decimal >= 2 ** -(i + 1):
+                decimal -= 2 ** -(i + 1)
                 fraction[i // 8] |= 1 << (7 - (i % 8))
         quality = ((0x80 if data.leap_second else 0) |
                    (0x40 if data.clock_failure else 0) |
@@ -466,7 +466,7 @@ def _decode_data(data):
         ts = struct.unpack(">I", data[:4])[0]
         for i in range(24):
             if data[4 + i // 8] & (1 << (7 - (i % 8))):
-                ts += 2 ** -i
+                ts += 2 ** -(i + 1)
         t = datetime.datetime.fromtimestamp(ts, datetime.timezone.utc)
         leap_second = bool(0x80 & data[7])
         clock_failure = bool(0x40 & data[7])
