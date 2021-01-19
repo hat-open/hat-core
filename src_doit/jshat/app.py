@@ -14,8 +14,8 @@ __all__ = ['task_jshat_app',
            'task_jshat_app_gui',
            'task_jshat_app_syslog',
            'task_jshat_app_event_viewer',
-           'task_jshat_app_hue_manager',
-           'task_jshat_app_hue_manager_assets']
+           'task_jshat_app_manager_hue',
+           'task_jshat_app_manager_hue_assets']
 
 
 build_dir = Path('build/jshat/app')
@@ -33,7 +33,7 @@ def task_jshat_app():
                          'jshat_app_gui',
                          'jshat_app_syslog',
                          'jshat_app_event_viewer',
-                         'jshat_app_hue_manager']}
+                         'jshat_app_manager_hue']}
 
 
 def task_jshat_app_orchestrator():
@@ -66,19 +66,19 @@ def task_jshat_app_event_viewer():
                            src_js_dir / '@hat-core/event-viewer/main.js')
 
 
-def task_jshat_app_hue_manager():
-    """JsHat application - build hue-manager"""
-    return _get_task_build('hue-manager',
-                           src_js_dir / '@hat-core/hue-manager/main.js',
-                           task_dep=['jshat_app_hue_manager_assets'])
+def task_jshat_app_manager_hue():
+    """JsHat application - build manager-hue"""
+    return _get_task_build('manager-hue',
+                           src_js_dir / '@hat-core/manager-hue/main.js',
+                           task_dep=['jshat_app_manager_hue_assets'])
 
 
-def task_jshat_app_hue_manager_assets():
-    """JsHat assets - build hue-manager assets"""
+def task_jshat_app_manager_hue_assets():
+    """JsHat assets - build manager-hue assets"""
     def mappings():
         yield 'bars', node_modules_dir / 'svg-loaders/svg-css-loaders/bars.svg'
 
-    return _get_task_assets(src_js_dir / '@hat-core/hue-manager/assets.js',
+    return _get_task_assets(src_js_dir / '@hat-core/manager-hue/assets.js',
                             mappings)
 
 

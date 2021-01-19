@@ -57,7 +57,7 @@ def task_docs_pyhat():
 def task_docs_jshat():
     """Docs - build jshat documentation"""
     return {'actions': [(common.mkdir_p, [jshat_dst_dir.parent]),
-                        'yarn run --silent docs'],
+                        'node_modules/.bin/jsdoc -c jsdoc.json'],
             'task_dep': ['jshat_deps']}
 
 

@@ -1,9 +1,9 @@
 import r from '@hat-core/renderer';
 import * as u from '@hat-core/util';
-import * as common from '@hat-core/hue-manager/common';
-import * as vt from '@hat-core/hue-manager/vt';
+import * as common from '@hat-core/manager-hue/common';
+import * as vt from '@hat-core/manager-hue/vt';
 
-import 'hue-manager/main.scss';
+import 'manager-hue/main.scss';
 
 
 function main() {

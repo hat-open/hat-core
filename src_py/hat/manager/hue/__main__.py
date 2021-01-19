@@ -1,6 +1,6 @@
 import sys
 
-from hat.drivers.hue.manager.main import main
+from hat.manager.hue.main import main
 
 
 if __name__ == '__main__':

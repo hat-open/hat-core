@@ -73,7 +73,7 @@ def task_clean_all():
                            'asn1_repo.json']
         targets = [build_dir,
                    dist_dir,
-                   src_js_dir / '@hat-core/hue-manager/assets.js',
+                   src_js_dir / '@hat-core/manager-hue/assets.js',
                    *itertools.chain.from_iterable(src_py_dir.rglob(i)
                                                   for i in src_py_patterns),
                    *(src_c_dir / 'hat').glob('sbs_defs.*')]

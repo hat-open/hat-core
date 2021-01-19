@@ -12,7 +12,7 @@ from hat.drivers import upnp
 
 
 user_data_dir = Path(appdirs.user_data_dir('hat'))
-settings_path = user_data_dir / 'hue-manager.json'
+settings_path = user_data_dir / 'hat-manager-hue.json'
 
 
 async def create(ui_path):

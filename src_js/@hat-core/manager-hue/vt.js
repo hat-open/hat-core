@@ -1,7 +1,7 @@
 import r from '@hat-core/renderer';
 import * as u from '@hat-core/util';
 import * as form from '@hat-core/common/form';
-import * as common from '@hat-core/hue-manager/common';
+import * as common from '@hat-core/manager-hue/common';
 import * as datetime from '@hat-core/syslog/datetime';
 
 

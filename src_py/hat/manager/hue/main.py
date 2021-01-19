@@ -7,7 +7,7 @@ import PySide2.QtWidgets
 
 from hat import aio
 from hat import qt
-from hat.drivers.hue.manager import server
+from hat.drivers.manager.hue import server
 
 
 package_path = Path(__file__).parent

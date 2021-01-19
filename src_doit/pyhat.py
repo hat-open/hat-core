@@ -28,7 +28,8 @@ __all__ = ['task_pyhat_util',
            'task_pyhat_monitor',
            'task_pyhat_event',
            'task_pyhat_gateway',
-           'task_pyhat_gui']
+           'task_pyhat_gui',
+           'task_pyhat_manager']
 
 
 build_dir = Path('build/pyhat')
@@ -236,34 +237,20 @@ def task_pyhat_drivers():
         asn1_repos = [src_py_dir / 'hat/drivers/copp/asn1_repo.json',
                       src_py_dir / 'hat/drivers/acse/asn1_repo.json',
                       src_py_dir / 'hat/drivers/mms/asn1_repo.json']
-        hue_manager_jshat_build = Path('build/jshat/app/hue-manager')
         for i in (src_py_dir / 'hat/drivers').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         for asn1_repo in asn1_repos:
             yield asn1_repo, dst_dir / asn1_repo.relative_to(src_py_dir)
-        for i in hue_manager_jshat_build.rglob('*'):
-            if i.is_dir():
-                continue
-            yield i, (dst_dir / 'hat/drivers/hue/manager/ui'
-                              / i.relative_to(hue_manager_jshat_build))
 
-    return _get_task_build(
-        name='hat-drivers',
-        description='Hat communication drivers',
-        readme_path=Path('README.hat-drivers.rst'),
-        dependencies=['pyserial',
-                      'hat-util',
-                      'hat-aio',
-                      'hat-json',
-                      'hat-asn1'],
-        mappings=mappings,
-        optional_dependencies={'hue-manager': ['appdirs',
-                                               'click',
-                                               'PySide2',
-                                               'hat-qt',
-                                               'hat-juggler']},
-        gui_scripts=['hat-hue-manager = hat.drivers.hue.manager.main:main'],
-        task_dep=['jshat_app_hue_manager'])
+    return _get_task_build(name='hat-drivers',
+                           description='Hat communication drivers',
+                           readme_path=Path('README.hat-drivers.rst'),
+                           dependencies=['pyserial',
+                                         'hat-util',
+                                         'hat-aio',
+                                         'hat-json',
+                                         'hat-asn1'],
+                           mappings=mappings)
 
 
 def task_pyhat_syslog():
@@ -467,6 +454,37 @@ def task_pyhat_gui():
         console_scripts=['hat-gui = hat.gui.main:main'],
         task_dep=['jshat_app_gui',
                   'jshat_view'])
+
+
+def task_pyhat_manager():
+    """PyHat - build hat-manager"""
+    def mappings():
+        dst_dir = _get_build_dst_dir('hat-manager')
+        manager_hue_jshat_build = Path('build/jshat/app/manager-hue')
+        for i in (src_py_dir / 'hat/manager').rglob('*.py'):
+            yield i, dst_dir / i.relative_to(src_py_dir)
+        for i in manager_hue_jshat_build.rglob('*'):
+            if i.is_dir():
+                continue
+            yield i, (dst_dir / 'hat/manager/hue/ui'
+                              / i.relative_to(manager_hue_jshat_build))
+
+    return _get_task_build(
+        name='hat-manager',
+        description='Hat manager GUIs',
+        readme_path=Path('README.hat-manager.rst'),
+        dependencies=['appdirs',
+                      'click',
+                      'PySide2',
+                      'hat-aio',
+                      'hat-drivers',
+                      'hat-json',
+                      'hat-juggler',
+                      'hat-qt',
+                      'hat-util'],
+        mappings=mappings,
+        gui_scripts=['hat-manager-hue = hat.manager.hue.main:main'],
+        task_dep=['jshat_app_manager_hue'])
 
 
 def _get_task_build(name, description, readme_path, dependencies, mappings, *,

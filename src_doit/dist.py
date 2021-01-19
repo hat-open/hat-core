@@ -29,6 +29,7 @@ __all__ = ['task_dist',
            'task_dist_pyhat_event',
            'task_dist_pyhat_gateway',
            'task_dist_pyhat_gui',
+           'task_dist_pyhat_manager',
            'task_dist_jshat_util',
            'task_dist_jshat_renderer',
            'task_dist_jshat_future',
@@ -62,6 +63,7 @@ def task_dist():
                          'dist_pyhat_event',
                          'dist_pyhat_gateway',
                          'dist_pyhat_gui',
+                         'dist_pyhat_manager',
                          'dist_jshat_util',
                          'dist_jshat_renderer',
                          'dist_jshat_future',
@@ -170,6 +172,11 @@ def task_dist_pyhat_gateway():
 def task_dist_pyhat_gui():
     """Dist - create pyhat hat-gui distribution"""
     return _get_task_dist_pyhat('hat-gui', 'pyhat_gui')
+
+
+def task_dist_pyhat_manager():
+    """Dist - create pyhat hat-manager distribution"""
+    return _get_task_dist_pyhat('hat-manager', 'pyhat_manager')
 
 
 def task_dist_jshat_util():

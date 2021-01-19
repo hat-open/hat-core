@@ -31,11 +31,11 @@ def task_check_pyhat():
 
 def task_check_jshat():
     """Check - check jshat with eslint"""
-    return {'actions': ['yarn run --silent check_js'],
+    return {'actions': ['node_modules/.bin/eslint src_js'],
             'task_dep': ['jshat_deps']}
 
 
 def task_check_sass():
     """Check - check sass with sass-lint"""
-    return {'actions': ['yarn run --silent check_sass'],
+    return {'actions': ['node_modules/.bin/sass-lint src_scss/**/*.scss'],
             'task_dep': ['jshat_deps']}
