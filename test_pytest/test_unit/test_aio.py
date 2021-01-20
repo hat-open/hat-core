@@ -52,6 +52,18 @@ async def test_first_example():
     assert await aio.first(async_range(3), lambda x: x > 2, 123) == 123
 
 
+async def test_first_example_docs():
+    queue = aio.Queue()
+    queue.put_nowait(1)
+    queue.put_nowait(2)
+    queue.put_nowait(3)
+    queue.close()
+
+    assert 1 == await aio.first(queue)
+    assert 3 == await aio.first(queue, lambda x: x > 2)
+    assert 123 == await aio.first(queue, default=123)
+
+
 async def test_uncancellable():
     f1 = asyncio.Future()
 
@@ -399,21 +411,22 @@ async def test_queue_async_iterable():
 
 
 async def test_queue_example():
+    queue = aio.Queue(maxsize=1)
 
-    async def async_sum():
+    async def producer():
+        for i in range(4):
+            await queue.put(i)
+        queue.close()
+
+    async def consumer():
         result = 0
         async for i in queue:
             result += i
         return result
 
-    queue = aio.Queue(maxsize=1)
-    f = asyncio.ensure_future(async_sum())
-    await queue.put(1)
-    await queue.put(2)
-    await queue.put(3)
-    assert not f.done()
-    queue.close()
-    assert 6 == await f
+    asyncio.ensure_future(producer())
+    result = await consumer()
+    assert result == 6
 
 
 async def test_group():
@@ -551,3 +564,38 @@ async def test_group_default_exception_handler():
 
     _, kwargs = mock.call_args
     assert kwargs['exc_info'] is e
+
+
+async def test_group_example_docs_spawn():
+
+    async def f1(x):
+        try:
+            await asyncio.Future()
+        except asyncio.CancelledError:
+            return x
+
+    async def f2(x):
+        await asyncio.sleep(0)
+        return x
+
+    async with aio.Group() as group:
+        f = group.spawn(f1, 'f1')
+        assert 'f2' == await group.spawn(f2, 'f2')
+    assert 'f1' == await f
+
+
+async def test_group_example_docs_subgroup():
+    group = aio.Group()
+    subgroup1 = group.create_subgroup()
+    subgroup2 = group.create_subgroup()
+
+    f1 = subgroup1.spawn(asyncio.Future)
+    f2 = subgroup2.spawn(asyncio.Future)
+
+    assert not f1.done()
+    assert not f2.done()
+
+    await group.async_close()
+
+    assert f1.done()
+    assert f2.done()

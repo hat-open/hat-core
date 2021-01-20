@@ -139,7 +139,7 @@ async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
             return f
 
         async def f3(x):
-            return 'x
+            return x
 
         assert 'f1' == await hat.aio.call(f1, 'f1')
         assert 'f2' == await hat.aio.call(f2, 'f2')
@@ -394,20 +394,22 @@ class Queue:
 
     Example::
 
-        async def async_sum():
+        queue = Queue(maxsize=1)
+
+        async def producer():
+            for i in range(4):
+                await queue.put(i)
+            queue.close()
+
+        async def consumer():
             result = 0
             async for i in queue:
                 result += i
             return result
 
-        queue = Queue(maxsize=1)
-        f = asyncio.ensure_future(async_sum())
-        await queue.put(1)
-        await queue.put(2)
-        await queue.put(3)
-        assert not f.done()
-        queue.close()
-        assert 6 == await f
+        asyncio.ensure_future(producer())
+        result = await consumer()
+        assert result == 6
 
     """
 

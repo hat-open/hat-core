@@ -111,7 +111,7 @@ Async utility functions.
                 return f
 
             async def f3(x):
-                return 'x
+                return x
 
             assert 'f1' == await hat.aio.call(f1, 'f1')
             assert 'f2' == await hat.aio.call(f2, 'f2')
