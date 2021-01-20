@@ -12,7 +12,7 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 
 For more information see:
 
-    * `hat-util` documentation - `<https://core.hat-open.com/docs/libraries/util.html>`_
+    * `hat-util` documentation - `<https://core.hat-open.com/docs/libraries/util/python.html>`_
     * Hat Core homepage - `<https://core.hat-open.com>`_
     * Hat Core git repository - `<https://github.com/hat-open/hat-core.git>`_
 
@@ -47,6 +47,8 @@ Common utility functions not available as part of standard library.
             assert first(range(3), lambda x: x > 1) == 2
             assert first(range(3), lambda x: x > 2) is None
             assert first(range(3), lambda x: x > 2, 123) == 123
+            assert first({1: 'a', 2: 'b', 3: 'c'}) == 1
+            assert first([], default=123) == 123
 
         """
 

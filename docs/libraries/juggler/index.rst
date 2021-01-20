@@ -74,6 +74,7 @@ local data changes.
 Implementation
 --------------
 
-Documentation is available as part of generated API reference:
+.. toctree::
+    :maxdepth: 1
 
-    * `Python hat.juggler module <../pyhat/hat/juggler.html>`_
+    python

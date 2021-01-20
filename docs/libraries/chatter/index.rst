@@ -62,7 +62,7 @@ SBS module and SBS type identifiers.
 
 SBS message schema:
 
-.. include:: ../../schemas_sbs/hat.sbs
+.. include:: ../../../schemas_sbs/hat.sbs
    :literal:
 
 
@@ -174,13 +174,14 @@ where 'p1' and 'p2' are two communicating peers.
 
 SBS schema:
 
-.. include:: ../../schemas_sbs/hat/ping.sbs
+.. include:: ../../../schemas_sbs/hat/ping.sbs
    :literal:
 
 
 Implementation
 --------------
 
-Documentation is available as part of generated API reference:
+.. toctree::
+    :maxdepth: 1
 
-    * `Python hat.chatter module <../pyhat/hat/chatter/index.html>`_
+    python

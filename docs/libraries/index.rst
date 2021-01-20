@@ -4,12 +4,15 @@ Libraries
 .. toctree::
     :maxdepth: 1
 
-    util
+    util/index
+    aio
+    json
+    qt
     peg
     stc
-    sbs
-    chatter
-    juggler
+    sbs/index
+    chatter/index
+    juggler/index
     duktape
     asn1
-    drivers
+    drivers/index

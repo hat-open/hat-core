@@ -1,4 +1,4 @@
-`hat.duktape` - Python Duktape wrapper
+`hat.juggler` - Python juggler library
 ======================================
 
 API
@@ -6,4 +6,4 @@ API
 
 API reference is available as part of generated documentation:
 
-    * `Python hat.duktape module <../pyhat/hat/duktape/index.html>`_
+    * `Python hat.juggler module <../../pyhat/hat/juggler.html>`_

@@ -1,4 +1,4 @@
-`hat.stc` - Python statechart library
+`hat.json` - Python JSON data library
 =====================================
 
 API
@@ -6,4 +6,4 @@ API
 
 API reference is available as part of generated documentation:
 
-    * `Python hat.stc module <../pyhat/hat/stc.html>`_
+    * `Python hat.json module <../pyhat/hat/json.html>`_

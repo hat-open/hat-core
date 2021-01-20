@@ -1,7 +1,7 @@
 Simple binary serialization
 ===========================
 
-.. include:: ../../README.hat-sbs.rst
+.. include:: ../../../README.hat-sbs.rst
    :start-line: 27
 
 
@@ -175,6 +175,8 @@ as ``Integer``.
 Implementation
 --------------
 
-Documentation is available as part of generated API reference:
+.. toctree::
+    :maxdepth: 1
 
-    * `Python hat.sbs module <../pyhat/hat/sbs/index.html>`_
+    python
+    c

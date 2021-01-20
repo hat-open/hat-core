@@ -1,4 +1,4 @@
-`hat.duktape` - Python Duktape wrapper
+`hat.chatter` - Python chatter library
 ======================================
 
 API
@@ -6,4 +6,4 @@ API
 
 API reference is available as part of generated documentation:
 
-    * `Python hat.duktape module <../pyhat/hat/duktape/index.html>`_
+    * `Python hat.chatter module <../../pyhat/hat/chatter/index.html>`_

@@ -12,7 +12,7 @@ Končar - Power Plant and Electric Traction Engineering Inc.
 
 For more information see:
 
-    * `hat-qt` documentation - `<https://core.hat-open.com/docs/libraries/util.html>`_
+    * `hat-qt` documentation - `<https://core.hat-open.com/docs/libraries/qt.html>`_
     * Hat Core homepage - `<https://core.hat-open.com>`_
     * Hat Core git repository - `<https://github.com/hat-open/hat-core.git>`_
 
