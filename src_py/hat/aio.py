@@ -663,7 +663,9 @@ class Group:
         self._children.add(child)
         return child
 
-    def wrap(self, future: asyncio.Future) -> asyncio.Task:
+    def wrap(self,
+             future: asyncio.Future
+             ) -> asyncio.Task:
         """Wrap the Future into a Task and schedule its execution. Return the
         Task object.
 
@@ -678,8 +680,10 @@ class Group:
         task.add_done_callback(self._on_task_done)
         return asyncio.shield(task)
 
-    def spawn(self, fn: typing.Callable[..., typing.Awaitable],
-              *args, **kwargs) -> asyncio.Task:
+    def spawn(self,
+              fn: typing.Callable[..., typing.Awaitable],
+              *args, **kwargs
+              ) -> asyncio.Task:
         """Wrap the result of a `fn` into a Task and schedule its execution.
         Return the Task object.
 

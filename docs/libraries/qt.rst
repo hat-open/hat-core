@@ -1,5 +1,13 @@
+.. _hat-qt:
+
 `hat.qt` - Python Qt utility library
 ====================================
+
+.. todo::
+
+    ...
+
+
 
 API
 ---

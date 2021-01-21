@@ -1,5 +1,11 @@
+.. _hat-peg:
+
 `hat.peg` - Python parsing expression grammar library
 =====================================================
+
+.. todo::
+
+    ...
 
 API
 ---

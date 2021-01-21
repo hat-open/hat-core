@@ -17,16 +17,7 @@ This is simple function with signature::
     def first(xs: typing.Iterable[T],
               fn: typing.Callable[[T], bool] = lambda _: True,
               default: typing.Optional[T] = None
-              ) -> typing.Optional[T]:
-        """Return the first element from iterable that satisfies predicate `fn`,
-        or `default` if no such element exists.
-
-        Args:
-            xs: collection
-            fn: predicate
-            default: default value
-
-        """
+              ) -> typing.Optional[T]: ...
 
 Some of possible application of this function include:
 
@@ -71,39 +62,25 @@ infrastructure where additional component decoupling is required.
 ::
 
     class RegisterCallbackHandle(typing.NamedTuple):
-        """Handle for canceling callback registration."""
 
         cancel: typing.Callable[[], None]
-        """cancel callback registration"""
 
         def __enter__(self): ...
 
         def __exit__(self, *args): ...
 
     ExceptionCb: typing.Type = typing.Callable[[Exception], None]
-    """Exception callback"""
 
     class CallbackRegistry:
-        """Registry that enables callback registration and notification.
-
-        Callbacks in the registry are notified sequentially with
-        `CallbackRegistry.notify`. If a callback raises an exception, the
-        exception is caught and `exception_cb` handler is called. Notification of
-        subsequent callbacks is not interrupted. If handler is `None`, the
-        exception is reraised and no subsequent callback is notified.
-
-        """
 
         def __init__(self,
                      exception_cb: typing.Optional[ExceptionCb] = None): ...
 
         def register(self,
                      cb: typing.Callable
-                     ) -> RegisterCallbackHandle:
-            """Register a callback."""
+                     ) -> RegisterCallbackHandle: ...
 
-        def notify(self, *args, **kwargs):
-            """Notify all registered callbacks."""
+        def notify(self, *args, **kwargs): ...
 
 Usage example::
 
@@ -130,15 +107,7 @@ Usage example::
 
 URL query string parser::
 
-    def parse_url_query(query: str) -> typing.Dict[str, str]:
-        """Parse url query string.
-
-        Returns a dictionary of field names and their values.
-
-        Args:
-            query: url query string
-
-        """
+    def parse_url_query(query: str) -> typing.Dict[str, str]: ...
 
 Usage example::
 
@@ -166,11 +135,9 @@ return different results.
 
 ::
 
-    def get_unused_tcp_port() -> int:
-        """Search for unused TCP port"""
+    def get_unused_tcp_port() -> int: ...
 
-    def get_unused_udp_port() -> int:
-        """Search for unused UDP port"""
+    def get_unused_udp_port() -> int: ...
 
 
 .. _hat-util-api:

@@ -19,16 +19,7 @@ with `AsyncIterable`::
     async def first(xs: typing.AsyncIterable[T],
                     fn: typing.Callable[[T], bool] = lambda _: True,
                     default: typing.Optional[T] = None
-                    ) -> typing.Optional[T]:
-        """Return the first element from async iterable that satisfies
-        predicate `fn`, or `default` if no such element exists.
-
-        Args:
-            xs: async collection
-            fn: predicate
-            default: default value
-
-        """
+                    ) -> typing.Optional[T]: ...
 
 This coroutine can be used on any kind of async iterable including
 :ref:`hat.aio.Queue <hat-aio-Queue>`::
@@ -63,27 +54,7 @@ caution because it disrupts usual `asyncio.CancelledError` propagation.
 
     async def uncancellable(f: asyncio.Future,
                             raise_cancel: bool = True
-                            ) -> typing.Any:
-        """Uncancellable execution of a Future.
-
-        Future is shielded and its execution cannot be interrupted.
-
-        If `raise_cancel` is `True` and the Future gets canceled,
-        `asyncio.CancelledError` is reraised after the Future finishes.
-
-        Warning:
-            If `raise_cancel` is `False`, this method suppresses
-            `asyncio.CancelledError` and stops its propagation. Use with
-            caution.
-
-        Args:
-            f: future
-            raise_cancel: raise CancelledError flag
-
-        Returns:
-            future's result
-
-        """
+                            ) -> typing.Any: ...
 
 Most significant usage of this coroutine is in scenarios where cancellation
 of task should be temporary suspended until internally acquired resources are
@@ -113,63 +84,14 @@ released::
 `call`, `call_on_cancel` and `call_on_done` provide the same mechanism for
 function and coroutine calling::
 
-    async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
-        """Call a function or a coroutine (or other callable object).
+    async def call(fn: AsyncCallable, *args, **kwargs) -> typing.Any: ...
 
-        Call the `fn` with `args` and `kwargs`. If result of this call is
-        awaitable, it is awaited and returned. Otherwise, result is immediately
-        returned.
-
-        Args:
-            fn: callable object
-            args: additional positional arguments
-            kwargs: additional keyword arguments
-
-        Returns:
-            awaited result or result
-
-        """
-
-    async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any:
-        """Call a function or a coroutine when canceled.
-
-        When canceled, `fn` is called with `args` and `kwargs` by using
-        `call` coroutine.
-
-        Args:
-            fn: function or coroutine
-            args: additional function arguments
-            kwargs: additional function keyword arguments
-
-        Returns:
-            function result
-
-        """
+    async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -> typing.Any: ...
 
     async def call_on_done(f: typing.Awaitable,
                            fn: AsyncCallable,
                            *args, **kwargs
-                           ) -> typing.Any:
-        """Call a function or a coroutine when awaitable is done.
-
-        When `f` is done, `fn` is called with `args` and `kwargs` by using
-        `call` coroutine.
-
-        If this coroutine is canceled before `f` is done, `f` is canceled and `fn`
-        is not called.
-
-        If this coroutine is canceled after `f` is done, `fn` call is canceled.
-
-        Args:
-            f: awaitable future
-            fn: function or coroutine
-            args: additional function arguments
-            kwargs: additional function keyword arguments
-
-        Returns:
-            function result
-
-        """
+                           ) -> typing.Any: ...
 
 When regular functions are called by `call` coroutine, result of function call
 is immediately available as result of `call` coroutine. If function call results
@@ -223,22 +145,7 @@ instances and invocation of `asyncio.loop.run_in_executor` coroutine::
     def create_executor(*args: typing.Any,
                         executor_cls: typing.Type = concurrent.futures.ThreadPoolExecutor,  # NOQA
                         loop: typing.Optional[asyncio.AbstractEventLoop] = None
-                        ) -> typing.Callable[..., typing.Awaitable]:
-        """Create `asyncio.loop.run_in_executor` wrapper.
-
-        Returns a coroutine that takes a function and its arguments, executes the
-        function using executor created from `executor_cls` and `args`; and
-        returns the result.
-
-        Args:
-            args: executor args
-            executor_cls: executor class
-            loop: asyncio loop
-
-        Returns:
-            executor coroutine
-
-        """
+                        ) -> typing.Callable[..., typing.Awaitable]: ...
 
 Example usage::
 
@@ -257,46 +164,12 @@ Example usage::
 
 Utility coroutines for initialization of asyncio loop and task execution::
 
-    def init_asyncio(policy: typing.Optional[asyncio.AbstractEventLoopPolicy] = None):  # NOQA
-        """Initialize asyncio.
-
-        Sets event loop policy (if ``None``, instance of
-        `asyncio.DefaultEventLoopPolicy` is used).
-
-        After policy is set, new event loop is created and associated with current
-        thread.
-
-        On Windows, `asyncio.WindowsProactorEventLoopPolicy` is used as default
-        policy.
-
-        """
+    def init_asyncio(policy: typing.Optional[asyncio.AbstractEventLoopPolicy] = None): ...
 
     def run_asyncio(future: typing.Awaitable, *,
                     handle_signals=True,
                     create_loop=False
-                    ) -> typing.Any:
-        """Run asyncio loop until the `future` is completed and return the result.
-
-        If `handle_signals` is ``True``, SIGINT and SIGTERM handlers are
-        temporarily overridden. Instead of raising ``KeyboardInterrupt`` on every
-        signal reception, Future is canceled only once. Additional signals are
-        ignored. On Windows, SIGBREAK (CTRL_BREAK_EVENT) handler is also
-        overridden.
-
-        If `create_loop` is set to ``True``, new event loop is created and set
-        as thread's default event loop.
-
-        On Windows, asyncio loop gets periodically woken up (every 0.5 seconds).
-
-        Args:
-            future: future or coroutine
-            handle_signals: handle signals flag
-            create_loop: create new event loop
-
-        Returns:
-            future's result
-
-        """
+                    ) -> typing.Any: ...
 
 Example usage::
 
@@ -327,26 +200,13 @@ empty, all future calls to `get` methods will also result in raising of
 
 ::
 
-    class QueueClosedError(Exception):
-        """Raised when trying to use a closed queue."""
+    class QueueClosedError(Exception): ...
 
-    class QueueEmptyError(Exception):
-        """Raised if queue is empty."""
+    class QueueEmptyError(Exception): ...
 
-    class QueueFullError(Exception):
-        """Raised if queue is full."""
+    class QueueFullError(Exception): ...
 
     class Queue:
-        """Asyncio queue which implements AsyncIterable and can be closed.
-
-        Interface and implementation are based on `asyncio.Queue`.
-
-        If `maxsize` is less than or equal to zero, the queue size is infinite.
-
-        Args:
-            maxsize: maximum number of items in the queue
-
-        """
 
         def __init__(self, maxsize: int = 0): ...
 
@@ -359,74 +219,28 @@ empty, all future calls to `get` methods will also result in raising of
         def __len__(self): ...
 
         @property
-        def maxsize(self) -> int:
-            """Maximum number of items in the queue."""
+        def maxsize(self) -> int: ...
 
         @property
-        def is_closed(self) -> bool:
-            """Is queue closed."""
+        def is_closed(self) -> bool: ...
 
-        def empty(self) -> bool:
-            """``True`` if queue is empty, ``False`` otherwise."""
+        def empty(self) -> bool: ...
 
-        def full(self) -> bool:
-            """``True`` if queue is full, ``False`` otherwise."""
+        def full(self) -> bool: ...
 
-        def qsize(self) -> int:
-            """Number of items currently in the queue."""
+        def qsize(self) -> int: ...
 
-        def close(self):
-            """Close the queue."""
+        def close(self): ...
 
-        def get_nowait(self) -> typing.Any:
-            """Return an item if one is immediately available, else raise
-            `QueueEmptyError`.
+        def get_nowait(self) -> typing.Any: ...
 
-            Raises:
-                QueueEmptyError
+        def put_nowait(self, item: typing.Any): ...
 
-            """
+        async def get(self) -> typing.Any: ...
 
-        def put_nowait(self, item: typing.Any):
-            """Put an item into the queue without blocking.
+        async def put(self, item: typing.Any): ...
 
-            If no free slot is immediately available, raise `QueueFullError`.
-
-            Raises:
-                QueueFullError
-
-            """
-
-        async def get(self) -> typing.Any:
-            """Remove and return an item from the queue.
-
-            If queue is empty, wait until an item is available.
-
-            Raises:
-                QueueClosedError
-
-            """
-
-        async def put(self, item: typing.Any):
-            """Put an item into the queue.
-
-            If the queue is full, wait until a free slot is available before adding
-            the item.
-
-            Raises:
-                QueueClosedError
-
-            """
-
-        async def get_until_empty(self) -> typing.Any:
-            """Empty the queue and return the last item.
-
-            If queue is empty, wait until at least one item is available.
-
-            Raises:
-                QueueClosedError
-
-            """
+        async def get_until_empty(self) -> typing.Any: ...
 
 Example usage::
 
@@ -456,24 +270,8 @@ Example usage::
 `Group` provides mechanics for `safe` task execution and life-time control::
 
     ExceptionCb = typing.Callable[[Exception], None]
-    """Exception callback"""
 
     class Group:
-        """Group of asyncio Tasks.
-
-        Group enables creation and management of related asyncio Tasks. The
-        Group ensures uninterrupted execution of Tasks and Task completion upon
-        Group closing.
-
-        Group can contain subgroups, which are independent Groups managed by the
-        parent Group.
-
-        If a Task raises exception, other Tasks continue to execute.
-
-        If `exception_cb` handler is ``None``, exceptions are logged with level
-        WARNING.
-
-        """
 
         def __init__(self,
                      exception_cb: typing.Optional[ExceptionCb] = None,
@@ -481,66 +279,32 @@ Example usage::
                      loop: typing.Optional[asyncio.AbstractEventLoop] = None): ...
 
         @property
-        def is_open(self) -> bool:
-            """``True`` if group is not closing or closed, ``False`` otherwise."""
+        def is_open(self) -> bool: ...
 
         @property
-        def is_closing(self) -> bool:
-            """Is group closing or closed."""
+        def is_closing(self) -> bool: ...
 
         @property
-        def is_closed(self) -> bool:
-            """Is group closed."""
+        def is_closed(self) -> bool: ...
 
-        async def wait_closing(self):
-            """Wait until closing is ``True``."""
+        async def wait_closing(self): ...
 
-        async def wait_closed(self):
-            """Wait until closed is ``True``."""
+        async def wait_closed(self): ...
 
-        def create_subgroup(self) -> 'Group':
-            """Create new Group as a child of this Group. Return the new Group.
+        def create_subgroup(self) -> 'Group': ...
 
-            When a parent Group gets closed, all of its children are closed.
-            Closing of a subgroup has no effect on the parent Group.
+        def wrap(self,
+                 future: asyncio.Future
+                 ) -> asyncio.Task: ...
 
-            Subgroup inherits exception handler from its parent.
+        def spawn(self,
+                  fn: typing.Callable[..., typing.Awaitable],
+                  *args, **kwargs
+                  ) -> asyncio.Task: ...
 
-            """
+        def close(self, cancel: bool = True): ...
 
-        def wrap(self, future: asyncio.Future) -> asyncio.Task:
-            """Wrap the Future into a Task and schedule its execution. Return the
-            Task object.
-
-            Resulting task is shielded and can be canceled only with
-            `Group.async_close`.
-
-            """
-
-        def spawn(self, fn: typing.Callable[..., typing.Awaitable],
-                  *args, **kwargs) -> asyncio.Task:
-            """Wrap the result of a `fn` into a Task and schedule its execution.
-            Return the Task object.
-
-            Function `fn` is called with provided `args` and `kwargs`.
-            Resulting Task is shielded and can be canceled only with
-            `Group.async_close`.
-
-            """
-
-        def close(self, cancel: bool = True):
-            """Schedule Group closing.
-
-            Closing Future is set immediately. All subgroups are closed, and all
-            running tasks are optionally canceled. Once closing of all subgroups
-            and execution of all tasks is completed, closed Future is set.
-
-            Tasks are canceled if `cancel` is ``True``.
-
-            """
-
-        async def async_close(self, cancel: bool = True):
-            """Close Group and wait until closed is ``True``."""
+        async def async_close(self, cancel: bool = True): ...
 
         async def __aenter__(self): ...
 
@@ -593,36 +357,27 @@ Simple abstract base class providing abstraction of lifetime control based on
 `is_closing` and `is_closed`) are matching to associated group states::
 
     class Resource(abc.ABC):
-        """Resource with lifetime control based on `Group`."""
 
         @property
         @abc.abstractmethod
-        def async_group(self) -> Group:
-            """Group controlling resource's lifetime."""
+        def async_group(self) -> Group: ...
 
         @property
-        def is_open(self) -> bool:
-            """``True`` if not closing or closed, ``False`` otherwise."""
+        def is_open(self) -> bool: ...
 
         @property
-        def is_closing(self) -> bool:
-            """Is resource closing or closed."""
+        def is_closing(self) -> bool: ...
 
         @property
-        def is_closed(self) -> bool:
-            """Is resource closed."""
+        def is_closed(self) -> bool: ...
 
-        async def wait_closing(self):
-            """Wait until closing is ``True``."""
+        async def wait_closing(self): ...
 
-        async def wait_closed(self):
-            """Wait until closed is ``True``."""
+        async def wait_closed(self): ...
 
-        def close(self):
-            """Close resource."""
+        def close(self): ...
 
-        async def async_close(self):
-            """Close resource and wait until closed is ``True``."""
+        async def async_close(self): ...
 
 
 API

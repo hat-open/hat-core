@@ -14,6 +14,7 @@ Documentation is available as part of generated API reference:
     * `Python hat.drivers.copp module <../pyhat/hat/drivers/copp/index.html>`_
     * `Python hat.drivers.acse module <../pyhat/hat/drivers/acse/index.html>`_
     * `Python hat.drivers.mms module <../pyhat/hat/drivers/mms/index.html>`_
+    * `Python hat.drivers.iec104 module <../pyhat/hat/drivers/iec104/index.html>`_
     * `Python hat.drivers.modbus module <../pyhat/hat/drivers/modbus/index.html>`_
     * `Python hat.drivers.hue module <../pyhat/hat/drivers/hue/index.html>`_
     * `Python hat.drivers.upnp module <../pyhat/hat/drivers/upnp.html>`_

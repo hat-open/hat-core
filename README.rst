@@ -191,7 +191,7 @@ in:
     * requirements.pip.txt
     * package.json
 
-Python code targets CPython 3.8 only.
+Python code targets CPython 3.8 and 3.9 only.
 
 
 Documentation

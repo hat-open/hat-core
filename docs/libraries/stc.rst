@@ -1,5 +1,11 @@
+.. _hat-stc:
+
 `hat.stc` - Python statechart library
 =====================================
+
+.. todo::
+
+    ...
 
 API
 ---
