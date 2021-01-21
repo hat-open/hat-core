@@ -24,8 +24,8 @@ import enum
 
 from hat import aio
 from hat import util
-from hat.eds.drivers.iec104 import _common
-from hat.eds.drivers.iec104 import common
+from hat.drivers.iec104 import _common
+from hat.drivers.iec104 import common
 
 
 mlog = logging.getLogger(__name__)
@@ -202,10 +202,9 @@ class Server(aio.Resource):
         return self._addresses
 
     async def _on_close(self):
-        self._srv.close()
-        await asyncio.wait(
-            [self._srv.wait_closed()] +
-            [conn.async_close() for conn in self._connections])
+        await self._ser.async_close()
+        for conn in list(self._connections):
+            await conn.async_close()
 
     async def _conn_life(self, conn):
         try:

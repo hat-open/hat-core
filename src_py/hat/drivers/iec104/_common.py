@@ -10,7 +10,7 @@ import asyncio
 
 from hat import aio
 from hat import util
-from hat.eds.drivers.iec104 import common
+from hat.drivers.iec104 import common
 
 
 mlog = logging.getLogger(__name__)
