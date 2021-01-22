@@ -37,7 +37,7 @@ split into multiple packages:
 Python packages
 '''''''''''''''
 
-Python packages require Python 3.8 and can be installed with `pip`::
+Python packages require Python 3.8 or 3.9 and can be installed with `pip`::
 
     $ pip install <package-name>
 
@@ -69,11 +69,11 @@ where ``package-name`` is one of following:
 
     * `hat-sbs <https://pypi.org/project/hat-sbs>`_
 
-        Chatter communication protocol
+        Simple binary serialization
 
     * `hat-chatter <https://pypi.org/project/hat-chatter>`_
 
-        Simple binary serialization
+        Chatter communication protocol
 
     * `hat-juggler <https://pypi.org/project/hat-juggler>`_
 
@@ -143,7 +143,7 @@ where ``package-name`` is one of following:
 
     * `@hat-core/juggler <https://www.npmjs.com/package/@hat-core/juggler>`_
 
-        Juggler client library
+        Juggler communication protocol client library
 
 
 Build
