@@ -25,7 +25,7 @@ where:
 
     * `m` is byte length of `k`
     * `k` is byte length of `message` (`n+1` is the most significant byte)
-    * `message` is SBS encoded message data.
+    * `message` is :ref:`SBS <sbs>` encoded message data.
 
 SBS data definitions are available in the directory `schemas_sbs` of the
 hat-open repository. The file structure of this directory mimics SBS modules
@@ -65,8 +65,6 @@ SBS message schema:
 .. include:: ../../../schemas_sbs/hat.sbs
    :literal:
 
-
-.. _protocol-conversation:
 
 Conversation
 ------------
@@ -135,8 +133,6 @@ definition. These message types are defined in the Service's appropriate SBS
 definition file in the `schemas_sbs` directory.
 
 
-.. _ping-service:
-
 Ping
 ''''
 
@@ -153,8 +149,8 @@ The default ping timeout is 30 seconds.
 
 The default conversation timeout period is 5 seconds.
 
-The Ping Service is implemented as an integrated part of
-:class:`hat.protocol.Connection`.
+The Ping Service is implemented as an integrated part of each chatter
+implementation.
 
 A Ping - Pong Conversation between peers contains these messages:
 

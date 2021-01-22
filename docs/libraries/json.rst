@@ -207,9 +207,15 @@ from path suffix::
 JSON Schema
 -----------
 
-.. todo::
+`JSON Schema <https://json-schema.org/>`_ provides means for definition and
+validation of JSON data structures.
 
-    ...
+`hat.json.SchemaRepository` provides wrapper for
+`jsonschema library <https://pypi.org/project/jsonschema/>`_ with ability
+to utilize multiple interconnected JSON schemas.
+
+All schemas combined in single `SchemaRepository` can be serialized as
+JSON data.
 
 ::
 

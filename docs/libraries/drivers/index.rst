@@ -1,5 +1,5 @@
-Drivers
-=======
+Communication drivers
+=====================
 
 Hat includes a limited set of basic communication interfaces. These libraries
 are used for communication with external devices and other systems.

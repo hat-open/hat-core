@@ -1,6 +1,11 @@
 `hat.chatter` - Python chatter library
 ======================================
 
+.. todo::
+
+    ...
+
+
 API
 ---
 

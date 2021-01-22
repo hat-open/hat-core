@@ -55,7 +55,9 @@ class Repository:
         return [parser.module_to_json(module) for module in self._modules]
 
     @staticmethod
-    def from_json(data: typing.Union[pathlib.PurePath, common.Data]
+    def from_json(data: typing.Union[pathlib.PurePath, common.Data],
+                  *,
+                  serializer=serializer.CSerializer
                   ) -> 'Repository':
         """Create new repository from content exported as json serializable
         data.
@@ -66,7 +68,7 @@ class Repository:
         """
         if isinstance(data, pathlib.PurePath):
             data = json.decode_file(data)
-        repo = Repository()
+        repo = Repository(serializer=serializer)
         repo._modules = [parser.module_from_json(i) for i in data]
         repo._refs = evaluator.evaluate_modules(repo._modules)
         return repo

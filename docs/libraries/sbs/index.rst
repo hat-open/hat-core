@@ -1,8 +1,40 @@
+.. _sbs:
+
 Simple binary serialization
 ===========================
 
-.. include:: ../../../README.hat-sbs.rst
-   :start-line: 27
+Simple binary serialization (SBS) features:
+
+    * schema based
+    * small schema language optimized for human readability
+    * schema re-usability and organization into modules
+    * small number of built in types
+    * polymorphic data types
+    * binary serialization
+    * designed to enable simple and efficient implementation
+    * optimized for small encoded data size
+
+Example of SBS schema::
+
+    module Module
+
+    Entry(K, V) = Tuple {
+        key: K
+        value: V
+    }
+
+    Collection(K) = Union {
+        null: None
+        bool: Entry(K, Boolean)
+        int: Entry(K, Integer)
+        float: Entry(K, Float)
+        str: Entry(K, String)
+        bytes: Entry(K, Bytes)
+    }
+
+    IntKeyCollection = Collection(Integer)
+
+    StrKeyCollection = Collection(String)
 
 
 Schema definition
@@ -44,6 +76,10 @@ definition is written as ``<new_type>(<t1> <t2> ...) = <other_type>`` where:
         refers to type defined in same module, ``<module_name>.`` can be
         omitted. If user defined type is not parametric data type, parenthesis
         should be omitted.
+
+
+Data types
+----------
 
 Builtin data types include:
 
@@ -100,6 +136,51 @@ Builtin data types include:
                 Nothing: None
                 Just: a
             }
+
+
+PEG grammar
+-----------
+
+::
+
+    Module          <- OWS 'module' MWS Identifier TypeDefinitions OWS EOF
+    TypeDefinitions <- (MWS TypeDefinition (MWS TypeDefinition)*)?
+    TypeDefinition  <- Identifier OWS ArgNames? OWS '=' OWS Type
+
+    Type            <- TSimple
+                     / TArray
+                     / TTuple
+                     / TUnion
+                     / TIdentifier
+    TSimple         <- 'Boolean'
+                     / 'Integer'
+                     / 'Float'
+                     / 'String'
+                     / 'Bytes'
+    TArray          <- 'Array' OWS '(' OWS Type OWS ')'
+    TTuple          <- 'Tuple' OWS '{' OWS Entries? OWS '}'
+    TUnion          <- 'Union' OWS '{' OWS Entries? OWS '}'
+    TIdentifier     <- Identifier ('.' Identifier)? (OWS ArgTypes)?
+
+    Entries         <- Entry (MWS Entry)*
+    Entry           <- Identifier OWS ':' OWS Type
+
+    ArgNames        <- '(' OWS Identifiers? OWS ')'
+    ArgTypes        <- '(' OWS Types? OWS ')'
+    Identifiers     <- Identifier (MWS Identifier)*
+    Types           <- Type (MWS Type)*
+
+    Identifier      <- [A-Za-z][A-Za-z0-9_]*
+
+    # mandatory white-space
+    MWS             <- (WS / Comment)+
+    # optional white-space
+    OWS             <- (WS / Comment)*
+
+    Comment         <- '#' (!EOL .)* EOL
+    WS              <- ',' / ' ' / '\t' / EOL
+    EOL             <- '\r\n' / '\n' / '\r'
+    EOF             <- !.
 
 
 Data encoding
