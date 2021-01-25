@@ -1,6 +1,87 @@
 <%inherit file="_main.html"/>
 <%block name="title">About</%block>
 
+<%
+components = [('hat-syslog',
+               'Syslog server',
+               'docs/components/syslog.html'),
+              ('hat-orchestrator',
+               'Simple cross-platform daemon/service manager',
+               'docs/components/orchestrator.html'),
+              ('hat-monitor',
+               'Redundancy and service discovery server',
+               'docs/components/monitor.html'),
+              ('hat-event',
+               'Event pub/sub communication and storage',
+               'docs/components/event/index.html'),
+              ('hat-gateway',
+               'Remote communication device gateway',
+               'docs/components/gateway/index.html'),
+              ('hat-gui',
+               'GUI server',
+               'docs/components/gui/index.html')]
+
+py_libraries = [('hat-util',
+                 'Utility library',
+                 'docs/libraries/util/python.html'),
+                ('hat-aio',
+                 'Async utility library',
+                 'docs/libraries/aio.html'),
+                ('hat-json',
+                 'JSON library',
+                 'docs/libraries/json.html'),
+                ('hat-qt',
+                 'Qt utility library',
+                 'docs/libraries/qt.html'),
+                ('hat-peg',
+                 'Parsing expression grammar',
+                 'docs/libraries/peg.html'),
+                ('hat-stc',
+                 'Statechart engine',
+                 'docs/libraries/stc/python.html'),
+                ('hat-sbs',
+                 'Simple binary serialization',
+                 'docs/libraries/sbs/python.html'),
+                ('hat-chatter',
+                 'Chatter communication protocol',
+                 'docs/libraries/chatter/python.html'),
+                ('hat-juggler',
+                 'Juggler communication protocol',
+                 'docs/libraries/juggler/python.html'),
+                ('hat-duktape',
+                 'Python Duktape JS wrapper',
+                 'docs/libraries/duktape.html'),
+                ('hat-sqlite3',
+                 'Hat specific sqlite3 build',
+                 None),
+                ('hat-asn1',
+                 'ASN.1 parser and encoder',
+                 'docs/libraries/asn1.html'),
+                ('hat-drivers',
+                 'Communication drivers',
+                 'docs/libraries/drivers/index.html')]
+
+js_libraries = [('@hat-core/util',
+                 'Utility module',
+                 'docs/libraries/util/javascript.html'),
+                ('@hat-core/renderer',
+                 'Virtual DOM renderer',
+                 ''),
+                ('@hat-core/future',
+                 'Async Future implementation',
+                 ''),
+                ('@hat-core/juggler',
+                 'Juggler communication protocol client library',
+                 '')]
+
+sections = [('Components',
+             components),
+            ('Python libraries',
+             py_libraries),
+            ('JavaScript libraries',
+             js_libraries)]
+%>
+
 <p>
 Hat Open is open-source framework of tools and libraries for developing
 applications used for remote monitoring, control and management of
@@ -23,81 +104,22 @@ Končar - Power Plant and Electric Traction Engineering Inc.
     functionality and API are unstable.
 </p>
 
+% for header, items in sections:
 <article>
-    <h2>Components</h2>
+    <h2>${header}</h2>
     <ul>
-    % for title, description in [('hat-syslog', \
-                                  'Syslog server'), \
-                                 ('hat-orchestrator', \
-                                  'Simple cross-platform daemon/service manager'), \
-                                 ('hat-monitor', \
-                                  'Redundancy and service discovery server'), \
-                                 ('hat-event', \
-                                  'Event pub/sub communication and storage'), \
-                                 ('hat-gateway', \
-                                  'Remote communication device gateway'), \
-                                 ('hat-gui', \
-                                  'GUI server')]:
+    % for title, description, url in items:
         <li>
-            <h3>${title}</h3>
+            <h3>
+                % if url:
+                    <a href="${url}">${title}</a>
+                % else:
+                    ${title}
+                % endif
+            </h3>
             ${description}
         </li>
     % endfor
     </ul>
 </article>
-
-<article>
-    <h2>Python libraries</h2>
-    <ul>
-    % for title, description in [('hat-util', \
-                                  'Utility library'), \
-                                 ('hat-aio', \
-                                  'Async utility library'), \
-                                 ('hat-json', \
-                                  'JSON library'), \
-                                 ('hat-qt', \
-                                  'Qt utility library'), \
-                                 ('hat-peg', \
-                                  'Parsing expression grammar'), \
-                                 ('hat-stc', \
-                                  'Statechart engine'), \
-                                 ('hat-sbs', \
-                                  'Simple binary serialization'), \
-                                 ('hat-chatter', \
-                                  'Chatter communication protocol'), \
-                                 ('hat-juggler', \
-                                  'Juggler communication protocol'), \
-                                 ('hat-duktape', \
-                                  'Python Duktape JS wrapper'), \
-                                 ('hat-sqlite3', \
-                                  'Hat specific sqlite3 build'), \
-                                 ('hat-asn1', \
-                                  'ASN.1 parser and encoder'), \
-                                 ('hat-drivers', \
-                                  'Communication drivers')]:
-        <li>
-            <h3>${title}</h3>
-            ${description}
-        </li>
-    % endfor
-    </ul>
-</article>
-
-<article>
-    <h2>JavaScript libraries</h2>
-    <ul>
-    % for title, description in [('@hat-core/util', \
-                                  'Utility module'), \
-                                 ('@hat-core/renderer', \
-                                  'Virtual DOM renderer'), \
-                                 ('@hat-core/future', \
-                                  'Async Future implementation'), \
-                                 ('@hat-core/juggler', \
-                                  'Juggler communication protocol client library')]:
-        <li>
-            <h3>${title}</h3>
-            ${description}
-        </li>
-    % endfor
-    </ul>
-</article>
+% endfor
