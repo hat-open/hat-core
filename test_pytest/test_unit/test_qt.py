@@ -1,8 +1,11 @@
 import threading
 
+import pytest
+
 from hat import qt
 
 
+@pytest.mark.skip("headless not supported")
 def test_example_docs():
 
     async def async_main(executor):
