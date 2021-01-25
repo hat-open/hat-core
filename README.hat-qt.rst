@@ -33,7 +33,6 @@ Parallel execution of Qt and asyncio threads::
     AsyncMain = typing.Callable[..., typing.Awaitable[typing.Any]]
     """First argument is QtExecutor"""
 
-
     def run(async_main: AsyncMain, *args, **kwargs):
         """Run Qt application with additional asyncio thread
 

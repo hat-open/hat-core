@@ -232,7 +232,7 @@ def encode(data: Data,
                   else yaml.SafeDumper)
         return str(yaml.dump(data, indent=indent, Dumper=dumper))
 
-    raise ValueError()
+    raise ValueError('unsupported format')
 
 
 def decode(data_str: str,
@@ -253,7 +253,7 @@ def decode(data_str: str,
                   else yaml.SafeLoader)
         return yaml.load(io.StringIO(data_str), Loader=loader)
 
-    raise ValueError()
+    raise ValueError('unsupported format')
 
 
 def encode_file(data: Data,
@@ -277,7 +277,7 @@ def encode_file(data: Data,
         elif path.suffix in ('.yaml', '.yml'):
             format = Format.YAML
         else:
-            raise ValueError()
+            raise ValueError('can not determine format from path suffix')
 
     with open(path, 'w', encoding='utf-8') as f:
         if format == Format.JSON:
@@ -290,7 +290,7 @@ def encode_file(data: Data,
                       explicit_start=True, explicit_end=True)
 
         else:
-            raise ValueError()
+            raise ValueError('unsupported format')
 
 
 def decode_file(path: pathlib.PurePath,
@@ -311,7 +311,7 @@ def decode_file(path: pathlib.PurePath,
         elif path.suffix in ('.yaml', '.yml'):
             format = Format.YAML
         else:
-            raise ValueError()
+            raise ValueError('can not determine format from path suffix')
 
     with open(path, 'r', encoding='utf-8') as f:
         if format == Format.JSON:
@@ -322,7 +322,7 @@ def decode_file(path: pathlib.PurePath,
                       else yaml.SafeLoader)
             return yaml.load(f, Loader=loader)
 
-        raise ValueError()
+        raise ValueError('unsupported format')
 
 
 class SchemaRepository:

@@ -386,11 +386,16 @@ async def test_queue_put():
 
 async def test_queue_put_cancel():
     queue = aio.Queue(1)
-    await queue.put(1)
-    put_future = asyncio.ensure_future(queue.put(1))
-    asyncio.get_event_loop().call_soon(put_future.cancel)
+    await queue.put(0)
+    f1 = asyncio.ensure_future(queue.put(1))
+    f2 = asyncio.ensure_future(queue.put(2))
+    await asyncio.sleep(0)
+    assert 0 == queue.get_nowait()
+    f1.cancel()
+    assert 2 == await queue.get()
     with pytest.raises(asyncio.CancelledError):
-        await put_future
+        await f1
+    await f2
 
 
 async def test_queue_async_iterable():
@@ -408,6 +413,18 @@ async def test_queue_async_iterable():
 
     assert queue.empty()
     assert len(data) == 0
+
+
+async def test_queue_get_canceled():
+    queue = aio.Queue()
+    f1 = asyncio.ensure_future(queue.get())
+    f2 = asyncio.ensure_future(queue.get())
+    await asyncio.sleep(0)
+    queue.put_nowait(123)
+    f1.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await f1
+    assert 123 == await f2
 
 
 async def test_queue_example():
@@ -438,6 +455,8 @@ async def test_group():
     assert not group.is_open
     assert group.is_closing
     assert group.is_closed
+    await group.wait_closing()
+    await group.wait_closed()
 
 
 async def test_group_spawn_async_close():
@@ -599,3 +618,34 @@ async def test_group_example_docs_subgroup():
 
     assert f1.done()
     assert f2.done()
+
+
+async def test_resource():
+
+    class Mock(aio.Resource):
+
+        def __init__(self):
+            self._async_group = aio.Group()
+            self._async_group.spawn(asyncio.sleep, 1)
+
+        @property
+        def async_group(self):
+            return self._async_group
+
+    mock = Mock()
+    assert mock.is_open
+    assert not mock.is_closing
+    assert not mock.is_closed
+
+    mock.close()
+    assert not mock.is_open
+    assert mock.is_closing
+    assert not mock.is_closed
+
+    await mock.wait_closing()
+    await mock.wait_closed()
+    assert not mock.is_open
+    assert mock.is_closing
+    assert mock.is_closed
+
+    await mock.async_close()

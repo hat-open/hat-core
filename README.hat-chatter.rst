@@ -30,9 +30,9 @@ components. Some of key features:
 
     * based on TCP (with optional TLS)
     * binary serialization based on
-      `SBS encoding <https://core.hat-open.com/docs/libraries/sbs.html>`_
+      `SBS encoding <https://core.hat-open.com/docs/libraries/sbs/index.html>`_
     * message based conversations (independent message exchange streams)
     * full duplex communication
     * unique message identification
-    * token passing
+    * token passing session control
     * closed connection detection
