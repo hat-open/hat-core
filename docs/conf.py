@@ -9,7 +9,8 @@ extensions = ['sphinx.ext.graphviz',
               'sphinxcontrib.plantuml',
               'sphinxcontrib.programoutput',
               'hat.sphinx.include_dir',
-              'hat.sphinx.exec']
+              'hat.sphinx.exec',
+              'hat.sphinx.scxml']
 
 with open(root_path / 'VERSION', encoding='utf-8') as f:
     version = f.read().strip()

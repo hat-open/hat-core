@@ -9,7 +9,7 @@ Libraries
     json
     qt
     peg
-    stc
+    stc/index
     sbs/index
     chatter/index
     juggler/index
