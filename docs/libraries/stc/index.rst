@@ -43,10 +43,10 @@ State is defined by:
 
         Unique state identifier.
 
-    * `childern`
+    * `children`
 
         Optional child states. If state has children, first child is
-        considered as it's initial state.
+        considered as its initial state.
 
     * `transitions`
 

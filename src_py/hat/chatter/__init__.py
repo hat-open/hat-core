@@ -156,6 +156,8 @@ class Server(aio.Resource):
 
     For creating new server see `listen` function.
 
+    When server is closed, all incomming connections are also closed.
+
     """
 
     @property

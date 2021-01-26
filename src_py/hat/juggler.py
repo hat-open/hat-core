@@ -3,27 +3,6 @@
 This module implements basic communication infrastructure used for
 communication between back-end and GUI front-end parts of Hat components.
 
-Example usage of Juggler communication::
-
-    srv_conn = None
-
-    def on_connection(conn):
-        global srv_conn
-        srv_conn = conn
-
-    srv = await listen('127.0.0.1', 1234, on_connection)
-
-    conn = await connect('ws://127.0.0.1:1234/ws')
-
-    conn.set_local_data(123)
-
-    await asyncio.sleep(0.3)
-
-    assert srv_conn.remote_data == conn.local_data
-
-    await conn.async_close()
-    await srv.async_close()
-
 """
 
 import aiohttp.web
@@ -169,6 +148,8 @@ class Server(aio.Resource):
     """Server
 
     For creating new server see `listen` coroutine.
+
+    When server is closed, all incomming connections are also closed.
 
     """
 

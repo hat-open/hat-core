@@ -20,3 +20,15 @@ For more information see:
 
     This project is currently in state of active development. Features,
     functionality and API are unstable.
+
+
+About
+-----
+
+Chatter is communication protocol used for communication between Hat
+back-end services and web-based front-ends. Some of key features:
+
+    * based on WebSocket communication
+    * symmetrical full duplex (peer-to-peer) communication
+    * unsolicited message passing
+    * local/remote JSON state synchronization based on JSON Patch

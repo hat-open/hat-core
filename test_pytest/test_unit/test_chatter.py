@@ -1,9 +1,13 @@
-import pytest
 import asyncio
+
+import pytest
 
 from hat import sbs
 from hat import chatter
 import pem
+
+
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
@@ -23,7 +27,6 @@ def sbs_repo():
     return sbs.Repository(chatter.sbs_repo, data_sbs_repo)
 
 
-@pytest.mark.asyncio
 async def test_sbs_repo(sbs_repo):
     data = 123
     encoded_data = sbs_repo.encode('Test', 'Data', data)
@@ -43,7 +46,6 @@ async def test_sbs_repo(sbs_repo):
     assert msg == decoded_msg
 
 
-@pytest.mark.asyncio
 async def test_connect(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://[::1]:{unused_tcp_port}'
 
@@ -69,7 +71,6 @@ async def test_connect(sbs_repo, unused_tcp_port):
     assert srv_conn.is_closed
 
 
-@pytest.mark.asyncio
 async def test_ssl_connect(sbs_repo, unused_tcp_port, pem_path):
     address = f'ssl+sbs://127.0.0.1:{unused_tcp_port}'
     srv = await chatter.listen(sbs_repo, address, lambda conn: None,
@@ -89,7 +90,6 @@ async def test_ssl_connect(sbs_repo, unused_tcp_port, pem_path):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_listen(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
 
@@ -106,7 +106,6 @@ async def test_listen(sbs_repo, unused_tcp_port):
         await chatter.connect(sbs_repo, address)
 
 
-@pytest.mark.asyncio
 async def test_wrong_address(sbs_repo, unused_tcp_port):
     addresses = ['tcp+sbs://127.0.0.1',
                  f'tcp://127.0.0.1:{unused_tcp_port}']
@@ -119,7 +118,6 @@ async def test_wrong_address(sbs_repo, unused_tcp_port):
             await chatter.listen(sbs_repo, address, lambda conn: None)
 
 
-@pytest.mark.asyncio
 async def test_send_receive(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
     conn2_future = asyncio.Future()
@@ -151,7 +149,6 @@ async def test_send_receive(sbs_repo, unused_tcp_port):
         await conn2.receive()
 
 
-@pytest.mark.asyncio
 async def test_send_receive_native_data(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
     conn2_future = asyncio.Future()
@@ -172,7 +169,6 @@ async def test_send_receive_native_data(sbs_repo, unused_tcp_port):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_invalid_communication(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
     conn_future = asyncio.Future()
@@ -194,7 +190,6 @@ async def test_invalid_communication(sbs_repo, unused_tcp_port):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_conversation_timeout(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
     conn2_future = asyncio.Future()
@@ -228,7 +223,6 @@ async def test_conversation_timeout(sbs_repo, unused_tcp_port):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_ping_timeout(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
     conn_future = asyncio.Future()
@@ -247,7 +241,6 @@ async def test_ping_timeout(sbs_repo, unused_tcp_port):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_connection_close_when_queue_blocking(sbs_repo, unused_tcp_port):
     address = f'tcp+sbs://127.0.0.1:{unused_tcp_port}'
     conn2_future = asyncio.Future()
@@ -268,3 +261,36 @@ async def test_connection_close_when_queue_blocking(sbs_repo, unused_tcp_port):
     await asyncio.wait_for(conn2.wait_closed(), 0.1)
 
     await srv.async_close()
+
+
+async def test_example_docs():
+
+    from hat import aio
+    from hat import chatter
+    from hat import sbs
+    from hat import util
+
+    sbs_repo = sbs.Repository(chatter.sbs_repo, r"""
+        module Example
+
+        Msg = Integer
+    """)
+
+    port = util.get_unused_tcp_port()
+    address = f'tcp+sbs://127.0.0.1:{port}'
+
+    server_conns = aio.Queue()
+    server = await chatter.listen(sbs_repo, address, server_conns.put_nowait)
+
+    client_conn = await chatter.connect(sbs_repo, address)
+    server_conn = await server_conns.get()
+
+    data = chatter.Data('Example', 'Msg', 123)
+    client_conn.send(data)
+
+    msg = await server_conn.receive()
+    assert msg.data == data
+
+    await server.async_close()
+    await client_conn.wait_closed()
+    await server_conn.wait_closed()

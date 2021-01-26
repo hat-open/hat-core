@@ -1,21 +1,22 @@
-import collections
-import itertools
 import asyncio
+import collections
 import contextlib
+import itertools
 
 import pytest
 
 from hat import aio
 from hat import json
 from hat import juggler
+from hat import util
 
 
 pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
-def server_port(unused_tcp_port_factory):
-    return unused_tcp_port_factory()
+def server_port():
+    return util.get_unused_udp_port()
 
 
 @contextlib.asynccontextmanager
@@ -231,3 +232,33 @@ async def test_autoflush_not_zero(server_port):
         assert change == 'xyz'
         assert conn2.remote_data == 'xyz'
         assert conn2_changes.empty()
+
+
+async def test_example_docs():
+
+    from hat import aio
+    from hat import juggler
+    from hat import util
+
+    port = util.get_unused_tcp_port()
+    host = '127.0.0.1'
+
+    server_conns = aio.Queue()
+    server = await juggler.listen(host, port, server_conns.put_nowait,
+                                  autoflush_delay=0)
+
+    client_conn = await juggler.connect(f'ws://{host}:{port}/ws',
+                                        autoflush_delay=0)
+    server_conn = await server_conns.get()
+
+    server_remote_data = aio.Queue()
+    server_conn.register_change_cb(
+        lambda: server_remote_data.put_nowait(server_conn.remote_data))
+
+    client_conn.set_local_data(123)
+    data = await server_remote_data.get()
+    assert data == 123
+
+    await server.async_close()
+    await client_conn.wait_closed()
+    await server_conn.wait_closed()

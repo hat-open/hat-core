@@ -96,7 +96,7 @@ function and coroutine calling::
 When regular functions are called by `call` coroutine, result of function call
 is immediately available as result of `call` coroutine. If function call results
 in awaitable object (e.g. when coroutine is called in place of regular
-function), resulting awaitable is awaited and it's result is returned as result
+function), resulting awaitable is awaited and its result is returned as result
 of `call` coroutine::
 
     def f1(x):
