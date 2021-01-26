@@ -24,29 +24,25 @@ Example usage of Juggler communication::
     await conn.async_close()
     await srv.async_close()
 
-
-Attributes:
-    mlog (logging.Logger): module logger
-
 """
 
 import aiohttp.web
 import asyncio
-import contextlib
 import logging
 import pathlib
-import typing
 import ssl
+import typing
 
 from hat import aio
 from hat import json
 from hat import util
 
 
-mlog = logging.getLogger(__name__)
-
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 ConnectionCb = typing.Callable[['Connection'], None]
+"""Connection callback"""
 
 
 async def connect(address: str, *,
@@ -71,15 +67,15 @@ async def connect(address: str, *,
 
     """
     session = aiohttp.ClientSession()
+
     try:
         ws = await session.ws_connect(address, max_msg_size=0)
-    except Exception:
-        await session.close()
+
+    except BaseException:
+        await aio.uncancellable(session.close())
         raise
-    conn = _create_connection(ws=ws,
-                              autoflush_delay=autoflush_delay,
-                              session=session)
-    return conn
+
+    return _create_connection(aio.Group(), ws, autoflush_delay, session)
 
 
 async def listen(host: str,
@@ -107,7 +103,7 @@ async def listen(host: str,
     of `http/ws` communication.
 
     Argument `autoflush_delay` is associated with all connections associated
-    with this server (see :func:`connect`).
+    with this server (see `connect`).
 
     `shutdown_timeout` defines maximum time duration server will wait for
     regular connection close procedures during server shutdown. All connections
@@ -125,10 +121,12 @@ async def listen(host: str,
         shutdown_timeout: shutdown timeout
 
     """
+    async_group = aio.Group()
+
     server = Server()
     server._connection_cb = connection_cb
     server._autoflush_delay = autoflush_delay
-    server._async_group = aio.Group(exception_cb=_on_exception)
+    server._async_group = async_group
 
     routes = []
 
@@ -148,24 +146,29 @@ async def listen(host: str,
     app.add_routes(routes)
     runner = aiohttp.web.AppRunner(app)
     await runner.setup()
+    async_group.spawn(aio.call_on_cancel, runner.cleanup)
 
-    ssl_ctx = _create_ssl_context(pem_file) if pem_file else None
-    site = aiohttp.web.TCPSite(runner=runner,
-                               host=host,
-                               port=port,
-                               shutdown_timeout=shutdown_timeout,
-                               ssl_context=ssl_ctx,
-                               reuse_address=True)
-    await site.start()
+    try:
+        ssl_ctx = _create_ssl_context(pem_file) if pem_file else None
+        site = aiohttp.web.TCPSite(runner=runner,
+                                   host=host,
+                                   port=port,
+                                   shutdown_timeout=shutdown_timeout,
+                                   ssl_context=ssl_ctx,
+                                   reuse_address=True)
+        await site.start()
 
-    server._async_group.spawn(aio.call_on_cancel, runner.cleanup)
+    except BaseException:
+        await aio.uncancellable(async_group.async_close())
+        raise
+
     return server
 
 
 class Server(aio.Resource):
     """Server
 
-    For creating new server see :func:`listen`.
+    For creating new server see `listen` coroutine.
 
     """
 
@@ -177,16 +180,16 @@ class Server(aio.Resource):
     async def _ws_handler(self, request):
         ws = aiohttp.web.WebSocketResponse()
         await ws.prepare(request)
-        conn = _create_connection(ws=ws,
-                                  autoflush_delay=self._autoflush_delay,
-                                  parent_group=self._async_group)
+        subgroup = self._async_group.create_subgroup()
+        conn = _create_connection(subgroup, ws, self._autoflush_delay)
         self._connection_cb(conn)
         await conn.wait_closed()
         return ws
 
 
-def _create_connection(ws, autoflush_delay, session=None, parent_group=None):
+def _create_connection(async_group, ws, autoflush_delay, session=None):
     conn = Connection()
+    conn._async_group = async_group
     conn._ws = ws
     conn._autoflush_delay = autoflush_delay
     conn._session = session
@@ -196,12 +199,10 @@ def _create_connection(ws, autoflush_delay, session=None, parent_group=None):
     conn._message_queue = aio.Queue()
     conn._flush_queue = aio.Queue()
     conn._local_data_queue = aio.Queue()
-    conn._async_group = (parent_group.create_subgroup() if parent_group else
-                         aio.Group(exception_cb=_on_exception))
 
-    conn._async_group.spawn(aio.call_on_cancel, conn._on_close)
-    conn._async_group.spawn(conn._receive_loop)
-    conn._async_group.spawn(conn._sync_loop)
+    async_group.spawn(aio.call_on_cancel, conn._on_close)
+    async_group.spawn(conn._receive_loop)
+    async_group.spawn(conn._sync_loop)
 
     return conn
 
@@ -209,7 +210,7 @@ def _create_connection(ws, autoflush_delay, session=None, parent_group=None):
 class Connection(aio.Resource):
     """Connection
 
-    For creating new connection see :func:`connect`.
+    For creating new connection see `connect` coroutine.
 
     """
 
@@ -228,7 +229,8 @@ class Connection(aio.Resource):
         """Remote data"""
         return self._remote_data
 
-    def register_change_cb(self, cb: typing.Callable[[], None]
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
                            ) -> util.RegisterCallbackHandle:
         """Register remote data change callback"""
         return self._remote_change_cbs.register(cb)
@@ -243,6 +245,7 @@ class Connection(aio.Resource):
         try:
             self._local_data_queue.put_nowait(data)
             self._local_data = data
+
         except aio.QueueClosedError:
             raise ConnectionError()
 
@@ -257,6 +260,7 @@ class Connection(aio.Resource):
             flush_future = asyncio.Future()
             self._flush_queue.put_nowait(flush_future)
             await flush_future
+
         except aio.QueueClosedError:
             raise ConnectionError()
 
@@ -281,6 +285,7 @@ class Connection(aio.Resource):
         """
         try:
             return await self._message_queue.get()
+
         except aio.QueueClosedError:
             raise ConnectionError()
 
@@ -294,10 +299,10 @@ class Connection(aio.Resource):
             if not f.done():
                 f.set_exception(ConnectionError())
 
-        with contextlib.suppress(Exception, asyncio.CancelledError):
-            await self._ws.close()
-        if self._session:
-            await self._session.close()
+        await self._ws.close()
+        if not self._session:
+            return
+        await self._session.close()
 
     async def _receive_loop(self):
         try:
@@ -320,6 +325,9 @@ class Connection(aio.Resource):
 
                 else:
                     raise Exception("invalid message type")
+
+        except Exception as e:
+            mlog.error("juggler receive loop error: %s", e, exc_info=e)
 
         finally:
             self._async_group.close()
@@ -375,14 +383,14 @@ class Connection(aio.Resource):
                 if flush_future and not flush_future.done():
                     flush_future.set_result(True)
 
+        except aio.QueueClosedError:
+            pass
+
+        except Exception as e:
+            mlog.error("juggler sync loop error: %s", e, exc_info=e)
+
         finally:
             self._async_group.close()
-
-
-def _on_exception(exc):
-    if isinstance(exc, aio.QueueClosedError):
-        return
-    mlog.error("juggler connection error: %s", exc, exc_info=exc)
 
 
 def _create_ssl_context(pem_file):
