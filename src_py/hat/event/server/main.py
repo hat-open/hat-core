@@ -10,7 +10,6 @@ from pathlib import Path
 import argparse
 import asyncio
 import contextlib
-import functools
 import importlib
 import logging.config
 import sys
@@ -59,8 +58,11 @@ async def async_main(conf):
         conf (json.Data): configuration defined by ``hat://event/main.yaml#``
 
     """
-    run_cb = functools.partial(run, conf)
-    await hat.monitor.client.run_component(conf['monitor'], run_cb)
+    monitor = await hat.monitor.client.connect(conf['monitor'])
+    try:
+        await hat.monitor.client.run_component(monitor, run, conf, monitor)
+    finally:
+        await aio.uncancellable(monitor.async_close())
 
 
 async def run(conf, monitor):

@@ -58,8 +58,12 @@ async def async_main(conf):
         conf (json.Data): configuration defined by ``hat://gateway/main.yaml#``
 
     """
-    run_cb = functools.partial(run_with_monitor, conf)
-    await hat.monitor.client.run_component(conf['monitor'], run_cb)
+    monitor = await hat.monitor.client.connect(conf['monitor'])
+    try:
+        await hat.monitor.client.run_component(
+            conf['monitor'], run_with_monitor, conf, monitor)
+    finally:
+        await aio.uncancellable(monitor.async_close())
 
 
 async def run_with_monitor(conf, monitor):

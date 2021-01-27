@@ -209,8 +209,7 @@ async def test_run_component(server_address):
 
     running_queue = aio.Queue()
 
-    async def async_run(client):
-        assert isinstance(client, hat.monitor.client.Client)
+    async def async_run():
         running_queue.put_nowait(True)
         try:
             await asyncio.Future()
@@ -218,8 +217,9 @@ async def test_run_component(server_address):
             running_queue.put_nowait(False)
 
     server = await create_server(server_address)
+    client = await hat.monitor.client.connect(conf)
     run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(conf, async_run))
+        hat.monitor.client.run_component(client, async_run))
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -279,6 +279,7 @@ async def test_run_component(server_address):
     with pytest.raises(ConnectionError):
         await run_future
 
+    await client.async_close()
     await server.async_close()
     assert running_queue.empty()
 
@@ -298,12 +299,13 @@ async def test_run_component_return(server_address):
                                 blessing=None,
                                 ready=None)
 
-    async def async_run(client):
+    async def async_run():
         return 123
 
     server = await create_server(server_address)
+    client = await hat.monitor.client.connect(conf)
     run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(conf, async_run))
+        hat.monitor.client.run_component(client, async_run))
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -321,8 +323,9 @@ async def test_run_component_return(server_address):
     conn.send(msg)
     result = await run_future
     assert result == 123
-    await conn.wait_closed()
 
+    await client.async_close()
+    await conn.wait_closed()
     await server.async_close()
 
 
@@ -341,12 +344,13 @@ async def test_run_component_exception(server_address):
                                 blessing=None,
                                 ready=None)
 
-    async def async_run(client):
+    async def async_run():
         raise Exception()
 
     server = await create_server(server_address)
+    client = await hat.monitor.client.connect(conf)
     run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(conf, async_run))
+        hat.monitor.client.run_component(client, async_run))
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -364,8 +368,9 @@ async def test_run_component_exception(server_address):
     conn.send(msg)
     with pytest.raises(Exception):
         await run_future
-    await conn.wait_closed()
 
+    await client.async_close()
+    await conn.wait_closed()
     await server.async_close()
 
 
@@ -388,8 +393,9 @@ async def test_run_component_close_before_ready(server_address):
         await asyncio.Future()
 
     server = await create_server(server_address)
+    client = await hat.monitor.client.connect(conf)
     run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(conf, async_run))
+        hat.monitor.client.run_component(client, async_run))
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -402,6 +408,7 @@ async def test_run_component_close_before_ready(server_address):
     assert msg.ready == 123
 
     await conn.async_close()
+    await client.wait_closed()
     with pytest.raises(ConnectionError):
         await run_future
 

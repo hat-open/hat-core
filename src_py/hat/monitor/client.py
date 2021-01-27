@@ -32,16 +32,16 @@ to monitor server is closed, this function raises exception.
 
 Example of high-level interface usage::
 
-    async def monitor_async_run(monitor):
+    async def monitor_async_run():
         await asyncio.sleep(10)
         return 13
 
-    res = await hat.monitor.client.run_component(
-        conf={'name': 'client',
-              'group': 'test clients',
-              'monitor_address': 'tcp+sbs://127.0.0.1:23010',
-              'component_address': None},
-        async_run_cb=monitor_async_run)
+    client = await hat.monitor.client.connect({
+        'name': 'client',
+        'group': 'test clients',
+        'monitor_address': 'tcp+sbs://127.0.0.1:23010',
+        'component_address': None})
+    res = await hat.monitor.client.run_component(client, monitor_async_run)
     assert res == 13
 
 """
@@ -173,26 +173,23 @@ class Client(aio.Resource):
 T = typing.TypeVar('T')
 
 
-async def run_component(conf: json.Data,
-                        async_run_cb: typing.Callable[[Client],
-                                                      typing.Awaitable[T]]
+async def run_component(client: Client,
+                        async_run_cb: typing.Callable[..., typing.Awaitable[T]],  # NOQA
+                        *args, **kwargs
                         ) -> T:
     """Run component
 
-    This method opens new connection to Monitor server and starts client's
-    loop which manages blessing/ready states. This implementation
-    sets ready token immediately after blessing token is detected.
+    This starts client's loop which manages blessing/ready states based on
+    provided monitor client. This implementation sets ready token immediately
+    after blessing token is detected.
 
-    `conf` argument is directly passed to `connect` function.
+    When blessing token matches ready token, `async_run_cb` is called with
+    additional `args` and `kwargs` arguments. While `async_run_cb` is running,
+    if blessing token changes, `async_run_cb` is canceled.
 
-    When blessing token matches ready token, `async_run_cb` is called. While
-    `async_run_cb` is running, if blessing token changes, `async_run_cb` is
-    canceled.
-
-    If `async_run_cb` finishes or raises exception, this function closes
-    connection to monitor server and returns `async_run_cb` result. If
-    connection to monitor server is closed, this function raises
-    `ConnectionError`.
+    If `async_run_cb` finishes or raises exception, this function returns
+    `async_run_cb` result. If connection to monitor server is closed, this
+    function raises `ConnectionError`.
 
     """
     change_queue = aio.Queue()
@@ -201,11 +198,9 @@ async def run_component(conf: json.Data,
     def on_client_change():
         change_queue.put_nowait(None)
 
-    client = await connect(conf)
     closing_future = async_group.spawn(client.wait_closing)
     change_handler = client.register_change_cb(on_client_change)
     async_group.spawn(aio.call_on_cancel, change_handler.cancel)
-    async_group.spawn(aio.call_on_cancel, client.async_close)
 
     async def wait_until_blessed_and_ready():
         while True:
@@ -246,7 +241,7 @@ async def run_component(conf: json.Data,
             async with async_group.create_subgroup() as subgroup:
                 mlog.debug("running component's async_run_cb")
 
-                run_future = subgroup.spawn(async_run_cb, client)
+                run_future = subgroup.spawn(async_run_cb, *args, **kwargs)
                 ready_future = subgroup.spawn(wait_while_blessed_and_ready)
 
                 await asyncio.wait([run_future,

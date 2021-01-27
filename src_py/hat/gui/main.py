@@ -56,8 +56,12 @@ async def async_main(conf, ui_path):
         ui_path (pathlib.Path): web ui directory path
 
     """
-    run_cb = functools.partial(run_with_monitor, conf, ui_path)
-    await hat.monitor.client.run_component(conf['monitor'], run_cb)
+    monitor = await hat.monitor.client.connect(conf['monitor'])
+    try:
+        await hat.monitor.client.run_component(
+            conf['monitor'], run_with_monitor, conf, ui_path, monitor)
+    finally:
+        await aio.uncancellable(monitor.async_close())
 
 
 async def run_with_monitor(conf, ui_path, monitor):

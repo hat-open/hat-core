@@ -1,6 +1,5 @@
 import pytest
 import asyncio
-import functools
 
 import hat.monitor.common
 import hat.monitor.client
@@ -55,7 +54,7 @@ async def monitor_server(async_group, unused_tcp_port_factory, tmpdir):
 def event_server_factory(async_group, monitor_server, unused_tcp_port_factory):
     i = 0
 
-    def f():
+    async def f():
         nonlocal i
         event_server_addr = f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}'
         event_server_conf = {'name': f'event_server_{i}',
@@ -64,15 +63,19 @@ def event_server_factory(async_group, monitor_server, unused_tcp_port_factory):
                              'component_address': event_server_addr}
         i += 1
         group = async_group.create_subgroup()
-        run_cb = functools.partial(event_server_run_cb, event_server_addr)
+        monitor_client = await hat.monitor.client.connect(event_server_conf)
+        group.spawn(aio.call_on_cancel, monitor_client.async_close)
+        group.spawn(aio.call_on_done, monitor_client.wait_closing(),
+                    group.close)
         future = group.spawn(hat.monitor.client.run_component,
-                             event_server_conf, run_cb)
+                             monitor_client, event_server_run_cb,
+                             event_server_addr)
         return group, future
 
     return f
 
 
-async def event_server_run_cb(address, monitor_client):
+async def event_server_run_cb(address):
     conf = {'address': address}
     engine = common.create_module_engine(register_cb=lambda events: [
         common.process_event_to_event(i) for i in events])
@@ -94,7 +97,7 @@ async def event_server_run_cb(address, monitor_client):
 def client_factory(async_group, monitor_server):
     i = 0
 
-    def f(run_cb):
+    async def f(run_cb):
         nonlocal i
         event_client_conf = {'name': f'client_{i}',
                              'group': 'client',
@@ -102,10 +105,13 @@ def client_factory(async_group, monitor_server):
                              'component_address': None}
         i += 1
         group = async_group.create_subgroup()
-        wrapped_run_cb = functools.partial(client_run_cb, 'event_server',
-                                           run_cb)
+        monitor_client = await hat.monitor.client.connect(event_client_conf)
+        group.spawn(aio.call_on_cancel, monitor_client.async_close)
+        group.spawn(aio.call_on_done, monitor_client.wait_closing(),
+                    group.close)
         future = group.spawn(hat.monitor.client.run_component,
-                             event_client_conf, wrapped_run_cb)
+                             monitor_client, client_run_cb, 'event_server',
+                             run_cb, monitor_client)
         return group, future
 
     return f
@@ -131,10 +137,10 @@ async def test_run_client(event_server_factory, client_factory,
             client_queue.put_nowait(None)
             raise
 
-    client_factory(run_cb)
+    await client_factory(run_cb)
 
     for i in range(server_count):
-        server_group, _ = event_server_factory()
+        server_group, _ = await event_server_factory()
 
         event_client = await client_queue.get()
         assert event_client is not None
@@ -159,8 +165,8 @@ async def test_run_client_result(event_server_factory, client_factory,
     async def run_cb(event_client):
         return 'test'
 
-    event_server_factory()
-    _, client_future = client_factory(run_cb)
+    await event_server_factory()
+    _, client_future = await client_factory(run_cb)
 
     assert (await client_future) == 'test'
 
@@ -172,8 +178,8 @@ async def test_run_client_exception(event_server_factory, client_factory,
     async def run_cb(event_client):
         raise MockError()
 
-    event_server_factory()
-    _, client_future = client_factory(run_cb)
+    await event_server_factory()
+    _, client_future = await client_factory(run_cb)
 
     with pytest.raises(MockError):
         await client_future
@@ -194,8 +200,8 @@ async def test_run_client_close_from_cb(event_server_factory, client_factory,
         else:
             await event_client.async_close()
 
-    event_server_factory()
-    _, client_future = client_factory(run_cb)
+    await event_server_factory()
+    _, client_future = await client_factory(run_cb)
 
     assert (await client_future) == 'test'
     assert n == run_count
@@ -215,25 +221,26 @@ async def test_run_client_cancel_cb(event_server_factory, client_factory,
         else:
             raise asyncio.CancelledError
 
-    event_server_factory()
-    _, client_future = client_factory(run_cb)
+    await event_server_factory()
+    _, client_future = await client_factory(run_cb)
 
     assert (await client_future) == 'test'
     assert n == run_count
 
 
+@pytest.mark.skip("WIP")
 @pytest.mark.asyncio
 async def test_run_client_change_while_connecting(
         async_group, unused_tcp_port_factory, monitor_server,
         event_server_factory, client_factory, short_client_reconnect_delay):
 
-    async def run_decoy_cb(_):
+    async def run_decoy_cb():
         await asyncio.sleep(0.1)
 
     async def run_cb(_):
         return 'test'
 
-    _, client_future = client_factory(run_cb)
+    _, client_future = await client_factory(run_cb)
 
     decoy_address = f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}'
     decoy_conf = {'name': 'decoy',
@@ -241,12 +248,15 @@ async def test_run_client_change_while_connecting(
                   'monitor_address': monitor_server,
                   'component_address': decoy_address}
 
-    await async_group.spawn(hat.monitor.client.run_component, decoy_conf,
+    monitor_client = await hat.monitor.client.connect(decoy_conf)
+    await async_group.spawn(hat.monitor.client.run_component, monitor_client,
                             run_decoy_cb)
 
-    event_server_factory()
+    await event_server_factory()
 
     assert (await client_future) == 'test'
+
+    await monitor_client.async_close()
 
 
 @pytest.mark.asyncio
@@ -269,8 +279,8 @@ async def test_run_client_register_on_cancel(event_server_factory,
             events = await event_client.register_with_response(register_events)
             events_queue.put_nowait(events)
 
-    event_server_factory()
-    client_group, _ = client_factory(run_cb)
+    await event_server_factory()
+    client_group, _ = await client_factory(run_cb)
     await is_running.wait()
     await client_group.async_close()
 
