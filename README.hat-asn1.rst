@@ -20,3 +20,12 @@ For more information see:
 
     This project is currently in state of active development. Features,
     functionality and API are unstable.
+
+
+About
+-----
+
+Library providing implementation of
+`ASN.1 <https://en.wikipedia.org/wiki/ASN.1>`_ schema parser and
+`BER <https://en.wikipedia.org/wiki/X.690#BER_encoding>`_ encoder/decoder.
+Additionally, HTML documentation of parsed ASN.1 schemas can be generated.

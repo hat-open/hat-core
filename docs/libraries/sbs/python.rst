@@ -43,7 +43,7 @@ SBS Tuple and Union types without elements are translated to ``None``.
                         typing.Tuple[str, 'Data']]
 
 
-.. hat-sbs-Repository:
+.. _hat-sbs-Repository:
 
 Repository
 ----------

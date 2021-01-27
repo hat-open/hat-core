@@ -410,3 +410,25 @@ def test_constructed_as_bit_string(encoding):
 ])
 def test_is_oid_eq(oid1, oid2, expected):
     assert asn1.is_oid_eq(oid1, oid2) is expected
+
+
+def test_example_docs():
+    repo = asn1.Repository(r"""
+        Example DEFINITIONS ::= BEGIN
+            T ::= SEQUENCE OF CHOICE {
+                a BOOLEAN,
+                b INTEGER,
+                c UTF8String
+            }
+        END
+    """)
+
+    encoder = asn1.Encoder(asn1.Encoding.BER, repo)
+
+    value = [('c', '123'), ('a', True), ('a', False), ('b', 123)]
+
+    encoded = encoder.encode('Example', 'T', value)
+    decoded, rest = encoder.decode('Example', 'T', encoded)
+
+    assert value == decoded
+    assert len(rest) == 0
