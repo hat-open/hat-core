@@ -62,32 +62,34 @@ Example of high-level interface usage::
               'component_address': None},
         async_run_cb=monitor_async_run)
 
-
-Attributes:
-    mlog (logging.Logger): module logger
-    reconnect_delay (int): delay in seconds before trying to reconnect to
-        event server (used in high-level interface)
-
 """
 
 import asyncio
 import logging
+import typing
 
 from hat import aio
 from hat import chatter
 from hat import util
 from hat.event import common
+import hat.monitor.client
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
-reconnect_delay = 0.5
+reconnect_delay: float = 0.5
+"""Delay in seconds before trying to reconnect to event server
+(used in high-level interface)"""
 
 
-async def connect(address, subscriptions=None, **kwargs):
+async def connect(address: str,
+                  subscriptions: typing.List[common.EventType] = [],
+                  **kwargs
+                  ) -> 'Client':
     """Connect to event server
 
-    For address format see :func:`hat.chatter.connect`.
+    For address format see `hat.chatter.connect` coroutine.
 
     According to Event Server specification, each subscription is event
     type identifier which can contain special subtypes ``?`` and ``*``.
@@ -96,29 +98,28 @@ async def connect(address, subscriptions=None, **kwargs):
     only as last subtype in event type identifier and is used as replacement
     for zero or more arbitrary subtypes.
 
-    If subscription is not defined (is None), client doesn't subscribe for any
-    events and will not receive server's notifications.
+    If subscription is empty list, client doesn't subscribe for any events and
+    will not receive server's notifications.
 
     Args:
-        address (str): event server's address
-        subscriptions (Optional[List[common.EventType]]): subscriptions
-        kwargs: additional arguments passed to :func:`hat.chatter.connect`
-
-    Returns:
-        Client
+        address: event server's address
+        subscriptions: subscriptions
+        kwargs: additional arguments passed to `hat.chatter.connect` coroutine
 
     """
     client = Client()
-    client._async_group = aio.Group(exception_cb=client._on_exception_cb)
+    client._async_group = aio.Group()
     client._conv_futures = {}
     client._event_queue = aio.Queue()
 
     client._conn = await chatter.connect(common.sbs_repo, address, **kwargs)
     client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
+
     if subscriptions:
         client._conn.send(chatter.Data(module='HatEvent',
                                        type='MsgSubscribe',
                                        data=subscriptions))
+
     client._async_group.spawn(client._receive_loop)
     return client
 
@@ -126,7 +127,7 @@ async def connect(address, subscriptions=None, **kwargs):
 class Client(aio.Resource):
     """Event Server client
 
-    For creating new client see :func:`connect`.
+    For creating new client see `connect` coroutine.
 
     """
 
@@ -135,11 +136,8 @@ class Client(aio.Resource):
         """Async group"""
         return self._async_group
 
-    async def receive(self):
+    async def receive(self) -> typing.List[common.Event]:
         """Receive subscribed event notifications
-
-        Returns:
-            List[common.Event]
 
         Raises:
             ConnectionError
@@ -147,147 +145,154 @@ class Client(aio.Resource):
         """
         try:
             return await self._event_queue.get()
+
         except aio.QueueClosedError:
             raise ConnectionError()
 
-    def register(self, events):
+    def register(self, events: typing.List[common.RegisterEvent]):
         """Register events
-
-        Args:
-            events (List[common.RegisterEvent]): register events
 
         Raises:
             ConnectionError
 
         """
-        self._conn.send(chatter.Data(
-            module='HatEvent',
-            type='MsgRegisterReq',
-            data=[common.register_event_to_sbs(i) for i in events]))
+        msg_data = chatter.Data(module='HatEvent',
+                                type='MsgRegisterReq',
+                                data=[common.register_event_to_sbs(i)
+                                      for i in events])
+        self._conn.send(msg_data)
 
-    async def register_with_response(self, events):
+    async def register_with_response(self,
+                                     events: typing.List[common.RegisterEvent]
+                                     ) -> typing.List[typing.Optional[common.Event]]:  # NOQA
         """Register events
 
-        Each `RegisterEvent` from `events` is paired with results `Event` if
-        new event was successfuly created or `None` is new event could not
-        be created.
-
-        Args:
-            events (List[common.RegisterEvent]): register events
-
-        Returns:
-            List[Optional[common.Event]]
+        Each `common.RegisterEvent` from `events` is paired with results
+        `common.Event` if new event was successfuly created or ``None`` is new
+        event could not be created.
 
         Raises:
             ConnectionError
 
         """
-        conv = self._conn.send(chatter.Data(
-            module='HatEvent',
-            type='MsgRegisterReq',
-            data=[common.register_event_to_sbs(i) for i in events]),
-                               last=False)
-        response_future = asyncio.Future()
-        self._conv_futures[conv] = response_future
-        return await response_future
+        msg_data = chatter.Data(module='HatEvent',
+                                type='MsgRegisterReq',
+                                data=[common.register_event_to_sbs(i)
+                                      for i in events])
+        conv = self._conn.send(msg_data, last=False)
+        return await self._wait_conv_res(conv)
 
-    async def query(self, data):
+    async def query(self,
+                    data: common.QueryData
+                    ) -> typing.List[common.Event]:
         """Query events from server
 
-        Args:
-            data (common.QueryData): query data
-
-        Returns:
-            List[common.Event]
-
         Raises:
             ConnectionError
 
         """
-        conv = self._conn.send(chatter.Data(
-            module='HatEvent',
-            type='MsgQueryReq',
-            data=common.query_to_sbs(data)), last=False)
-        response_future = asyncio.Future()
-        self._conv_futures[conv] = response_future
-        return await response_future
+        msg_data = chatter.Data(module='HatEvent',
+                                type='MsgQueryReq',
+                                data=common.query_to_sbs(data))
+        conv = self._conn.send(msg_data, last=False)
+        return await self._wait_conv_res(conv)
 
     async def _receive_loop(self):
+        mlog.debug("starting receive loop")
         try:
             while True:
+                mlog.debug("waiting for incoming message")
                 msg = await self._conn.receive()
-                self._process_received_msg(msg)
+                msg_type = msg.data.module, msg.data.type
+
+                if msg_type == ('HatEvent', 'MsgNotify'):
+                    mlog.debug("received event notification")
+                    self._process_msg_notify(msg)
+
+                elif msg_type == ('HatEvent', 'MsgQueryRes'):
+                    mlog.debug("received query response")
+                    self._process_msg_query_res(msg)
+
+                elif msg_type == ('HatEvent', 'MsgRegisterRes'):
+                    mlog.debug("received register response")
+                    self._process_msg_register_res(msg)
+
+                else:
+                    raise Exception("unsupported message type")
+
         except ConnectionError:
-            mlog.debug('connection closed')
+            pass
+
+        except Exception as e:
+            mlog.error("read loop error: %s", e, exc_info=e)
+
         finally:
+            mlog.debug("stopping receive loop")
             self._async_group.close()
             self._event_queue.close()
             for f in self._conv_futures.values():
                 f.set_exception(ConnectionError())
 
-    def _process_received_msg(self, msg):
-        if msg.data.module != 'HatEvent':
-            raise Exception('Message received from communication malformed!')
-        if msg.data.type == 'MsgNotify':
-            self._event_queue.put_nowait(
-                [common.event_from_sbs(e) for e in msg.data.data])
+    async def _wait_conv_res(self, conv):
+        response_future = asyncio.Future()
+        self._conv_futures[conv] = response_future
+        try:
+            return await response_future
+        finally:
+            self._conv_futures.pop(conv, None)
+
+    def _process_msg_notify(self, msg):
+        events = [common.event_from_sbs(e) for e in msg.data.data]
+        self._event_queue.put_nowait(events)
+
+    def _process_msg_query_res(self, msg):
+        f = self._conv_futures.get(msg.conv)
+        if not f or f.done():
             return
-        if msg.conv not in self._conv_futures:
+        events = [common.event_from_sbs(e) for e in msg.data.data]
+        f.set_result(events)
+
+    def _process_msg_register_res(self, msg):
+        f = self._conv_futures.get(msg.conv)
+        if not f or f.done():
             return
-        f = self._conv_futures.pop(msg.conv)
-        if msg.data.type == 'MsgQueryRes':
-            f.set_result([common.event_from_sbs(e) for e in msg.data.data])
-        elif msg.data.type == 'MsgRegisterRes':
-            f.set_result([{'event': common.event_from_sbs(e[1]),
-                           'failure': None}[e[0]] for e in msg.data.data])
-        else:
-            raise Exception('Message received from communication malformed!')
-
-    def _on_exception_cb(self, exc):
-        mlog.error('exception in receive loop: %s', exc, exc_info=exc)
+        events = [common.event_from_sbs(e) if t == 'event' else None
+                  for t, e in msg.data.data]
+        f.set_result(events)
 
 
-async def run_client(monitor_client, server_group, async_run_cb,
-                     subscriptions=None):
+async def run_client(monitor_client: hat.monitor.client.Client,
+                     server_group: str,
+                     async_run_cb: typing.Callable[[Client], None],
+                     subscriptions: typing.List[common.EventType] = []
+                     ) -> typing.Any:
     """Continuously communicate with currently active Event Server
 
-    This function tries to establish active connection with Event Server.
-    Once this connection is established, `async_run_cb` is called with
-    currently active :class:`Client`. Once connection to Event Server is closed
-    or new active Event Server is detected, execution of `async_run_cb` is
-    canceled. If new connection to Event Server is successfuly established,
+    This function tries to establish active connection with Event Server
+    whithin monitor component group `server_group`. Once this connection is
+    established, `async_run_cb` is called with currently active `Client`
+    instance. Once connection to Event Server is closed or new active Event
+    Server is detected, execution of `async_run_cb` is canceled. If new
+    connection to Event Server is successfuly established,
     `async_run_cb` is called with new instance of :class:`Client`.
 
     `async_run_cb` is called when:
-        * new active :class:`Client` is created
+        * new active `Client` is created
 
     `async_run_cb` execution is cancelled when:
-        * :func:`run_client` finishes execution
+        * `run_client` finishes execution
         * connection to Event Server is closed
         * different active Event Server is detected from Monitor Server's list
           of components
 
-    :func:`run_client` finishes execution when:
+    `run_client` finishes execution when:
         * connection to Monitor Server is closed
         * `async_run_cb` finishes execution (by returning value or raising
-          exception other than asyncio.CancelledError)
+          exception other than `asyncio.CancelledError`)
 
     Return value of this function is the same as return value of
     `async_run_cb`. If `async_run_cb` finishes by raising exception or if
     connection to Monitor Server is closed, exception is reraised.
-
-    .. todo::
-
-        review conditions when `run_client` finishes execution
-
-    Args:
-        monitor_client (hat.monitor.client.Client): monitor client
-        server_group (str): event server's component group
-        async_run_cb (Callable[[Client],None]): run callback
-        subscriptions (Optional[List[common.EventType]]): subscriptions
-
-    Returns:
-        Any
 
     """
     address = None
@@ -305,7 +310,8 @@ async def run_client(monitor_client, server_group, async_run_cb,
                     address_change.set()
                 await queue.get()
 
-    async with aio.Group() as group:
+    group = aio.Group()
+    try:
         group.spawn(_address_loop,
                     monitor_client, address_change, server_group)
         while True:
@@ -327,6 +333,9 @@ async def run_client(monitor_client, server_group, async_run_cb,
                     raise Exception('connection to monitor server closed')
                 elif connect_and_run_future.done():
                     return connect_and_run_future.result()
+
+    finally:
+        await aio.uncancellable(group.async_close())
 
 
 async def _connect_and_run_loop(group, address, subscriptions,
