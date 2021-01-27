@@ -12,16 +12,22 @@ from hat import sbs
 import hat.monitor.common
 
 
-package_path = Path(__file__).parent
+package_path: Path = Path(__file__).parent
+"""Python package path"""
 
-json_schema_repo = json.SchemaRepository(
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
     json.json_schema_repo,
     hat.monitor.common.json_schema_repo,
     json.SchemaRepository.from_json(package_path / 'json_schema_repo.json'))
+"""JSON schema repository"""
 
 sbs_repo = sbs.Repository(
     chatter.sbs_repo,
     sbs.Repository.from_json(package_path / 'sbs_repo.json'))
+"""SBS schema repository"""
+
+EventType: typing.Type = typing.List[str]
+"""Event type"""
 
 
 Order = enum.Enum('Order', [
@@ -45,10 +51,6 @@ class EventId(typing.NamedTuple):
     """server identifier"""
     instance: int
     """event instance identifier"""
-
-
-EventType = typing.List[str]
-"""Event type"""
 
 
 class EventPayload(typing.NamedTuple):
@@ -118,111 +120,28 @@ def matches_query_type(event_type: EventType,
     types.
 
     """
-    if not event_type:
-        if not query_type or query_type[0] == '*':
-            return True
-        else:
-            return False
-    if not query_type:
+    is_variable = bool(query_type and query_type[-1] == '*')
+    if is_variable:
+        query_type = query_type[:-1]
+
+    if len(event_type) < len(query_type):
         return False
-    if query_type[0] == '*':
-        return True
-    elif query_type[0] == '?' or query_type[0] == event_type[0]:
-        return matches_query_type(event_type[1:], query_type[1:])
-    return False
 
+    if len(event_type) > len(query_type) and not is_variable:
+        return False
 
-class _SubscriptionTree(typing.NamedTuple):
-    subtypes: typing.Dict
-    values: typing.Set[typing.Hashable]
+    for i, j in zip(event_type, query_type):
+        if j != '?' and i != j:
+            return False
 
-
-class SubscriptionRegistry:
-    """Registry of event type subscriptions
-
-    A tree-like collection that maps event types to hashable values. A map
-    between an event type and a value is called a subscription. Registry
-    enables finding all values that are subscribed to some event type. Each
-    value can be subscribed to multiple event types.
-
-    When adding a value to the registry, its subscriptions are specified by
-    a query type. It can be the same as an event type, but also contain
-    '?' and '*' wildcard subtypes. Value is subscribed to all event types that
-    match the given query type. For more details on matching see
-    :func:`matches_query_type`.
-
-    When a value is removed from the registry, all its subscriptions are also
-    removed.
-
-    """
-
-    def __init__(self):
-        self._subscriptions = _SubscriptionTree(subtypes={}, values=set())
-
-    def add(self, value: typing.Hashable, query_type: EventType):
-        """Add and subscribe value
-
-        Adds value to the registry and subscribes it to all event types that
-        match query type. If value is already in the registry, new
-        subscriptions will be added to previous.
-
-        """
-
-        def recursive_add(tree, query_type):
-            if not query_type:
-                tree.values.add(value)
-                return
-            if query_type[0] not in tree.subtypes:
-                tree.subtypes[query_type[0]] = _SubscriptionTree(
-                    subtypes={}, values=set())
-            recursive_add(tree.subtypes[query_type[0]], query_type[1:])
-
-        recursive_add(self._subscriptions, query_type)
-
-    def remove(self, value: typing.Hashable):
-        """Remove and unsubscribe value
-
-        Removes value from the registry with all its subscriptions.
-
-        """
-
-        def recursive_remove(tree):
-            if value in tree.values:
-                tree.values.remove(value)
-            for subtree in tree.subtypes.values():
-                recursive_remove(subtree)
-
-        recursive_remove(self._subscriptions)
-
-    def find(self, event_type: EventType) -> typing.Set[typing.Hashable]:
-        """Find subscribed values
-
-        Finds and returns all values that are subscribed to event type.
-
-        """
-
-        def recursive_find(tree, event_type):
-            if not tree:
-                return set()
-            temp = tree.subtypes.get('*', None)
-            values = set(temp.values) if temp else set()
-            if event_type:
-                values.update(recursive_find(
-                    tree.subtypes.get('?'), event_type[1:]))
-                values.update(recursive_find(
-                    tree.subtypes.get(event_type[0]), event_type[1:]))
-            else:
-                values.update(tree.values)
-            return values
-
-        return recursive_find(self._subscriptions, event_type)
+    return True
 
 
 class Timestamp(typing.NamedTuple):
     s: int
-    """seconds since 1970-01-01"""
+    """seconds since 1970-01-01 (can be negative)"""
     us: int
-    """microseconds added to timestamp defined by seconds"""
+    """microseconds added to timestamp seconds in range (-1e6, 1e6)"""
 
     def __lt__(self, other):
         if not isinstance(other, Timestamp):
@@ -249,45 +168,42 @@ class Timestamp(typing.NamedTuple):
         return self > other or self == other
 
     def __hash__(self):
-        return hash(timestamp_to_bytes(self))
+        return self.s * 1000000 + self.us
 
 
 def timestamp_to_bytes(t: Timestamp) -> bytes:
-    """Convert timestamp to 96 bit representation
+    """Convert timestamp to 12 byte representation
 
-    Bits 0 - 63 are big endian two's complement encoded :attr:`Timestamp.s` and
-    bits 64 - 95 are big endian two's complement encoded :attr:`Timestamp.us`.
+    Bytes [0, 8] are big endian two's complement encoded `Timestamp.s` and
+    bytes [9, 12] are big endian two's complement encoded `Timestamp.us`.
 
     """
-    return struct.pack(">QI", t.s + (1 << 63), t.us)
+    return struct.pack(">qi", t.s, t.us)
 
 
 def timestamp_from_bytes(data: bytes) -> Timestamp:
-    """Create new timestamp from 96 bit representation
+    """Create new timestamp from 12 byte representation
 
-    Bytes representation is same as defined for :func:`timestamp_to_bytes`
+    Bytes representation is same as defined for `timestamp_to_bytes` function.
 
     """
-    s, us = struct.unpack(">QI", data)
-    return Timestamp(int(s - (1 << 63)), int(us))
+    s, us = struct.unpack(">qi", data)
+    return Timestamp(s, us)
 
 
 def timestamp_to_float(t: Timestamp) -> float:
     """Convert timestamp to floating number of seconds since 1970-01-01 UTC
 
-    For precise serialization see :func:`timestamp_to_bytes` /
-    :func:`timestamp_from_bytes`
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
 
     """
     return t.s + t.us * 1E-6
 
 
 def timestamp_from_float(ts: float) -> Timestamp:
-    """Create new timestamp from floating number of seconds since 1970-01-01
-    UTC
+    """Create timestamp from floating number of seconds since 1970-01-01 UTC
 
-    For precise serialization see :func:`timestamp_to_bytes` /
-    :func:`timestamp_from_bytes`
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
 
     """
     s = int(ts)
@@ -303,8 +219,7 @@ def timestamp_from_float(ts: float) -> Timestamp:
 def timestamp_to_datetime(t: Timestamp) -> datetime.datetime:
     """Convert timestamp to datetime (representing utc time)
 
-    For precise serialization see :func:`timestamp_to_bytes` /
-    :func:`timestamp_from_bytes`
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
 
     """
     try:
@@ -330,8 +245,7 @@ def timestamp_from_datetime(dt: datetime.datetime) -> Timestamp:
     If `tzinfo` is not set, it is assumed that provided datetime represents
     utc time.
 
-    For precise serialization see :func:`timestamp_to_bytes` /
-    :func:`timestamp_from_bytes`
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
 
     """
     if not dt.tzinfo:
@@ -441,23 +355,35 @@ def query_from_sbs(data: sbs.Data) -> QueryData:
 
 def event_payload_to_sbs(payload: EventPayload) -> sbs.Data:
     """Convert EventPayload to SBS data"""
-    return {
-        EventPayloadType.BINARY: lambda: ('binary', payload.data),
-        EventPayloadType.JSON: lambda: ('json', json.encode(payload.data)),
-        EventPayloadType.SBS: lambda: ('sbs', _sbs_data_to_sbs(payload.data))
-    }[payload.type]()
+    if payload.type == EventPayloadType.BINARY:
+        return 'binary', payload.data
+
+    if payload.type == EventPayloadType.JSON:
+        return 'json', json.encode(payload.data)
+
+    if payload.type == EventPayloadType.SBS:
+        return 'sbs', _sbs_data_to_sbs(payload.data)
+
+    raise ValueError('unsupported payload type')
 
 
 def event_payload_from_sbs(data: sbs.Data) -> EventPayload:
     """Create new EventPayload based on SBS data"""
-    return {
-        'binary': lambda: EventPayload(type=EventPayloadType.BINARY,
-                                       data=data[1]),
-        'json': lambda: EventPayload(type=EventPayloadType.JSON,
-                                     data=json.decode(data[1])),
-        'sbs': lambda: EventPayload(type=EventPayloadType.SBS,
-                                    data=_sbs_data_from_sbs(data[1]))
-    }[data[0]]()
+    data_type, data_data = data
+
+    if data_type == 'binary':
+        return EventPayload(type=EventPayloadType.BINARY,
+                            data=data_data)
+
+    if data_type == 'json':
+        return EventPayload(type=EventPayloadType.JSON,
+                            data=json.decode(data_data))
+
+    if data_type == 'sbs':
+        return EventPayload(type=EventPayloadType.SBS,
+                            data=_sbs_data_from_sbs(data_data))
+
+    raise ValueError('unsupported payload type')
 
 
 def _event_id_to_sbs(event_id):

@@ -7,6 +7,12 @@ import typing
 
 from hat import aio
 from hat import json
+from hat.event.common import (EventId,
+                              EventType,
+                              Timestamp,
+                              EventPayload,
+                              Event,
+                              QueryData)
 from hat.event.common import *  # NOQA
 
 
@@ -22,11 +28,11 @@ class Source(typing.NamedTuple):
 
 
 class ProcessEvent(typing.NamedTuple):
-    event_id: EventId  # NOQA
+    event_id: EventId
     source: Source
-    event_type: EventType  # NOQA
-    source_timestamp: typing.Optional[Timestamp]  # NOQA
-    payload: typing.Optional[EventPayload]  # NOQA
+    event_type: EventType
+    source_timestamp: typing.Optional[Timestamp]
+    payload: typing.Optional[EventPayload]
 
 
 class SessionChanges(typing.NamedTuple):
@@ -63,11 +69,11 @@ class Backend(aio.Resource):
     @abc.abstractmethod
     async def get_last_event_id(self,
                                 server_id: int
-                                ) -> EventId:  # NOQA
+                                ) -> EventId:
         """Get last registered event id associated with server id"""
 
     @abc.abstractmethod
-    async def register(self, events: typing.List[Event]):  # NOQA
+    async def register(self, events: typing.List[Event]):
         """Register events
 
         .. todo::
@@ -77,20 +83,21 @@ class Backend(aio.Resource):
         """
 
     @abc.abstractmethod
-    async def query(self, data: QueryData) -> typing.List[Event]:  # NOQA
+    async def query(self,
+                    data: QueryData
+                    ) -> typing.List[Event]:
         """Query events"""
 
 
 class EventTypeRegistryStorage(abc.ABC):
     """EventTypeRegistry storage ABC
 
-    This interface specifies perzistent storage used by
-    :class:`EventTypeRegistry`.
+    This interface specifies perzistent storage used by `EventTypeRegistry`.
 
     """
 
     @abc.abstractmethod
-    async def get_event_type_mappings(self) -> typing.Dict[int, EventType]:  # NOQA
+    async def get_event_type_mappings(self) -> typing.Dict[int, EventType]:
         """Get all event type mappings
 
         Returned dict has event type ids as keys and associated event types as
@@ -100,7 +107,7 @@ class EventTypeRegistryStorage(abc.ABC):
 
     @abc.abstractmethod
     async def add_event_type_mappings(self,
-                                      mappings: typing.Dict[int, EventType]):  # NOQA
+                                      mappings: typing.Dict[int, EventType]):
         """Add new event type mappings
 
         `mappings` dict has event type ids as keys and associated event types
@@ -137,7 +144,7 @@ class Module(aio.Resource):
 
     @property
     @abc.abstractmethod
-    def subscriptions(self) -> typing.List[EventType]:  # NOQA
+    def subscriptions(self) -> typing.List[EventType]:
         """Subscribed event types filter"""
 
     @abc.abstractmethod
@@ -148,7 +155,9 @@ class Module(aio.Resource):
 class ModuleSession(aio.Resource):
 
     @abc.abstractmethod
-    async def process(self, changes: SessionChanges) -> SessionChanges:
+    async def process(self,
+                      changes: SessionChanges
+                      ) -> SessionChanges:
         """Process session changes
 
         Changes include only process events which are matched by modules
@@ -159,7 +168,93 @@ class ModuleSession(aio.Resource):
         """
 
 
-async def create_event_type_registry(storage):
+class SubscriptionRegistry:
+    """Registry of event type subscriptions
+
+    A tree-like collection that maps event types to hashable values. A map
+    between an event type and a value is called a subscription. Registry
+    enables finding all values that are subscribed to some event type. Each
+    value can be subscribed to multiple event types.
+
+    When adding a value to the registry, its subscriptions are specified by
+    a query type. It can be the same as an event type, but also contain
+    '?' and '*' wildcard subtypes. Value is subscribed to all event types that
+    match the given query type. For more details on matching see
+    `hat.event.common.matches_query_type` function.
+
+    When a value is removed from the registry, all its subscriptions are also
+    removed.
+
+    """
+
+    def __init__(self):
+        self._subscriptions = _SubscriptionTree(subtypes={}, values=set())
+
+    def add(self,
+            value: typing.Hashable,
+            query_type: EventType):
+        """Add and subscribe value
+
+        Adds value to the registry and subscribes it to all event types that
+        match query type. If value is already in the registry, new
+        subscriptions will be added to previous.
+
+        """
+
+        def recursive_add(tree, query_type):
+            if not query_type:
+                tree.values.add(value)
+                return
+            if query_type[0] not in tree.subtypes:
+                tree.subtypes[query_type[0]] = _SubscriptionTree(
+                    subtypes={}, values=set())
+            recursive_add(tree.subtypes[query_type[0]], query_type[1:])
+
+        recursive_add(self._subscriptions, query_type)
+
+    def remove(self, value: typing.Hashable):
+        """Remove and unsubscribe value
+
+        Removes value from the registry with all its subscriptions.
+
+        """
+
+        def recursive_remove(tree):
+            if value in tree.values:
+                tree.values.remove(value)
+            for subtree in tree.subtypes.values():
+                recursive_remove(subtree)
+
+        recursive_remove(self._subscriptions)
+
+    def find(self,
+             event_type: EventType
+             ) -> typing.Set[typing.Hashable]:
+        """Find subscribed values
+
+        Finds and returns all values that are subscribed to event type.
+
+        """
+
+        def recursive_find(tree, event_type):
+            if not tree:
+                return set()
+            temp = tree.subtypes.get('*', None)
+            values = set(temp.values) if temp else set()
+            if event_type:
+                values.update(recursive_find(
+                    tree.subtypes.get('?'), event_type[1:]))
+                values.update(recursive_find(
+                    tree.subtypes.get(event_type[0]), event_type[1:]))
+            else:
+                values.update(tree.values)
+            return values
+
+        return recursive_find(self._subscriptions, event_type)
+
+
+async def create_event_type_registry(storage: EventTypeRegistryStorage
+                                     ) -> 'EventTypeRegistry':
     """Create EventTypeRegistry instance
 
     This class can be used for simple mapping between event types and unique
@@ -185,21 +280,17 @@ async def create_event_type_registry(storage):
 
 class EventTypeRegistry:
 
-    def get_event_type(self, identifier):
+    def get_event_type(self, identifier: int):
         """Get event types associated with identifier"""
         return self._mappings[identifier]
 
-    async def get_identifiers(self, event_types):
+    async def get_identifiers(self,
+                              event_types: typing.Iterable[EventType]
+                              ) -> typing.List[int]:
         """Get identifiers associated with event types
 
         If event type doesn't have previously defined identifier, new one is
         created and stored in storage.
-
-        Args:
-            event_types (Iterable[EventType]): event types
-
-        Returns:
-            typing.List[int]
 
         """
         new_mappings = {}
@@ -209,16 +300,10 @@ class EventTypeRegistry:
             await self._storage.add_event_type_mappings(new_mappings)
         return ids
 
-    def query_identifiers(self, event_types):
-        """Get identifiers matching event type queries
-
-        Args:
-            event_types (EventType): event type queries
-
-        Returns:
-            Set[int]
-
-        """
+    def query_identifiers(self,
+                          event_types: EventType
+                          ) -> typing.Set[int]:
+        """Get identifiers matching event type queries"""
         nodes = itertools.chain.from_iterable(
             self._query_nodes(self._nodes, event_type)
             for event_type in event_types)
@@ -292,6 +377,11 @@ class EventTypeRegistry:
                     if event_subtype == ['*']:
                         yield subnode
                     yield from self._query_nodes(subnode.nodes, event_subtype)
+
+
+class _SubscriptionTree(typing.NamedTuple):
+    subtypes: typing.Dict
+    values: typing.Set[typing.Hashable]
 
 
 class _EventTypeRegistryNode(typing.NamedTuple):

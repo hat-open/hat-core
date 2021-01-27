@@ -264,7 +264,8 @@ class Client(aio.Resource):
 
 async def run_client(monitor_client: hat.monitor.client.Client,
                      server_group: str,
-                     async_run_cb: typing.Callable[[Client], None],
+                     async_run_cb: typing.Callable[[Client],
+                                                   typing.Awaitable[None]],
                      subscriptions: typing.List[common.EventType] = []
                      ) -> typing.Any:
     """Continuously communicate with currently active Event Server
@@ -275,7 +276,7 @@ async def run_client(monitor_client: hat.monitor.client.Client,
     instance. Once connection to Event Server is closed or new active Event
     Server is detected, execution of `async_run_cb` is canceled. If new
     connection to Event Server is successfuly established,
-    `async_run_cb` is called with new instance of :class:`Client`.
+    `async_run_cb` is called with new instance of `Client`.
 
     `async_run_cb` is called when:
         * new active `Client` is created
@@ -359,8 +360,7 @@ async def _connect_and_run_loop(group, address, subscriptions,
                 await asyncio.wait([run_future,
                                     subgroup.spawn(client.wait_closed)],
                                    return_when=asyncio.FIRST_COMPLETED)
-                # TODO maybe we should check for closing.done()
-                if client.is_closed:
+                if client.is_closing:
                     mlog.warning('connection to event server closed')
                     continue
                 elif run_future.done():
