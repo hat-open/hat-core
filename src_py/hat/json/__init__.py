@@ -1,7 +1,6 @@
 """JSON data manipulation and validation"""
 
 import collections
-import contextlib
 import enum
 import io
 import itertools
