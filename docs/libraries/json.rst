@@ -99,7 +99,8 @@ account Path type:
         as result of applying ``head`` path onto input data.
 
 Function `hat.json.get` is used for obtaining subset of input data referenced
-by path. If referenced subset doesn't exist, this function returns ``None``::
+by path. If referenced subset doesn't exist, this function returns default
+value::
 
     def get(data: Data, path: Path, default: typing.Optional[Data] = None) -> Data: ...
 

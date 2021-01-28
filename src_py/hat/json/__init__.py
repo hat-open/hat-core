@@ -80,7 +80,8 @@ def flatten(data: Data
 
 def get(data: Data,
         path: Path,
-        default: typing.Optional[Data] = None) -> Data:
+        default: typing.Optional[Data] = None
+        ) -> Data:
     """Get data element referenced by path
 
     Example::

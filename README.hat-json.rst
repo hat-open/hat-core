@@ -81,7 +81,8 @@ JSON data manipulation and validation functions.
 * `hat.json.get` and `hat.json.set_`::
 
     def get(data: Data,
-            path: Path
+            path: Path,
+            default: typing.Optional[Data] = None
             ) -> Data:
         """Get data element referenced by path
 
