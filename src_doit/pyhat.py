@@ -357,23 +357,18 @@ def task_pyhat_event():
         dst_dir = _get_build_dst_dir('hat-event')
         json_schema_repo = src_py_dir / 'hat/event/json_schema_repo.json'
         sbs_repo = src_py_dir / 'hat/event/sbs_repo.json'
-        viewer_jshat_build = Path('build/jshat/app/event-viewer')
         for i in (src_py_dir / 'hat/event').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
         yield json_schema_repo, (dst_dir /
                                  json_schema_repo.relative_to(src_py_dir))
         yield sbs_repo, dst_dir / sbs_repo.relative_to(src_py_dir)
-        for i in viewer_jshat_build.rglob('*'):
-            if i.is_dir():
-                continue
-            yield i, (dst_dir / 'hat/event/viewer/ui'
-                              / i.relative_to(viewer_jshat_build))
 
     return _get_task_build(
         name='hat-event',
         description='Hat Event Server and client',
         readme_path=Path('README.hat-event.rst'),
         dependencies=['appdirs',
+                      'click',
                       'hat-util',
                       'hat-aio',
                       'hat-json',
@@ -382,11 +377,7 @@ def task_pyhat_event():
                       'hat-sqlite3',
                       'hat-monitor'],
         mappings=mappings,
-        optional_dependencies={'viewer': ['click',
-                                          'PySide2']},
-        console_scripts=['hat-event = hat.event.server.main:main'],
-        gui_scripts=['hat-event-viewer = hat.event.viewer.main:main'],
-        task_dep=['jshat_app_event_viewer'])
+        console_scripts=['hat-event = hat.event.server.main:main'])
 
 
 def task_pyhat_gateway():
@@ -460,14 +451,18 @@ def task_pyhat_manager():
     """PyHat - build hat-manager"""
     def mappings():
         dst_dir = _get_build_dst_dir('hat-manager')
-        manager_hue_jshat_build = Path('build/jshat/app/manager-hue')
         for i in (src_py_dir / 'hat/manager').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
-        for i in manager_hue_jshat_build.rglob('*'):
-            if i.is_dir():
-                continue
-            yield i, (dst_dir / 'hat/manager/hue/ui'
-                              / i.relative_to(manager_hue_jshat_build))
+
+        jshat_dirs = [(Path('build/jshat/app/manager-event'),
+                       dst_dir / 'hat/manager/event/ui'),
+                      (Path('build/jshat/app/manager-hue'),
+                       dst_dir / 'hat/manager/hue/ui')]
+        for jshat_src_dir, jshat_dst_dir in jshat_dirs:
+            for i in jshat_src_dir.rglob('*'):
+                if i.is_dir():
+                    continue
+                yield i, (jshat_dst_dir / i.relative_to(jshat_src_dir))
 
     return _get_task_build(
         name='hat-manager',
@@ -478,13 +473,16 @@ def task_pyhat_manager():
                       'PySide2',
                       'hat-aio',
                       'hat-drivers',
+                      'hat-event',
                       'hat-json',
                       'hat-juggler',
                       'hat-qt',
                       'hat-util'],
         mappings=mappings,
-        gui_scripts=['hat-manager-hue = hat.manager.hue.main:main'],
-        task_dep=['jshat_app_manager_hue'])
+        gui_scripts=['hat-manager-event = hat.manager.event.main:main',
+                     'hat-manager-hue = hat.manager.hue.main:main'],
+        task_dep=['jshat_app_manager_event',
+                  'jshat_app_manager_hue'])
 
 
 def _get_task_build(name, description, readme_path, dependencies, mappings, *,

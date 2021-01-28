@@ -22,10 +22,7 @@ async def create(conf, engine):
     module._subscriptions = conf['subscriptions']
     module._async_group = aio.Group()
     module._conn = await chatter.connect(sbs_repo, conf['address'])
-    module._async_group.spawn(aio.call_on_cancel,
-                              module._send, 'ModuleClose', None)
-    module._async_group.spawn(aio.call_on_cancel,
-                              module._conn.async_close)
+    module._async_group.spawn(aio.call_on_cancel, module._on_close)
     module._send('ModuleCreate', None)
     return module
 
@@ -48,6 +45,10 @@ class RemoteModule(hat.event.server.common.Module):
         session._async_group.spawn(aio.call_on_cancel,
                                    self._send, 'SessionClose', None)
         return session
+
+    async def _on_close(self):
+        self._send('ModuleClose', None)
+        await self._conn.async_close()
 
     def _send(self, msg_type, msg):
         self._conn.send(chatter.Data('TestRemoteModule', msg_type, msg))

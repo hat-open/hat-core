@@ -1,6 +1,6 @@
 import sys
 
-from hat.event.viewer.main import main
+from hat.manager.event.main import main
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ __all__ = ['task_jshat_app',
            'task_jshat_app_monitor',
            'task_jshat_app_gui',
            'task_jshat_app_syslog',
-           'task_jshat_app_event_viewer',
+           'task_jshat_app_manager_event',
            'task_jshat_app_manager_hue',
            'task_jshat_app_manager_hue_assets']
 
@@ -32,7 +32,7 @@ def task_jshat_app():
                          'jshat_app_monitor',
                          'jshat_app_gui',
                          'jshat_app_syslog',
-                         'jshat_app_event_viewer',
+                         'jshat_app_manager_event',
                          'jshat_app_manager_hue']}
 
 
@@ -60,10 +60,10 @@ def task_jshat_app_syslog():
                            src_js_dir / '@hat-core/syslog/main.js')
 
 
-def task_jshat_app_event_viewer():
-    """JsHat application - build event-viewer"""
-    return _get_task_build('event-viewer',
-                           src_js_dir / '@hat-core/event-viewer/main.js')
+def task_jshat_app_manager_event():
+    """JsHat application - build manager_event"""
+    return _get_task_build('manager-event',
+                           src_js_dir / '@hat-core/manager-event/main.js')
 
 
 def task_jshat_app_manager_hue():

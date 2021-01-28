@@ -4,7 +4,7 @@ import * as juggler from '@hat-core/juggler';
 import * as datetime from '@hat-core/syslog/datetime';
 
 
-import 'event-viewer/main.scss';
+import 'manager-event/main.scss';
 
 
 const defaultState = {

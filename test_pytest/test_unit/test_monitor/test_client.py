@@ -389,7 +389,7 @@ async def test_run_component_close_before_ready(server_address):
                                 blessing=None,
                                 ready=None)
 
-    async def async_run(client):
+    async def async_run():
         await asyncio.Future()
 
     server = await create_server(server_address)

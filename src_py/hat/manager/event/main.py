@@ -7,7 +7,7 @@ import PySide2.QtWidgets
 
 from hat import aio
 from hat import qt
-from hat.event.viewer import server
+from hat.manager.event import server
 
 
 package_path = Path(__file__).parent

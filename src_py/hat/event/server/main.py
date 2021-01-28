@@ -18,7 +18,7 @@ import appdirs
 
 from hat import aio
 from hat import json
-import hat.event.common
+from hat.event.server import common
 import hat.event.server.backend_engine
 import hat.event.server.communication
 import hat.event.server.module_engine
@@ -37,7 +37,7 @@ def main():
 
     args = _create_parser().parse_args()
     conf = json.decode_file(args.conf)
-    hat.event.common.json_schema_repo.validate('hat://event/main.yaml#', conf)
+    common.json_schema_repo.validate('hat://event/main.yaml#', conf)
     sub_confs = ([conf['backend_engine']['backend']] +
                  conf['module_engine']['modules'])
     for sub_conf in sub_confs:

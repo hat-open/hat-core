@@ -59,7 +59,7 @@ async def async_main(conf, ui_path):
     monitor = await hat.monitor.client.connect(conf['monitor'])
     try:
         await hat.monitor.client.run_component(
-            conf['monitor'], run_with_monitor, conf, ui_path, monitor)
+            monitor, run_with_monitor, conf, ui_path, monitor)
     finally:
         await aio.uncancellable(monitor.async_close())
 
