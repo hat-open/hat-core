@@ -155,6 +155,11 @@ def test_flatten_example():
      ['a', 0, 'b', 0],
      [1, 2],
      [1, 2]),
+
+    (None,
+     ['a', 'b'],
+     {'b': 123},
+     {'b': 123})
 ])
 def test_get(data, path, default, result):
     x = json.get(data, path, default)

@@ -1,6 +1,7 @@
 """JSON data manipulation and validation"""
 
 import collections
+import contextlib
 import enum
 import io
 import itertools
@@ -98,13 +99,17 @@ def get(data: Data,
     """
     for i in flatten(path):
         if isinstance(i, str):
-            data = data.get(i, default) if isinstance(data, dict) else default
+            if not isinstance(data, dict) or i not in data:
+                return default
+            data = data[i]
 
         elif isinstance(i, int) and not isinstance(i, bool):
+            if not isinstance(data, list):
+                return default
             try:
-                data = data[i] if isinstance(data, list) else default
+                data = data[i]
             except IndexError:
-                data = default
+                return default
 
         else:
             raise ValueError('invalid path')
