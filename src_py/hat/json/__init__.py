@@ -79,8 +79,8 @@ def flatten(data: Data
 
 
 def get(data: Data,
-        path: Path
-        ) -> Data:
+        path: Path,
+        default: typing.Optional[Data] = None) -> Data:
     """Get data element referenced by path
 
     Example::
@@ -92,17 +92,18 @@ def get(data: Data,
         data = [1, 2, 3]
         assert get(data, 0) == 1
         assert get(data, 5) is None
+        assert get(data, 5, default=123) == 123
 
     """
     for i in flatten(path):
         if isinstance(i, str):
-            data = data.get(i) if isinstance(data, dict) else None
+            data = data.get(i, default) if isinstance(data, dict) else default
 
         elif isinstance(i, int) and not isinstance(i, bool):
             try:
-                data = data[i] if isinstance(data, list) else None
+                data = data[i] if isinstance(data, list) else default
             except IndexError:
-                data = None
+                data = default
 
         else:
             raise ValueError('invalid path')

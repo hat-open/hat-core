@@ -101,7 +101,7 @@ account Path type:
 Function `hat.json.get` is used for obtaining subset of input data referenced
 by path. If referenced subset doesn't exist, this function returns ``None``::
 
-    def get(data: Data, path: Path) -> Data: ...
+    def get(data: Data, path: Path, default: typing.Optional[Data] = None) -> Data: ...
 
 Example usage::
 
@@ -112,6 +112,7 @@ Example usage::
     data = [1, 2, 3]
     assert get(data, 0) == 1
     assert get(data, 5) is None
+    assert get(data, 5, default=123) == 123
 
 Function `hat.json.set_` is used for creating new data based on input data
 where subset of input data is replaced by provided input value. This function

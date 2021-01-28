@@ -95,37 +95,69 @@ def test_flatten_example():
     assert list(json.flatten(data)) == result
 
 
-@pytest.mark.parametrize("data, path, result", [
+@pytest.mark.parametrize("data, path, default, result", [
     (123,
      [],
+     None,
      123),
 
     ('abc',
      [1, 'a', 2, 'b', 3],
+     None,
      None),
 
     ({'a': [{'b': 1}, 2, 3]},
      ['a', 0, 'b'],
+     None,
      1),
 
     ([1, 2, 3],
      0,
+     None,
      1),
 
     ([1, 2, 3],
      -1,
+     None,
      3),
 
     ([1, 2, 3],
      3,
+     None,
      None),
 
     ([1, 2, 3],
      -4,
-     None)
+     None,
+     None),
+
+    ([1, 2, 3],
+     -4,
+     123,
+     123),
+
+    ([1, 2, 3],
+     ['a'],
+     'abc',
+     'abc'),
+
+    ({'a': 3},
+     ['c'],
+     456,
+     456),
+
+    ({'a': 3},
+     [0],
+     456,
+     456),
+
+    ({'a': [{'b': 1}, 2, 3]},
+     ['a', 0, 'b', 0],
+     [1, 2],
+     [1, 2]),
 ])
-def test_get(data, path, result):
-    x = json.get(data, path)
+def test_get(data, path, default, result):
+    x = json.get(data, path, default)
     assert json.equals(x, result)
 
 
