@@ -9,6 +9,7 @@ json_schema_repo = None
 
 async def create(conf, engine):
     module = CopierModule()
+    module._subscription = hat.event.common.Subscription([['*']])
     module._async_group = aio.Group()
     module._engine = engine
     module._source = hat.event.server.common.Source(
@@ -25,8 +26,8 @@ class CopierModule(hat.event.server.common.Module):
         return self._async_group
 
     @property
-    def subscriptions(self):
-        return [['*']]
+    def subscription(self):
+        return self._subscription
 
     async def create_session(self):
         session = CopierModuleSession()

@@ -1,49 +1,37 @@
-"""Event server's communication
-
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
+"""Event server's communication"""
 
 import contextlib
 import logging
 
 from hat import aio
 from hat import chatter
+from hat import json
 from hat.event.server import common
+import hat.event.server.module_engine
 
 
-mlog = logging.getLogger(__name__)
-
-_source_id = 0
+mlog: logging.Logger = logging.getLogger(__name__)
 
 
-async def create(conf, engine):
+async def create(conf: json.Data,
+                 engine: hat.event.server.module_engine.ModuleEngine
+                 ) -> 'Communication':
     """Create communication
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://event/main.yaml#/definitions/communication``
-        engine (hat.event.module_engine.ModuleEngine): module engine
-
-    Returns:
-        Communication
+        engine: module engine
 
     """
     comm = Communication()
     comm._engine = engine
-    comm._async_group = aio.Group(exception_cb=lambda e: mlog.error(
-        'exception in communication: %s', e, exc_info=e))
-    comm._connection_ids = {}
-    comm._subs_registry = common.SubscriptionRegistry()
+    comm._last_source_id = 0
 
-    chatter_server = await chatter.listen(
-        sbs_repo=common.sbs_repo,
-        address=conf['address'],
-        connection_cb=lambda conn: comm._async_group.spawn(
-            comm._connection_loop, conn))
-    comm._async_group.spawn(aio.call_on_cancel, chatter_server.async_close)
-    comm._async_group.spawn(comm._run_engine)
+    comm._server = await chatter.listen(sbs_repo=common.sbs_repo,
+                                        address=conf['address'],
+                                        connection_cb=comm._on_connection)
+
     return comm
 
 
@@ -52,97 +40,101 @@ class Communication(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._server.async_group
 
-    async def _connection_loop(self, conn):
-        global _source_id
-        _source_id += 1
-        self._connection_ids[conn] = _source_id
-        try:
-            await self._register_communication_event(_source_id, 'connected')
-            while True:
-                msg = await conn.receive()
-                if msg.data.module != 'HatEvent' or msg.data.type not in [
-                        'MsgSubscribe', 'MsgRegisterReq', 'MsgQueryReq']:
-                    raise Exception('Message received from client malformed!')
-                self._process_msg(msg, conn)
-        except ConnectionError:
-            mlog.debug('connection %s closed', _source_id)
-        finally:
-            await aio.uncancellable(self._close_connection(conn))
+    def _on_connection(self, conn):
+        self._last_source_id += 1
+        _Connection(conn, self._engine, self._last_source_id)
 
-    async def _close_connection(self, conn):
-        self._subs_registry.remove(conn)
-        await conn.async_close()
-        source_id = self._connection_ids.pop(conn)
-        await self._register_communication_event(source_id, 'disconnected')
 
-    async def _register_communication_event(self, source_id, status):
-        source = common.Source(type=common.SourceType.COMMUNICATION,
-                               name=None,
-                               id=source_id)
-        reg_event = common.RegisterEvent(
-            event_type=['event', 'communication', status],
-            source_timestamp=None,
-            payload=None)
-        await self._engine.register(source, [reg_event])
+class _Connection(aio.Resource):
 
-    async def _run_engine(self):
+    def __init__(self, conn, engine, source_id):
+        self._conn = conn
+        self._engine = engine
+        self._subscription = None
+        self._source = common.Source(type=common.SourceType.COMMUNICATION,
+                                     name=None,
+                                     id=source_id)
+
+        self.async_group.spawn(self._connection_loop)
+
+    @property
+    def async_group(self):
+        return self._conn.async_group
+
+    def _on_events(self, events):
+        if not self._subscription:
+            return
+        events = [e for e in events
+                  if self._subscription.matches(e.event_type)]
+        if not events:
+            return
+
+        data = chatter.Data('HatEvent', 'MsgNotify',
+                            [common.event_to_sbs(e) for e in events])
+        with contextlib.suppress(ConnectionError):
+            self._conn.send(data)
+
+    async def _connection_loop(self):
         try:
             with self._engine.register_events_cb(self._on_events):
-                await self._engine.wait_closed()
+                await self._register_communication_event('connected')
+
+                while True:
+                    msg = await self._conn.receive()
+                    msg_type = msg.data.module, msg.data.type
+
+                    if msg_type == ('HatEvent', 'MsgSubscribe'):
+                        await self._process_msg_subscribe(msg)
+
+                    elif msg_type == ('HatEvent', 'MsgRegisterReq'):
+                        await self._process_msg_register(msg)
+
+                    elif msg_type == ('HatEvent', 'MsgQueryReq'):
+                        await self._process_msg_query(msg)
+
+                    else:
+                        raise Exception('unsupported message type')
+
+        except ConnectionError:
+            pass
+
+        except Exception as e:
+            mlog.error("connection loop error: %s", e, exc_info=e)
+
         finally:
-            self._async_group.close()
+            self.close()
+            await self._register_communication_event('disconnected')
 
-    def _process_msg(self, msg, conn):
-        {'MsgSubscribe': self._process_subscribe,
-         'MsgRegisterReq': self._process_register_request,
-         'MsgQueryReq': self._process_query_request
-         }[msg.data.type](msg, conn)
+    async def _process_msg_subscribe(self, msg):
+        self._subscription = common.Subscription(msg.data.data)
 
-    def _process_subscribe(self, msg, conn):
-        for event_type in msg.data.data:
-            self._subs_registry.add(conn, event_type)
-
-    def _process_register_request(self, msg, conn):
-        source = common.Source(type=common.SourceType.COMMUNICATION,
-                               name=None,
-                               id=self._connection_ids[conn])
-        events = [common.register_event_from_sbs(i) for i in msg.data.data]
-        self._async_group.spawn(self._register_request_response, source,
-                                events, conn, msg)
-
-    def _process_query_request(self, msg, conn):
-        query = common.query_from_sbs(msg.data.data)
-        self._async_group.spawn(self._query_request_response,
-                                query, conn, msg)
-
-    async def _register_request_response(self, source, reg_events, conn, msg):
-        events = await self._engine.register(source, reg_events)
+    async def _process_msg_register(self, msg):
+        register_events = [common.register_event_from_sbs(i)
+                           for i in msg.data.data]
+        events = await self._engine.register(self._source, register_events)
         if msg.last:
             return
+
         data = chatter.Data(module='HatEvent',
                             type='MsgRegisterRes',
                             data=[(('event', common.event_to_sbs(e))
                                    if e is not None else ('failure', None))
                                   for e in events])
-        conn.send(data, conv=msg.conv)
+        self._conn.send(data, conv=msg.conv)
 
-    async def _query_request_response(self, query, conn, msg):
-        events = await self._engine.query(query)
-        conn.send(chatter.Data(module='HatEvent',
-                               type='MsgQueryRes',
-                               data=[common.event_to_sbs(e) for e in events]),
-                  conv=msg.conv)
+    async def _process_msg_query(self, msg):
+        query_data = common.query_from_sbs(msg.data.data)
+        events = await self._engine.query(query_data)
+        data = chatter.Data(module='HatEvent',
+                            type='MsgQueryRes',
+                            data=[common.event_to_sbs(e) for e in events])
+        self._conn.send(data, conv=msg.conv)
 
-    def _on_events(self, events):
-        conn_notify = {}
-        for event in events:
-            for conn in self._subs_registry.find(event.event_type):
-                conn_notify[conn] = (conn_notify.get(conn, []) + [event])
-        for conn, notify_events in conn_notify.items():
-            with contextlib.suppress(ConnectionError):
-                conn.send(chatter.Data(module='HatEvent',
-                                       type='MsgNotify',
-                                       data=[common.event_to_sbs(e)
-                                             for e in notify_events]))
+    async def _register_communication_event(self, status):
+        register_event = common.RegisterEvent(
+            event_type=['event', 'communication', status],
+            source_timestamp=None,
+            payload=None)
+        await self._engine.register(self._source, [register_event])

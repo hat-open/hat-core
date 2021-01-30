@@ -137,6 +137,81 @@ def matches_query_type(event_type: EventType,
     return True
 
 
+class Subscription:
+    """Subscription defined by query event types"""
+
+    _Node = typing.Tuple[bool,                  # is_leaf
+                         typing.Dict[str,       # subtype
+                                     '_Node']]  # child
+
+    def __init__(self, query_types: typing.Iterable[EventType]):
+        self._root = False, {}
+        for query_type in query_types:
+            self._root = self._add_query_type(self._root, query_type)
+
+    def get_query_types(self) -> typing.Iterable[EventType]:
+        """Calculate sanitized query event types"""
+        yield from self._get_query_types(self._root)
+
+    def matches(self, event_type: EventType) -> bool:
+        """Does `event_type` match subscription"""
+        return self._matches(self._root, event_type)
+
+    def _add_query_type(self, node, query_type):
+        is_leaf, children = node
+
+        if '*' in children:
+            return node
+
+        if not query_type:
+            return True, children
+
+        head, rest = query_type[0], query_type[1:]
+
+        if head == '*':
+            if rest:
+                raise ValueError('invalid query event type')
+            children.clear()
+            children['*'] = True, {}
+
+        else:
+            child = children.get(head, (False, {}))
+            child = self._add_query_type(child, rest)
+            children[head] = child
+
+        return node
+
+    def _get_query_types(self, node):
+        is_leaf, children = node
+
+        if is_leaf and '*' not in children:
+            yield []
+
+        for head, child in children.items():
+            for rest in self._get_query_types(child):
+                yield [head, *rest]
+
+    def _matches(self, node, event_type):
+        is_leaf, children = node
+
+        if '*' in children:
+            return True
+
+        if not event_type:
+            return is_leaf
+
+        head, rest = event_type[0], event_type[1:]
+
+        for i in (head, '?'):
+            child = children.get(i)
+            if not child:
+                continue
+            if self._matches(child, rest):
+                return True
+
+        return False
+
+
 class Timestamp(typing.NamedTuple):
     s: int
     """seconds since 1970-01-01 (can be negative)"""

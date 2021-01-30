@@ -227,8 +227,6 @@ class _ModuleSession():
     async def add_changes(self, changes):
         for name in ['new', 'deleted']:
             for event in getattr(changes, name):
-                match = any(common.matches_query_type(event.event_type, i)
-                            for i in self._module.subscriptions)
-                if not match:
+                if not self._module.subscription.matches(event.event_type):
                     continue
                 getattr(self._pending_changes, name).append(event)

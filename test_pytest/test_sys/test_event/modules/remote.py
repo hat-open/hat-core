@@ -19,7 +19,8 @@ sbs_repo = sbs.Repository(chatter.sbs_repo, package_path / 'remote.sbs')
 
 async def create(conf, engine):
     module = RemoteModule()
-    module._subscriptions = conf['subscriptions']
+    module._subscription = hat.event.server.common.Subscription(
+        conf['subscriptions'])
     module._async_group = aio.Group()
     module._conn = await chatter.connect(sbs_repo, conf['address'])
     module._async_group.spawn(aio.call_on_cancel, module._on_close)
@@ -34,8 +35,8 @@ class RemoteModule(hat.event.server.common.Module):
         return self._async_group
 
     @property
-    def subscriptions(self):
-        return self._subscriptions
+    def subscription(self):
+        return self._subscription
 
     async def create_session(self):
         self._send('SessionCreate', None)

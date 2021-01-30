@@ -12,7 +12,8 @@ from hat.event.common import (EventId,
                               Timestamp,
                               EventPayload,
                               Event,
-                              QueryData)
+                              QueryData,
+                              Subscription)
 from hat.event.common import *  # NOQA
 
 
@@ -89,6 +90,58 @@ class Backend(aio.Resource):
         """Query events"""
 
 
+ModuleConf = json.Data
+
+CreateModule = typing.Callable[
+    [ModuleConf, 'hat.event.module_engine.ModuleEngine'],  # NOQA
+    typing.Awaitable['Module']]
+
+
+class Module(aio.Resource):
+    """Module ABC
+
+    Module is implemented as python module which is dynamically imported.
+    It is expected that this module implements:
+
+        * json_schema_id (typing.Optional[str]): JSON schema id
+        * json_schema_repo (typing.Optional[json.SchemaRepository]):
+            JSON schema repo
+        * create (CreateModule): create new module instance
+
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of module configuration
+    with JSON schema id.
+
+    Module's `subscription` is constant during module's lifetime.
+
+    """
+
+    @property
+    @abc.abstractmethod
+    def subscription(self) -> Subscription:
+        """Subscribed event types filter"""
+
+    @abc.abstractmethod
+    async def create_session(self) -> 'ModuleSession':
+        """Create new module session"""
+
+
+class ModuleSession(aio.Resource):
+
+    @abc.abstractmethod
+    async def process(self,
+                      changes: SessionChanges
+                      ) -> SessionChanges:
+        """Process session changes
+
+        Changes include only process events which are matched by modules
+        subscription filter.
+
+        Single module session process is always called sequentially.
+
+        """
+
+
 class EventTypeRegistryStorage(abc.ABC):
     """EventTypeRegistry storage ABC
 
@@ -114,143 +167,6 @@ class EventTypeRegistryStorage(abc.ABC):
         as values. New mappings are appended to allready existing mappings.
 
         """
-
-
-ModuleConf = json.Data
-
-CreateModule = typing.Callable[
-    [ModuleConf, 'hat.event.module_engine.ModuleEngine'],  # NOQA
-    typing.Awaitable['Module']]
-
-
-class Module(aio.Resource):
-    """Module ABC
-
-    Module is implemented as python module which is dynamically imported.
-    It is expected that this module implements:
-
-        * json_schema_id (typing.Optional[str]): JSON schema id
-        * json_schema_repo (typing.Optional[json.SchemaRepository]):
-            JSON schema repo
-        * create (CreateModule): create new module instance
-
-    If module defines JSON schema repositoy and JSON schema id, JSON schema
-    repository will be used for additional validation of module configuration
-    with JSON schema id.
-
-    Module's `subscriptions` are constant during module's lifetime.
-
-    """
-
-    @property
-    @abc.abstractmethod
-    def subscriptions(self) -> typing.List[EventType]:
-        """Subscribed event types filter"""
-
-    @abc.abstractmethod
-    async def create_session(self) -> 'ModuleSession':
-        """Create new module session"""
-
-
-class ModuleSession(aio.Resource):
-
-    @abc.abstractmethod
-    async def process(self,
-                      changes: SessionChanges
-                      ) -> SessionChanges:
-        """Process session changes
-
-        Changes include only process events which are matched by modules
-        subscription filter.
-
-        Single module session process is always called sequentially.
-
-        """
-
-
-class SubscriptionRegistry:
-    """Registry of event type subscriptions
-
-    A tree-like collection that maps event types to hashable values. A map
-    between an event type and a value is called a subscription. Registry
-    enables finding all values that are subscribed to some event type. Each
-    value can be subscribed to multiple event types.
-
-    When adding a value to the registry, its subscriptions are specified by
-    a query type. It can be the same as an event type, but also contain
-    '?' and '*' wildcard subtypes. Value is subscribed to all event types that
-    match the given query type. For more details on matching see
-    `hat.event.common.matches_query_type` function.
-
-    When a value is removed from the registry, all its subscriptions are also
-    removed.
-
-    """
-
-    def __init__(self):
-        self._subscriptions = _SubscriptionTree(subtypes={}, values=set())
-
-    def add(self,
-            value: typing.Hashable,
-            query_type: EventType):
-        """Add and subscribe value
-
-        Adds value to the registry and subscribes it to all event types that
-        match query type. If value is already in the registry, new
-        subscriptions will be added to previous.
-
-        """
-
-        def recursive_add(tree, query_type):
-            if not query_type:
-                tree.values.add(value)
-                return
-            if query_type[0] not in tree.subtypes:
-                tree.subtypes[query_type[0]] = _SubscriptionTree(
-                    subtypes={}, values=set())
-            recursive_add(tree.subtypes[query_type[0]], query_type[1:])
-
-        recursive_add(self._subscriptions, query_type)
-
-    def remove(self, value: typing.Hashable):
-        """Remove and unsubscribe value
-
-        Removes value from the registry with all its subscriptions.
-
-        """
-
-        def recursive_remove(tree):
-            if value in tree.values:
-                tree.values.remove(value)
-            for subtree in tree.subtypes.values():
-                recursive_remove(subtree)
-
-        recursive_remove(self._subscriptions)
-
-    def find(self,
-             event_type: EventType
-             ) -> typing.Set[typing.Hashable]:
-        """Find subscribed values
-
-        Finds and returns all values that are subscribed to event type.
-
-        """
-
-        def recursive_find(tree, event_type):
-            if not tree:
-                return set()
-            temp = tree.subtypes.get('*', None)
-            values = set(temp.values) if temp else set()
-            if event_type:
-                values.update(recursive_find(
-                    tree.subtypes.get('?'), event_type[1:]))
-                values.update(recursive_find(
-                    tree.subtypes.get(event_type[0]), event_type[1:]))
-            else:
-                values.update(tree.values)
-            return values
-
-        return recursive_find(self._subscriptions, event_type)
 
 
 async def create_event_type_registry(storage: EventTypeRegistryStorage
@@ -377,11 +293,6 @@ class EventTypeRegistry:
                     if event_subtype == ['*']:
                         yield subnode
                     yield from self._query_nodes(subnode.nodes, event_subtype)
-
-
-class _SubscriptionTree(typing.NamedTuple):
-    subtypes: typing.Dict
-    values: typing.Set[typing.Hashable]
 
 
 class _EventTypeRegistryNode(typing.NamedTuple):

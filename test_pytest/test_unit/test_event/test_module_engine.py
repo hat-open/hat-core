@@ -62,6 +62,8 @@ def create_module():
         class Module(hat.event.server.common.Module):
 
             def __init__(self):
+                self._subscription = hat.event.server.common.Subscription(
+                    subscriptions)
                 self._async_group = aio.Group()
 
             @property
@@ -69,8 +71,8 @@ def create_module():
                 return self._async_group
 
             @property
-            def subscriptions(self):
-                return subscriptions
+            def subscription(self):
+                return self._subscription
 
             async def create_session(self):
                 return Session()
@@ -102,15 +104,16 @@ def create_module():
 
 def assert_notified_changes(sessions, registered_events):
     for session in sessions:
+        subscriptions = list(session._module.subscription.get_query_types())
         changes_notified_new_exp = filter_events_by_subscriptions(
             registered_events +
             [i for ss in sessions for i in ss.changes_result_new
              if ss is not session],
-            session._module.subscriptions)
+            subscriptions)
         changes_notified_deleted_exp = filter_events_by_subscriptions(
             [i for ss in sessions for i in ss.changes_result_deleted
              if ss is not session],
-            session._module.subscriptions)
+            subscriptions)
         assert (sorted(session.changes_notified_new,
                        key=lambda i: i.event_id) ==
                 sorted(changes_notified_new_exp, key=lambda i: i.event_id))
@@ -302,7 +305,7 @@ async def test_module1(module_engine_conf, register_events, source_comm,
     session = await module.session_queue.get()
     await session.wait_closed()
     filtered_events = filter_events_by_subscriptions(
-        process_events, module.subscriptions)
+        process_events, list(module.subscription.get_query_types()))
     assert session.changes_notified_new == filtered_events
 
     events = await event_queue.get()

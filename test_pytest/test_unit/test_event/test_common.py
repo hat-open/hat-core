@@ -1,4 +1,3 @@
-import collections
 import datetime
 import itertools
 import math
@@ -9,6 +8,22 @@ from hat.event.server import common
 
 
 pytestmark = pytest.mark.asyncio
+
+
+class MockEventTypeRegistryStorage(common.EventTypeRegistryStorage):
+
+    def __init__(self, mappings):
+        self._mappings = mappings
+
+    @property
+    def mappings(self):
+        return self._mappings
+
+    async def get_event_type_mappings(self):
+        return self._mappings
+
+    async def add_event_type_mappings(self, mappings):
+        self._mappings.update(mappings)
 
 
 @pytest.mark.parametrize("event_type, query_type, is_match", [
@@ -135,6 +150,61 @@ pytestmark = pytest.mark.asyncio
 def test_matches_query_type(event_type, query_type, is_match):
     result = common.matches_query_type(event_type, query_type)
     assert result is is_match
+
+
+@pytest.mark.parametrize("query_types, sanitized", [
+    ([],
+     []),
+
+    ([[]],
+     [[]]),
+
+    ([['a'], ['b'], ['c']],
+     [['a'], ['b'], ['c']]),
+
+    ([['a'], ['b', '*'], [], ['*']],
+     [['*']]),
+
+    ([['a', '*'], ['a']],
+     [['a', '*']]),
+
+    ([['a', '*'], ['b'], ['c', '?'], ['c', '*']],
+     [['a', '*'], ['b'], ['c', '*']]),
+])
+def test_subscription_get_query_types(query_types, sanitized):
+    subscription = common.Subscription(query_types)
+    result = list(subscription.get_query_types())
+    assert len(result) == len(sanitized)
+    assert {tuple(i) for i in result} == {tuple(i) for i in sanitized}
+
+
+@pytest.mark.parametrize("query_types, matching, not_matching", [
+    ([],
+     [],
+     [['a'], ['a', 'b'], []]),
+
+    ([[]],
+     [[]],
+     [['a'], ['a', 'b']]),
+
+    ([['*']],
+     [[], ['a'], ['a', 'b']],
+     []),
+
+    ([['a']],
+     [['a']],
+     [[], ['a', 'b'], ['b']]),
+
+    ([['a', '?'], ['a']],
+     [['a'], ['a', 'b']],
+     [[], ['a', 'b', 'c'], ['b']]),
+])
+def test_subscription_matches(query_types, matching, not_matching):
+    subscription = common.Subscription(query_types)
+    for i in matching:
+        assert subscription.matches(i) is True
+    for i in not_matching:
+        assert subscription.matches(i) is False
 
 
 @pytest.mark.parametrize("t1, t2", itertools.permutations([
@@ -373,76 +443,6 @@ def test_query_sbs(query):
     encoded = common.query_to_sbs(query)
     decoded = common.query_from_sbs(encoded)
     assert decoded == query
-
-
-@pytest.mark.parametrize("event_type", [
-    [],
-    [''],
-    ['a'],
-    ['b'],
-    ['a', 'a'],
-    ['a', 'b'],
-    ['a', 'b', 'c']])
-def test_subscription_registry(event_type):
-    subscriptions = [
-        [],
-        ['*'],
-        ['?'],
-        [''],
-        ['?', '*'],
-        ['?', '?'],
-        ['a'],
-        ['a', '*'],
-        ['a', '?'],
-        ['b'],
-        ['a', 'b'],
-        ['?', '?', '*'],
-        ['?', '?', '?'],
-        ['a', '?', '*'],
-        ['a', '?', '?'],
-        ['?', 'b'],
-        ['?', 'b', '*'],
-        ['?', 'b', '?'],
-        ['b', 'a'],
-        ['a', 'b', 'c']]
-    value_sub_pairs = collections.deque()
-
-    registry = common.SubscriptionRegistry()
-    assert registry.find(event_type) == set()
-
-    for value, sub in enumerate(subscriptions):
-        value_sub_pairs.append((value, sub))
-        registry.add(value, sub)
-
-        assert registry.find(event_type) == {
-            value for value, sub in value_sub_pairs
-            if common.matches_query_type(event_type, sub)}
-
-    for _ in range(len(value_sub_pairs)):
-        value, sub = value_sub_pairs.popleft()
-        registry.remove(value)
-
-        assert registry.find(event_type) == {
-            value for value, sub in value_sub_pairs
-            if common.matches_query_type(event_type, sub)}
-
-    assert registry.find(event_type) == set()
-
-
-class MockEventTypeRegistryStorage(common.EventTypeRegistryStorage):
-
-    def __init__(self, mappings):
-        self._mappings = mappings
-
-    @property
-    def mappings(self):
-        return self._mappings
-
-    async def get_event_type_mappings(self):
-        return self._mappings
-
-    async def add_event_type_mappings(self, mappings):
-        self._mappings.update(mappings)
 
 
 async def test_event_type_registry_get_event_type():

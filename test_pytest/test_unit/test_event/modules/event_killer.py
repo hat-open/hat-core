@@ -9,6 +9,7 @@ json_schema_repo = None
 
 async def create(conf, engine):
     module = ModuleEventKiller()
+    module._subscription = hat.event.common.Subscription([['*']])
     module._async_group = aio.Group()
     module._engine = engine
     module._source = hat.event.server.common.Source(
@@ -22,8 +23,8 @@ async def create(conf, engine):
 class ModuleEventKiller(hat.event.server.common.Module):
 
     @property
-    def subscriptions(self):
-        return [['*']]
+    def subscription(self):
+        return self._subscription
 
     @property
     def async_group(self):
