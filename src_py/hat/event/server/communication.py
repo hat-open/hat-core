@@ -11,6 +11,7 @@ import hat.event.server.module_engine
 
 
 mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
 async def create(conf: json.Data,
@@ -31,6 +32,7 @@ async def create(conf: json.Data,
     comm._server = await chatter.listen(sbs_repo=common.sbs_repo,
                                         address=conf['address'],
                                         connection_cb=comm._on_connection)
+    mlog.debug("listening on %s", conf['address'])
 
     return comm
 
@@ -77,21 +79,26 @@ class _Connection(aio.Resource):
             self._conn.send(data)
 
     async def _connection_loop(self):
+        mlog.debug("starting new client connection loop")
         try:
             with self._engine.register_events_cb(self._on_events):
                 await self._register_communication_event('connected')
 
                 while True:
+                    mlog.debug("waiting for incomming messages")
                     msg = await self._conn.receive()
                     msg_type = msg.data.module, msg.data.type
 
                     if msg_type == ('HatEvent', 'MsgSubscribe'):
+                        mlog.debug("received subscribe message")
                         await self._process_msg_subscribe(msg)
 
                     elif msg_type == ('HatEvent', 'MsgRegisterReq'):
+                        mlog.debug("received register request")
                         await self._process_msg_register(msg)
 
                     elif msg_type == ('HatEvent', 'MsgQueryReq'):
+                        mlog.debug("received query request")
                         await self._process_msg_query(msg)
 
                     else:
@@ -104,6 +111,7 @@ class _Connection(aio.Resource):
             mlog.error("connection loop error: %s", e, exc_info=e)
 
         finally:
+            mlog.debug("closing client connection loop")
             self.close()
             await self._register_communication_event('disconnected')
 

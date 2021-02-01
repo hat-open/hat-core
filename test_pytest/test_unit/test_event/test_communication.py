@@ -1,112 +1,100 @@
-import pytest
 import asyncio
-import functools
 
-import hat.chatter
-import hat.event.client
-import hat.event.common
-import hat.event.server.common
-import hat.event.server.communication
+import pytest
 
 from hat import aio
-from test_unit.test_event import common
+from hat import util
+from hat.event.server import common
+import hat.event.client
+import hat.event.server.communication
+
+
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
-def comm_conf(unused_tcp_port_factory):
-    return {
-        'address': f'tcp+sbs://127.0.0.1:{unused_tcp_port_factory()}'}
+def comm_port():
+    return util.get_unused_tcp_port()
 
 
 @pytest.fixture
-def register_events():
-    return [
-        hat.event.common.RegisterEvent(
-            event_type=['test', 'a'],
-            source_timestamp=None,
-            payload=None),
-        hat.event.common.RegisterEvent(
-            event_type=['test', 'a'],
-            source_timestamp=hat.event.common.Timestamp(s=0, us=0),
-            payload=hat.event.common.EventPayload(
-                type=hat.event.common.EventPayloadType.JSON,
-                data={'a': True, 'b': [0, 1, None, 'c']})),
-        hat.event.common.RegisterEvent(
-            event_type=['test', 'b'],
-            source_timestamp=None,
-            payload=hat.event.common.EventPayload(
-                type=hat.event.common.EventPayloadType.BINARY,
-                data=b'Test')),
-        hat.event.common.RegisterEvent(
-            event_type=['test'],
-            source_timestamp=None,
-            payload=hat.event.common.EventPayload(
-                type=hat.event.common.EventPayloadType.SBS,
-                data=hat.event.common.SbsData(module=None, type='Bytes',
-                                              data=b'Test')))]
+def comm_address(comm_port):
+    return f'tcp+sbs://127.0.0.1:{comm_port}'
 
 
-@pytest.mark.asyncio
-async def test_client_connect_disconnect(comm_conf):
+@pytest.fixture
+def comm_conf(comm_address):
+    return {'address': comm_address}
+
+
+class ModuleEngine(aio.Resource):
+
+    def __init__(self, register_cb=None, query_cb=None, server_id=1):
+        self._register_cb = register_cb
+        self._query_cb = query_cb
+        self._server_id = server_id
+        self._last_instance_id = 0
+        self._async_group = aio.Group()
+        self._events_cbs = util.CallbackRegistry()
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    def register_events_cb(self, cb):
+        return self._events_cbs.register(cb)
+
+    def create_process_event(self, source, event):
+        self._last_instance_id += 1
+        return common.ProcessEvent(
+            event_id=common.EventId(
+                server=self._server_id,
+                instance=self._last_instance_id),
+            source=source,
+            event_type=event.event_type,
+            source_timestamp=event.source_timestamp,
+            payload=event.payload)
+
+    async def register(self, source, events):
+        if not self._register_cb:
+            return [None for _ in events]
+        return self._register_cb(source, events)
+
+    async def query(self, data):
+        if not self._query_cb:
+            return []
+        return self._query_cb(data)
+
+    def notify(self, events):
+        self._events_cbs.notify(events)
+
+
+@pytest.mark.parametrize("client_count", [1, 2, 5])
+async def test_client_connect_disconnect(comm_address, comm_conf,
+                                         client_count):
 
     with pytest.raises(Exception):
-        await hat.event.client.connect(comm_conf['address'])
+        await hat.event.client.connect(comm_address)
 
-    engine = common.create_module_engine()
+    engine = ModuleEngine()
     comm = await hat.event.server.communication.create(comm_conf, engine)
+
+    clients = []
+    for _ in range(client_count):
+        client = await hat.event.client.connect(comm_address)
+        clients.append(client)
+
     assert not comm.is_closed
+    for client in clients:
+        assert not client.is_closed
 
-    client = await hat.event.client.connect(comm_conf['address'])
-    assert not client.is_closed
-
-    await client.async_close()
     await comm.async_close()
     await engine.async_close()
-
-    assert client.is_closed
-    assert comm.is_closed
+    for client in clients:
+        await client.wait_closed()
 
     with pytest.raises(Exception):
-        await hat.event.client.connect(comm_conf['address'])
-
-
-@pytest.mark.skip(reason='communication events - regresion failure')
-@pytest.mark.asyncio
-async def test_srv_comm_close(comm_conf, register_events):
-    comm_register = asyncio.Event()
-    comm_query = asyncio.Event()
-
-    async def unresponsive_cb(async_event, _):
-        async_event.set()
-        while True:
-            await asyncio.sleep(1)
-
-    engine = common.create_module_engine(
-        register_cb=functools.partial(unresponsive_cb, comm_register),
-        query_cb=functools.partial(unresponsive_cb, comm_query))
-    comm = await hat.event.server.communication.create(comm_conf, engine)
-    assert not comm.is_closed
-
-    client = await hat.event.client.connect(comm_conf['address'])
-    assert not client.is_closed
-
-    async with aio.Group() as group:
-        futures = [
-            group.spawn(client.receive),
-            group.spawn(client.register_with_response, register_events),
-            group.spawn(client.query, hat.event.common.QueryData())]
-
-        await asyncio.gather(comm_register.wait(), comm_query.wait())
-
-        await comm.async_close()
-        await engine.async_close()
-        assert comm.is_closed
-
-        for f in futures:
-            with pytest.raises(ConnectionError):
-                await f
-
-    await client.wait_closed()
+        await hat.event.client.connect(comm_address)
 
 
 @pytest.mark.parametrize("subscriptions", [
@@ -138,186 +126,306 @@ async def test_srv_comm_close(comm_conf, register_events):
     [['a'], ['a', 'b']],
     [['b'], ['a', 'b']],
     [['a'], ['a', 'b'], ['a', 'b', 'c']],
-    [['', '', '']]])
-@pytest.mark.asyncio
-async def test_subscribe(comm_conf, subscriptions):
-    event_types = [
-        [],
-        ['a'],
-        ['b'],
-        ['a', 'a'],
-        ['a', 'b'],
-        ['a', 'b', 'c'],
-        ['', '', '']]
-
-    engine = common.create_module_engine()
-    comm = await hat.event.server.communication.create(comm_conf, engine)
-
-    client = await hat.event.client.connect(comm_conf['address'],
-                                            subscriptions=subscriptions)
-
-    await asyncio.sleep(0.01)  # allow server to receive `Subscribe` message
-
-    engine._register_event_cbs.notify([
+    [['', '', '']],
+    [['x', 'y', 'z']]
+])
+async def test_subscribe(comm_address, comm_conf, subscriptions):
+    subscription = common.Subscription(subscriptions)
+    event_types = [[],
+                   ['a'],
+                   ['b'],
+                   ['a', 'a'],
+                   ['a', 'b'],
+                   ['a', 'b', 'c'],
+                   ['', '', '']]
+    filtered_event_types = [event_type for event_type in event_types
+                            if subscription.matches(event_type)]
+    events = [
         hat.event.common.Event(
             event_id=hat.event.common.EventId(server=0, instance=i),
             event_type=event_type,
-            timestamp=hat.event.common.Timestamp(s=0, us=0),
+            timestamp=common.now(),
             source_timestamp=None,
-            payload=None
-        ) for i, event_type in enumerate(event_types)])
+            payload=None)
+        for i, event_type in enumerate(event_types)]
 
-    filtered_event_types = [
-        event_type for event_type in event_types
-        if any(hat.event.common.matches_query_type(event_type, query_type)
-               for query_type in subscriptions)]
+    engine = ModuleEngine()
+    comm = await hat.event.server.communication.create(comm_conf, engine)
+    client = await hat.event.client.connect(comm_address, subscriptions)
+    await client.query(common.QueryData())  # process `Subscribe` message
 
+    engine.notify(events)
     if filtered_event_types:
         events = await client.receive()
-        assert (set((tuple(i.event_type) for i in events)) ==
-                set(tuple(i) for i in filtered_event_types))
+        assert ({tuple(i.event_type) for i in events} ==
+                {tuple(i) for i in filtered_event_types})
 
     await client.async_close()
     await comm.async_close()
     await engine.async_close()
 
 
-@pytest.mark.asyncio
-async def test_register(comm_conf, register_events):
+async def test_without_subscribe(comm_address, comm_conf):
+    event_types = [[],
+                   ['a'],
+                   ['b'],
+                   ['a', 'a'],
+                   ['a', 'b'],
+                   ['a', 'b', 'c'],
+                   ['', '', '']]
+    events = [
+        hat.event.common.Event(
+            event_id=hat.event.common.EventId(server=0, instance=i),
+            event_type=event_type,
+            timestamp=common.now(),
+            source_timestamp=None,
+            payload=None)
+        for i, event_type in enumerate(event_types)]
 
-    def register_cb(events):
-        events = [i for i in events
-                  if i.event_type[:2] != ['event', 'communication']]
-        if not events:
-            return []
-        register_queue.put_nowait(events)
-        return [common.process_event_to_event(i) for i in events]
+    engine = ModuleEngine()
+    comm = await hat.event.server.communication.create(comm_conf, engine)
+    client = await hat.event.client.connect(comm_address)
+    await client.query(common.QueryData())
+
+    engine.notify(events)
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(client.receive(), 0.01)
+
+    await client.async_close()
+    await comm.async_close()
+    await engine.async_close()
+
+
+@pytest.mark.parametrize("client_count", [1, 2, 5])
+async def test_communication_events(comm_address, comm_conf, client_count):
 
     register_queue = aio.Queue()
-    engine = common.create_module_engine(register_cb=register_cb)
+
+    def register_cb(source, events):
+        register_queue.put_nowait((source, events))
+        return [None for event in events]
+
+    engine = ModuleEngine(register_cb=register_cb)
     comm = await hat.event.server.communication.create(comm_conf, engine)
 
-    client = await hat.event.client.connect(comm_conf['address'],
-                                            subscriptions=[['test', '*']])
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(register_queue.get(), 0.01)
+
+    source_clients = []
+    for _ in range(client_count):
+        client = await hat.event.client.connect(comm_address)
+        source, events = await register_queue.get()
+
+        assert len(events) == 1
+        assert events[0].event_type == ['event', 'communication', 'connected']
+        assert source not in [i for i, _ in source_clients]
+
+        source_clients.append((source, client))
+
+    while source_clients:
+        source_client, source_clients = source_clients[0], source_clients[1:]
+        source, client = source_client
+
+        await client.async_close()
+
+        register_source, events = await register_queue.get()
+        assert len(events) == 1
+        assert events[0].event_type == ['event', 'communication',
+                                        'disconnected']
+        assert register_source == source
+
+    await comm.async_close()
+    await engine.async_close()
+
+
+async def test_register(comm_address, comm_conf):
+    register_events = [
+        hat.event.common.RegisterEvent(
+            event_type=['test', 'a'],
+            source_timestamp=None,
+            payload=None),
+        hat.event.common.RegisterEvent(
+            event_type=['test', 'a'],
+            source_timestamp=hat.event.common.Timestamp(s=0, us=0),
+            payload=hat.event.common.EventPayload(
+                type=hat.event.common.EventPayloadType.JSON,
+                data={'a': True, 'b': [0, 1, None, 'c']})),
+        hat.event.common.RegisterEvent(
+            event_type=['test', 'b'],
+            source_timestamp=None,
+            payload=hat.event.common.EventPayload(
+                type=hat.event.common.EventPayloadType.BINARY,
+                data=b'Test')),
+        hat.event.common.RegisterEvent(
+            event_type=['test'],
+            source_timestamp=None,
+            payload=hat.event.common.EventPayload(
+                type=hat.event.common.EventPayloadType.SBS,
+                data=hat.event.common.SbsData(module=None, type='Bytes',
+                                              data=b'Test')))]
+
+    register_queue = aio.Queue()
+
+    def register_cb(source, events):
+        register_queue.put_nowait(events)
+        return [None for event in events]
+
+    engine = ModuleEngine(register_cb=register_cb)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
+    client = await hat.event.client.connect(comm_address)
+
+    events = await register_queue.get()
+    assert len(events) == 1
+    assert events[0].event_type == ['event', 'communication', 'connected']
 
     client.register(register_events)
-    process_events = await register_queue.get()
 
-    assert all(type(event) == hat.event.server.common.ProcessEvent
-               for event in process_events)
-    assert all(common.compare_register_event_vs_event(r, p)
-               for r, p in zip(register_events, process_events))
-
-    events = [common.process_event_to_event(i) for i in process_events]
-    subscription_events = await client.receive()
-    assert events == subscription_events
+    events = await register_queue.get()
+    assert events == register_events
 
     await client.async_close()
+
+    events = await register_queue.get()
+    assert len(events) == 1
+    assert events[0].event_type == ['event', 'communication', 'disconnected']
+
     await comm.async_close()
     await engine.async_close()
 
 
-@pytest.mark.asyncio
-async def test_register_with_response(comm_conf, register_events):
-
-    def register_cb(events):
-        events = [i for i in events
-                  if i.event_type[:2] != ['event', 'communication']]
-        if not events:
-            return []
-        register_queue.put_nowait(events)
-        return [common.process_event_to_event(i) for i in events]
+async def test_register_with_response(comm_address, comm_conf):
+    event_types = [[],
+                   ['a'],
+                   ['b'],
+                   ['a', 'a'],
+                   ['a', 'b'],
+                   ['a', 'b', 'c'],
+                   ['', '', '']]
+    register_events = [
+        hat.event.common.RegisterEvent(
+            event_type=event_type,
+            source_timestamp=None,
+            payload=None)
+        for event_type in event_types]
 
     register_queue = aio.Queue()
-    engine = common.create_module_engine(register_cb=register_cb)
+
+    def register_cb(source, events):
+        register_queue.put_nowait(events)
+        process_events = [engine.create_process_event(source, event)
+                          for event in events]
+        return [common.Event(event_id=i.event_id,
+                             event_type=i.event_type,
+                             timestamp=common.now(),
+                             source_timestamp=i.source_timestamp,
+                             payload=i.payload)
+                for i in process_events]
+
+    engine = ModuleEngine(register_cb=register_cb)
     comm = await hat.event.server.communication.create(comm_conf, engine)
+    client = await hat.event.client.connect(comm_address)
 
-    client = await hat.event.client.connect(comm_conf['address'],
-                                            subscriptions=[['test', '*']])
+    events = await register_queue.get()
+    assert len(events) == 1
+    assert events[0].event_type == ['event', 'communication', 'connected']
 
-    client_events = await client.register_with_response(register_events)
-    process_events = await register_queue.get()
+    events = await client.register_with_response(register_events)
 
-    assert all(type(event) == hat.event.server.common.ProcessEvent
-               for event in process_events)
-    assert all(common.compare_register_event_vs_event(r, p)
-               for r, p in zip(register_events, process_events))
+    temp_register_events = await register_queue.get()
+    assert temp_register_events == register_events
 
-    events = [common.process_event_to_event(i) for i in process_events]
-    assert events == client_events
-
-    subscription_events = await client.receive()
-    assert events == subscription_events
+    assert [i.event_type for i in events] == event_types
 
     await client.async_close()
+
+    events = await register_queue.get()
+    assert len(events) == 1
+    assert events[0].event_type == ['event', 'communication', 'disconnected']
+
     await comm.async_close()
     await engine.async_close()
 
 
-@pytest.mark.asyncio
-async def test_query(comm_conf):
+async def test_register_with_response_failure(comm_address, comm_conf):
+    event_types = [[],
+                   ['a'],
+                   ['b'],
+                   ['a', 'a'],
+                   ['a', 'b'],
+                   ['a', 'b', 'c'],
+                   ['', '', '']]
+    register_events = [
+        hat.event.common.RegisterEvent(
+            event_type=event_type,
+            source_timestamp=None,
+            payload=None)
+        for event_type in event_types]
+
+    register_queue = aio.Queue()
+
+    def register_cb(source, events):
+        register_queue.put_nowait(events)
+        return [None for _ in events]
+
+    engine = ModuleEngine(register_cb=register_cb)
+    comm = await hat.event.server.communication.create(comm_conf, engine)
+    client = await hat.event.client.connect(comm_address)
+
+    events = await register_queue.get()
+    assert len(events) == 1
+    assert events[0].event_type == ['event', 'communication', 'connected']
+
+    events = await client.register_with_response(register_events)
+
+    temp_register_events = await register_queue.get()
+    assert temp_register_events == register_events
+
+    assert events == [None] * len(register_events)
+
+    await client.async_close()
+
+    events = await register_queue.get()
+    assert len(events) == 1
+    assert events[0].event_type == ['event', 'communication', 'disconnected']
+
+    await comm.async_close()
+    await engine.async_close()
+
+
+async def test_query(comm_address, comm_conf):
+    event_types = [[],
+                   ['a'],
+                   ['b'],
+                   ['a', 'a'],
+                   ['a', 'b'],
+                   ['a', 'b', 'c'],
+                   ['', '', '']]
+    events = [
+        hat.event.common.Event(
+            event_id=hat.event.common.EventId(server=0, instance=i),
+            event_type=event_type,
+            timestamp=common.now(),
+            source_timestamp=None,
+            payload=None)
+        for i, event_type in enumerate(event_types)]
+    query_data = common.QueryData()
+
+    query_queue = aio.Queue()
 
     def query_cb(data):
         query_queue.put_nowait(data)
-        return mock_result
+        return events
 
-    mock_query = hat.event.common.QueryData()
-    mock_result = [hat.event.common.Event(
-        event_id=hat.event.common.EventId(server=0, instance=0),
-        event_type=['mock'],
-        timestamp=hat.event.common.Timestamp(s=0, us=0),
-        source_timestamp=None,
-        payload=None)]
-    query_queue = aio.Queue()
-
-    engine = common.create_module_engine(query_cb=query_cb)
+    engine = ModuleEngine(query_cb=query_cb)
     comm = await hat.event.server.communication.create(comm_conf, engine)
-    client = await hat.event.client.connect(comm_conf['address'])
+    client = await hat.event.client.connect(comm_address)
 
-    events = await client.query(mock_query)
-    query_data = await query_queue.get()
+    result = await client.query(query_data)
+    assert result == events
 
-    assert events == mock_result
-    assert query_data == mock_query
+    temp_query_data = await query_queue.get()
+    assert temp_query_data == query_data
 
     await client.async_close()
-    await comm.async_close()
-    await engine.async_close()
-
-
-@pytest.mark.asyncio
-async def test_communication_event(comm_conf):
-
-    def register_cb(events):
-        register_queue.put_nowait(events)
-        return [common.process_event_to_event(i) for i in events]
-
-    register_queue = aio.Queue()
-    engine = common.create_module_engine(register_cb=register_cb)
-    comm = await hat.event.server.communication.create(comm_conf, engine)
-    clients_count = 10
-
-    clients = []
-    for i in range(clients_count):
-        client = await hat.event.client.connect(comm_conf['address'])
-        clients.append(client)
-        events = await register_queue.get()
-        event = events[0]
-
-        assert event.event_type == ['event', 'communication', 'connected']
-        assert event.payload is None
-        assert event.source.id == i + 1
-
-    for i in reversed(range(clients_count)):
-        client = clients.pop()
-        await client.async_close()
-
-        events = await register_queue.get()
-        event = events[0]
-
-        assert event.event_type == ['event', 'communication', 'disconnected']
-        assert event.payload is None
-        assert event.source.id == i + 1
-
     await comm.async_close()
     await engine.async_close()
