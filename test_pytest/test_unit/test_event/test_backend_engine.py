@@ -1,119 +1,167 @@
+import contextlib
+import itertools
+import sys
+import types
+
 import pytest
 
-import hat.event.server
+from hat import aio
+from hat.event.server import common
+import hat.event.server.backend_engine
 
-from test_unit.test_event import common
-import test_unit.test_event.backends.memory_backend
 
-
-@pytest.fixture
-def backend_engine_conf():
-    return {'server_id': 0,
-            'backend': {
-                'module': 'test_unit.test_event.backends.memory_backend'}}
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
-def register_events():
-    event_types = [['a'],
-                   ['a'],
-                   ['b'],
-                   ['a', 'b'],
-                   ['a', 'b'],
-                   ['a', 'b', 'c'],
-                   []]
-    return [hat.event.common.RegisterEvent(event_type=et,
-                                           source_timestamp=None,
-                                           payload=None)
-            for et in event_types]
+def backend_module_name():
+    for i in itertools.count(1):
+        name = f'mock_backend_module_{i}'
+        if name not in sys.modules:
+            return name
 
 
-@pytest.mark.asyncio
 @pytest.fixture
-async def backend_engine_backend(backend_engine_conf):
-    with common.get_return_values(
-            test_unit.test_event.backends.memory_backend.create) as backend:
-        backend_engine = await hat.event.server.backend_engine.create(
-            backend_engine_conf)
-        backend = backend[0]
+def create_backend_module(backend_module_name):
 
-    yield backend_engine, backend
+    @contextlib.contextmanager
+    def create_backend_module(get_last_event_id_cb=None,
+                              register_cb=None, query_cb=None):
 
-    await backend_engine.async_close()
-    assert backend_engine.is_closed
-    await backend.wait_closed()
+        instances = []
 
+        async def create(conf):
+            backend = Backend(conf)
+            instances.append(backend)
+            return backend
 
-async def create_process_events_mock(reg_events, backend_engine):
-    ret = []
-    source = hat.event.server.common.Source(
-        type=hat.event.server.common.SourceType.COMMUNICATION,
-        name=None,
-        id=0)
+        class Backend(common.Backend):
 
-    last_event_id = await backend_engine.get_last_event_id()
-    last_instance_id = last_event_id.instance
-    for reg_event in reg_events:
-        last_instance_id += 1
-        ret.append(
-            hat.event.server.common.ProcessEvent(
-                event_id=hat.event.common.EventId(
-                    server=last_event_id.server,
-                    instance=last_instance_id),
-                source=source,
-                event_type=reg_event.event_type,
-                source_timestamp=reg_event.source_timestamp,
-                payload=reg_event.payload))
-    return ret
+            def __init__(self, conf):
+                self._conf = conf
+                self._async_group = aio.Group()
 
+            @property
+            def conf(self):
+                return self._conf
 
-@pytest.mark.asyncio
-async def test_create_backend(backend_engine_backend, backend_engine_conf):
-    backend_engine, backend = backend_engine_backend
+            @property
+            def async_group(self):
+                return self._async_group
 
-    assert not backend_engine.is_closed
-    assert not backend.is_closed
+            async def get_last_event_id(self, server_id):
+                if not get_last_event_id_cb:
+                    return 0
+                return get_last_event_id_cb(server_id)
 
-    last_event_id = await backend_engine.get_last_event_id()
-    assert last_event_id.server == backend_engine_conf['server_id']
+            async def register(self, events):
+                if not register_cb:
+                    return events
+                return register_cb(events)
 
+            async def query(self, data):
+                if not query_cb:
+                    return []
+                return query_cb(data)
 
-@pytest.mark.asyncio
-async def test_register(backend_engine_backend, register_events):
-    backend_engine, backend = backend_engine_backend
+        module = types.ModuleType(backend_module_name)
+        module.json_schema_id = None
+        module.json_schema_repo = None
+        module.create = create
+        sys.modules[backend_module_name] = module
+        try:
+            yield instances
+        finally:
+            del sys.modules[backend_module_name]
 
-    process_events = await create_process_events_mock(
-        register_events, backend_engine)
-    events = await backend_engine.register(process_events)
-
-    assert all(common.compare_proces_event_vs_event(e1, e2)
-               for e1, e2 in zip(events, process_events))
-    assert all(events[0].timestamp == e.timestamp for e in events)
-
-    backend_events = backend._events
-    assert all(isinstance(e, hat.event.common.Event)
-               for e in backend_events)
-    for be, e in zip(backend_events, events):
-        assert be == e
-    # lately registered events have greater timestamp
-    events_previous = events
-    for _ in range(3):
-        process_events = await create_process_events_mock(
-            register_events, backend_engine)
-        events = await backend_engine.register(process_events)
-        assert events[0].timestamp >= events_previous[0].timestamp
-        events_previous = events
+    return create_backend_module
 
 
-@pytest.mark.asyncio
-async def test_query(backend_engine_backend, register_events):
-    backend_engine, backend = backend_engine_backend
-    process_events = await create_process_events_mock(
-        register_events, backend_engine)
-    await backend_engine.register(process_events)
+async def test_create(backend_module_name, create_backend_module):
+    conf = {'server_id': 123,
+            'backend': {'module': backend_module_name,
+                        'data': 321}}
 
-    query_data = hat.event.common.QueryData()
-    await backend_engine.query(query_data)
-    backend_query_data = await backend._query_data_queue.get()
+    with pytest.raises(Exception):
+        await hat.event.server.backend_engine(conf)
 
-    assert query_data is backend_query_data
+    with create_backend_module() as backends:
+        assert len(backends) == 0
+
+        engine = await hat.event.server.backend_engine.create(conf)
+
+        assert engine.is_open
+        assert len(backends) == 1
+        assert backends[0].conf == conf['backend']
+        assert backends[0].is_open
+
+        await engine.async_close()
+        assert backends[0].is_closed
+
+
+async def test_get_last_event_id(backend_module_name, create_backend_module):
+    conf = {'server_id': 123,
+            'backend': {'module': backend_module_name}}
+    event_id = common.EventId(conf['server_id'], 321)
+
+    def get_last(server_id):
+        assert server_id == conf['server_id']
+        return event_id
+
+    with create_backend_module(get_last_event_id_cb=get_last):
+        engine = await hat.event.server.backend_engine.create(conf)
+
+        result = await engine.get_last_event_id()
+        assert result == event_id
+
+        await engine.async_close()
+
+
+async def test_register(backend_module_name, create_backend_module):
+    conf = {'server_id': 123,
+            'backend': {'module': backend_module_name}}
+    event_ids = [common.EventId(conf['server_id'], i) for i in range(10)]
+    process_events = [
+        common.ProcessEvent(event_id=event_id,
+                            source=common.Source(common.SourceType.MODULE,
+                                                 'abc', 1),
+                            event_type=[],
+                            source_timestamp=common.now(),
+                            payload=None)
+        for event_id in event_ids]
+
+    def register(events):
+        return events
+
+    with create_backend_module(register_cb=register):
+        engine = await hat.event.server.backend_engine.create(conf)
+
+        events = await engine.register(process_events)
+        assert [i.event_id for i in events] == event_ids
+
+        await engine.async_close()
+
+
+async def test_query(backend_module_name, create_backend_module):
+    conf = {'server_id': 123,
+            'backend': {'module': backend_module_name}}
+    event_ids = [common.EventId(conf['server_id'], i) for i in range(10)]
+    events = [common.Event(event_id=event_id,
+                           event_type=[],
+                           timestamp=common.now(),
+                           source_timestamp=None,
+                           payload=None)
+              for event_id in event_ids]
+    query_data = common.QueryData()
+
+    def query(data):
+        assert query_data == data
+        return events
+
+    with create_backend_module(query_cb=query):
+        engine = await hat.event.server.backend_engine.create(conf)
+
+        result = await engine.query(query_data)
+        assert result == events
+
+        await engine.async_close()

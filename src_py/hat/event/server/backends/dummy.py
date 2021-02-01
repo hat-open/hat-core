@@ -45,13 +45,15 @@ class DummyBackend(common.Backend):
 
     async def get_last_event_id(self, server_id):
         """See :meth:`common.Backend.get_last_event_id`"""
-        return await self._async_group.spawn(
-            aio.call, lambda: common.EventId(server_id, 0))
+        result = common.EventId(server_id, 0)
+        return await self._async_group.spawn(aio.call, lambda: result)
 
     async def register(self, events):
         """See :meth:`common.Backend.register`"""
-        return await self._async_group.spawn(aio.call, lambda: None)
+        result = events
+        return await self._async_group.spawn(aio.call, lambda: result)
 
     async def query(self, data):
         """See :meth:`common.Backend.query`"""
-        return await self._async_group.spawn(aio.call, lambda: [])
+        result = []
+        return await self._async_group.spawn(aio.call, lambda: result)

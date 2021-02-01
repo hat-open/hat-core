@@ -140,6 +140,7 @@ class SqliteBackend(common.Backend, common.EventTypeRegistryStorage):
         async with self._conn.transaction():
             await self._conn.execute_many(sql, params)
         _update_last_instance_ids(self._last_instance_ids, events)
+        return events
 
     async def query(self, data):
         """See :meth:`common.Backend.query`"""

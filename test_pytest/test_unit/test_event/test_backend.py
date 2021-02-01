@@ -132,7 +132,7 @@ def backend_events_factory():
 async def test_register(backend, backend_events_factory):
     backend_events = backend_events_factory(server_id=1)
     register_res = await backend.register(backend_events)
-    assert register_res is None
+    assert register_res == backend_events
 
 
 @pytest.mark.asyncio

@@ -74,14 +74,10 @@ class Backend(aio.Resource):
         """Get last registered event id associated with server id"""
 
     @abc.abstractmethod
-    async def register(self, events: typing.List[Event]):
-        """Register events
-
-        .. todo::
-
-            do we need list of success flags as result?
-
-        """
+    async def register(self,
+                       events: typing.List[Event]
+                       ) -> typing.List[typing.Optional[Event]]:
+        """Register events"""
 
     @abc.abstractmethod
     async def query(self,
