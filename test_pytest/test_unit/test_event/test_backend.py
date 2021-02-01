@@ -71,8 +71,8 @@ async def backend_memory_backend(conf_factory, event_loop,
     conf = conf_factory()
     backend = await importlib.import_module(conf['module']).create(conf)
     memory_backend = await importlib.import_module(
-        'test_unit.test_event.backends.memory_backend').create(
-        {'module': 'test_unit.test_event.backends.memory_backend'})
+        'hat.event.server.backends.memory').create(
+        {'module': 'hat.event.server.backends.memory'})
 
     backend_events = []
     ts = ts_gen(hat.event.common.now())
@@ -188,6 +188,7 @@ async def test_get_last_event_id(backend, backend_events_factory):
         e.event_id.instance for e in registered_events2)
 
 
+@pytest.mark.skip('WIP')
 @pytest.mark.parametrize("event_ids, event_types, payload", [
     (None, None, None),
     ([hat.event.common.EventId(server=1, instance=0)], None, None),

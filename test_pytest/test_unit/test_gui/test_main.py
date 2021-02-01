@@ -25,7 +25,7 @@ async def event_server(event_server_port):
         'backend_engine': {
             'server_id': 1,
             'backend': {
-                'module': 'test_unit.test_event.backends.memory_backend'}},
+                'module': 'hat.event.server.backends.memory'}},
         'module_engine': {'modules': []},
         'communication': {
             'address': f'tcp+sbs://127.0.0.1:{event_server_port}'}}
