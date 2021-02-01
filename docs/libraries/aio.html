@@ -1,0 +1,609 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="search" title="Search" href="../search.html" /><link rel="next" title="hat.json - Python JSON data library" href="json.html" /><link rel="prev" title="@hat-core/util - JavaScript utility library" href="util/javascript.html" />
+
+    <meta name="generator" content="sphinx-3.4.1, furo 2020.12.30.beta24"/>
+        <title>hat.aio - Python asyncio utility library - Hat Core documentation</title>
+      <link rel="stylesheet" href="../_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
+    <link rel="stylesheet" href="../_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="../_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" href="../_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script defer="defer" src="../_static/jquery.js"></script>
+    <script defer="defer" src="../_static/underscore.js"></script>
+    <script defer="defer" src="../_static/doctools.js"></script>
+    <script defer src="../_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Hat Core  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hat Core  documentation</span>
+  
+</a><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Libraries</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label for="toctree-checkbox-1"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="util/index.html">Utility functions</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label for="toctree-checkbox-2"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="util/python.html"><cite>hat.util</cite> - Python utility library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="util/javascript.html"><cite>@hat-core/util</cite> - JavaScript utility library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#"><cite>hat.aio</cite> - Python asyncio utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="json.html"><cite>hat.json</cite> - Python JSON data library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qt.html"><cite>hat.qt</cite> - Python Qt utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="peg.html"><cite>hat.peg</cite> - Python parsing expression grammar library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stc/index.html"><cite>hat.stc</cite> - Python statechart library</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="sbs/index.html">Simple binary serialization</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label for="toctree-checkbox-3"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="sbs/python.html"><cite>hat.sbs</cite> - Python simple binary serialization library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sbs/c.html"><cite>hat/sbs</cite> - C simple binary serialization library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="chatter/index.html">Chatter communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label for="toctree-checkbox-4"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="chatter/python.html"><cite>hat.chatter</cite> - Python chatter library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="juggler/index.html">Juggler communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label for="toctree-checkbox-5"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="juggler/python.html"><cite>hat.juggler</cite> - Python juggler library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="duktape.html"><cite>hat.duktape</cite> - Python Duktape wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asn1.html"><cite>hat.asn1</cite> - Python Abstract Syntax Notation One library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drivers/index.html">Communication drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../components/index.html">Components</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label for="toctree-checkbox-6"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../components/syslog.html">Syslog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../components/orchestrator.html">Orchestrator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../components/monitor.html">Monitor Server</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../components/event/index.html">Event Server</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label for="toctree-checkbox-7"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../components/event/modules/dummy.html">Dummy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/event/backends/dummy.html">Dummy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/event/backends/sqlite.html">Sqlite backend</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../components/gateway/index.html">Gateway</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label for="toctree-checkbox-8"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../components/gateway/devices/dummy.html">Dummy device</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../components/gui/index.html">GUI Server</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label for="toctree-checkbox-9"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../components/gui/adapters/dummy.html">Dummy adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/gui/views/dummy.html">Dummy view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../appendix/index.html">Appendix</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label for="toctree-checkbox-10"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/api.html">Generated API documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/ports.html">Default TCP ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/events.html">Event definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/sbs.html">SBS Schema definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../appendix/json.html">JSON Schema definitions</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="hat-aio-python-asyncio-utility-library">
+<span id="hat-aio"></span><h1><cite>hat.aio</cite> - Python asyncio utility library<a class="headerlink" href="#hat-aio-python-asyncio-utility-library" title="Permalink to this headline">¶</a></h1>
+<p>Additional functions/coroutines that enhance Python <cite>asyncio</cite> library. For more
+information on <cite>asyncio</cite> see
+<a class="reference external" href="https://docs.python.org/3/library/asyncio.html">Python standard library documentation</a>.</p>
+<div class="section" id="hat-aio-first">
+<span id="hat-aio-fist"></span><h2><cite>hat.aio.first</cite><a class="headerlink" href="#hat-aio-first" title="Permalink to this headline">¶</a></h2>
+<p>Same as <a class="reference internal" href="util/python.html#hat-util-first"><span class="std std-ref">hat.util.first</span></a> where <cite>Iterable</cite> is replaced
+with <cite>AsyncIterable</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="n">xs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">AsyncIterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+                <span class="n">fn</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="n">default</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>This coroutine can be used on any kind of async iterable including
+<a class="reference internal" href="#hat-aio-queue"><span class="std std-ref">hat.aio.Queue</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="mi">1</span> <span class="o">==</span> <span class="k">await</span> <span class="n">first</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+<span class="k">assert</span> <span class="mi">3</span> <span class="o">==</span> <span class="k">await</span> <span class="n">first</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="mi">123</span> <span class="o">==</span> <span class="k">await</span> <span class="n">first</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-uncancellable">
+<span id="id1"></span><h2><cite>hat.aio.uncancellable</cite><a class="headerlink" href="#hat-aio-uncancellable" title="Permalink to this headline">¶</a></h2>
+<p>This coroutine provides enhancement of <cite>asyncio.shield</cite> mechanism.
+<cite>asyncio.shield</cite> provides canceling protection for shielded future but
+interrupts execution of task which awaited for shielded future. By using
+<cite>uncancellable</cite>, future can be shielded from cancellation with addition
+of suspending cancellation of task awaiting shielded future. This cancellation
+is suspended until shielded future is done (if <cite>raise_cancel</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code>) or
+is completely ignored (if <cite>raise_cancel</cite> is <code class="docutils literal notranslate"><span class="pre">False</span></code>). Calling
+<cite>uncancellable</cite> with <cite>raise_cancel</cite> set to <code class="docutils literal notranslate"><span class="pre">False</span></code> should be used with extra
+caution because it disrupts usual <cite>asyncio.CancelledError</cite> propagation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">uncancellable</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">,</span>
+                        <span class="n">raise_cancel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Most significant usage of this coroutine is in scenarios where cancellation
+of task should be temporary suspended until internally acquired resources are
+released:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">create_resource</span><span class="p">():</span> <span class="o">...</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume_resource</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">free_resource</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="n">resource</span> <span class="o">=</span> <span class="k">await</span> <span class="n">create_resource</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">consume_resource</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">uncancellable</span><span class="p">(</span><span class="n">free_resource</span><span class="p">(</span><span class="n">resource</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-call-hat-aio-call-on-cancel-and-hat-aio-call-on-done">
+<span id="hat-aio-call-on-done"></span><span id="hat-aio-call-on-cancel"></span><span id="hat-aio-call"></span><h2><cite>hat.aio.call</cite>, <cite>hat.aio.call_on_cancel</cite> and <cite>hat.aio.call_on_done</cite><a class="headerlink" href="#hat-aio-call-hat-aio-call-on-cancel-and-hat-aio-call-on-done" title="Permalink to this headline">¶</a></h2>
+<p><cite>call</cite>, <cite>call_on_cancel</cite> and <cite>call_on_done</cite> provide the same mechanism for
+function and coroutine calling:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">AsyncCallable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">call_on_cancel</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">AsyncCallable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">call_on_done</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">,</span>
+                       <span class="n">fn</span><span class="p">:</span> <span class="n">AsyncCallable</span><span class="p">,</span>
+                       <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                       <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>When regular functions are called by <cite>call</cite> coroutine, result of function call
+is immediately available as result of <cite>call</cite> coroutine. If function call results
+in awaitable object (e.g. when coroutine is called in place of regular
+function), resulting awaitable is awaited and its result is returned as result
+of <cite>call</cite> coroutine:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">123</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">123</span>
+</pre></div>
+</div>
+<p><cite>call_on_cancel</cite> coroutine waits until its execution is cancelled (until
+asyncio.CancelledError is raised) and then executes provided callable with
+<cite>call</cite> coroutine. This behavior is most useful in combination with
+<a class="reference internal" href="#hat-aio-group"><span class="std std-ref">hat.aio.Goup</span></a>’s <cite>spawn</cite> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">()</span>
+<span class="n">group</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">call_on_cancel</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">set_result</span><span class="p">,</span> <span class="mi">123</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">group</span><span class="o">.</span><span class="n">async_close</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="o">==</span> <span class="mi">123</span>
+</pre></div>
+</div>
+<p><cite>call_on_done</cite> coroutine accepts additional future which is awaited prior to
+application of <cite>call</cite> coroutine. Same as <cite>call_on_cancel</cite>, it is usually
+used with <a class="reference internal" href="#hat-aio-group"><span class="std std-ref">hat.aio.Goup</span></a>’s <cite>spawn</cite> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">()</span>
+<span class="n">group</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">call_on_done</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">group</span><span class="o">.</span><span class="n">wait_closed</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-create-executor">
+<span id="id2"></span><h2><cite>hat.aio.create_executor</cite><a class="headerlink" href="#hat-aio-create-executor" title="Permalink to this headline">¶</a></h2>
+<p>This helper coroutine provides simple wrapper for creation of executor
+instances and invocation of <cite>asyncio.loop.run_in_executor</cite> coroutine:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_executor</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
+                    <span class="n">executor_cls</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">,</span>  <span class="c1"># NOQA</span>
+                    <span class="n">loop</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">]:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">executor1</span> <span class="o">=</span> <span class="n">create_executor</span><span class="p">()</span>
+<span class="n">executor2</span> <span class="o">=</span> <span class="n">create_executor</span><span class="p">()</span>
+<span class="n">tid1</span> <span class="o">=</span> <span class="k">await</span> <span class="n">executor1</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">get_ident</span><span class="p">)</span>
+<span class="n">tid2</span> <span class="o">=</span> <span class="k">await</span> <span class="n">executor2</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">get_ident</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">tid1</span> <span class="o">!=</span> <span class="n">tid2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-init-asyncio-and-hat-aio-run-asyncio">
+<span id="hat-aio-run-asyncio"></span><span id="hat-aio-init-asyncio"></span><h2><cite>hat.aio.init_asyncio</cite> and <cite>hat.aio.run_asyncio</cite><a class="headerlink" href="#hat-aio-init-asyncio-and-hat-aio-run-asyncio" title="Permalink to this headline">¶</a></h2>
+<p>Utility coroutines for initialization of asyncio loop and task execution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_asyncio</span><span class="p">(</span><span class="n">policy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoopPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">run_asyncio</span><span class="p">(</span><span class="n">future</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                <span class="n">handle_signals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">create_loop</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">init_asyncio</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">run_asyncio</span><span class="p">(</span><span class="n">async_main</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">123</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">async_main</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">123</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-queue">
+<span id="id3"></span><h2><cite>hat.aio.Queue</cite><a class="headerlink" href="#hat-aio-queue" title="Permalink to this headline">¶</a></h2>
+<p><cite>hat.aio.Queue</cite> provides drop-in replacement for
+<a class="reference external" href="https://docs.python.org/3/library/asyncio-queue.html">asyncio.Queue</a> with
+addition of <cite>close</cite> method. Once queue is closed, all future calls to <cite>put</cite>
+methods will result in raising of <cite>QueueClosedError</cite>. Once queue is closed and
+empty, all future calls to <cite>get</cite> methods will also result in raising of
+<cite>QueueClosedError</cite>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">QueueClosedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">QueueEmptyError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">QueueFullError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span> <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">Queue</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__aiter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__anext__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">maxsize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">full</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">qsize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">get_nowait</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">put_nowait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_until_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">producer</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="k">await</span> <span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">queue</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consumer</span><span class="p">():</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">queue</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">producer</span><span class="p">())</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">consumer</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">6</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-group">
+<span id="id4"></span><h2><cite>hat.aio.Group</cite><a class="headerlink" href="#hat-aio-group" title="Permalink to this headline">¶</a></h2>
+<p><cite>Group</cite> provides mechanics for <cite>safe</cite> task execution and life-time control:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ExceptionCb</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="ne">Exception</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">Group</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">exception_cb</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ExceptionCb</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="o">*</span><span class="p">,</span>
+                 <span class="n">loop</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_closing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_closing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">create_subgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'Group'</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">future</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span>
+             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">fn</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">],</span>
+              <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+              <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cancel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">async_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cancel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>In most basic use-case, <cite>Group</cite>’s <cite>spawn</cite> method can be used as <cite>safer</cite>
+wrapper for <cite>asyncio.ensure_future</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">Group</span><span class="p">()</span> <span class="k">as</span> <span class="n">group</span><span class="p">:</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="s1">'f1'</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">'f2'</span> <span class="o">==</span> <span class="k">await</span> <span class="n">group</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="s1">'f2'</span><span class="p">)</span>
+<span class="k">assert</span> <span class="s1">'f1'</span> <span class="o">==</span> <span class="k">await</span> <span class="n">f</span>
+</pre></div>
+</div>
+<p><cite>Group</cite>’s <cite>create_subgroup</cite> method provides possibility of group hierarchies
+for easier control of complex task execution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">aio</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
+<span class="n">subgroup1</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_subgroup</span><span class="p">()</span>
+<span class="n">subgroup2</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_subgroup</span><span class="p">()</span>
+
+<span class="n">f1</span> <span class="o">=</span> <span class="n">subgroup1</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="n">subgroup2</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">f1</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">f2</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+<span class="k">await</span> <span class="n">group</span><span class="o">.</span><span class="n">async_close</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="n">f1</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">f2</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hat-aio-resource">
+<span id="id5"></span><h2><cite>hat.aio.Resource</cite><a class="headerlink" href="#hat-aio-resource" title="Permalink to this headline">¶</a></h2>
+<p>Simple abstract base class providing abstraction of lifetime control based on
+<a class="reference internal" href="#hat-aio-group"><span class="std std-ref">hat.aio.Group</span></a>. Lifetime states of resource (<cite>is_open</cite>,
+<cite>is_closing</cite> and <cite>is_closed</cite>) are matching to associated group states:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Resource</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">async_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Group</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_closing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_closing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">async_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>API reference is available as part of generated documentation:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="../pyhat/hat/aio.html">Python hat.aio module</a></p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="json.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title"><cite>hat.json</cite> - Python JSON data library</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="util/javascript.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><cite>&#64;hat-core/util</cite> - JavaScript utility library</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2020 - 2021, Hat Open AUTHORS
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#"><cite>hat.aio</cite> - Python asyncio utility library</a><ul>
+<li><a class="reference internal" href="#hat-aio-first"><cite>hat.aio.first</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-uncancellable"><cite>hat.aio.uncancellable</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-call-hat-aio-call-on-cancel-and-hat-aio-call-on-done"><cite>hat.aio.call</cite>, <cite>hat.aio.call_on_cancel</cite> and <cite>hat.aio.call_on_done</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-create-executor"><cite>hat.aio.create_executor</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-init-asyncio-and-hat-aio-run-asyncio"><cite>hat.aio.init_asyncio</cite> and <cite>hat.aio.run_asyncio</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-queue"><cite>hat.aio.Queue</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-group"><cite>hat.aio.Group</cite></a></li>
+<li><a class="reference internal" href="#hat-aio-resource"><cite>hat.aio.Resource</cite></a></li>
+<li><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>

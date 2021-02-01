@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.hue API documentation</title>
+<meta name="description" content="Philips Hue bridge communication driver" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.hue</code></h1>
+</header>
+<section id="section-intro">
+<p>Philips Hue bridge communication driver</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Philips Hue bridge communication driver&#34;&#34;&#34;
+
+from hat.drivers.hue.common import (LightAlert,
+                                    LightEffect,
+                                    DeviceType,
+                                    DeviceId,
+                                    LightState,
+                                    SensorState,
+                                    Device)
+from hat.drivers.hue.client import (create_user,
+                                    Client,
+                                    ClientTransport)
+
+
+__all__ = [&#39;LightAlert&#39;,
+           &#39;LightEffect&#39;,
+           &#39;DeviceType&#39;,
+           &#39;DeviceId&#39;,
+           &#39;LightState&#39;,
+           &#39;SensorState&#39;,
+           &#39;Device&#39;,
+           &#39;create_user&#39;,
+           &#39;Client&#39;,
+           &#39;ClientTransport&#39;]</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="hat.drivers.hue.client" href="client.html">hat.drivers.hue.client</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="hat.drivers.hue.common" href="common.html">hat.drivers.hue.common</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="hat.drivers.hue.encoder" href="encoder.html">hat.drivers.hue.encoder</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.hue.create_user"><code class="name flex">
+<span>async def <span class="ident">create_user</span></span>(<span>addr: str, app_name: str = 'hat', dev_name: str = 'fv-az16-908') ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new user</p>
+<p>Register new user with bridge and return newly created username.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create_user(addr: str,
+                      app_name: str = &#39;hat&#39;,
+                      dev_name: str = socket.gethostname()
+                      ) -&gt; str:
+    &#34;&#34;&#34;Create new user
+
+    Register new user with bridge and return newly created username.
+
+    &#34;&#34;&#34;
+    url = f&#39;{addr}/api&#39;
+    req_data = {&#39;devicetype&#39;: f&#39;{app_name}#{dev_name}&#39;}
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=req_data) as res:
+            res_data = await res.json()
+    _parse_action_response(res_data)
+    return res_data[0][&#39;success&#39;][&#39;username&#39;]</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.hue.Client"><code class="flex name class">
+<span>class <span class="ident">Client</span></span>
+<span>(</span><span>addr: str, user: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>High-level hue bridge client</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Client:
+    &#34;&#34;&#34;High-level hue bridge client&#34;&#34;&#34;
+
+    def __init__(self, addr: str, user: str):
+        self._transport = ClientTransport(addr, user)
+
+    @property
+    def transport(self) -&gt; &#39;ClientTransport&#39;:
+        &#34;&#34;&#34;Low-level transport&#34;&#34;&#34;
+        return self._transport
+
+    @property
+    def closed(self) -&gt; asyncio.Future:
+        &#34;&#34;&#34;Closed future&#34;&#34;&#34;
+        return self._transport.closed
+
+    async def async_close(self):
+        &#34;&#34;&#34;Async close&#34;&#34;&#34;
+        await self._transport.async_close()
+
+    async def touchlink(self):
+        &#34;&#34;&#34;Adds the closest light to the ZigBee network&#34;&#34;&#34;
+        await self._transport.set_conf(None, None, {&#39;touchlink&#39;: True})
+
+    async def search(self):
+        &#34;&#34;&#34;Search for new devices&#34;&#34;&#34;
+        await self._transport.search(common.DeviceType.LIGHT)
+        await self._transport.search(common.DeviceType.SENSOR)
+
+    async def rename(self,
+                     device_id: common.DeviceId,
+                     name: str):
+        &#34;&#34;&#34;Rename device&#34;&#34;&#34;
+        await self._transport.rename(device_id, device_id, name)
+
+    async def get_devices(self) -&gt; typing.List[common.Device]:
+        &#34;&#34;&#34;Get all devices&#34;&#34;&#34;
+        data = await self._transport.get(None)
+        devices = []
+        for device_type in common.DeviceType:
+            devices.extend(
+                encoder.device_from_json(
+                    common.DeviceId(type=device_type, label=k), v)
+                for k, v in data[device_type.value].items())
+        return devices
+
+    async def get_device(self, device_id: common.DeviceId) -&gt; common.Device:
+        &#34;&#34;&#34;Get device&#34;&#34;&#34;
+        data = await self._transport.get(device_id)
+        return encoder.device_from_json(device_id, data)
+
+    async def set_state(self,
+                        device_id: common.DeviceId,
+                        state: common.DeviceState):
+        &#34;&#34;&#34;Set device state&#34;&#34;&#34;
+        data = encoder.state_to_json(state)
+        await self._transport.set_state(device_id, data)</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.Client.closed"><code class="name">var <span class="ident">closed</span> : _asyncio.Future</code></dt>
+<dd>
+<div class="desc"><p>Closed future</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def closed(self) -&gt; asyncio.Future:
+    &#34;&#34;&#34;Closed future&#34;&#34;&#34;
+    return self._transport.closed</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.transport"><code class="name">var <span class="ident">transport</span> : <a title="hat.drivers.hue.client.ClientTransport" href="client.html#hat.drivers.hue.client.ClientTransport">ClientTransport</a></code></dt>
+<dd>
+<div class="desc"><p>Low-level transport</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def transport(self) -&gt; &#39;ClientTransport&#39;:
+    &#34;&#34;&#34;Low-level transport&#34;&#34;&#34;
+    return self._transport</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.hue.Client.async_close"><code class="name flex">
+<span>async def <span class="ident">async_close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Async close</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def async_close(self):
+    &#34;&#34;&#34;Async close&#34;&#34;&#34;
+    await self._transport.async_close()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.get_device"><code class="name flex">
+<span>async def <span class="ident">get_device</span></span>(<span>self, device_id: <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>) ‑> <a title="hat.drivers.hue.common.Device" href="common.html#hat.drivers.hue.common.Device">Device</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get device</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_device(self, device_id: common.DeviceId) -&gt; common.Device:
+    &#34;&#34;&#34;Get device&#34;&#34;&#34;
+    data = await self._transport.get(device_id)
+    return encoder.device_from_json(device_id, data)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.get_devices"><code class="name flex">
+<span>async def <span class="ident">get_devices</span></span>(<span>self) ‑> typing.List[<a title="hat.drivers.hue.common.Device" href="common.html#hat.drivers.hue.common.Device">Device</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get all devices</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_devices(self) -&gt; typing.List[common.Device]:
+    &#34;&#34;&#34;Get all devices&#34;&#34;&#34;
+    data = await self._transport.get(None)
+    devices = []
+    for device_type in common.DeviceType:
+        devices.extend(
+            encoder.device_from_json(
+                common.DeviceId(type=device_type, label=k), v)
+            for k, v in data[device_type.value].items())
+    return devices</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.rename"><code class="name flex">
+<span>async def <span class="ident">rename</span></span>(<span>self, device_id: <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rename device</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def rename(self,
+                 device_id: common.DeviceId,
+                 name: str):
+    &#34;&#34;&#34;Rename device&#34;&#34;&#34;
+    await self._transport.rename(device_id, device_id, name)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.search"><code class="name flex">
+<span>async def <span class="ident">search</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Search for new devices</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def search(self):
+    &#34;&#34;&#34;Search for new devices&#34;&#34;&#34;
+    await self._transport.search(common.DeviceType.LIGHT)
+    await self._transport.search(common.DeviceType.SENSOR)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.set_state"><code class="name flex">
+<span>async def <span class="ident">set_state</span></span>(<span>self, device_id: <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, state: typing.Union[<a title="hat.drivers.hue.common.LightState" href="common.html#hat.drivers.hue.common.LightState">LightState</a>, <a title="hat.drivers.hue.common.SensorState" href="common.html#hat.drivers.hue.common.SensorState">SensorState</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set device state</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def set_state(self,
+                    device_id: common.DeviceId,
+                    state: common.DeviceState):
+    &#34;&#34;&#34;Set device state&#34;&#34;&#34;
+    data = encoder.state_to_json(state)
+    await self._transport.set_state(device_id, data)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.Client.touchlink"><code class="name flex">
+<span>async def <span class="ident">touchlink</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adds the closest light to the ZigBee network</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def touchlink(self):
+    &#34;&#34;&#34;Adds the closest light to the ZigBee network&#34;&#34;&#34;
+    await self._transport.set_conf(None, None, {&#39;touchlink&#39;: True})</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport"><code class="flex name class">
+<span>class <span class="ident">ClientTransport</span></span>
+<span>(</span><span>addr: str, user: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Low-level bridge client communication</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClientTransport:
+    &#34;&#34;&#34;Low-level bridge client communication&#34;&#34;&#34;
+
+    def __init__(self, addr: str, user: str):
+        self._addr = addr
+        self._user = user
+        self._session = aiohttp.ClientSession()
+        self._async_group = aio.Group()
+        self._async_group.spawn(aio.call_on_cancel, self._session.close)
+
+    @property
+    def closed(self) -&gt; asyncio.Future:
+        &#34;&#34;&#34;Closed future&#34;&#34;&#34;
+        return self._async_group.closed
+
+    async def async_close(self):
+        &#34;&#34;&#34;Async close&#34;&#34;&#34;
+        await self._async_group.async_close()
+
+    async def get(self,
+                  device_id: typing.Optional[common.DeviceId]
+                  ) -&gt; json.Data:
+        &#34;&#34;&#34;Get data
+
+        If `device_id` is ``None``, global data is returned.
+
+        &#34;&#34;&#34;
+        path = f&#39;{device_id.type.value}/{device_id.label}&#39; if device_id else &#39;&#39;
+        return await self._get(path)
+
+    async def search(self, device_type: common.DeviceType):
+        &#34;&#34;&#34;Search for new devices&#34;&#34;&#34;
+        await self._post(device_type.value)
+
+    async def rename(self,
+                     device_id: common.DeviceId,
+                     name: str):
+        &#34;&#34;&#34;Rename device&#34;&#34;&#34;
+        path = f&#39;{device_id.type.value}/{device_id.label}&#39;
+        await self._post(path, {&#39;name&#39;: name})
+
+    async def set_conf(self,
+                       device_id: typing.Optional[common.DeviceId],
+                       data: json.Data):
+        &#34;&#34;&#34;Set configuration
+
+        If `device_id` is ``None``, global configuration is modified.
+
+        Light devices are not supported.
+
+        &#34;&#34;&#34;
+        if device_id and device_id.type == common.DeviceType.LIGHT:
+            raise ValueError(&#39;light devices not supported&#39;)
+        path = (f&#39;{device_id.type}/{device_id}/config&#39; if device_id
+                else &#39;config&#39;)
+        await self._put(path, data)
+
+    async def set_state(self,
+                        device_id: common.DeviceId,
+                        data: json.Data):
+        &#34;&#34;&#34;Set device state&#34;&#34;&#34;
+        path = f&#39;{device_id.type.value}/{device_id.label}/state&#39;
+        await self._put(path, data)
+
+    async def delete_user(self, user: str):
+        &#34;&#34;&#34;Delete existing user&#34;&#34;&#34;
+        await self._delete(f&#39;config/whitelist/{user}&#39;)
+
+    async def _get(self, path):
+        url = f&#39;{self._addr}/api/{self._user}/{path}&#39;
+        async with self._session.get(url) as res:
+            return await res.json()
+
+    async def _post(self, path, data=None):
+        url = f&#39;{self._addr}/api/{self._user}/{path}&#39;
+        async with self._session.post(url, json=data) as res:
+            _parse_action_response(await res.json())
+
+    async def _put(self, path, data=None):
+        url = f&#39;{self._addr}/api/{self._user}/{path}&#39;
+        async with self._session.put(url, json=data) as res:
+            _parse_action_response(await res.json())
+
+    async def _delete(self, path):
+        url = f&#39;{self._addr}/api/{self._user}/{path}&#39;
+        async with self._session.delete(url) as res:
+            _parse_action_response(await res.json())</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.ClientTransport.closed"><code class="name">var <span class="ident">closed</span> : _asyncio.Future</code></dt>
+<dd>
+<div class="desc"><p>Closed future</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def closed(self) -&gt; asyncio.Future:
+    &#34;&#34;&#34;Closed future&#34;&#34;&#34;
+    return self._async_group.closed</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.hue.ClientTransport.async_close"><code class="name flex">
+<span>async def <span class="ident">async_close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Async close</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def async_close(self):
+    &#34;&#34;&#34;Async close&#34;&#34;&#34;
+    await self._async_group.async_close()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport.delete_user"><code class="name flex">
+<span>async def <span class="ident">delete_user</span></span>(<span>self, user: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete existing user</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def delete_user(self, user: str):
+    &#34;&#34;&#34;Delete existing user&#34;&#34;&#34;
+    await self._delete(f&#39;config/whitelist/{user}&#39;)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport.get"><code class="name flex">
+<span>async def <span class="ident">get</span></span>(<span>self, device_id: typing.Union[<a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, NoneType]) ‑> typing.Union[NoneType, bool, int, float, str, typing.List[<a title="hat.chatter.Data" href="../../chatter/index.html#hat.chatter.Data">Data</a>], typing.Dict[str, <a title="hat.chatter.Data" href="../../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get data</p>
+<p>If <code>device_id</code> is <code>None</code>, global data is returned.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get(self,
+              device_id: typing.Optional[common.DeviceId]
+              ) -&gt; json.Data:
+    &#34;&#34;&#34;Get data
+
+    If `device_id` is ``None``, global data is returned.
+
+    &#34;&#34;&#34;
+    path = f&#39;{device_id.type.value}/{device_id.label}&#39; if device_id else &#39;&#39;
+    return await self._get(path)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport.rename"><code class="name flex">
+<span>async def <span class="ident">rename</span></span>(<span>self, device_id: <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rename device</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def rename(self,
+                 device_id: common.DeviceId,
+                 name: str):
+    &#34;&#34;&#34;Rename device&#34;&#34;&#34;
+    path = f&#39;{device_id.type.value}/{device_id.label}&#39;
+    await self._post(path, {&#39;name&#39;: name})</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport.search"><code class="name flex">
+<span>async def <span class="ident">search</span></span>(<span>self, device_type: <a title="hat.drivers.hue.common.DeviceType" href="common.html#hat.drivers.hue.common.DeviceType">DeviceType</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Search for new devices</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def search(self, device_type: common.DeviceType):
+    &#34;&#34;&#34;Search for new devices&#34;&#34;&#34;
+    await self._post(device_type.value)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport.set_conf"><code class="name flex">
+<span>async def <span class="ident">set_conf</span></span>(<span>self, device_id: typing.Union[<a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, NoneType], data: typing.Union[NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set configuration</p>
+<p>If <code>device_id</code> is <code>None</code>, global configuration is modified.</p>
+<p>Light devices are not supported.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def set_conf(self,
+                   device_id: typing.Optional[common.DeviceId],
+                   data: json.Data):
+    &#34;&#34;&#34;Set configuration
+
+    If `device_id` is ``None``, global configuration is modified.
+
+    Light devices are not supported.
+
+    &#34;&#34;&#34;
+    if device_id and device_id.type == common.DeviceType.LIGHT:
+        raise ValueError(&#39;light devices not supported&#39;)
+    path = (f&#39;{device_id.type}/{device_id}/config&#39; if device_id
+            else &#39;config&#39;)
+    await self._put(path, data)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.hue.ClientTransport.set_state"><code class="name flex">
+<span>async def <span class="ident">set_state</span></span>(<span>self, device_id: <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, data: typing.Union[NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set device state</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def set_state(self,
+                    device_id: common.DeviceId,
+                    data: json.Data):
+    &#34;&#34;&#34;Set device state&#34;&#34;&#34;
+    path = f&#39;{device_id.type.value}/{device_id.label}/state&#39;
+    await self._put(path, data)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.Device"><code class="flex name class">
+<span>class <span class="ident">Device</span></span>
+<span>(</span><span>id: <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a>, subtype: str, name: str, model_id: str, manufacturer_name: str, sw_version: str, unique_id: typing.Union[str, NoneType], state: typing.Union[<a title="hat.drivers.hue.common.LightState" href="common.html#hat.drivers.hue.common.LightState">LightState</a>, <a title="hat.drivers.hue.common.SensorState" href="common.html#hat.drivers.hue.common.SensorState">SensorState</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Device(id, subtype, name, model_id, manufacturer_name, sw_version, unique_id, state)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Device(typing.NamedTuple):
+    id: DeviceId
+    subtype: str
+    name: str
+    model_id: str
+    manufacturer_name: str
+    sw_version: str
+    unique_id: typing.Optional[str]
+    state: DeviceState</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.Device.id"><code class="name">var <span class="ident">id</span> : <a title="hat.drivers.hue.common.DeviceId" href="common.html#hat.drivers.hue.common.DeviceId">DeviceId</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.manufacturer_name"><code class="name">var <span class="ident">manufacturer_name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.model_id"><code class="name">var <span class="ident">model_id</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.state"><code class="name">var <span class="ident">state</span> : typing.Union[<a title="hat.drivers.hue.common.LightState" href="common.html#hat.drivers.hue.common.LightState">LightState</a>, <a title="hat.drivers.hue.common.SensorState" href="common.html#hat.drivers.hue.common.SensorState">SensorState</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.subtype"><code class="name">var <span class="ident">subtype</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.sw_version"><code class="name">var <span class="ident">sw_version</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.hue.Device.unique_id"><code class="name">var <span class="ident">unique_id</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.DeviceId"><code class="flex name class">
+<span>class <span class="ident">DeviceId</span></span>
+<span>(</span><span>type: <a title="hat.drivers.hue.common.DeviceType" href="common.html#hat.drivers.hue.common.DeviceType">DeviceType</a>, label: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DeviceId(type, label)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeviceId(typing.NamedTuple):
+    type: DeviceType
+    label: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.DeviceId.label"><code class="name">var <span class="ident">label</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.hue.DeviceId.type"><code class="name">var <span class="ident">type</span> : <a title="hat.drivers.hue.common.DeviceType" href="common.html#hat.drivers.hue.common.DeviceType">DeviceType</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.DeviceType"><code class="flex name class">
+<span>class <span class="ident">DeviceType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeviceType(enum.Enum):
+    LIGHT = &#39;lights&#39;
+    SENSOR = &#39;sensors&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.hue.DeviceType.LIGHT"><code class="name">var <span class="ident">LIGHT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.DeviceType.SENSOR"><code class="name">var <span class="ident">SENSOR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.LightAlert"><code class="flex name class">
+<span>class <span class="ident">LightAlert</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LightAlert(enum.Enum):
+    NONE = &#39;none&#39;
+    SELECT = &#39;select&#39;
+    LSELECT = &#39;lselect&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.hue.LightAlert.LSELECT"><code class="name">var <span class="ident">LSELECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.LightAlert.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.LightAlert.SELECT"><code class="name">var <span class="ident">SELECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.LightEffect"><code class="flex name class">
+<span>class <span class="ident">LightEffect</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LightEffect(enum.Enum):
+    NONE = &#39;none&#39;
+    COLOR_LOOP = &#39;colorloop&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.hue.LightEffect.COLOR_LOOP"><code class="name">var <span class="ident">COLOR_LOOP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.LightEffect.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.LightState"><code class="flex name class">
+<span>class <span class="ident">LightState</span></span>
+<span>(</span><span>on: typing.Union[bool, NoneType] = None, bri: typing.Union[int, NoneType] = None, alert: typing.Union[<a title="hat.drivers.hue.common.LightAlert" href="common.html#hat.drivers.hue.common.LightAlert">LightAlert</a>, NoneType] = None, reachable: typing.Union[bool, NoneType] = None, hue: typing.Union[int, NoneType] = None, sat: typing.Union[int, NoneType] = None, effect: typing.Union[<a title="hat.drivers.hue.common.LightEffect" href="common.html#hat.drivers.hue.common.LightEffect">LightEffect</a>, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Light state</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>on</code></strong></dt>
+<dd>on/off state</dd>
+<dt><strong><code>bri</code></strong></dt>
+<dd>brightness between 1 (min) and 254 (max)</dd>
+<dt><strong><code>alert</code></strong></dt>
+<dd>light alert state</dd>
+<dt><strong><code>reachable</code></strong></dt>
+<dd>is device reachable</dd>
+<dt><strong><code>hue</code></strong></dt>
+<dd>hue between 0 and 65535</dd>
+<dt><strong><code>sat</code></strong></dt>
+<dd>saturnation between 0 (white) and 254 (colored)</dd>
+<dt><strong><code>effect</code></strong></dt>
+<dd>light effect</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LightState(typing.NamedTuple):
+    &#34;&#34;&#34;Light state
+
+    Attributes:
+        on: on/off state
+        bri: brightness between 1 (min) and 254 (max)
+        alert: light alert state
+        reachable: is device reachable
+        hue: hue between 0 and 65535
+        sat: saturnation between 0 (white) and 254 (colored)
+        effect: light effect
+
+    &#34;&#34;&#34;
+    on: typing.Optional[bool] = None
+    bri: typing.Optional[int] = None
+    alert: typing.Optional[LightAlert] = None
+    reachable: typing.Optional[bool] = None
+    hue: typing.Optional[int] = None
+    sat: typing.Optional[int] = None
+    effect: typing.Optional[LightEffect] = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.LightState.alert"><code class="name">var <span class="ident">alert</span> : typing.Union[<a title="hat.drivers.hue.common.LightAlert" href="common.html#hat.drivers.hue.common.LightAlert">LightAlert</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.hue.LightState.bri"><code class="name">var <span class="ident">bri</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.hue.LightState.effect"><code class="name">var <span class="ident">effect</span> : typing.Union[<a title="hat.drivers.hue.common.LightEffect" href="common.html#hat.drivers.hue.common.LightEffect">LightEffect</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.hue.LightState.hue"><code class="name">var <span class="ident">hue</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.hue.LightState.on"><code class="name">var <span class="ident">on</span> : typing.Union[bool, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.hue.LightState.reachable"><code class="name">var <span class="ident">reachable</span> : typing.Union[bool, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.hue.LightState.sat"><code class="name">var <span class="ident">sat</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.SensorState"><code class="flex name class">
+<span>class <span class="ident">SensorState</span></span>
+<span>(</span><span>last_updated: typing.Union[datetime.datetime, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sensor state</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>last_updated</code></strong></dt>
+<dd>last updated time</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SensorState(typing.NamedTuple):
+    &#34;&#34;&#34;Sensor state
+
+    Attributes:
+        last_updated: last updated time
+
+    &#34;&#34;&#34;
+    last_updated: typing.Optional[datetime.datetime] = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.SensorState.last_updated"><code class="name">var <span class="ident">last_updated</span> : typing.Union[datetime.datetime, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers" href="../index.html">hat.drivers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="hat.drivers.hue.client" href="client.html">hat.drivers.hue.client</a></code></li>
+<li><code><a title="hat.drivers.hue.common" href="common.html">hat.drivers.hue.common</a></code></li>
+<li><code><a title="hat.drivers.hue.encoder" href="encoder.html">hat.drivers.hue.encoder</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.hue.create_user" href="#hat.drivers.hue.create_user">create_user</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.hue.Client" href="#hat.drivers.hue.Client">Client</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.hue.Client.async_close" href="#hat.drivers.hue.Client.async_close">async_close</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.closed" href="#hat.drivers.hue.Client.closed">closed</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.get_device" href="#hat.drivers.hue.Client.get_device">get_device</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.get_devices" href="#hat.drivers.hue.Client.get_devices">get_devices</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.rename" href="#hat.drivers.hue.Client.rename">rename</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.search" href="#hat.drivers.hue.Client.search">search</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.set_state" href="#hat.drivers.hue.Client.set_state">set_state</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.touchlink" href="#hat.drivers.hue.Client.touchlink">touchlink</a></code></li>
+<li><code><a title="hat.drivers.hue.Client.transport" href="#hat.drivers.hue.Client.transport">transport</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.ClientTransport" href="#hat.drivers.hue.ClientTransport">ClientTransport</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.hue.ClientTransport.async_close" href="#hat.drivers.hue.ClientTransport.async_close">async_close</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.closed" href="#hat.drivers.hue.ClientTransport.closed">closed</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.delete_user" href="#hat.drivers.hue.ClientTransport.delete_user">delete_user</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.get" href="#hat.drivers.hue.ClientTransport.get">get</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.rename" href="#hat.drivers.hue.ClientTransport.rename">rename</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.search" href="#hat.drivers.hue.ClientTransport.search">search</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.set_conf" href="#hat.drivers.hue.ClientTransport.set_conf">set_conf</a></code></li>
+<li><code><a title="hat.drivers.hue.ClientTransport.set_state" href="#hat.drivers.hue.ClientTransport.set_state">set_state</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.Device" href="#hat.drivers.hue.Device">Device</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.hue.Device.id" href="#hat.drivers.hue.Device.id">id</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.manufacturer_name" href="#hat.drivers.hue.Device.manufacturer_name">manufacturer_name</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.model_id" href="#hat.drivers.hue.Device.model_id">model_id</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.name" href="#hat.drivers.hue.Device.name">name</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.state" href="#hat.drivers.hue.Device.state">state</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.subtype" href="#hat.drivers.hue.Device.subtype">subtype</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.sw_version" href="#hat.drivers.hue.Device.sw_version">sw_version</a></code></li>
+<li><code><a title="hat.drivers.hue.Device.unique_id" href="#hat.drivers.hue.Device.unique_id">unique_id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.DeviceId" href="#hat.drivers.hue.DeviceId">DeviceId</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.DeviceId.label" href="#hat.drivers.hue.DeviceId.label">label</a></code></li>
+<li><code><a title="hat.drivers.hue.DeviceId.type" href="#hat.drivers.hue.DeviceId.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.DeviceType" href="#hat.drivers.hue.DeviceType">DeviceType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.DeviceType.LIGHT" href="#hat.drivers.hue.DeviceType.LIGHT">LIGHT</a></code></li>
+<li><code><a title="hat.drivers.hue.DeviceType.SENSOR" href="#hat.drivers.hue.DeviceType.SENSOR">SENSOR</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.LightAlert" href="#hat.drivers.hue.LightAlert">LightAlert</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.LightAlert.LSELECT" href="#hat.drivers.hue.LightAlert.LSELECT">LSELECT</a></code></li>
+<li><code><a title="hat.drivers.hue.LightAlert.NONE" href="#hat.drivers.hue.LightAlert.NONE">NONE</a></code></li>
+<li><code><a title="hat.drivers.hue.LightAlert.SELECT" href="#hat.drivers.hue.LightAlert.SELECT">SELECT</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.LightEffect" href="#hat.drivers.hue.LightEffect">LightEffect</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.LightEffect.COLOR_LOOP" href="#hat.drivers.hue.LightEffect.COLOR_LOOP">COLOR_LOOP</a></code></li>
+<li><code><a title="hat.drivers.hue.LightEffect.NONE" href="#hat.drivers.hue.LightEffect.NONE">NONE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.LightState" href="#hat.drivers.hue.LightState">LightState</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.hue.LightState.alert" href="#hat.drivers.hue.LightState.alert">alert</a></code></li>
+<li><code><a title="hat.drivers.hue.LightState.bri" href="#hat.drivers.hue.LightState.bri">bri</a></code></li>
+<li><code><a title="hat.drivers.hue.LightState.effect" href="#hat.drivers.hue.LightState.effect">effect</a></code></li>
+<li><code><a title="hat.drivers.hue.LightState.hue" href="#hat.drivers.hue.LightState.hue">hue</a></code></li>
+<li><code><a title="hat.drivers.hue.LightState.on" href="#hat.drivers.hue.LightState.on">on</a></code></li>
+<li><code><a title="hat.drivers.hue.LightState.reachable" href="#hat.drivers.hue.LightState.reachable">reachable</a></code></li>
+<li><code><a title="hat.drivers.hue.LightState.sat" href="#hat.drivers.hue.LightState.sat">sat</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.SensorState" href="#hat.drivers.hue.SensorState">SensorState</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.SensorState.last_updated" href="#hat.drivers.hue.SensorState.last_updated">last_updated</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.syslog.common API documentation</title>
+<meta name="description" content="Common syslog functionality and data structures" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.syslog.common</code></h1>
+</header>
+<section id="section-intro">
+<p>Common syslog functionality and data structures</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Common syslog functionality and data structures&#34;&#34;&#34;
+
+from pathlib import Path
+import datetime
+import enum
+import re
+import typing
+
+from hat import json
+
+
+package_path: Path = Path(__file__).parent
+&#34;&#34;&#34;Package file system path&#34;&#34;&#34;
+
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
+    json.json_schema_repo,
+    json.SchemaRepository.from_json(package_path / &#39;json_schema_repo.json&#39;))
+&#34;&#34;&#34;JSON schema repository&#34;&#34;&#34;
+
+
+class Facility(enum.Enum):
+    KERNEL = 0
+    USER = 1
+    MAIL = 2
+    SYSTEM = 3
+    AUTHORIZATION1 = 4
+    INTERNAL = 5
+    PRINTER = 6
+    NETWORK = 7
+    UUCP = 8
+    CLOCK1 = 9
+    AUTHORIZATION2 = 10
+    FTP = 11
+    NTP = 12
+    AUDIT = 13
+    ALERT = 14
+    CLOCK2 = 15
+    LOCAL0 = 16
+    LOCAL1 = 17
+    LOCAL2 = 18
+    LOCAL3 = 19
+    LOCAL4 = 20
+    LOCAL5 = 21
+    LOCAL6 = 22
+    LOCAL7 = 23
+
+
+class Severity(enum.Enum):
+    EMERGENCY = 0
+    ALERT = 1
+    CRITICAL = 2
+    ERROR = 3
+    WARNING = 4
+    NOTICE = 5
+    INFORMATIONAL = 6
+    DEBUG = 7
+
+
+class Msg(typing.NamedTuple):
+    &#34;&#34;&#34;Message
+
+    `data` containes JSON serialized Dict[str, Dict[str, str]]
+
+    &#34;&#34;&#34;
+    facility: Facility
+    severity: Severity
+    version: int
+    timestamp: typing.Optional[float]
+    hostname: typing.Optional[str]
+    app_name: typing.Optional[str]
+    procid: typing.Optional[str]
+    msgid: typing.Optional[str]
+    data: typing.Optional[str]
+    msg: typing.Optional[str]
+
+
+def msg_to_str(msg: Msg) -&gt; str:
+    &#34;&#34;&#34;Create string representation of message according to RFC 5424&#34;&#34;&#34;
+    buff = [
+        f&#39;&lt;{msg.facility.value * 8 + msg.severity.value}&gt;{msg.version}&#39;,
+        _timestamp_to_str(msg.timestamp),
+        msg.hostname if msg.hostname else &#39;-&#39;,
+        msg.app_name if msg.app_name else &#39;-&#39;,
+        msg.procid if msg.procid else &#39;-&#39;,
+        msg.msgid if msg.msgid else &#39;-&#39;,
+        _data_to_str(msg.data)]
+    if msg.msg:
+        buff.append(&#39;BOM&#39; + msg.msg)
+    return &#39; &#39;.join(buff)
+
+
+def msg_from_str(msg_str: str) -&gt; Msg:
+    &#34;&#34;&#34;Parse message string formatted according to RFC 5424&#34;&#34;&#34;
+    match = _msg_pattern.fullmatch(msg_str).groupdict()
+    prival = int(match[&#39;prival&#39;])
+    return Msg(
+        facility=Facility(prival // 8),
+        severity=Severity(prival % 8),
+        version=int(match[&#39;version&#39;]),
+        timestamp=_parse_timestamp(match[&#39;timestamp&#39;]),
+        hostname=None if match[&#39;hostname&#39;] == &#39;-&#39; else match[&#39;hostname&#39;],
+        app_name=None if match[&#39;app_name&#39;] == &#39;-&#39; else match[&#39;app_name&#39;],
+        procid=None if match[&#39;procid&#39;] == &#39;-&#39; else match[&#39;procid&#39;],
+        msgid=None if match[&#39;msgid&#39;] == &#39;-&#39; else match[&#39;msgid&#39;],
+        data=_parse_data(match[&#39;data&#39;]),
+        msg=(match[&#39;msg&#39;][3:] if match[&#39;msg&#39;] and match[&#39;msg&#39;][:3] == &#39;BOM&#39;
+             else match[&#39;msg&#39;]))
+
+
+def msg_to_json(msg: Msg) -&gt; json.Data:
+    &#34;&#34;&#34;Convert message to json serializable data&#34;&#34;&#34;
+    return {&#39;facility&#39;: msg.facility.name,
+            &#39;severity&#39;: msg.severity.name,
+            &#39;version&#39;: msg.version,
+            &#39;timestamp&#39;: msg.timestamp,
+            &#39;hostname&#39;: msg.hostname,
+            &#39;app_name&#39;: msg.app_name,
+            &#39;procid&#39;: msg.procid,
+            &#39;msgid&#39;: msg.msgid,
+            &#39;data&#39;: msg.data,
+            &#39;msg&#39;: msg.msg}
+
+
+def msg_from_json(data: json.Data) -&gt; Msg:
+    &#34;&#34;&#34;Convert json serializable data to message&#34;&#34;&#34;
+    return Msg(facility=Facility[data[&#39;facility&#39;]],
+               severity=Severity[data[&#39;severity&#39;]],
+               version=data[&#39;version&#39;],
+               timestamp=data[&#39;timestamp&#39;],
+               hostname=data[&#39;hostname&#39;],
+               app_name=data[&#39;app_name&#39;],
+               procid=data[&#39;procid&#39;],
+               msgid=data[&#39;msgid&#39;],
+               data=data[&#39;data&#39;],
+               msg=data[&#39;msg&#39;])
+
+
+_msg_pattern = re.compile(r&#39;&#39;&#39;
+    &lt; (?P&lt;prival&gt; \d+) &gt;
+    (?P&lt;version&gt; \d+)
+    \ (?P&lt;timestamp&gt; - |
+                     [^ ]+)
+    \ (?P&lt;hostname&gt; - |
+                    [^ ]+)
+    \ (?P&lt;app_name&gt; - |
+                    [^ ]+)
+    \ (?P&lt;procid&gt; - |
+                  [^ ]+)
+    \ (?P&lt;msgid&gt; - |
+                 [^ ]+)
+    \ (?P&lt;data&gt; - |
+                (\[
+                    ((\\(\\\\)*\]) |
+                     [^\]])*
+                \])+)
+    (\ (?P&lt;msg&gt; .*))?
+&#39;&#39;&#39;, re.X | re.DOTALL)
+
+_timestamp_pattern = re.compile(r&#39;&#39;&#39;
+    (?P&lt;year&gt; \d{4})
+    -
+    (?P&lt;month&gt; \d{2})
+    -
+    (?P&lt;day&gt; \d{2})
+    T
+    (?P&lt;hour&gt; \d{2})
+    :
+    (?P&lt;minute&gt; \d{2})
+    :
+    (?P&lt;second&gt; \d{2})
+    (\. (?P&lt;fraction&gt; \d+))?
+    ((?P&lt;tz_utc&gt; Z) |
+     ((?P&lt;tz_sign&gt; \+ |
+                   -)
+      (?P&lt;tz_hour&gt; \d{2})
+      :
+      (?P&lt;tz_minute&gt; \d{2})))
+&#39;&#39;&#39;, re.X | re.DOTALL)
+
+_data_pattern = re.compile(r&#39;&#39;&#39;
+    \[
+        (?P&lt;id&gt; [^ \]]+)
+        (?P&lt;param&gt; ((\\(\\\\)*\]) |
+                   [^\]])*)
+    \]
+    (?P&lt;rest&gt; .*)
+&#39;&#39;&#39;, re.X | re.DOTALL)
+
+_param_pattern = re.compile(r&#39;&#39;&#39;
+    \ (?P&lt;name&gt; [^=\]]+)
+    =&#34;
+    (?P&lt;value&gt; ((\\\\) |
+                (\\&#34;) |
+                (\\\]) |
+                [^&#34;\]\\])*)
+    &#34;
+    (?P&lt;rest&gt; .*)
+&#39;&#39;&#39;, re.X | re.DOTALL)
+
+_escape_pattern = re.compile(r&#39;&#39;&#39;((\\\\)|(\\&#34;)|(\\]))&#39;&#39;&#39;)
+
+
+def _timestamp_to_str(timestamp):
+    if not timestamp:
+        return &#39;-&#39;
+    return datetime.datetime.fromtimestamp(
+        timestamp, datetime.timezone.utc).replace(
+        tzinfo=None).isoformat() + &#39;Z&#39;
+
+
+def _data_to_str(data_json):
+    data = json.decode(data_json) if data_json else None
+    if not data:
+        return &#39;-&#39;
+    return &#39;&#39;.join(f&#39;[{sd_id}{_param_to_str(param)}]&#39;
+                   for sd_id, param in data.items())
+
+
+def _param_to_str(param):
+    if not param:
+        return &#39;&#39;
+    return &#39; &#39; + &#39; &#39;.join(f&#39;{k}=&#34;{_escape_value(v)}&#34;&#39;
+                          for k, v in param.items())
+
+
+def _parse_timestamp(timestamp_str):
+    if timestamp_str == &#39;-&#39;:
+        return
+    match = _timestamp_pattern.fullmatch(timestamp_str).groupdict()
+    return datetime.datetime(
+        year=int(match[&#39;year&#39;]),
+        month=int(match[&#39;month&#39;]),
+        day=int(match[&#39;day&#39;]),
+        hour=int(match[&#39;hour&#39;]),
+        minute=int(match[&#39;minute&#39;]),
+        second=int(match[&#39;second&#39;]),
+        microsecond=(int(int(match[&#39;fraction&#39;]) *
+                         pow(10, 6 - len(match[&#39;fraction&#39;])))
+                     if match[&#39;fraction&#39;] else None),
+        tzinfo=(datetime.timezone.utc if match[&#39;tz_utc&#39;] else
+                datetime.timezone(datetime.timedelta(
+                    hours=((1 if match[&#39;tz_sign&#39;] == &#39;+&#39; else -1) *
+                           int(match[&#39;tz_hour&#39;])),
+                    minutes=int(match[&#39;tz_hour&#39;]))))).timestamp()
+
+
+def _parse_data(data_str):
+    if data_str == &#39;-&#39;:
+        return
+    data = {}
+    while data_str:
+        match = _data_pattern.fullmatch(data_str).groupdict()
+        data[match[&#39;id&#39;]] = _parse_param(match[&#39;param&#39;])
+        data_str = match[&#39;rest&#39;]
+    data_json = json.encode(data)
+    return data_json
+
+
+def _parse_param(param_str):
+    param = {}
+    while param_str:
+        match = _param_pattern.fullmatch(param_str).groupdict()
+        param[match[&#39;name&#39;]] = _unescape_value(match[&#39;value&#39;])
+        param_str = match[&#39;rest&#39;]
+    return param
+
+
+def _escape_value(value):
+    return value.replace(&#39;\\&#39;, &#39;\\\\&#39;).replace(&#39;&#34;&#39;, &#39;\\&#34;&#39;).replace(&#39;]&#39;, &#39;\\]&#39;)
+
+
+def _unescape_value(value):
+    return re.sub(_escape_pattern, _unescape_value_char, value)
+
+
+def _unescape_value_char(match):
+    return {r&#39;\\&#39;: &#39;\\&#39;,
+            r&#39;\&#34;&#39;: r&#39;&#34;&#39;,
+            r&#39;\]&#39;: r&#39;]&#39;}[match.group(0)]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.syslog.common.json_schema_repo"><code class="name">var <span class="ident">json_schema_repo</span> : <a title="hat.json.SchemaRepository" href="../json/index.html#hat.json.SchemaRepository">SchemaRepository</a></code></dt>
+<dd>
+<div class="desc"><p>JSON schema repository</p></div>
+</dd>
+<dt id="hat.syslog.common.package_path"><code class="name">var <span class="ident">package_path</span> : pathlib.Path</code></dt>
+<dd>
+<div class="desc"><p>Package file system path</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.syslog.common.msg_from_json"><code class="name flex">
+<span>def <span class="ident">msg_from_json</span></span>(<span>data: typing.Union[NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')]]) ‑> <a title="hat.syslog.common.Msg" href="#hat.syslog.common.Msg">Msg</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert json serializable data to message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def msg_from_json(data: json.Data) -&gt; Msg:
+    &#34;&#34;&#34;Convert json serializable data to message&#34;&#34;&#34;
+    return Msg(facility=Facility[data[&#39;facility&#39;]],
+               severity=Severity[data[&#39;severity&#39;]],
+               version=data[&#39;version&#39;],
+               timestamp=data[&#39;timestamp&#39;],
+               hostname=data[&#39;hostname&#39;],
+               app_name=data[&#39;app_name&#39;],
+               procid=data[&#39;procid&#39;],
+               msgid=data[&#39;msgid&#39;],
+               data=data[&#39;data&#39;],
+               msg=data[&#39;msg&#39;])</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.common.msg_from_str"><code class="name flex">
+<span>def <span class="ident">msg_from_str</span></span>(<span>msg_str: str) ‑> <a title="hat.syslog.common.Msg" href="#hat.syslog.common.Msg">Msg</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse message string formatted according to RFC 5424</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def msg_from_str(msg_str: str) -&gt; Msg:
+    &#34;&#34;&#34;Parse message string formatted according to RFC 5424&#34;&#34;&#34;
+    match = _msg_pattern.fullmatch(msg_str).groupdict()
+    prival = int(match[&#39;prival&#39;])
+    return Msg(
+        facility=Facility(prival // 8),
+        severity=Severity(prival % 8),
+        version=int(match[&#39;version&#39;]),
+        timestamp=_parse_timestamp(match[&#39;timestamp&#39;]),
+        hostname=None if match[&#39;hostname&#39;] == &#39;-&#39; else match[&#39;hostname&#39;],
+        app_name=None if match[&#39;app_name&#39;] == &#39;-&#39; else match[&#39;app_name&#39;],
+        procid=None if match[&#39;procid&#39;] == &#39;-&#39; else match[&#39;procid&#39;],
+        msgid=None if match[&#39;msgid&#39;] == &#39;-&#39; else match[&#39;msgid&#39;],
+        data=_parse_data(match[&#39;data&#39;]),
+        msg=(match[&#39;msg&#39;][3:] if match[&#39;msg&#39;] and match[&#39;msg&#39;][:3] == &#39;BOM&#39;
+             else match[&#39;msg&#39;]))</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.common.msg_to_json"><code class="name flex">
+<span>def <span class="ident">msg_to_json</span></span>(<span>msg: <a title="hat.syslog.common.Msg" href="#hat.syslog.common.Msg">Msg</a>) ‑> typing.Union[NoneType, bool, int, float, str, typing.List[abc.Data], typing.Dict[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert message to json serializable data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def msg_to_json(msg: Msg) -&gt; json.Data:
+    &#34;&#34;&#34;Convert message to json serializable data&#34;&#34;&#34;
+    return {&#39;facility&#39;: msg.facility.name,
+            &#39;severity&#39;: msg.severity.name,
+            &#39;version&#39;: msg.version,
+            &#39;timestamp&#39;: msg.timestamp,
+            &#39;hostname&#39;: msg.hostname,
+            &#39;app_name&#39;: msg.app_name,
+            &#39;procid&#39;: msg.procid,
+            &#39;msgid&#39;: msg.msgid,
+            &#39;data&#39;: msg.data,
+            &#39;msg&#39;: msg.msg}</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.common.msg_to_str"><code class="name flex">
+<span>def <span class="ident">msg_to_str</span></span>(<span>msg: <a title="hat.syslog.common.Msg" href="#hat.syslog.common.Msg">Msg</a>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create string representation of message according to RFC 5424</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def msg_to_str(msg: Msg) -&gt; str:
+    &#34;&#34;&#34;Create string representation of message according to RFC 5424&#34;&#34;&#34;
+    buff = [
+        f&#39;&lt;{msg.facility.value * 8 + msg.severity.value}&gt;{msg.version}&#39;,
+        _timestamp_to_str(msg.timestamp),
+        msg.hostname if msg.hostname else &#39;-&#39;,
+        msg.app_name if msg.app_name else &#39;-&#39;,
+        msg.procid if msg.procid else &#39;-&#39;,
+        msg.msgid if msg.msgid else &#39;-&#39;,
+        _data_to_str(msg.data)]
+    if msg.msg:
+        buff.append(&#39;BOM&#39; + msg.msg)
+    return &#39; &#39;.join(buff)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.syslog.common.Facility"><code class="flex name class">
+<span>class <span class="ident">Facility</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Facility(enum.Enum):
+    KERNEL = 0
+    USER = 1
+    MAIL = 2
+    SYSTEM = 3
+    AUTHORIZATION1 = 4
+    INTERNAL = 5
+    PRINTER = 6
+    NETWORK = 7
+    UUCP = 8
+    CLOCK1 = 9
+    AUTHORIZATION2 = 10
+    FTP = 11
+    NTP = 12
+    AUDIT = 13
+    ALERT = 14
+    CLOCK2 = 15
+    LOCAL0 = 16
+    LOCAL1 = 17
+    LOCAL2 = 18
+    LOCAL3 = 19
+    LOCAL4 = 20
+    LOCAL5 = 21
+    LOCAL6 = 22
+    LOCAL7 = 23</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.syslog.common.Facility.ALERT"><code class="name">var <span class="ident">ALERT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.AUDIT"><code class="name">var <span class="ident">AUDIT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.AUTHORIZATION1"><code class="name">var <span class="ident">AUTHORIZATION1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.AUTHORIZATION2"><code class="name">var <span class="ident">AUTHORIZATION2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.CLOCK1"><code class="name">var <span class="ident">CLOCK1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.CLOCK2"><code class="name">var <span class="ident">CLOCK2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.FTP"><code class="name">var <span class="ident">FTP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.INTERNAL"><code class="name">var <span class="ident">INTERNAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.KERNEL"><code class="name">var <span class="ident">KERNEL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL0"><code class="name">var <span class="ident">LOCAL0</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL1"><code class="name">var <span class="ident">LOCAL1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL2"><code class="name">var <span class="ident">LOCAL2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL3"><code class="name">var <span class="ident">LOCAL3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL4"><code class="name">var <span class="ident">LOCAL4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL5"><code class="name">var <span class="ident">LOCAL5</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL6"><code class="name">var <span class="ident">LOCAL6</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.LOCAL7"><code class="name">var <span class="ident">LOCAL7</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.MAIL"><code class="name">var <span class="ident">MAIL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.NETWORK"><code class="name">var <span class="ident">NETWORK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.NTP"><code class="name">var <span class="ident">NTP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.PRINTER"><code class="name">var <span class="ident">PRINTER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.SYSTEM"><code class="name">var <span class="ident">SYSTEM</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.USER"><code class="name">var <span class="ident">USER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Facility.UUCP"><code class="name">var <span class="ident">UUCP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.syslog.common.Msg"><code class="flex name class">
+<span>class <span class="ident">Msg</span></span>
+<span>(</span><span>facility: <a title="hat.syslog.common.Facility" href="#hat.syslog.common.Facility">Facility</a>, severity: <a title="hat.syslog.common.Severity" href="#hat.syslog.common.Severity">Severity</a>, version: int, timestamp: typing.Union[float, NoneType], hostname: typing.Union[str, NoneType], app_name: typing.Union[str, NoneType], procid: typing.Union[str, NoneType], msgid: typing.Union[str, NoneType], data: typing.Union[str, NoneType], msg: typing.Union[str, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Message</p>
+<p><code>data</code> containes JSON serialized Dict[str, Dict[str, str]]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Msg(typing.NamedTuple):
+    &#34;&#34;&#34;Message
+
+    `data` containes JSON serialized Dict[str, Dict[str, str]]
+
+    &#34;&#34;&#34;
+    facility: Facility
+    severity: Severity
+    version: int
+    timestamp: typing.Optional[float]
+    hostname: typing.Optional[str]
+    app_name: typing.Optional[str]
+    procid: typing.Optional[str]
+    msgid: typing.Optional[str]
+    data: typing.Optional[str]
+    msg: typing.Optional[str]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.syslog.common.Msg.app_name"><code class="name">var <span class="ident">app_name</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.data"><code class="name">var <span class="ident">data</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 8</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.facility"><code class="name">var <span class="ident">facility</span> : <a title="hat.syslog.common.Facility" href="#hat.syslog.common.Facility">Facility</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.hostname"><code class="name">var <span class="ident">hostname</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.msg"><code class="name">var <span class="ident">msg</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 9</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.msgid"><code class="name">var <span class="ident">msgid</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.procid"><code class="name">var <span class="ident">procid</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.severity"><code class="name">var <span class="ident">severity</span> : <a title="hat.syslog.common.Severity" href="#hat.syslog.common.Severity">Severity</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.timestamp"><code class="name">var <span class="ident">timestamp</span> : typing.Union[float, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.syslog.common.Msg.version"><code class="name">var <span class="ident">version</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.syslog.common.Severity"><code class="flex name class">
+<span>class <span class="ident">Severity</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Severity(enum.Enum):
+    EMERGENCY = 0
+    ALERT = 1
+    CRITICAL = 2
+    ERROR = 3
+    WARNING = 4
+    NOTICE = 5
+    INFORMATIONAL = 6
+    DEBUG = 7</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.syslog.common.Severity.ALERT"><code class="name">var <span class="ident">ALERT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.CRITICAL"><code class="name">var <span class="ident">CRITICAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.DEBUG"><code class="name">var <span class="ident">DEBUG</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.EMERGENCY"><code class="name">var <span class="ident">EMERGENCY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.ERROR"><code class="name">var <span class="ident">ERROR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.INFORMATIONAL"><code class="name">var <span class="ident">INFORMATIONAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.NOTICE"><code class="name">var <span class="ident">NOTICE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.syslog.common.Severity.WARNING"><code class="name">var <span class="ident">WARNING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.syslog" href="index.html">hat.syslog</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.syslog.common.json_schema_repo" href="#hat.syslog.common.json_schema_repo">json_schema_repo</a></code></li>
+<li><code><a title="hat.syslog.common.package_path" href="#hat.syslog.common.package_path">package_path</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.syslog.common.msg_from_json" href="#hat.syslog.common.msg_from_json">msg_from_json</a></code></li>
+<li><code><a title="hat.syslog.common.msg_from_str" href="#hat.syslog.common.msg_from_str">msg_from_str</a></code></li>
+<li><code><a title="hat.syslog.common.msg_to_json" href="#hat.syslog.common.msg_to_json">msg_to_json</a></code></li>
+<li><code><a title="hat.syslog.common.msg_to_str" href="#hat.syslog.common.msg_to_str">msg_to_str</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.syslog.common.Facility" href="#hat.syslog.common.Facility">Facility</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.syslog.common.Facility.ALERT" href="#hat.syslog.common.Facility.ALERT">ALERT</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.AUDIT" href="#hat.syslog.common.Facility.AUDIT">AUDIT</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.AUTHORIZATION1" href="#hat.syslog.common.Facility.AUTHORIZATION1">AUTHORIZATION1</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.AUTHORIZATION2" href="#hat.syslog.common.Facility.AUTHORIZATION2">AUTHORIZATION2</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.CLOCK1" href="#hat.syslog.common.Facility.CLOCK1">CLOCK1</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.CLOCK2" href="#hat.syslog.common.Facility.CLOCK2">CLOCK2</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.FTP" href="#hat.syslog.common.Facility.FTP">FTP</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.INTERNAL" href="#hat.syslog.common.Facility.INTERNAL">INTERNAL</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.KERNEL" href="#hat.syslog.common.Facility.KERNEL">KERNEL</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL0" href="#hat.syslog.common.Facility.LOCAL0">LOCAL0</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL1" href="#hat.syslog.common.Facility.LOCAL1">LOCAL1</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL2" href="#hat.syslog.common.Facility.LOCAL2">LOCAL2</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL3" href="#hat.syslog.common.Facility.LOCAL3">LOCAL3</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL4" href="#hat.syslog.common.Facility.LOCAL4">LOCAL4</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL5" href="#hat.syslog.common.Facility.LOCAL5">LOCAL5</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL6" href="#hat.syslog.common.Facility.LOCAL6">LOCAL6</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.LOCAL7" href="#hat.syslog.common.Facility.LOCAL7">LOCAL7</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.MAIL" href="#hat.syslog.common.Facility.MAIL">MAIL</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.NETWORK" href="#hat.syslog.common.Facility.NETWORK">NETWORK</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.NTP" href="#hat.syslog.common.Facility.NTP">NTP</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.PRINTER" href="#hat.syslog.common.Facility.PRINTER">PRINTER</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.SYSTEM" href="#hat.syslog.common.Facility.SYSTEM">SYSTEM</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.USER" href="#hat.syslog.common.Facility.USER">USER</a></code></li>
+<li><code><a title="hat.syslog.common.Facility.UUCP" href="#hat.syslog.common.Facility.UUCP">UUCP</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.syslog.common.Msg" href="#hat.syslog.common.Msg">Msg</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.syslog.common.Msg.app_name" href="#hat.syslog.common.Msg.app_name">app_name</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.data" href="#hat.syslog.common.Msg.data">data</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.facility" href="#hat.syslog.common.Msg.facility">facility</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.hostname" href="#hat.syslog.common.Msg.hostname">hostname</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.msg" href="#hat.syslog.common.Msg.msg">msg</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.msgid" href="#hat.syslog.common.Msg.msgid">msgid</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.procid" href="#hat.syslog.common.Msg.procid">procid</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.severity" href="#hat.syslog.common.Msg.severity">severity</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.timestamp" href="#hat.syslog.common.Msg.timestamp">timestamp</a></code></li>
+<li><code><a title="hat.syslog.common.Msg.version" href="#hat.syslog.common.Msg.version">version</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.syslog.common.Severity" href="#hat.syslog.common.Severity">Severity</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.syslog.common.Severity.ALERT" href="#hat.syslog.common.Severity.ALERT">ALERT</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.CRITICAL" href="#hat.syslog.common.Severity.CRITICAL">CRITICAL</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.DEBUG" href="#hat.syslog.common.Severity.DEBUG">DEBUG</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.EMERGENCY" href="#hat.syslog.common.Severity.EMERGENCY">EMERGENCY</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.ERROR" href="#hat.syslog.common.Severity.ERROR">ERROR</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.INFORMATIONAL" href="#hat.syslog.common.Severity.INFORMATIONAL">INFORMATIONAL</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.NOTICE" href="#hat.syslog.common.Severity.NOTICE">NOTICE</a></code></li>
+<li><code><a title="hat.syslog.common.Severity.WARNING" href="#hat.syslog.common.Severity.WARNING">WARNING</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

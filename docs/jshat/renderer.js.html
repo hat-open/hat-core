@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>renderer.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-@hat-core_juggler.Application.html">Application</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_juggler.Application.html#send">send</a></li></ul></li><li><a href="module-@hat-core_juggler.Connection.html">Connection</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_juggler.Connection.html#close">close</a></li><li data-type='method'><a href="module-@hat-core_juggler.Connection.html#send">send</a></li><li data-type='method'><a href="module-@hat-core_juggler.Connection.html#setLocalData">setLocalData</a></li></ul></li><li><a href="module-@hat-core_renderer.Renderer.html">Renderer</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#change">change</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#get">get</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#init">init</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#render">render</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#set">set</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-@hat-core_future.html">@hat-core/future</a></li><li><a href="module-@hat-core_juggler.html">@hat-core/juggler</a></li><li><a href="module-@hat-core_renderer.html">@hat-core/renderer</a></li><li><a href="module-@hat-core_util.html">@hat-core/util</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_util.html#.append">append</a></li><li data-type='method'><a href="module-@hat-core_util.html#.change">change</a></li><li data-type='method'><a href="module-@hat-core_util.html#.clone">clone</a></li><li data-type='method'><a href="module-@hat-core_util.html#.concat">concat</a></li><li data-type='method'><a href="module-@hat-core_util.html#.contains">contains</a></li><li data-type='method'><a href="module-@hat-core_util.html#.curry">curry</a></li><li data-type='method'><a href="module-@hat-core_util.html#.dec">dec</a></li><li data-type='method'><a href="module-@hat-core_util.html#.delay">delay</a></li><li data-type='method'><a href="module-@hat-core_util.html#.equals">equals</a></li><li data-type='method'><a href="module-@hat-core_util.html#.filter">filter</a></li><li data-type='method'><a href="module-@hat-core_util.html#.find">find</a></li><li data-type='method'><a href="module-@hat-core_util.html#.findIndex">findIndex</a></li><li data-type='method'><a href="module-@hat-core_util.html#.flap">flap</a></li><li data-type='method'><a href="module-@hat-core_util.html#.flatten">flatten</a></li><li data-type='method'><a href="module-@hat-core_util.html#.fromPairs">fromPairs</a></li><li data-type='method'><a href="module-@hat-core_util.html#.get">get</a></li><li data-type='method'><a href="module-@hat-core_util.html#.identity">identity</a></li><li data-type='method'><a href="module-@hat-core_util.html#.inc">inc</a></li><li data-type='method'><a href="module-@hat-core_util.html#.insert">insert</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isArray">isArray</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isBoolean">isBoolean</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isInteger">isInteger</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isNil">isNil</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isNumber">isNumber</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isObject">isObject</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isString">isString</a></li><li data-type='method'><a href="module-@hat-core_util.html#.length">length</a></li><li data-type='method'><a href="module-@hat-core_util.html#.map">map</a></li><li data-type='method'><a href="module-@hat-core_util.html#.merge">merge</a></li><li data-type='method'><a href="module-@hat-core_util.html#.mergeAll">mergeAll</a></li><li data-type='method'><a href="module-@hat-core_util.html#.move">move</a></li><li data-type='method'><a href="module-@hat-core_util.html#.not">not</a></li><li data-type='method'><a href="module-@hat-core_util.html#.omit">omit</a></li><li data-type='method'><a href="module-@hat-core_util.html#.pick">pick</a></li><li data-type='method'><a href="module-@hat-core_util.html#.pipe">pipe</a></li><li data-type='method'><a href="module-@hat-core_util.html#.reduce">reduce</a></li><li data-type='method'><a href="module-@hat-core_util.html#.repeat">repeat</a></li><li data-type='method'><a href="module-@hat-core_util.html#.reverse">reverse</a></li><li data-type='method'><a href="module-@hat-core_util.html#.set">set</a></li><li data-type='method'><a href="module-@hat-core_util.html#.sleep">sleep</a></li><li data-type='method'><a href="module-@hat-core_util.html#.slice">slice</a></li><li data-type='method'><a href="module-@hat-core_util.html#.sort">sort</a></li><li data-type='method'><a href="module-@hat-core_util.html#.sortBy">sortBy</a></li><li data-type='method'><a href="module-@hat-core_util.html#.strictParseFloat">strictParseFloat</a></li><li data-type='method'><a href="module-@hat-core_util.html#.strictParseInt">strictParseInt</a></li><li data-type='method'><a href="module-@hat-core_util.html#.toPairs">toPairs</a></li><li data-type='method'><a href="module-@hat-core_util.html#.union">union</a></li><li data-type='method'><a href="module-@hat-core_util.html#.zip">zip</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">renderer.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module @hat-core/renderer
+ */
+
+import {init as snabbdomInit} from 'snabbdom/build/package/init';
+import {h as snabbdomH} from 'snabbdom/build/package/h';
+import {classModule as snabbdomClass} from 'snabbdom/build/package/modules/class';
+import {datasetModule as snabbdomDataset} from 'snabbdom/build/package/modules/dataset';
+import {eventListenersModule as snabbdomEvent} from 'snabbdom/build/package/modules/eventlisteners';
+import {styleModule as snabbdomStyle} from 'snabbdom/build/package/modules/style';
+
+import * as u from '@hat-core/util';
+
+
+// patched version of snabbdom's es/modules/attributes.js
+const snabbdomAttributes = (() => {
+    function updateAttrs(oldVnode, vnode) {
+        var key, elm = vnode.elm, oldAttrs = oldVnode.data.attrs, attrs = vnode.data.attrs;
+        if (!oldAttrs &amp;&amp; !attrs)
+            return;
+        if (oldAttrs === attrs)
+            return;
+        oldAttrs = oldAttrs || {};
+        attrs = attrs || {};
+        for (key in attrs) {
+            var cur = attrs[key];
+            var old = oldAttrs[key];
+            if (old !== cur) {
+                if (cur === true) {
+                    elm.setAttribute(key, "");
+                }
+                else if (cur === false) {
+                    elm.removeAttribute(key);
+                }
+                else {
+                    elm.setAttribute(key, cur);
+                }
+            }
+        }
+        for (key in oldAttrs) {
+            if (!(key in attrs)) {
+                elm.removeAttribute(key);
+            }
+        }
+    }
+    return { create: updateAttrs, update: updateAttrs };
+})();
+
+
+// patched version of snabbdom's es/modules/props.js
+const snabbdomProps = (() => {
+    function updateProps(oldVnode, vnode) {
+        var key, cur, old, elm = vnode.elm, oldProps = oldVnode.data.props, props = vnode.data.props;
+        if (!oldProps &amp;&amp; !props)
+            return;
+        if (oldProps === props)
+            return;
+        oldProps = oldProps || {};
+        props = props || {};
+        for (key in oldProps) {
+            if (!props[key]) {
+                if (key === 'style') {
+                    elm[key] = '';
+                } else {
+                    delete elm[key];
+                }
+            }
+        }
+        for (key in props) {
+            cur = props[key];
+            old = oldProps[key];
+            if (old !== cur &amp;&amp; (key !== 'value' || elm[key] !== cur)) {
+                elm[key] = cur;
+            }
+        }
+    }
+    return { create: updateProps, update: updateProps };
+})();
+
+
+const patch = snabbdomInit([
+    snabbdomAttributes,
+    snabbdomClass,
+    snabbdomDataset,
+    snabbdomEvent,
+    snabbdomProps,
+    snabbdomStyle
+]);
+
+
+function vhFromArray(node) {
+    if (!node)
+        return [];
+    if (u.isString(node))
+        return node;
+    if (!u.isArray(node))
+        throw 'Invalid node structure';
+    if (node.length &lt; 1)
+        return [];
+    if (typeof node[0] != 'string')
+        return node.map(vhFromArray);
+    const hasData = node.length > 1 &amp;&amp; u.isObject(node[1]);
+    const children = u.pipe(
+        u.map(vhFromArray),
+        u.flatten,
+        Array.from
+    )(node.slice(hasData ? 2 : 1));
+    const result = hasData ?
+        snabbdomH(node[0], node[1], children) :
+        snabbdomH(node[0], children);
+    return result;
+}
+
+/**
+ * Virtual DOM renderer
+ */
+export class Renderer extends EventTarget {
+
+    /**
+     * Calls `init` method
+     * @param {HTMLElement} [el=document.body]
+     * @param {Any} [initState=null]
+     * @param {Function} [vtCb=null]
+     * @param {Number} [maxFps=30]
+     */
+    constructor(el, initState, vtCb, maxFps) {
+        super();
+        this.init(el, initState, vtCb, maxFps);
+    }
+
+    /**
+     * Initialize renderer
+     * @param {HTMLElement} [el=document.body]
+     * @param {Any} [initState=null]
+     * @param {Function} [vtCb=null]
+     * @param {Number} [maxFps=30]
+     * @return {Promise}
+     */
+    init(el, initState, vtCb, maxFps) {
+        this._state = null;
+        this._changes = [];
+        this._promise = null;
+        this._timeout = null;
+        this._lastRender = null;
+        this._vtCb = vtCb;
+        this._maxFps = u.isNumber(maxFps) ? maxFps : 30;
+        this._vNode = el || document.querySelector('body');
+        if (initState)
+            return this.change(_ => initState);
+        return new Promise(resolve => { resolve(); });
+    }
+
+    /**
+      * Render
+      */
+    render() {
+        if (!this._vtCb)
+            return;
+        this._lastRender = performance.now();
+        const vNode = vhFromArray(this._vtCb(this));
+        patch(this._vNode, vNode);
+        this._vNode = vNode;
+        this.dispatchEvent(new CustomEvent('render', {detail: this._state}));
+    }
+
+    /**
+     * Get current state value referenced by `paths`
+     * @param {...Path} paths
+     * @return {Any}
+     */
+    get(...paths) {
+        return u.get(paths, this._state);
+    }
+
+    /**
+     * Change current state value referenced by `path`
+     * @param {Path} path
+     * @param {Any} value
+     * @return {Promise}
+     */
+    set(path, value) {
+        if (arguments.length &lt; 2) {
+            value = path;
+            path = [];
+        }
+        return this.change(path, _ => value);
+    }
+
+    /**
+     * Change current state value referenced by `path`
+     * @param {Path} path
+     * @param {Function} cb
+     * @return {Promise}
+     */
+    change(path, cb) {
+        if (arguments.length &lt; 2) {
+            cb = path;
+            path = [];
+        }
+        this._changes.push([path, cb]);
+        if (this._promise)
+            return this._promise;
+        this._promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                try {
+                    this._change();
+                } catch(e) {
+                    this._promise = null;
+                    reject(e);
+                    throw e;
+                }
+                this._promise = null;
+                resolve();
+            }, 0);
+        });
+        return this._promise;
+    }
+
+    _change() {
+        let change = false;
+        while (this._changes.length > 0) {
+            const [path, cb] = this._changes.shift();
+            const view = u.get(path);
+            const oldState = this._state;
+            this._state = u.change(path, cb, this._state);
+            if (this._state &amp;&amp; u.equals(view(oldState),
+                                        view(this._state)))
+                continue;
+            change = true;
+            if (!this._vtCb || this._timeout)
+                continue;
+            const delay = (!this._lastRender || !this._maxFps ?
+                0 :
+                (1000 / this._maxFps) -
+                (performance.now() - this._lastRender));
+            this._timeout = setTimeout(() => {
+                this._timeout = null;
+                this.render();
+            }, (delay > 0 ? delay : 0));
+        }
+        if (change)
+            this.dispatchEvent(
+                new CustomEvent('change', {detail: this._state}));
+    }
+}
+// Renderer.prototype.set = u.curry(Renderer.prototype.set);
+// Renderer.prototype.change = u.curry(Renderer.prototype.change);
+
+
+/**
+ * Default renderer
+ * @static
+ * @type {Renderer}
+ */
+const defaultRenderer = (() => {
+    const r = (window &amp;&amp; window.__hat_default_renderer) || new Renderer();
+    if (window)
+        window.__hat_default_renderer = r;
+    return r;
+})();
+export default defaultRenderer;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a> on Mon Feb 01 2021 22:53:55 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

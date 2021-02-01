@@ -1,0 +1,431 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Dummy device" href="devices/dummy.html" /><link rel="prev" title="Sqlite backend" href="../event/backends/sqlite.html" />
+
+    <meta name="generator" content="sphinx-3.4.1, furo 2020.12.30.beta24"/>
+        <title>Gateway - Hat Core documentation</title>
+      <link rel="stylesheet" href="../../_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
+    <link rel="stylesheet" href="../../_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="../../_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" href="../../_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script defer="defer" src="../../_static/jquery.js"></script>
+    <script defer="defer" src="../../_static/underscore.js"></script>
+    <script defer="defer" src="../../_static/doctools.js"></script>
+    <script defer src="../../_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Hat Core  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hat Core  documentation</span>
+  
+</a><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../libraries/index.html">Libraries</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label for="toctree-checkbox-1"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../libraries/util/index.html">Utility functions</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label for="toctree-checkbox-2"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../libraries/util/python.html"><cite>hat.util</cite> - Python utility library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../libraries/util/javascript.html"><cite>@hat-core/util</cite> - JavaScript utility library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/aio.html"><cite>hat.aio</cite> - Python asyncio utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/json.html"><cite>hat.json</cite> - Python JSON data library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/qt.html"><cite>hat.qt</cite> - Python Qt utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/peg.html"><cite>hat.peg</cite> - Python parsing expression grammar library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/stc/index.html"><cite>hat.stc</cite> - Python statechart library</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../libraries/sbs/index.html">Simple binary serialization</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label for="toctree-checkbox-3"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../libraries/sbs/python.html"><cite>hat.sbs</cite> - Python simple binary serialization library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../libraries/sbs/c.html"><cite>hat/sbs</cite> - C simple binary serialization library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../libraries/chatter/index.html">Chatter communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label for="toctree-checkbox-4"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../libraries/chatter/python.html"><cite>hat.chatter</cite> - Python chatter library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../libraries/juggler/index.html">Juggler communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label for="toctree-checkbox-5"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../libraries/juggler/python.html"><cite>hat.juggler</cite> - Python juggler library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/duktape.html"><cite>hat.duktape</cite> - Python Duktape wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/asn1.html"><cite>hat.asn1</cite> - Python Abstract Syntax Notation One library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../libraries/drivers/index.html">Communication drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Components</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label for="toctree-checkbox-6"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../syslog.html">Syslog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestrator.html">Orchestrator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../monitor.html">Monitor Server</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../event/index.html">Event Server</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label for="toctree-checkbox-7"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../event/modules/dummy.html">Dummy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../event/backends/dummy.html">Dummy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../event/backends/sqlite.html">Sqlite backend</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">Gateway</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label for="toctree-checkbox-8"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="devices/dummy.html">Dummy device</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../gui/index.html">GUI Server</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label for="toctree-checkbox-9"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../gui/adapters/dummy.html">Dummy adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../gui/views/dummy.html">Dummy view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../appendix/index.html">Appendix</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label for="toctree-checkbox-10"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/api.html">Generated API documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/ports.html">Default TCP ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/events.html">Event definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/sbs.html">SBS Schema definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/json.html">JSON Schema definitions</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="gateway">
+<span id="id1"></span><h1>Gateway<a class="headerlink" href="#gateway" title="Permalink to this headline">¶</a></h1>
+<p>Primary function of Gateway is to provide access to remote devices
+communicating with different protocols. Gateway connects to these remote
+devices and to the Event Server and serves as the intermediary between remote
+devices and other components. Once a remote device sends a message
+to Gateway, it will send the appropriate Event registration request to the
+Event Server. The same logic is applied in reverse - Gateway sends a message to
+a remote device once the Event server creates an appropriate Event. With
+this functionality, Gateway provides bidirectional translation between
+communication protocols and Event Server’s events.</p>
+<div class="section" id="running">
+<h2>Running<a class="headerlink" href="#running" title="Permalink to this headline">¶</a></h2>
+<p>By installing Gateway from <cite>hat-gateway</cite> package, executable <cite>hat-gateway</cite>
+becomes available and can be used for starting this component.</p>
+<blockquote>
+<div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: hat-gateway [-h] [--conf path]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --conf path  configuration defined by hat://gateway/main.yaml# (default
+               $XDG_CONFIG_HOME/hat/gateway.yaml)
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Gateway functionality can be defined according to following components:</p>
+<p class="plantuml">
+<img alt='component "Event Server" as EventServer
+
+folder "Gateway" {
+    component Engine
+    component "Device proxy 1" &lt;&lt;Device proxy&gt;&gt; as DeviceProxy1
+    component "Device proxy 2" &lt;&lt;Device proxy&gt;&gt; as DeviceProxy2
+    component "Device proxy 3" &lt;&lt;Device proxy&gt;&gt; as DeviceProxy3
+    component "Device 1" &lt;&lt;Device&gt;&gt; as Device1
+    component "Device 2" &lt;&lt;Device&gt;&gt; as Device2
+    component "Device 3" &lt;&lt;Device&gt;&gt; as Device3
+}
+
+component "Remote Device 1" &lt;&lt;Remote Device&gt;&gt; as RemoteDevice1
+component "Remote Device 2" &lt;&lt;Remote Device&gt;&gt; as RemoteDevice2
+component "Remote Device 3" &lt;&lt;Remote Device&gt;&gt; as RemoteDevice3
+
+EventServer &lt;---&gt; Engine
+
+Engine o--- DeviceProxy1
+Engine o--- DeviceProxy2
+Engine o--- DeviceProxy3
+
+DeviceProxy1 o--- Device1
+DeviceProxy2 o--- Device2
+DeviceProxy3 o--- Device3
+
+Device1 &lt;---&gt; RemoteDevice1
+Device2 &lt;---&gt; RemoteDevice2
+Device3 &lt;---&gt; RemoteDevice3' src="../../_images/plantuml-42b89f2938540061aa33cd0bc5cf69fb28c4e5cc.png"/>
+</p>
+<p>Functionality is dependent on active connection to Event Server. Engine is
+created when connection with Event Server is established and destroyed if
+this connection is closed. If connection with Event Server is closed, Gateway
+will repeatedly try to establish new connection with currently active Event
+Server. If connection to Monitor Server could not be established or is closed,
+Gateway terminates it’s process execution.</p>
+</div>
+<div class="section" id="event-server-communication">
+<h2>Event Server communication<a class="headerlink" href="#event-server-communication" title="Permalink to this headline">¶</a></h2>
+<p>Communication between Event Server and Gateway is based on Gateway’s requests
+for event registrations and Event Server’s notification of newly created
+events. Additionally, Gateway can query previously registered events persisted
+by Event Server.</p>
+<p>All events, consumed and registered by Gateway’s request, have event type
+prefixed with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'gateway'</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">gateway_name</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">device_type</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">device_name</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>where:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>&lt;gateway_name&gt;</cite> - gateway instance identifier</p></li>
+<li><p><cite>&lt;device_type&gt;</cite> - device type identifier</p></li>
+<li><p><cite>&lt;device_name&gt;</cite> - device instance identifier</p></li>
+<li><p><cite>&lt;source&gt;</cite> - <code class="docutils literal notranslate"><span class="pre">gateway</span></code> for events registered by Gateway and
+<code class="docutils literal notranslate"><span class="pre">system</span></code> for events registered by other components</p></li>
+</ul>
+</div></blockquote>
+<p>While establishing connection with Event Server, Gateway subscribes for events
+that match:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'gateway'</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">gateway_name</span><span class="o">&gt;</span><span class="p">,</span> <span class="s1">'?'</span><span class="p">,</span> <span class="s1">'?'</span><span class="p">,</span> <span class="s1">'system'</span><span class="p">,</span> <span class="s1">'*'</span>
+</pre></div>
+</div>
+<p>All devices, regardless of device type, support following events:</p>
+<blockquote>
+<div><ul>
+<li><p>‘gateway’, &lt;gateway_name&gt;, &lt;device_type&gt;, &lt;device_name&gt;, ‘system’, ‘enable’</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>source timestamp</cite> - optional timestamp when component issued event
+register request</p></li>
+<li><p><cite>payload</cite> - JSON payload encoding boolean value which represents
+device’s enabled status</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>‘gateway’, &lt;gateway_name&gt;, &lt;device_type&gt;, &lt;device_name&gt;, ‘gateway’, ‘running’</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>source timestamp</cite> - required timestamp when Device is successfully
+created (started) or destroyed (stopped)</p></li>
+<li><p><cite>payload</cite> - JSON payload encoding boolean value set to <cite>true</cite> when
+Device is successfully created (started) or destroyed (stopped)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p>All other Gateway events are specified in dependence of <cite>&lt;device_type&gt;</cite>.</p>
+</div>
+<div class="section" id="engine">
+<h2>Engine<a class="headerlink" href="#engine" title="Permalink to this headline">¶</a></h2>
+<p>Central part responsible for device orchestration. It is created when new
+connection with Event Server is established and destroyed when connection is
+closed. During initialization, engine creates new instance of device proxy for
+each configured device. These device proxies are destroyed during engine
+deletion procedure.</p>
+</div>
+<div class="section" id="device-proxy">
+<h2>Device proxy<a class="headerlink" href="#device-proxy" title="Permalink to this headline">¶</a></h2>
+<p>Each device proxy is responsible for managing lifetime of single device and
+providing custom device’s interface to event server. Device lifetime is
+dependent of last <cite>enable</cite> event state. During initialization, device proxy
+registers a new <cite>running</cite> event with payload <cite>false</cite>, queries last device’s
+associated <cite>enable</cite> event and keeps monitoring for any new <cite>enable</cite> events. When
+device is enabled, proxy creates new instance of device. Once device is
+successfully created, proxy registers new <cite>running</cite> event with payload <code class="docutils literal notranslate"><span class="pre">true</span></code>.
+If at any time device is disabled, proxy will destroy associated device instance
+and continue waiting for new <cite>enable</cite> event. When device is successfully
+destroyed, proxy will try to register new <cite>running</cite> event with payload
+<code class="docutils literal notranslate"><span class="pre">false</span></code>. Once proxy is destroyed, associated device is also destroyed.</p>
+<p>Prior to new device instance initialization, responsibility of proxy is to
+create interface for event server communication appropriate for associated
+device. This interface provides event filtering (based on event type) specific
+for associated device. Newly received events are passed to device only
+when devices <cite>running</cite> state is <code class="docutils literal notranslate"><span class="pre">true</span></code> (after successful initialization
+and until device is successfully destroyed).</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>maybe we should start putting new events to DeviceEventClient prior
+to calling create_device</p>
+</div>
+</div>
+<div class="section" id="device">
+<h2>Device<a class="headerlink" href="#device" title="Permalink to this headline">¶</a></h2>
+<p>Devices provide abstraction for mapping custom communication protocols to
+Event Server’s events. Event mapping is uniquely defined according to
+each device type. Implementation of device logic interfaces with other
+devices and Gateway’s core logic so additional care should be taken during
+device implementation (Gateway doesn’t provide sandbox environment for
+execution of device logic).</p>
+<p>Devices available as part of <cite>hat-gateway</cite> package:</p>
+<blockquote>
+<div><div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devices/dummy.html">Dummy device</a></li>
+</ul>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>Documentation is available as part of generated API reference:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="../../pyhat/hat/gateway/index.html">Python hat.gateway module</a></p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="devices/dummy.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Dummy device</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../event/backends/sqlite.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Sqlite backend</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2020 - 2021, Hat Open AUTHORS
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Gateway</a><ul>
+<li><a class="reference internal" href="#running">Running</a></li>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#event-server-communication">Event Server communication</a></li>
+<li><a class="reference internal" href="#engine">Engine</a></li>
+<li><a class="reference internal" href="#device-proxy">Device proxy</a></li>
+<li><a class="reference internal" href="#device">Device</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>

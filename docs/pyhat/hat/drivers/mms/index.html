@@ -1,0 +1,3330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.mms API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.mms</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from hat.drivers.mms.connection import (
+    Address,
+    ConnectionInfo,
+    RequestCb,
+    ConnectionCb,
+    connect,
+    listen,
+    Server,
+    Connection)
+
+from hat.drivers.mms.common import (
+    DataAccessError,
+    ObjectClass,
+    ErrorClass,
+    StatusRequest,
+    GetNameListRequest,
+    IdentifyRequest,
+    GetVariableAccessAttributesRequest,
+    GetNamedVariableListAttributesRequest,
+    ReadRequest,
+    WriteRequest,
+    DefineNamedVariableListRequest,
+    DeleteNamedVariableListRequest,
+    Request,
+    ErrorResponse,
+    StatusResponse,
+    GetNameListResponse,
+    IdentifyResponse,
+    GetVariableAccessAttributesResponse,
+    GetNamedVariableListAttributesResponse,
+    ReadResponse,
+    WriteResponse,
+    DefineNamedVariableListResponse,
+    DeleteNamedVariableListResponse,
+    Response,
+    EventNotificationUnconfirmed,
+    InformationReportUnconfirmed,
+    UnsolicitedStatusUnconfirmed,
+    Unconfirmed,
+    ArrayData,
+    BcdData,
+    BinaryTimeData,
+    BitStringData,
+    BooleanData,
+    BooleanArrayData,
+    FloatingPointData,
+    GeneralizedTimeData,
+    IntegerData,
+    MmsStringData,
+    ObjIdData,
+    OctetStringData,
+    StructureData,
+    UnsignedData,
+    UtcTimeData,
+    VisibleStringData,
+    Data,
+    ArrayTypeDescription,
+    BcdTypeDescription,
+    BinaryTimeTypeDescription,
+    BitStringTypeDescription,
+    BooleanTypeDescription,
+    FloatingPointTypeDescription,
+    GeneralizedTimeTypeDescription,
+    IntegerTypeDescription,
+    MmsStringTypeDescription,
+    ObjIdTypeDescription,
+    OctetStringTypeDescription,
+    StructureTypeDescription,
+    UnsignedTypeDescription,
+    UtcTimeTypeDescription,
+    VisibleStringTypeDescription,
+    TypeDescription,
+    AaSpecificObjectName,
+    DomainSpecificObjectName,
+    VmdSpecificObjectName,
+    ObjectName,
+    AaSpecificObjectScope,
+    DomainSpecificObjectScope,
+    VmdSpecificObjectScope,
+    ObjectScope,
+    AddressVariableSpecification,
+    InvalidatedVariableSpecification,
+    NameVariableSpecification,
+    ScatteredAccessDescriptionVariableSpecification,
+    VariableDescriptionVariableSpecification,
+    VariableSpecification)
+
+
+__all__ = [
+    &#39;Address&#39;,
+    &#39;ConnectionInfo&#39;,
+    &#39;RequestCb&#39;,
+    &#39;ConnectionCb&#39;,
+    &#39;connect&#39;,
+    &#39;listen&#39;,
+    &#39;Server&#39;,
+    &#39;Connection&#39;,
+    &#39;DataAccessError&#39;,
+    &#39;ObjectClass&#39;,
+    &#39;ErrorClass&#39;,
+    &#39;StatusRequest&#39;,
+    &#39;GetNameListRequest&#39;,
+    &#39;IdentifyRequest&#39;,
+    &#39;GetVariableAccessAttributesRequest&#39;,
+    &#39;GetNamedVariableListAttributesRequest&#39;,
+    &#39;ReadRequest&#39;,
+    &#39;WriteRequest&#39;,
+    &#39;DefineNamedVariableListRequest&#39;,
+    &#39;DeleteNamedVariableListRequest&#39;,
+    &#39;Request&#39;,
+    &#39;ErrorResponse&#39;,
+    &#39;StatusResponse&#39;,
+    &#39;GetNameListResponse&#39;,
+    &#39;IdentifyResponse&#39;,
+    &#39;GetVariableAccessAttributesResponse&#39;,
+    &#39;GetNamedVariableListAttributesResponse&#39;,
+    &#39;ReadResponse&#39;,
+    &#39;WriteResponse&#39;,
+    &#39;DefineNamedVariableListResponse&#39;,
+    &#39;DeleteNamedVariableListResponse&#39;,
+    &#39;Response&#39;,
+    &#39;EventNotificationUnconfirmed&#39;,
+    &#39;InformationReportUnconfirmed&#39;,
+    &#39;UnsolicitedStatusUnconfirmed&#39;,
+    &#39;Unconfirmed&#39;,
+    &#39;ArrayData&#39;,
+    &#39;BcdData&#39;,
+    &#39;BinaryTimeData&#39;,
+    &#39;BitStringData&#39;,
+    &#39;BooleanData&#39;,
+    &#39;BooleanArrayData&#39;,
+    &#39;FloatingPointData&#39;,
+    &#39;GeneralizedTimeData&#39;,
+    &#39;IntegerData&#39;,
+    &#39;MmsStringData&#39;,
+    &#39;ObjIdData&#39;,
+    &#39;OctetStringData&#39;,
+    &#39;StructureData&#39;,
+    &#39;UnsignedData&#39;,
+    &#39;UtcTimeData&#39;,
+    &#39;VisibleStringData&#39;,
+    &#39;Data&#39;,
+    &#39;ArrayTypeDescription&#39;,
+    &#39;BcdTypeDescription&#39;,
+    &#39;BinaryTimeTypeDescription&#39;,
+    &#39;BitStringTypeDescription&#39;,
+    &#39;BooleanTypeDescription&#39;,
+    &#39;FloatingPointTypeDescription&#39;,
+    &#39;GeneralizedTimeTypeDescription&#39;,
+    &#39;IntegerTypeDescription&#39;,
+    &#39;MmsStringTypeDescription&#39;,
+    &#39;ObjIdTypeDescription&#39;,
+    &#39;OctetStringTypeDescription&#39;,
+    &#39;StructureTypeDescription&#39;,
+    &#39;UnsignedTypeDescription&#39;,
+    &#39;UtcTimeTypeDescription&#39;,
+    &#39;VisibleStringTypeDescription&#39;,
+    &#39;TypeDescription&#39;,
+    &#39;AaSpecificObjectName&#39;,
+    &#39;DomainSpecificObjectName&#39;,
+    &#39;VmdSpecificObjectName&#39;,
+    &#39;ObjectName&#39;,
+    &#39;AaSpecificObjectScope&#39;,
+    &#39;DomainSpecificObjectScope&#39;,
+    &#39;VmdSpecificObjectScope&#39;,
+    &#39;ObjectScope&#39;,
+    &#39;AddressVariableSpecification&#39;,
+    &#39;InvalidatedVariableSpecification&#39;,
+    &#39;NameVariableSpecification&#39;,
+    &#39;ScatteredAccessDescriptionVariableSpecification&#39;,
+    &#39;VariableDescriptionVariableSpecification&#39;,
+    &#39;VariableSpecification&#39;]</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="hat.drivers.mms.common" href="common.html">hat.drivers.mms.common</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="hat.drivers.mms.connection" href="connection.html">hat.drivers.mms.connection</a></code></dt>
+<dd>
+<div class="desc"><p>Manufacturing Message Specification</p></div>
+</dd>
+<dt><code class="name"><a title="hat.drivers.mms.encoder" href="encoder.html">hat.drivers.mms.encoder</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.mms.connect"><code class="name flex">
+<span>async def <span class="ident">connect</span></span>(<span>request_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.mms.Connection" href="#hat.drivers.mms.Connection">Connection</a>'), abc.Request], typing.Union[abc.Response, typing.Awaitable[abc.Response]]], addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, local_tsel: typing.Union[int, NoneType] = None, remote_tsel: typing.Union[int, NoneType] = None, local_ssel: typing.Union[int, NoneType] = None, remote_ssel: typing.Union[int, NoneType] = None, local_psel: typing.Union[int, NoneType] = None, remote_psel: typing.Union[int, NoneType] = None, local_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType] = None, remote_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType] = None, local_ae_qualifier: typing.Union[int, NoneType] = None, remote_ae_qualifier: typing.Union[int, NoneType] = None, user_data: typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType] = None) ‑> <a title="hat.drivers.mms.connection.Connection" href="connection.html#hat.drivers.mms.connection.Connection">Connection</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect to ACSE server</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def connect(request_cb: RequestCb,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  local_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  remote_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  local_ae_qualifier: typing.Optional[int] = None,
+                  remote_ae_qualifier: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -&gt; &#39;Connection&#39;:
+    &#34;&#34;&#34;Connect to ACSE server&#34;&#34;&#34;
+    initiate_req = &#39;initiate-RequestPDU&#39;, {
+        &#39;proposedMaxServOutstandingCalling&#39;: 5,
+        &#39;proposedMaxServOutstandingCalled&#39;: 5,
+        &#39;initRequestDetail&#39;: {
+            &#39;proposedVersionNumber&#39;: 1,
+            &#39;proposedParameterCBB&#39;: _parameter_cbb,
+            &#39;servicesSupportedCalling&#39;: _service_support}}
+    req_user_data = _encode(initiate_req)
+    acse_conn = await acse.connect(syntax_name_list=[_mms_syntax_name],
+                                   app_context_name=_mms_app_context_name,
+                                   addr=addr,
+                                   local_tsel=local_tsel,
+                                   remote_tsel=remote_tsel,
+                                   local_ssel=local_ssel,
+                                   remote_ssel=remote_ssel,
+                                   local_psel=local_psel,
+                                   remote_psel=remote_psel,
+                                   local_ap_title=local_ap_title,
+                                   remote_ap_title=remote_ap_title,
+                                   local_ae_qualifier=local_ae_qualifier,
+                                   remote_ae_qualifier=remote_ae_qualifier,
+                                   user_data=(_mms_syntax_name, req_user_data))
+    try:
+        res_syntax_name, res_user_data = acse_conn.conn_res_user_data
+        if not asn1.is_oid_eq(res_syntax_name, _mms_syntax_name):
+            raise Exception(&#34;invalid syntax name&#34;)
+        initiate_res = _decode(res_user_data)
+        if initiate_res[0] != &#39;initiate-ResponsePDU&#39;:
+            raise Exception(&#34;invalid initiate response&#34;)
+        return _create_connection(request_cb, acse_conn)
+    except Exception:
+        await aio.uncancellable(acse_conn.async_close())
+        raise</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.listen"><code class="name flex">
+<span>async def <span class="ident">listen</span></span>(<span>connection_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.mms.Connection" href="#hat.drivers.mms.Connection">Connection</a>')], typing.Union[NoneType, typing.Awaitable[NoneType]]], request_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.mms.Connection" href="#hat.drivers.mms.Connection">Connection</a>'), abc.Request], typing.Union[abc.Response, typing.Awaitable[abc.Response]]], addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a> = Address(host='0.0.0.0', port=102)) ‑> <a title="hat.drivers.mms.connection.Server" href="connection.html#hat.drivers.mms.connection.Server">Server</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create MMS listening server</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>connection_cb</code></strong></dt>
+<dd>new connection callback</dd>
+<dt><strong><code>request_cb</code></strong></dt>
+<dd>received request callback</dd>
+<dt><strong><code>addr</code></strong></dt>
+<dd>local listening address</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def listen(connection_cb: ConnectionCb,
+                 request_cb: RequestCb,
+                 addr: Address = Address(&#39;0.0.0.0&#39;, 102)
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create MMS listening server
+
+    Args:
+        connection_cb: new connection callback
+        request_cb: received request callback
+        addr: local listening address
+
+    &#34;&#34;&#34;
+
+    async def on_validate(syntax_names, user_data):
+        syntax_name, req_user_data = user_data
+        if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
+            raise Exception(&#39;invalid mms syntax name&#39;)
+        initiate_req = _decode(req_user_data)
+        if initiate_req[0] != &#39;initiate-RequestPDU&#39;:
+            raise Exception(&#39;invalid initiate request&#39;)
+        initiate_res = &#39;initiate-ResponsePDU&#39;, {
+            &#39;negotiatedMaxServOutstandingCalling&#39;: 5,
+            &#39;negotiatedMaxServOutstandingCalled&#39;: 5,
+            &#39;negotiatedDataStructureNestingLevel&#39;: 4,  # TODO compatibility
+            &#39;initResponseDetail&#39;: {
+                &#39;negotiatedVersionNumber&#39;: 1,
+                &#39;negotiatedParameterCBB&#39;: _parameter_cbb,
+                &#39;servicesSupportedCalled&#39;: _service_support}}
+        if &#39;localDetailCalling&#39; in initiate_req[1]:
+            initiate_res[1][&#39;localDetailCalled&#39;] = \
+                initiate_req[1][&#39;localDetailCalling&#39;]
+        res_user_data = _encode(initiate_res)
+        return _mms_syntax_name, res_user_data
+
+    async def on_connection(acse_conn):
+        try:
+            try:
+                conn = _create_connection(request_cb, acse_conn)
+            except Exception:
+                await aio.uncancellable(acse_conn.async_close())
+                raise
+            try:
+                await aio.call(connection_cb, conn)
+            except BaseException:
+                await aio.uncancellable(conn.async_close())
+                raise
+        except Exception as e:
+            mlog.error(&#34;error creating new incomming connection: %s&#34;,
+                       e, exc_info=e)
+
+    async def wait_acse_server_closed():
+        try:
+            await acse_server.wait_closed()
+        finally:
+            async_group.close()
+
+    async_group = aio.Group()
+    acse_server = await acse.listen(on_validate, on_connection, addr)
+    async_group.spawn(aio.call_on_cancel, acse_server.async_close)
+    async_group.spawn(wait_acse_server_closed)
+
+    srv = Server()
+    srv._async_group = async_group
+    srv._acse_server = acse_server
+    return srv</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.mms.AaSpecificObjectName"><code class="flex name class">
+<span>class <span class="ident">AaSpecificObjectName</span></span>
+<span>(</span><span>identifier: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>AaSpecificObjectName(identifier,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AaSpecificObjectName(typing.NamedTuple):
+    identifier: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.AaSpecificObjectName.identifier"><code class="name">var <span class="ident">identifier</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.AaSpecificObjectScope"><code class="flex name class">
+<span>class <span class="ident">AaSpecificObjectScope</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>AaSpecificObjectScope()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AaSpecificObjectScope(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.Address"><code class="flex name class">
+<span>class <span class="ident">Address</span></span>
+<span>(</span><span>host: str, port: int = 102)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Address(host, port)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Address(typing.NamedTuple):
+    host: str
+    port: int = 102</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.Address.host"><code class="name">var <span class="ident">host</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.Address.port"><code class="name">var <span class="ident">port</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.AddressVariableSpecification"><code class="flex name class">
+<span>class <span class="ident">AddressVariableSpecification</span></span>
+<span>(</span><span>address: typing.Union[int, str, bytes, bytearray, memoryview])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>AddressVariableSpecification(address,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AddressVariableSpecification(typing.NamedTuple):
+    address: typing.Union[int, str, asn1.Data]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.AddressVariableSpecification.address"><code class="name">var <span class="ident">address</span> : typing.Union[int, str, bytes, bytearray, memoryview]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ArrayData"><code class="flex name class">
+<span>class <span class="ident">ArrayData</span></span>
+<span>(</span><span>elements: typing.List[ForwardRef('<a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ArrayData(elements,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArrayData(typing.NamedTuple):
+    elements: typing.List[&#39;Data&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ArrayData.elements"><code class="name">var <span class="ident">elements</span> : typing.List[abc.Data]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ArrayTypeDescription"><code class="flex name class">
+<span>class <span class="ident">ArrayTypeDescription</span></span>
+<span>(</span><span>number_of_elements: int, element_type: typing.Union[ForwardRef('<a title="hat.drivers.mms.TypeDescription" href="#hat.drivers.mms.TypeDescription">TypeDescription</a>'), ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ArrayTypeDescription(number_of_elements, element_type)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArrayTypeDescription(typing.NamedTuple):
+    number_of_elements: int
+    element_type: typing.Union[&#39;TypeDescription&#39;, &#39;ObjectName&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ArrayTypeDescription.element_type"><code class="name">var <span class="ident">element_type</span> : typing.Union[abc.TypeDescription, abc.ObjectName]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.ArrayTypeDescription.number_of_elements"><code class="name">var <span class="ident">number_of_elements</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BcdData"><code class="flex name class">
+<span>class <span class="ident">BcdData</span></span>
+<span>(</span><span>value: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BcdData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BcdData(typing.NamedTuple):
+    value: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BcdData.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BcdTypeDescription"><code class="flex name class">
+<span>class <span class="ident">BcdTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BcdTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BcdTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BcdTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BinaryTimeData"><code class="flex name class">
+<span>class <span class="ident">BinaryTimeData</span></span>
+<span>(</span><span>value: datetime.datetime)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BinaryTimeData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BinaryTimeData(typing.NamedTuple):
+    value: datetime.datetime</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BinaryTimeData.value"><code class="name">var <span class="ident">value</span> : datetime.datetime</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BinaryTimeTypeDescription"><code class="flex name class">
+<span>class <span class="ident">BinaryTimeTypeDescription</span></span>
+<span>(</span><span>xyz: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BinaryTimeTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BinaryTimeTypeDescription(typing.NamedTuple):
+    xyz: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BinaryTimeTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BitStringData"><code class="flex name class">
+<span>class <span class="ident">BitStringData</span></span>
+<span>(</span><span>value: typing.List[bool])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BitStringData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BitStringData(typing.NamedTuple):
+    value: typing.List[bool]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BitStringData.value"><code class="name">var <span class="ident">value</span> : typing.List[bool]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BitStringTypeDescription"><code class="flex name class">
+<span>class <span class="ident">BitStringTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BitStringTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BitStringTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BitStringTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BooleanArrayData"><code class="flex name class">
+<span>class <span class="ident">BooleanArrayData</span></span>
+<span>(</span><span>value: typing.List[bool])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BooleanArrayData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BooleanArrayData(typing.NamedTuple):
+    value: typing.List[bool]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BooleanArrayData.value"><code class="name">var <span class="ident">value</span> : typing.List[bool]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BooleanData"><code class="flex name class">
+<span>class <span class="ident">BooleanData</span></span>
+<span>(</span><span>value: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BooleanData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BooleanData(typing.NamedTuple):
+    value: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.BooleanData.value"><code class="name">var <span class="ident">value</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.BooleanTypeDescription"><code class="flex name class">
+<span>class <span class="ident">BooleanTypeDescription</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>BooleanTypeDescription()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BooleanTypeDescription(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>MMS connection</p>
+<p>For creating new connection see :func:<code><a title="hat.drivers.mms.connect" href="#hat.drivers.mms.connect">connect()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connection(aio.Resource):
+    &#34;&#34;&#34;MMS connection
+
+    For creating new connection see :func:`connect`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; ConnectionInfo:
+        &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+        return self._acse_conn.info
+
+    async def receive_unconfirmed(self) -&gt; common.Unconfirmed:
+        &#34;&#34;&#34;Receive unconfirmed message
+
+        Raises:
+            ConnectionError: in case connection is not open
+
+        &#34;&#34;&#34;
+        try:
+            return await self._unconfirmed_queue.get()
+        except aio.QueueClosedError:
+            raise ConnectionError(&#39;connection is not open&#39;)
+
+    def send_unconfirmed(self, unconfirmed: common.Unconfirmed):
+        &#34;&#34;&#34;Send unconfirmed message&#34;&#34;&#34;
+        pdu = &#39;unconfirmed-PDU&#39;, {
+            &#39;service&#39;: encoder.encode_unconfirmed(unconfirmed)}
+        data = _mms_syntax_name, _encode(pdu)
+        self._acse_conn.write(data)
+
+    async def send_confirmed(self,
+                             req: common.Request
+                             ) -&gt; common.Response:
+        &#34;&#34;&#34;Send confirmed request and wait for response
+
+        Raises:
+            ConnectionError: in case connection is not open
+
+        &#34;&#34;&#34;
+        if self._async_group.is_closing:
+            raise ConnectionError(&#39;connection is not open&#39;)
+        invoke_id = self._last_invoke_id + 1
+        pdu = &#39;confirmed-RequestPDU&#39;, {
+            &#39;invokeID&#39;: invoke_id,
+            &#39;service&#39;: encoder.encode_request(req)}
+        data = _mms_syntax_name, _encode(pdu)
+        self._acse_conn.write(data)
+        self._last_invoke_id = invoke_id
+        self._response_futures[invoke_id] = asyncio.Future()
+        try:
+            return await self._response_futures[invoke_id]
+        finally:
+            del self._response_futures[invoke_id]
+
+    async def _read_loop(self):
+        running = True
+        try:
+            while running:
+                syntax_name, entity = await self._acse_conn.read()
+                if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
+                    continue
+                pdu = _decode(entity)
+                running = await self._process_pdu(pdu)
+        except asyncio.CancelledError:
+            pdu = &#39;conclude-RequestPDU&#39;, None
+            data = _mms_syntax_name, _encode(pdu)
+            self._acse_conn.write(data)
+            # TODO: wait for response
+            raise
+        finally:
+            self._async_group.close()
+            self._unconfirmed_queue.close()
+            for response_future in self._response_futures.values():
+                if not response_future.done():
+                    response_future.set_exception(
+                        ConnectionError(&#39;connection is not open&#39;))
+            await aio.uncancellable(self._acse_conn.async_close())
+
+    async def _process_pdu(self, pdu):
+        name, data = pdu
+
+        if name == &#39;unconfirmed-PDU&#39;:
+            unconfirmed = encoder.decode_unconfirmed(data[&#39;service&#39;])
+            await self._unconfirmed_queue.put(unconfirmed)
+            return True
+
+        elif name == &#39;confirmed-RequestPDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            req = encoder.decode_request(data[&#39;service&#39;])
+            res = await aio.call(self._request_cb, self, req)
+            if isinstance(res, common.ErrorResponse):
+                res_pdu = &#39;confirmed-ErrorPDU&#39;, {
+                    &#39;invokeID&#39;: invoke_id,
+                    &#39;serviceError&#39;: {
+                        &#39;errorClass&#39;: (res.error_class.value, res.value)}}
+            else:
+                res_pdu = &#39;confirmed-ResponsePDU&#39;, {
+                    &#39;invokeID&#39;: invoke_id,
+                    &#39;service&#39;: encoder.encode_response(res)}
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
+            return True
+
+        elif name == &#39;confirmed-ResponsePDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            res = encoder.decode_response(data[&#39;service&#39;])
+            future = self._response_futures.get(invoke_id)
+            if future and not future.done():
+                future.set_result(res)
+            else:
+                mlog.warn(f&#34;dropping confirmed response &#34;
+                          f&#34;(invoke_id: {invoke_id})&#34;)
+            return True
+
+        elif name == &#39;confirmed-ErrorPDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            error_class_name, value = data[&#39;serviceError&#39;][&#39;errorClass&#39;]
+            error_class = common.ErrorClass(error_class_name)
+            res = common.ErrorResponse(error_class, value)
+            future = self._response_futures.get(invoke_id)
+            if future and not future.done():
+                future.set_result(res)
+            else:
+                mlog.warn(f&#34;dropping confirmed error &#34;
+                          f&#34;(invoke_id: {invoke_id})&#34;)
+            return True
+
+        elif name == &#39;conclude-RequestPDU&#39;:
+            res_pdu = &#39;conclude-ResponsePDU&#39;, None
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
+            return False
+
+        return False</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.Connection.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.Connection.info"><code class="name">var <span class="ident">info</span> : <a title="hat.drivers.acse.ConnectionInfo" href="../acse/index.html#hat.drivers.acse.ConnectionInfo">ConnectionInfo</a></code></dt>
+<dd>
+<div class="desc"><p>Connection info</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self) -&gt; ConnectionInfo:
+    &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+    return self._acse_conn.info</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.mms.Connection.receive_unconfirmed"><code class="name flex">
+<span>async def <span class="ident">receive_unconfirmed</span></span>(<span>self) ‑> abc.Unconfirmed</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Receive unconfirmed message</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ConnectionError</code></dt>
+<dd>in case connection is not open</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def receive_unconfirmed(self) -&gt; common.Unconfirmed:
+    &#34;&#34;&#34;Receive unconfirmed message
+
+    Raises:
+        ConnectionError: in case connection is not open
+
+    &#34;&#34;&#34;
+    try:
+        return await self._unconfirmed_queue.get()
+    except aio.QueueClosedError:
+        raise ConnectionError(&#39;connection is not open&#39;)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.Connection.send_confirmed"><code class="name flex">
+<span>async def <span class="ident">send_confirmed</span></span>(<span>self, req: abc.Request) ‑> abc.Response</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send confirmed request and wait for response</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ConnectionError</code></dt>
+<dd>in case connection is not open</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def send_confirmed(self,
+                         req: common.Request
+                         ) -&gt; common.Response:
+    &#34;&#34;&#34;Send confirmed request and wait for response
+
+    Raises:
+        ConnectionError: in case connection is not open
+
+    &#34;&#34;&#34;
+    if self._async_group.is_closing:
+        raise ConnectionError(&#39;connection is not open&#39;)
+    invoke_id = self._last_invoke_id + 1
+    pdu = &#39;confirmed-RequestPDU&#39;, {
+        &#39;invokeID&#39;: invoke_id,
+        &#39;service&#39;: encoder.encode_request(req)}
+    data = _mms_syntax_name, _encode(pdu)
+    self._acse_conn.write(data)
+    self._last_invoke_id = invoke_id
+    self._response_futures[invoke_id] = asyncio.Future()
+    try:
+        return await self._response_futures[invoke_id]
+    finally:
+        del self._response_futures[invoke_id]</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.Connection.send_unconfirmed"><code class="name flex">
+<span>def <span class="ident">send_unconfirmed</span></span>(<span>self, unconfirmed: abc.Unconfirmed)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send unconfirmed message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_unconfirmed(self, unconfirmed: common.Unconfirmed):
+    &#34;&#34;&#34;Send unconfirmed message&#34;&#34;&#34;
+    pdu = &#39;unconfirmed-PDU&#39;, {
+        &#39;service&#39;: encoder.encode_unconfirmed(unconfirmed)}
+    data = _mms_syntax_name, _encode(pdu)
+    self._acse_conn.write(data)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo"><code class="flex name class">
+<span>class <span class="ident">ConnectionInfo</span></span>
+<span>(</span><span>local_addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, local_tsel: typing.Union[int, NoneType], local_ssel: typing.Union[int, NoneType], local_psel: typing.Union[int, NoneType], local_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType], local_ae_qualifier: typing.Union[int, NoneType], remote_addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, remote_tsel: typing.Union[int, NoneType], remote_ssel: typing.Union[int, NoneType], remote_psel: typing.Union[int, NoneType], remote_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType], remote_ae_qualifier: typing.Union[int, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ConnectionInfo(local_addr, local_tsel, local_ssel, local_psel, local_ap_title, local_ae_qualifier, remote_addr, remote_tsel, remote_ssel, remote_psel, remote_ap_title, remote_ae_qualifier)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    local_psel: typing.Optional[int]
+    local_ap_title: typing.Optional[asn1.ObjectIdentifier]
+    local_ae_qualifier: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
+    remote_psel: typing.Optional[int]
+    remote_ap_title: typing.Optional[asn1.ObjectIdentifier]
+    remote_ae_qualifier: typing.Optional[int]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ConnectionInfo.local_addr"><code class="name">var <span class="ident">local_addr</span> : <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.local_ae_qualifier"><code class="name">var <span class="ident">local_ae_qualifier</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.local_ap_title"><code class="name">var <span class="ident">local_ap_title</span> : typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.local_psel"><code class="name">var <span class="ident">local_psel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.local_ssel"><code class="name">var <span class="ident">local_ssel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.local_tsel"><code class="name">var <span class="ident">local_tsel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.remote_addr"><code class="name">var <span class="ident">remote_addr</span> : <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.remote_ae_qualifier"><code class="name">var <span class="ident">remote_ae_qualifier</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 11</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.remote_ap_title"><code class="name">var <span class="ident">remote_ap_title</span> : typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 10</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.remote_psel"><code class="name">var <span class="ident">remote_psel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 9</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.remote_ssel"><code class="name">var <span class="ident">remote_ssel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 8</p></div>
+</dd>
+<dt id="hat.drivers.mms.ConnectionInfo.remote_tsel"><code class="name">var <span class="ident">remote_tsel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.Data"><code class="flex name class">
+<span>class <span class="ident">Data</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError"><code class="flex name class">
+<span>class <span class="ident">DataAccessError</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DataAccessError(enum.Enum):
+    OBJECT_INVALIDATED = 0
+    HARDWARE_FAULT = 1
+    TEMPORARILY_UNAVAILABLE = 2
+    OBJECT_ACCESS_DENIED = 3
+    OBJECT_UNDEFINED = 4
+    INVALID_ADDRESS = 5
+    TYPE_UNSUPPORTED = 6
+    TYPE_INCONSISTENT = 7
+    OBJECT_ATTRIBUTE_INCONSISTENT = 8
+    OBJECT_ACCESS_UNSUPPORTED = 9
+    OBJECT_NON_EXISTENT = 10
+    OBJECT_VALUE_INVALID = 11</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.mms.DataAccessError.HARDWARE_FAULT"><code class="name">var <span class="ident">HARDWARE_FAULT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.INVALID_ADDRESS"><code class="name">var <span class="ident">INVALID_ADDRESS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_ACCESS_DENIED"><code class="name">var <span class="ident">OBJECT_ACCESS_DENIED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_ACCESS_UNSUPPORTED"><code class="name">var <span class="ident">OBJECT_ACCESS_UNSUPPORTED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_ATTRIBUTE_INCONSISTENT"><code class="name">var <span class="ident">OBJECT_ATTRIBUTE_INCONSISTENT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_INVALIDATED"><code class="name">var <span class="ident">OBJECT_INVALIDATED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_NON_EXISTENT"><code class="name">var <span class="ident">OBJECT_NON_EXISTENT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_UNDEFINED"><code class="name">var <span class="ident">OBJECT_UNDEFINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.OBJECT_VALUE_INVALID"><code class="name">var <span class="ident">OBJECT_VALUE_INVALID</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.TEMPORARILY_UNAVAILABLE"><code class="name">var <span class="ident">TEMPORARILY_UNAVAILABLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.TYPE_INCONSISTENT"><code class="name">var <span class="ident">TYPE_INCONSISTENT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.DataAccessError.TYPE_UNSUPPORTED"><code class="name">var <span class="ident">TYPE_UNSUPPORTED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.DefineNamedVariableListRequest"><code class="flex name class">
+<span>class <span class="ident">DefineNamedVariableListRequest</span></span>
+<span>(</span><span>name: <a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>, specification: typing.List[ForwardRef('<a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DefineNamedVariableListRequest(name, specification)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DefineNamedVariableListRequest(typing.NamedTuple):
+    name: &#39;ObjectName&#39;
+    specification: typing.List[&#39;VariableSpecification&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.DefineNamedVariableListRequest.name"><code class="name">var <span class="ident">name</span> : abc.ObjectName</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.DefineNamedVariableListRequest.specification"><code class="name">var <span class="ident">specification</span> : typing.List[abc.VariableSpecification]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.DefineNamedVariableListResponse"><code class="flex name class">
+<span>class <span class="ident">DefineNamedVariableListResponse</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>DefineNamedVariableListResponse()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DefineNamedVariableListResponse(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.DeleteNamedVariableListRequest"><code class="flex name class">
+<span>class <span class="ident">DeleteNamedVariableListRequest</span></span>
+<span>(</span><span>names: typing.List[ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DeleteNamedVariableListRequest(names,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeleteNamedVariableListRequest(typing.NamedTuple):
+    names: typing.List[&#39;ObjectName&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.DeleteNamedVariableListRequest.names"><code class="name">var <span class="ident">names</span> : typing.List[abc.ObjectName]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.DeleteNamedVariableListResponse"><code class="flex name class">
+<span>class <span class="ident">DeleteNamedVariableListResponse</span></span>
+<span>(</span><span>matched: int, deleted: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DeleteNamedVariableListResponse(matched, deleted)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeleteNamedVariableListResponse(typing.NamedTuple):
+    matched: int
+    deleted: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.DeleteNamedVariableListResponse.deleted"><code class="name">var <span class="ident">deleted</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.DeleteNamedVariableListResponse.matched"><code class="name">var <span class="ident">matched</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.DomainSpecificObjectName"><code class="flex name class">
+<span>class <span class="ident">DomainSpecificObjectName</span></span>
+<span>(</span><span>domain_id: str, item_id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DomainSpecificObjectName(domain_id, item_id)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DomainSpecificObjectName(typing.NamedTuple):
+    domain_id: str
+    item_id: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.DomainSpecificObjectName.domain_id"><code class="name">var <span class="ident">domain_id</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.DomainSpecificObjectName.item_id"><code class="name">var <span class="ident">item_id</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.DomainSpecificObjectScope"><code class="flex name class">
+<span>class <span class="ident">DomainSpecificObjectScope</span></span>
+<span>(</span><span>identifier: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DomainSpecificObjectScope(identifier,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DomainSpecificObjectScope(typing.NamedTuple):
+    identifier: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.DomainSpecificObjectScope.identifier"><code class="name">var <span class="ident">identifier</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass"><code class="flex name class">
+<span>class <span class="ident">ErrorClass</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ErrorClass(enum.Enum):
+    ACCESS = &#39;access&#39;
+    APPLICATION_REFERENCE = &#39;application-reference&#39;
+    CANCEL = &#39;cancel&#39;
+    CONCLUDE = &#39;conclude&#39;
+    DEFINITION = &#39;definition&#39;
+    FILE = &#39;file&#39;
+    INITIATE = &#39;initiate&#39;
+    OTHERS = &#39;others&#39;
+    RESOURCE = &#39;resource&#39;
+    SERVICE = &#39;service&#39;
+    SERVICE_PREEMPT = &#39;service-preempt&#39;
+    TIME_RESOLUTION = &#39;time-resolution&#39;
+    VMD_STATE = &#39;vmd-state&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ErrorClass.ACCESS"><code class="name">var <span class="ident">ACCESS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.APPLICATION_REFERENCE"><code class="name">var <span class="ident">APPLICATION_REFERENCE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.CANCEL"><code class="name">var <span class="ident">CANCEL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.CONCLUDE"><code class="name">var <span class="ident">CONCLUDE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.DEFINITION"><code class="name">var <span class="ident">DEFINITION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.FILE"><code class="name">var <span class="ident">FILE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.INITIATE"><code class="name">var <span class="ident">INITIATE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.OTHERS"><code class="name">var <span class="ident">OTHERS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.RESOURCE"><code class="name">var <span class="ident">RESOURCE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.SERVICE"><code class="name">var <span class="ident">SERVICE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.SERVICE_PREEMPT"><code class="name">var <span class="ident">SERVICE_PREEMPT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.TIME_RESOLUTION"><code class="name">var <span class="ident">TIME_RESOLUTION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorClass.VMD_STATE"><code class="name">var <span class="ident">VMD_STATE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ErrorResponse"><code class="flex name class">
+<span>class <span class="ident">ErrorResponse</span></span>
+<span>(</span><span>error_class: <a title="hat.drivers.mms.common.ErrorClass" href="common.html#hat.drivers.mms.common.ErrorClass">ErrorClass</a>, value: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ErrorResponse(error_class, value)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ErrorResponse(typing.NamedTuple):
+    error_class: ErrorClass
+    value: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ErrorResponse.error_class"><code class="name">var <span class="ident">error_class</span> : <a title="hat.drivers.mms.common.ErrorClass" href="common.html#hat.drivers.mms.common.ErrorClass">ErrorClass</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.ErrorResponse.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.EventNotificationUnconfirmed"><code class="flex name class">
+<span>class <span class="ident">EventNotificationUnconfirmed</span></span>
+<span>(</span><span>enrollment: <a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>, condition: <a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>, severity: int, time: typing.Union[ForwardRef('<a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a>'), int, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>EventNotificationUnconfirmed(enrollment, condition, severity, time)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventNotificationUnconfirmed(typing.NamedTuple):
+    enrollment: &#39;ObjectName&#39;
+    condition: &#39;ObjectName&#39;
+    severity: int
+    time: typing.Optional[typing.Union[&#39;Data&#39;, int]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.EventNotificationUnconfirmed.condition"><code class="name">var <span class="ident">condition</span> : abc.ObjectName</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.EventNotificationUnconfirmed.enrollment"><code class="name">var <span class="ident">enrollment</span> : abc.ObjectName</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.EventNotificationUnconfirmed.severity"><code class="name">var <span class="ident">severity</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.mms.EventNotificationUnconfirmed.time"><code class="name">var <span class="ident">time</span> : typing.Union[abc.Data, int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.FloatingPointData"><code class="flex name class">
+<span>class <span class="ident">FloatingPointData</span></span>
+<span>(</span><span>value: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>FloatingPointData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FloatingPointData(typing.NamedTuple):
+    value: float</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.FloatingPointData.value"><code class="name">var <span class="ident">value</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.FloatingPointTypeDescription"><code class="flex name class">
+<span>class <span class="ident">FloatingPointTypeDescription</span></span>
+<span>(</span><span>format_width: int, exponent_width: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>FloatingPointTypeDescription(format_width, exponent_width)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FloatingPointTypeDescription(typing.NamedTuple):
+    format_width: int
+    exponent_width: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.FloatingPointTypeDescription.exponent_width"><code class="name">var <span class="ident">exponent_width</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.FloatingPointTypeDescription.format_width"><code class="name">var <span class="ident">format_width</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GeneralizedTimeData"><code class="flex name class">
+<span>class <span class="ident">GeneralizedTimeData</span></span>
+<span>(</span><span>value: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GeneralizedTimeData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GeneralizedTimeData(typing.NamedTuple):
+    value: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GeneralizedTimeData.value"><code class="name">var <span class="ident">value</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GeneralizedTimeTypeDescription"><code class="flex name class">
+<span>class <span class="ident">GeneralizedTimeTypeDescription</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>GeneralizedTimeTypeDescription()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GeneralizedTimeTypeDescription(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.GetNameListRequest"><code class="flex name class">
+<span>class <span class="ident">GetNameListRequest</span></span>
+<span>(</span><span>object_class: <a title="hat.drivers.mms.common.ObjectClass" href="common.html#hat.drivers.mms.common.ObjectClass">ObjectClass</a>, object_scope: <a title="hat.drivers.mms.ObjectScope" href="#hat.drivers.mms.ObjectScope">ObjectScope</a>, continue_after: typing.Union[str, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GetNameListRequest(object_class, object_scope, continue_after)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetNameListRequest(typing.NamedTuple):
+    object_class: ObjectClass
+    object_scope: &#39;ObjectScope&#39;
+    continue_after: typing.Optional[str]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GetNameListRequest.continue_after"><code class="name">var <span class="ident">continue_after</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.mms.GetNameListRequest.object_class"><code class="name">var <span class="ident">object_class</span> : <a title="hat.drivers.mms.common.ObjectClass" href="common.html#hat.drivers.mms.common.ObjectClass">ObjectClass</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.GetNameListRequest.object_scope"><code class="name">var <span class="ident">object_scope</span> : abc.ObjectScope</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GetNameListResponse"><code class="flex name class">
+<span>class <span class="ident">GetNameListResponse</span></span>
+<span>(</span><span>identifiers: typing.List[str], more_follows: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GetNameListResponse(identifiers, more_follows)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetNameListResponse(typing.NamedTuple):
+    identifiers: typing.List[str]
+    more_follows: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GetNameListResponse.identifiers"><code class="name">var <span class="ident">identifiers</span> : typing.List[str]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.GetNameListResponse.more_follows"><code class="name">var <span class="ident">more_follows</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GetNamedVariableListAttributesRequest"><code class="flex name class">
+<span>class <span class="ident">GetNamedVariableListAttributesRequest</span></span>
+<span>(</span><span>value: <a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GetNamedVariableListAttributesRequest(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetNamedVariableListAttributesRequest(typing.NamedTuple):
+    value: &#39;ObjectName&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GetNamedVariableListAttributesRequest.value"><code class="name">var <span class="ident">value</span> : abc.ObjectName</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GetNamedVariableListAttributesResponse"><code class="flex name class">
+<span>class <span class="ident">GetNamedVariableListAttributesResponse</span></span>
+<span>(</span><span>mms_deletable: bool, specification: typing.List[ForwardRef('<a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GetNamedVariableListAttributesResponse(mms_deletable, specification)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetNamedVariableListAttributesResponse(typing.NamedTuple):
+    mms_deletable: bool
+    specification: typing.List[&#39;VariableSpecification&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GetNamedVariableListAttributesResponse.mms_deletable"><code class="name">var <span class="ident">mms_deletable</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.GetNamedVariableListAttributesResponse.specification"><code class="name">var <span class="ident">specification</span> : typing.List[abc.VariableSpecification]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GetVariableAccessAttributesRequest"><code class="flex name class">
+<span>class <span class="ident">GetVariableAccessAttributesRequest</span></span>
+<span>(</span><span>value: typing.Union[ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>'), int, str, bytes, bytearray, memoryview])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GetVariableAccessAttributesRequest(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetVariableAccessAttributesRequest(typing.NamedTuple):
+    value: typing.Union[&#39;ObjectName&#39;, int, str, asn1.Data]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GetVariableAccessAttributesRequest.value"><code class="name">var <span class="ident">value</span> : typing.Union[abc.ObjectName, int, str, bytes, bytearray, memoryview]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.GetVariableAccessAttributesResponse"><code class="flex name class">
+<span>class <span class="ident">GetVariableAccessAttributesResponse</span></span>
+<span>(</span><span>mms_deletable: bool, type_description: <a title="hat.drivers.mms.TypeDescription" href="#hat.drivers.mms.TypeDescription">TypeDescription</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>GetVariableAccessAttributesResponse(mms_deletable, type_description)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GetVariableAccessAttributesResponse(typing.NamedTuple):
+    mms_deletable: bool
+    type_description: &#39;TypeDescription&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.GetVariableAccessAttributesResponse.mms_deletable"><code class="name">var <span class="ident">mms_deletable</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.GetVariableAccessAttributesResponse.type_description"><code class="name">var <span class="ident">type_description</span> : abc.TypeDescription</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.IdentifyRequest"><code class="flex name class">
+<span>class <span class="ident">IdentifyRequest</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>IdentifyRequest()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IdentifyRequest(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.IdentifyResponse"><code class="flex name class">
+<span>class <span class="ident">IdentifyResponse</span></span>
+<span>(</span><span>vendor: str, model: str, revision: str, syntaxes: typing.Union[typing.List[typing.List[typing.Union[int, typing.Tuple[str, int]]]], NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>IdentifyResponse(vendor, model, revision, syntaxes)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IdentifyResponse(typing.NamedTuple):
+    vendor: str
+    model: str
+    revision: str
+    syntaxes: typing.Optional[typing.List[asn1.ObjectIdentifier]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.IdentifyResponse.model"><code class="name">var <span class="ident">model</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.IdentifyResponse.revision"><code class="name">var <span class="ident">revision</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.mms.IdentifyResponse.syntaxes"><code class="name">var <span class="ident">syntaxes</span> : typing.Union[typing.List[typing.List[typing.Union[int, typing.Tuple[str, int]]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.mms.IdentifyResponse.vendor"><code class="name">var <span class="ident">vendor</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.InformationReportUnconfirmed"><code class="flex name class">
+<span>class <span class="ident">InformationReportUnconfirmed</span></span>
+<span>(</span><span>specification: typing.Union[typing.List[ForwardRef('<a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a>')], ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>')], data: typing.List[typing.Union[<a title="hat.drivers.mms.common.DataAccessError" href="common.html#hat.drivers.mms.common.DataAccessError">DataAccessError</a>, ForwardRef('<a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a>')]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>InformationReportUnconfirmed(specification, data)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InformationReportUnconfirmed(typing.NamedTuple):
+    specification: typing.Union[typing.List[&#39;VariableSpecification&#39;],
+                                &#39;ObjectName&#39;]
+    data: typing.List[typing.Union[DataAccessError, &#39;Data&#39;]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.InformationReportUnconfirmed.data"><code class="name">var <span class="ident">data</span> : typing.List[typing.Union[<a title="hat.drivers.mms.common.DataAccessError" href="common.html#hat.drivers.mms.common.DataAccessError">DataAccessError</a>, abc.Data]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.InformationReportUnconfirmed.specification"><code class="name">var <span class="ident">specification</span> : typing.Union[typing.List[abc.VariableSpecification], abc.ObjectName]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.IntegerData"><code class="flex name class">
+<span>class <span class="ident">IntegerData</span></span>
+<span>(</span><span>value: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>IntegerData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IntegerData(typing.NamedTuple):
+    value: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.IntegerData.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.IntegerTypeDescription"><code class="flex name class">
+<span>class <span class="ident">IntegerTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>IntegerTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IntegerTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.IntegerTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.InvalidatedVariableSpecification"><code class="flex name class">
+<span>class <span class="ident">InvalidatedVariableSpecification</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>InvalidatedVariableSpecification()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InvalidatedVariableSpecification(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.MmsStringData"><code class="flex name class">
+<span>class <span class="ident">MmsStringData</span></span>
+<span>(</span><span>value: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>MmsStringData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MmsStringData(typing.NamedTuple):
+    value: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.MmsStringData.value"><code class="name">var <span class="ident">value</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.MmsStringTypeDescription"><code class="flex name class">
+<span>class <span class="ident">MmsStringTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>MmsStringTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MmsStringTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.MmsStringTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.NameVariableSpecification"><code class="flex name class">
+<span>class <span class="ident">NameVariableSpecification</span></span>
+<span>(</span><span>name: abc.ObjectName)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>NameVariableSpecification(name,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NameVariableSpecification(typing.NamedTuple):
+    name: ObjectName</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.NameVariableSpecification.name"><code class="name">var <span class="ident">name</span> : abc.ObjectName</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ObjIdData"><code class="flex name class">
+<span>class <span class="ident">ObjIdData</span></span>
+<span>(</span><span>value: typing.List[typing.Union[int, typing.Tuple[str, int]]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ObjIdData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ObjIdData(typing.NamedTuple):
+    value: asn1.ObjectIdentifier</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ObjIdData.value"><code class="name">var <span class="ident">value</span> : typing.List[typing.Union[int, typing.Tuple[str, int]]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ObjIdTypeDescription"><code class="flex name class">
+<span>class <span class="ident">ObjIdTypeDescription</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>ObjIdTypeDescription()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ObjIdTypeDescription(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.ObjectClass"><code class="flex name class">
+<span>class <span class="ident">ObjectClass</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ObjectClass(enum.Enum):
+    NAMED_VARIABLE = 0
+    NAMED_VARIABLE_LIST = 2
+    JOURNAL = 8
+    DOMAIN = 9
+    UNDEFINED = 0xFF</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ObjectClass.DOMAIN"><code class="name">var <span class="ident">DOMAIN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ObjectClass.JOURNAL"><code class="name">var <span class="ident">JOURNAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ObjectClass.NAMED_VARIABLE"><code class="name">var <span class="ident">NAMED_VARIABLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ObjectClass.NAMED_VARIABLE_LIST"><code class="name">var <span class="ident">NAMED_VARIABLE_LIST</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.mms.ObjectClass.UNDEFINED"><code class="name">var <span class="ident">UNDEFINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ObjectName"><code class="flex name class">
+<span>class <span class="ident">ObjectName</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.ObjectScope"><code class="flex name class">
+<span>class <span class="ident">ObjectScope</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.OctetStringData"><code class="flex name class">
+<span>class <span class="ident">OctetStringData</span></span>
+<span>(</span><span>value: typing.Union[bytes, bytearray, memoryview])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>OctetStringData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OctetStringData(typing.NamedTuple):
+    value: asn1.Data</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.OctetStringData.value"><code class="name">var <span class="ident">value</span> : typing.Union[bytes, bytearray, memoryview]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.OctetStringTypeDescription"><code class="flex name class">
+<span>class <span class="ident">OctetStringTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>OctetStringTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OctetStringTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.OctetStringTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ReadRequest"><code class="flex name class">
+<span>class <span class="ident">ReadRequest</span></span>
+<span>(</span><span>value: typing.Union[typing.List[ForwardRef('<a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a>')], ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ReadRequest(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ReadRequest(typing.NamedTuple):
+    value: typing.Union[typing.List[&#39;VariableSpecification&#39;], &#39;ObjectName&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ReadRequest.value"><code class="name">var <span class="ident">value</span> : typing.Union[typing.List[abc.VariableSpecification], abc.ObjectName]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.ReadResponse"><code class="flex name class">
+<span>class <span class="ident">ReadResponse</span></span>
+<span>(</span><span>results: typing.List[typing.Union[<a title="hat.drivers.mms.common.DataAccessError" href="common.html#hat.drivers.mms.common.DataAccessError">DataAccessError</a>, ForwardRef('<a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a>')]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ReadResponse(results,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ReadResponse(typing.NamedTuple):
+    results: typing.List[typing.Union[DataAccessError, &#39;Data&#39;]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ReadResponse.results"><code class="name">var <span class="ident">results</span> : typing.List[typing.Union[<a title="hat.drivers.mms.common.DataAccessError" href="common.html#hat.drivers.mms.common.DataAccessError">DataAccessError</a>, abc.Data]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.Request"><code class="flex name class">
+<span>class <span class="ident">Request</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.Response"><code class="flex name class">
+<span>class <span class="ident">Response</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.ScatteredAccessDescriptionVariableSpecification"><code class="flex name class">
+<span>class <span class="ident">ScatteredAccessDescriptionVariableSpecification</span></span>
+<span>(</span><span>specifications: typing.List[ForwardRef('<a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ScatteredAccessDescriptionVariableSpecification(specifications,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ScatteredAccessDescriptionVariableSpecification(typing.NamedTuple):
+    specifications: typing.List[&#39;VariableSpecification&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.ScatteredAccessDescriptionVariableSpecification.specifications"><code class="name">var <span class="ident">specifications</span> : typing.List[abc.VariableSpecification]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>MMS listening server</p>
+<p>For creating new server see :func:<code><a title="hat.drivers.mms.listen" href="#hat.drivers.mms.listen">listen()</a></code></p>
+<p>Closing server doesn't close active incomming connections</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server(aio.Resource):
+    &#34;&#34;&#34;MMS listening server
+
+    For creating new server see :func:`listen`
+
+    Closing server doesn&#39;t close active incomming connections
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def addresses(self) -&gt; typing.List[Address]:
+        &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+        return self._acse_server.addresses</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.Server.addresses"><code class="name">var <span class="ident">addresses</span> : typing.List[<a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>]</code></dt>
+<dd>
+<div class="desc"><p>Listening addresses</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def addresses(self) -&gt; typing.List[Address]:
+    &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+    return self._acse_server.addresses</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.Server.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.StatusRequest"><code class="flex name class">
+<span>class <span class="ident">StatusRequest</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>StatusRequest()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StatusRequest(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.StatusResponse"><code class="flex name class">
+<span>class <span class="ident">StatusResponse</span></span>
+<span>(</span><span>logical: int, physical: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>StatusResponse(logical, physical)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StatusResponse(typing.NamedTuple):
+    logical: int
+    physical: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.StatusResponse.logical"><code class="name">var <span class="ident">logical</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.StatusResponse.physical"><code class="name">var <span class="ident">physical</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.StructureData"><code class="flex name class">
+<span>class <span class="ident">StructureData</span></span>
+<span>(</span><span>elements: typing.List[ForwardRef('<a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>StructureData(elements,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StructureData(typing.NamedTuple):
+    elements: typing.List[&#39;Data&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.StructureData.elements"><code class="name">var <span class="ident">elements</span> : typing.List[abc.Data]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.StructureTypeDescription"><code class="flex name class">
+<span>class <span class="ident">StructureTypeDescription</span></span>
+<span>(</span><span>components: typing.List[typing.Tuple[typing.Union[str, NoneType], typing.Union[ForwardRef('<a title="hat.drivers.mms.TypeDescription" href="#hat.drivers.mms.TypeDescription">TypeDescription</a>'), ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>')]]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>StructureTypeDescription(components,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StructureTypeDescription(typing.NamedTuple):
+    components: typing.List[typing.Tuple[typing.Optional[str],
+                                         typing.Union[&#39;TypeDescription&#39;,
+                                                      &#39;ObjectName&#39;]]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.StructureTypeDescription.components"><code class="name">var <span class="ident">components</span> : typing.List[typing.Tuple[typing.Union[str, NoneType], typing.Union[abc.TypeDescription, abc.ObjectName]]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.TypeDescription"><code class="flex name class">
+<span>class <span class="ident">TypeDescription</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.Unconfirmed"><code class="flex name class">
+<span>class <span class="ident">Unconfirmed</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.UnsignedData"><code class="flex name class">
+<span>class <span class="ident">UnsignedData</span></span>
+<span>(</span><span>value: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>UnsignedData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UnsignedData(typing.NamedTuple):
+    value: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.UnsignedData.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.UnsignedTypeDescription"><code class="flex name class">
+<span>class <span class="ident">UnsignedTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>UnsignedTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UnsignedTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.UnsignedTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.UnsolicitedStatusUnconfirmed"><code class="flex name class">
+<span>class <span class="ident">UnsolicitedStatusUnconfirmed</span></span>
+<span>(</span><span>logical: int, physical: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>UnsolicitedStatusUnconfirmed(logical, physical)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UnsolicitedStatusUnconfirmed(typing.NamedTuple):
+    logical: int
+    physical: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.UnsolicitedStatusUnconfirmed.logical"><code class="name">var <span class="ident">logical</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.UnsolicitedStatusUnconfirmed.physical"><code class="name">var <span class="ident">physical</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.UtcTimeData"><code class="flex name class">
+<span>class <span class="ident">UtcTimeData</span></span>
+<span>(</span><span>value: datetime.datetime, leap_second: bool, clock_failure: bool, not_synchronized: bool, accuracy: typing.Union[int, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>UtcTimeData(value, leap_second, clock_failure, not_synchronized, accuracy)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UtcTimeData(typing.NamedTuple):
+    value: datetime.datetime
+    leap_second: bool
+    clock_failure: bool
+    not_synchronized: bool
+    accuracy: typing.Optional[int]
+    &#34;&#34;&#34;accurate fraction bits [0,24]&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.UtcTimeData.accuracy"><code class="name">var <span class="ident">accuracy</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>accurate fraction bits [0,24]</p></div>
+</dd>
+<dt id="hat.drivers.mms.UtcTimeData.clock_failure"><code class="name">var <span class="ident">clock_failure</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.mms.UtcTimeData.leap_second"><code class="name">var <span class="ident">leap_second</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.UtcTimeData.not_synchronized"><code class="name">var <span class="ident">not_synchronized</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.mms.UtcTimeData.value"><code class="name">var <span class="ident">value</span> : datetime.datetime</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.UtcTimeTypeDescription"><code class="flex name class">
+<span>class <span class="ident">UtcTimeTypeDescription</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>UtcTimeTypeDescription()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UtcTimeTypeDescription(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.VariableDescriptionVariableSpecification"><code class="flex name class">
+<span>class <span class="ident">VariableDescriptionVariableSpecification</span></span>
+<span>(</span><span>address: typing.Union[int, str, bytes, bytearray, memoryview], type_specification: typing.Union[abc.TypeDescription, abc.ObjectName])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VariableDescriptionVariableSpecification(address, type_specification)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VariableDescriptionVariableSpecification(typing.NamedTuple):
+    address: typing.Union[int, str, asn1.Data]
+    type_specification: typing.Union[TypeDescription, ObjectName]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.VariableDescriptionVariableSpecification.address"><code class="name">var <span class="ident">address</span> : typing.Union[int, str, bytes, bytearray, memoryview]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.VariableDescriptionVariableSpecification.type_specification"><code class="name">var <span class="ident">type_specification</span> : typing.Union[abc.TypeDescription, abc.ObjectName]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.VariableSpecification"><code class="flex name class">
+<span>class <span class="ident">VariableSpecification</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.VisibleStringData"><code class="flex name class">
+<span>class <span class="ident">VisibleStringData</span></span>
+<span>(</span><span>value: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VisibleStringData(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisibleStringData(typing.NamedTuple):
+    value: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.VisibleStringData.value"><code class="name">var <span class="ident">value</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.VisibleStringTypeDescription"><code class="flex name class">
+<span>class <span class="ident">VisibleStringTypeDescription</span></span>
+<span>(</span><span>xyz: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VisibleStringTypeDescription(xyz,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisibleStringTypeDescription(typing.NamedTuple):
+    xyz: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.VisibleStringTypeDescription.xyz"><code class="name">var <span class="ident">xyz</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.VmdSpecificObjectName"><code class="flex name class">
+<span>class <span class="ident">VmdSpecificObjectName</span></span>
+<span>(</span><span>identifier: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>VmdSpecificObjectName(identifier,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VmdSpecificObjectName(typing.NamedTuple):
+    identifier: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.VmdSpecificObjectName.identifier"><code class="name">var <span class="ident">identifier</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.VmdSpecificObjectScope"><code class="flex name class">
+<span>class <span class="ident">VmdSpecificObjectScope</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>VmdSpecificObjectScope()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VmdSpecificObjectScope(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.WriteRequest"><code class="flex name class">
+<span>class <span class="ident">WriteRequest</span></span>
+<span>(</span><span>specification: typing.Union[typing.List[ForwardRef('<a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a>')], ForwardRef('<a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a>')], data: typing.List[ForwardRef('<a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>WriteRequest(specification, data)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WriteRequest(typing.NamedTuple):
+    specification: typing.Union[typing.List[&#39;VariableSpecification&#39;],
+                                &#39;ObjectName&#39;]
+    data: typing.List[&#39;Data&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.WriteRequest.data"><code class="name">var <span class="ident">data</span> : typing.List[abc.Data]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.WriteRequest.specification"><code class="name">var <span class="ident">specification</span> : typing.Union[typing.List[abc.VariableSpecification], abc.ObjectName]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.WriteResponse"><code class="flex name class">
+<span>class <span class="ident">WriteResponse</span></span>
+<span>(</span><span>results: typing.List[typing.Union[<a title="hat.drivers.mms.common.DataAccessError" href="common.html#hat.drivers.mms.common.DataAccessError">DataAccessError</a>, NoneType]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>WriteResponse(results,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WriteResponse(typing.NamedTuple):
+    results: typing.List[typing.Optional[DataAccessError]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.WriteResponse.results"><code class="name">var <span class="ident">results</span> : typing.List[typing.Union[<a title="hat.drivers.mms.common.DataAccessError" href="common.html#hat.drivers.mms.common.DataAccessError">DataAccessError</a>, NoneType]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers" href="../index.html">hat.drivers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="hat.drivers.mms.common" href="common.html">hat.drivers.mms.common</a></code></li>
+<li><code><a title="hat.drivers.mms.connection" href="connection.html">hat.drivers.mms.connection</a></code></li>
+<li><code><a title="hat.drivers.mms.encoder" href="encoder.html">hat.drivers.mms.encoder</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.mms.connect" href="#hat.drivers.mms.connect">connect</a></code></li>
+<li><code><a title="hat.drivers.mms.listen" href="#hat.drivers.mms.listen">listen</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.mms.AaSpecificObjectName" href="#hat.drivers.mms.AaSpecificObjectName">AaSpecificObjectName</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.AaSpecificObjectName.identifier" href="#hat.drivers.mms.AaSpecificObjectName.identifier">identifier</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.AaSpecificObjectScope" href="#hat.drivers.mms.AaSpecificObjectScope">AaSpecificObjectScope</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Address" href="#hat.drivers.mms.Address">Address</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.Address.host" href="#hat.drivers.mms.Address.host">host</a></code></li>
+<li><code><a title="hat.drivers.mms.Address.port" href="#hat.drivers.mms.Address.port">port</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.AddressVariableSpecification" href="#hat.drivers.mms.AddressVariableSpecification">AddressVariableSpecification</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.AddressVariableSpecification.address" href="#hat.drivers.mms.AddressVariableSpecification.address">address</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ArrayData" href="#hat.drivers.mms.ArrayData">ArrayData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ArrayData.elements" href="#hat.drivers.mms.ArrayData.elements">elements</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ArrayTypeDescription" href="#hat.drivers.mms.ArrayTypeDescription">ArrayTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ArrayTypeDescription.element_type" href="#hat.drivers.mms.ArrayTypeDescription.element_type">element_type</a></code></li>
+<li><code><a title="hat.drivers.mms.ArrayTypeDescription.number_of_elements" href="#hat.drivers.mms.ArrayTypeDescription.number_of_elements">number_of_elements</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BcdData" href="#hat.drivers.mms.BcdData">BcdData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BcdData.value" href="#hat.drivers.mms.BcdData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BcdTypeDescription" href="#hat.drivers.mms.BcdTypeDescription">BcdTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BcdTypeDescription.xyz" href="#hat.drivers.mms.BcdTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BinaryTimeData" href="#hat.drivers.mms.BinaryTimeData">BinaryTimeData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BinaryTimeData.value" href="#hat.drivers.mms.BinaryTimeData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BinaryTimeTypeDescription" href="#hat.drivers.mms.BinaryTimeTypeDescription">BinaryTimeTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BinaryTimeTypeDescription.xyz" href="#hat.drivers.mms.BinaryTimeTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BitStringData" href="#hat.drivers.mms.BitStringData">BitStringData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BitStringData.value" href="#hat.drivers.mms.BitStringData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BitStringTypeDescription" href="#hat.drivers.mms.BitStringTypeDescription">BitStringTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BitStringTypeDescription.xyz" href="#hat.drivers.mms.BitStringTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BooleanArrayData" href="#hat.drivers.mms.BooleanArrayData">BooleanArrayData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BooleanArrayData.value" href="#hat.drivers.mms.BooleanArrayData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BooleanData" href="#hat.drivers.mms.BooleanData">BooleanData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.BooleanData.value" href="#hat.drivers.mms.BooleanData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.BooleanTypeDescription" href="#hat.drivers.mms.BooleanTypeDescription">BooleanTypeDescription</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Connection" href="#hat.drivers.mms.Connection">Connection</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.Connection.async_group" href="#hat.drivers.mms.Connection.async_group">async_group</a></code></li>
+<li><code><a title="hat.drivers.mms.Connection.info" href="#hat.drivers.mms.Connection.info">info</a></code></li>
+<li><code><a title="hat.drivers.mms.Connection.receive_unconfirmed" href="#hat.drivers.mms.Connection.receive_unconfirmed">receive_unconfirmed</a></code></li>
+<li><code><a title="hat.drivers.mms.Connection.send_confirmed" href="#hat.drivers.mms.Connection.send_confirmed">send_confirmed</a></code></li>
+<li><code><a title="hat.drivers.mms.Connection.send_unconfirmed" href="#hat.drivers.mms.Connection.send_unconfirmed">send_unconfirmed</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ConnectionInfo" href="#hat.drivers.mms.ConnectionInfo">ConnectionInfo</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.mms.ConnectionInfo.local_addr" href="#hat.drivers.mms.ConnectionInfo.local_addr">local_addr</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.local_ae_qualifier" href="#hat.drivers.mms.ConnectionInfo.local_ae_qualifier">local_ae_qualifier</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.local_ap_title" href="#hat.drivers.mms.ConnectionInfo.local_ap_title">local_ap_title</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.local_psel" href="#hat.drivers.mms.ConnectionInfo.local_psel">local_psel</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.local_ssel" href="#hat.drivers.mms.ConnectionInfo.local_ssel">local_ssel</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.local_tsel" href="#hat.drivers.mms.ConnectionInfo.local_tsel">local_tsel</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.remote_addr" href="#hat.drivers.mms.ConnectionInfo.remote_addr">remote_addr</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.remote_ae_qualifier" href="#hat.drivers.mms.ConnectionInfo.remote_ae_qualifier">remote_ae_qualifier</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.remote_ap_title" href="#hat.drivers.mms.ConnectionInfo.remote_ap_title">remote_ap_title</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.remote_psel" href="#hat.drivers.mms.ConnectionInfo.remote_psel">remote_psel</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.remote_ssel" href="#hat.drivers.mms.ConnectionInfo.remote_ssel">remote_ssel</a></code></li>
+<li><code><a title="hat.drivers.mms.ConnectionInfo.remote_tsel" href="#hat.drivers.mms.ConnectionInfo.remote_tsel">remote_tsel</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Data" href="#hat.drivers.mms.Data">Data</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DataAccessError" href="#hat.drivers.mms.DataAccessError">DataAccessError</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.DataAccessError.HARDWARE_FAULT" href="#hat.drivers.mms.DataAccessError.HARDWARE_FAULT">HARDWARE_FAULT</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.INVALID_ADDRESS" href="#hat.drivers.mms.DataAccessError.INVALID_ADDRESS">INVALID_ADDRESS</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_ACCESS_DENIED" href="#hat.drivers.mms.DataAccessError.OBJECT_ACCESS_DENIED">OBJECT_ACCESS_DENIED</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_ACCESS_UNSUPPORTED" href="#hat.drivers.mms.DataAccessError.OBJECT_ACCESS_UNSUPPORTED">OBJECT_ACCESS_UNSUPPORTED</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_ATTRIBUTE_INCONSISTENT" href="#hat.drivers.mms.DataAccessError.OBJECT_ATTRIBUTE_INCONSISTENT">OBJECT_ATTRIBUTE_INCONSISTENT</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_INVALIDATED" href="#hat.drivers.mms.DataAccessError.OBJECT_INVALIDATED">OBJECT_INVALIDATED</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_NON_EXISTENT" href="#hat.drivers.mms.DataAccessError.OBJECT_NON_EXISTENT">OBJECT_NON_EXISTENT</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_UNDEFINED" href="#hat.drivers.mms.DataAccessError.OBJECT_UNDEFINED">OBJECT_UNDEFINED</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.OBJECT_VALUE_INVALID" href="#hat.drivers.mms.DataAccessError.OBJECT_VALUE_INVALID">OBJECT_VALUE_INVALID</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.TEMPORARILY_UNAVAILABLE" href="#hat.drivers.mms.DataAccessError.TEMPORARILY_UNAVAILABLE">TEMPORARILY_UNAVAILABLE</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.TYPE_INCONSISTENT" href="#hat.drivers.mms.DataAccessError.TYPE_INCONSISTENT">TYPE_INCONSISTENT</a></code></li>
+<li><code><a title="hat.drivers.mms.DataAccessError.TYPE_UNSUPPORTED" href="#hat.drivers.mms.DataAccessError.TYPE_UNSUPPORTED">TYPE_UNSUPPORTED</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DefineNamedVariableListRequest" href="#hat.drivers.mms.DefineNamedVariableListRequest">DefineNamedVariableListRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.DefineNamedVariableListRequest.name" href="#hat.drivers.mms.DefineNamedVariableListRequest.name">name</a></code></li>
+<li><code><a title="hat.drivers.mms.DefineNamedVariableListRequest.specification" href="#hat.drivers.mms.DefineNamedVariableListRequest.specification">specification</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DefineNamedVariableListResponse" href="#hat.drivers.mms.DefineNamedVariableListResponse">DefineNamedVariableListResponse</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DeleteNamedVariableListRequest" href="#hat.drivers.mms.DeleteNamedVariableListRequest">DeleteNamedVariableListRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.DeleteNamedVariableListRequest.names" href="#hat.drivers.mms.DeleteNamedVariableListRequest.names">names</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DeleteNamedVariableListResponse" href="#hat.drivers.mms.DeleteNamedVariableListResponse">DeleteNamedVariableListResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.DeleteNamedVariableListResponse.deleted" href="#hat.drivers.mms.DeleteNamedVariableListResponse.deleted">deleted</a></code></li>
+<li><code><a title="hat.drivers.mms.DeleteNamedVariableListResponse.matched" href="#hat.drivers.mms.DeleteNamedVariableListResponse.matched">matched</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DomainSpecificObjectName" href="#hat.drivers.mms.DomainSpecificObjectName">DomainSpecificObjectName</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.DomainSpecificObjectName.domain_id" href="#hat.drivers.mms.DomainSpecificObjectName.domain_id">domain_id</a></code></li>
+<li><code><a title="hat.drivers.mms.DomainSpecificObjectName.item_id" href="#hat.drivers.mms.DomainSpecificObjectName.item_id">item_id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.DomainSpecificObjectScope" href="#hat.drivers.mms.DomainSpecificObjectScope">DomainSpecificObjectScope</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.DomainSpecificObjectScope.identifier" href="#hat.drivers.mms.DomainSpecificObjectScope.identifier">identifier</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ErrorClass" href="#hat.drivers.mms.ErrorClass">ErrorClass</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ErrorClass.ACCESS" href="#hat.drivers.mms.ErrorClass.ACCESS">ACCESS</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.APPLICATION_REFERENCE" href="#hat.drivers.mms.ErrorClass.APPLICATION_REFERENCE">APPLICATION_REFERENCE</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.CANCEL" href="#hat.drivers.mms.ErrorClass.CANCEL">CANCEL</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.CONCLUDE" href="#hat.drivers.mms.ErrorClass.CONCLUDE">CONCLUDE</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.DEFINITION" href="#hat.drivers.mms.ErrorClass.DEFINITION">DEFINITION</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.FILE" href="#hat.drivers.mms.ErrorClass.FILE">FILE</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.INITIATE" href="#hat.drivers.mms.ErrorClass.INITIATE">INITIATE</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.OTHERS" href="#hat.drivers.mms.ErrorClass.OTHERS">OTHERS</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.RESOURCE" href="#hat.drivers.mms.ErrorClass.RESOURCE">RESOURCE</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.SERVICE" href="#hat.drivers.mms.ErrorClass.SERVICE">SERVICE</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.SERVICE_PREEMPT" href="#hat.drivers.mms.ErrorClass.SERVICE_PREEMPT">SERVICE_PREEMPT</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.TIME_RESOLUTION" href="#hat.drivers.mms.ErrorClass.TIME_RESOLUTION">TIME_RESOLUTION</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorClass.VMD_STATE" href="#hat.drivers.mms.ErrorClass.VMD_STATE">VMD_STATE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ErrorResponse" href="#hat.drivers.mms.ErrorResponse">ErrorResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ErrorResponse.error_class" href="#hat.drivers.mms.ErrorResponse.error_class">error_class</a></code></li>
+<li><code><a title="hat.drivers.mms.ErrorResponse.value" href="#hat.drivers.mms.ErrorResponse.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.EventNotificationUnconfirmed" href="#hat.drivers.mms.EventNotificationUnconfirmed">EventNotificationUnconfirmed</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.EventNotificationUnconfirmed.condition" href="#hat.drivers.mms.EventNotificationUnconfirmed.condition">condition</a></code></li>
+<li><code><a title="hat.drivers.mms.EventNotificationUnconfirmed.enrollment" href="#hat.drivers.mms.EventNotificationUnconfirmed.enrollment">enrollment</a></code></li>
+<li><code><a title="hat.drivers.mms.EventNotificationUnconfirmed.severity" href="#hat.drivers.mms.EventNotificationUnconfirmed.severity">severity</a></code></li>
+<li><code><a title="hat.drivers.mms.EventNotificationUnconfirmed.time" href="#hat.drivers.mms.EventNotificationUnconfirmed.time">time</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.FloatingPointData" href="#hat.drivers.mms.FloatingPointData">FloatingPointData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.FloatingPointData.value" href="#hat.drivers.mms.FloatingPointData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.FloatingPointTypeDescription" href="#hat.drivers.mms.FloatingPointTypeDescription">FloatingPointTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.FloatingPointTypeDescription.exponent_width" href="#hat.drivers.mms.FloatingPointTypeDescription.exponent_width">exponent_width</a></code></li>
+<li><code><a title="hat.drivers.mms.FloatingPointTypeDescription.format_width" href="#hat.drivers.mms.FloatingPointTypeDescription.format_width">format_width</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GeneralizedTimeData" href="#hat.drivers.mms.GeneralizedTimeData">GeneralizedTimeData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GeneralizedTimeData.value" href="#hat.drivers.mms.GeneralizedTimeData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GeneralizedTimeTypeDescription" href="#hat.drivers.mms.GeneralizedTimeTypeDescription">GeneralizedTimeTypeDescription</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GetNameListRequest" href="#hat.drivers.mms.GetNameListRequest">GetNameListRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GetNameListRequest.continue_after" href="#hat.drivers.mms.GetNameListRequest.continue_after">continue_after</a></code></li>
+<li><code><a title="hat.drivers.mms.GetNameListRequest.object_class" href="#hat.drivers.mms.GetNameListRequest.object_class">object_class</a></code></li>
+<li><code><a title="hat.drivers.mms.GetNameListRequest.object_scope" href="#hat.drivers.mms.GetNameListRequest.object_scope">object_scope</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GetNameListResponse" href="#hat.drivers.mms.GetNameListResponse">GetNameListResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GetNameListResponse.identifiers" href="#hat.drivers.mms.GetNameListResponse.identifiers">identifiers</a></code></li>
+<li><code><a title="hat.drivers.mms.GetNameListResponse.more_follows" href="#hat.drivers.mms.GetNameListResponse.more_follows">more_follows</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GetNamedVariableListAttributesRequest" href="#hat.drivers.mms.GetNamedVariableListAttributesRequest">GetNamedVariableListAttributesRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GetNamedVariableListAttributesRequest.value" href="#hat.drivers.mms.GetNamedVariableListAttributesRequest.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GetNamedVariableListAttributesResponse" href="#hat.drivers.mms.GetNamedVariableListAttributesResponse">GetNamedVariableListAttributesResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GetNamedVariableListAttributesResponse.mms_deletable" href="#hat.drivers.mms.GetNamedVariableListAttributesResponse.mms_deletable">mms_deletable</a></code></li>
+<li><code><a title="hat.drivers.mms.GetNamedVariableListAttributesResponse.specification" href="#hat.drivers.mms.GetNamedVariableListAttributesResponse.specification">specification</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GetVariableAccessAttributesRequest" href="#hat.drivers.mms.GetVariableAccessAttributesRequest">GetVariableAccessAttributesRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GetVariableAccessAttributesRequest.value" href="#hat.drivers.mms.GetVariableAccessAttributesRequest.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.GetVariableAccessAttributesResponse" href="#hat.drivers.mms.GetVariableAccessAttributesResponse">GetVariableAccessAttributesResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.GetVariableAccessAttributesResponse.mms_deletable" href="#hat.drivers.mms.GetVariableAccessAttributesResponse.mms_deletable">mms_deletable</a></code></li>
+<li><code><a title="hat.drivers.mms.GetVariableAccessAttributesResponse.type_description" href="#hat.drivers.mms.GetVariableAccessAttributesResponse.type_description">type_description</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.IdentifyRequest" href="#hat.drivers.mms.IdentifyRequest">IdentifyRequest</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.IdentifyResponse" href="#hat.drivers.mms.IdentifyResponse">IdentifyResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.IdentifyResponse.model" href="#hat.drivers.mms.IdentifyResponse.model">model</a></code></li>
+<li><code><a title="hat.drivers.mms.IdentifyResponse.revision" href="#hat.drivers.mms.IdentifyResponse.revision">revision</a></code></li>
+<li><code><a title="hat.drivers.mms.IdentifyResponse.syntaxes" href="#hat.drivers.mms.IdentifyResponse.syntaxes">syntaxes</a></code></li>
+<li><code><a title="hat.drivers.mms.IdentifyResponse.vendor" href="#hat.drivers.mms.IdentifyResponse.vendor">vendor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.InformationReportUnconfirmed" href="#hat.drivers.mms.InformationReportUnconfirmed">InformationReportUnconfirmed</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.InformationReportUnconfirmed.data" href="#hat.drivers.mms.InformationReportUnconfirmed.data">data</a></code></li>
+<li><code><a title="hat.drivers.mms.InformationReportUnconfirmed.specification" href="#hat.drivers.mms.InformationReportUnconfirmed.specification">specification</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.IntegerData" href="#hat.drivers.mms.IntegerData">IntegerData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.IntegerData.value" href="#hat.drivers.mms.IntegerData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.IntegerTypeDescription" href="#hat.drivers.mms.IntegerTypeDescription">IntegerTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.IntegerTypeDescription.xyz" href="#hat.drivers.mms.IntegerTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.InvalidatedVariableSpecification" href="#hat.drivers.mms.InvalidatedVariableSpecification">InvalidatedVariableSpecification</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.MmsStringData" href="#hat.drivers.mms.MmsStringData">MmsStringData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.MmsStringData.value" href="#hat.drivers.mms.MmsStringData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.MmsStringTypeDescription" href="#hat.drivers.mms.MmsStringTypeDescription">MmsStringTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.MmsStringTypeDescription.xyz" href="#hat.drivers.mms.MmsStringTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.NameVariableSpecification" href="#hat.drivers.mms.NameVariableSpecification">NameVariableSpecification</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.NameVariableSpecification.name" href="#hat.drivers.mms.NameVariableSpecification.name">name</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ObjIdData" href="#hat.drivers.mms.ObjIdData">ObjIdData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ObjIdData.value" href="#hat.drivers.mms.ObjIdData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ObjIdTypeDescription" href="#hat.drivers.mms.ObjIdTypeDescription">ObjIdTypeDescription</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ObjectClass" href="#hat.drivers.mms.ObjectClass">ObjectClass</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ObjectClass.DOMAIN" href="#hat.drivers.mms.ObjectClass.DOMAIN">DOMAIN</a></code></li>
+<li><code><a title="hat.drivers.mms.ObjectClass.JOURNAL" href="#hat.drivers.mms.ObjectClass.JOURNAL">JOURNAL</a></code></li>
+<li><code><a title="hat.drivers.mms.ObjectClass.NAMED_VARIABLE" href="#hat.drivers.mms.ObjectClass.NAMED_VARIABLE">NAMED_VARIABLE</a></code></li>
+<li><code><a title="hat.drivers.mms.ObjectClass.NAMED_VARIABLE_LIST" href="#hat.drivers.mms.ObjectClass.NAMED_VARIABLE_LIST">NAMED_VARIABLE_LIST</a></code></li>
+<li><code><a title="hat.drivers.mms.ObjectClass.UNDEFINED" href="#hat.drivers.mms.ObjectClass.UNDEFINED">UNDEFINED</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ObjectName" href="#hat.drivers.mms.ObjectName">ObjectName</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ObjectScope" href="#hat.drivers.mms.ObjectScope">ObjectScope</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.OctetStringData" href="#hat.drivers.mms.OctetStringData">OctetStringData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.OctetStringData.value" href="#hat.drivers.mms.OctetStringData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.OctetStringTypeDescription" href="#hat.drivers.mms.OctetStringTypeDescription">OctetStringTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.OctetStringTypeDescription.xyz" href="#hat.drivers.mms.OctetStringTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ReadRequest" href="#hat.drivers.mms.ReadRequest">ReadRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ReadRequest.value" href="#hat.drivers.mms.ReadRequest.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ReadResponse" href="#hat.drivers.mms.ReadResponse">ReadResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ReadResponse.results" href="#hat.drivers.mms.ReadResponse.results">results</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Request" href="#hat.drivers.mms.Request">Request</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Response" href="#hat.drivers.mms.Response">Response</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.ScatteredAccessDescriptionVariableSpecification" href="#hat.drivers.mms.ScatteredAccessDescriptionVariableSpecification">ScatteredAccessDescriptionVariableSpecification</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.ScatteredAccessDescriptionVariableSpecification.specifications" href="#hat.drivers.mms.ScatteredAccessDescriptionVariableSpecification.specifications">specifications</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Server" href="#hat.drivers.mms.Server">Server</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.Server.addresses" href="#hat.drivers.mms.Server.addresses">addresses</a></code></li>
+<li><code><a title="hat.drivers.mms.Server.async_group" href="#hat.drivers.mms.Server.async_group">async_group</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.StatusRequest" href="#hat.drivers.mms.StatusRequest">StatusRequest</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.StatusResponse" href="#hat.drivers.mms.StatusResponse">StatusResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.StatusResponse.logical" href="#hat.drivers.mms.StatusResponse.logical">logical</a></code></li>
+<li><code><a title="hat.drivers.mms.StatusResponse.physical" href="#hat.drivers.mms.StatusResponse.physical">physical</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.StructureData" href="#hat.drivers.mms.StructureData">StructureData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.StructureData.elements" href="#hat.drivers.mms.StructureData.elements">elements</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.StructureTypeDescription" href="#hat.drivers.mms.StructureTypeDescription">StructureTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.StructureTypeDescription.components" href="#hat.drivers.mms.StructureTypeDescription.components">components</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.TypeDescription" href="#hat.drivers.mms.TypeDescription">TypeDescription</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.Unconfirmed" href="#hat.drivers.mms.Unconfirmed">Unconfirmed</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.UnsignedData" href="#hat.drivers.mms.UnsignedData">UnsignedData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.UnsignedData.value" href="#hat.drivers.mms.UnsignedData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.UnsignedTypeDescription" href="#hat.drivers.mms.UnsignedTypeDescription">UnsignedTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.UnsignedTypeDescription.xyz" href="#hat.drivers.mms.UnsignedTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.UnsolicitedStatusUnconfirmed" href="#hat.drivers.mms.UnsolicitedStatusUnconfirmed">UnsolicitedStatusUnconfirmed</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.UnsolicitedStatusUnconfirmed.logical" href="#hat.drivers.mms.UnsolicitedStatusUnconfirmed.logical">logical</a></code></li>
+<li><code><a title="hat.drivers.mms.UnsolicitedStatusUnconfirmed.physical" href="#hat.drivers.mms.UnsolicitedStatusUnconfirmed.physical">physical</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.UtcTimeData" href="#hat.drivers.mms.UtcTimeData">UtcTimeData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.UtcTimeData.accuracy" href="#hat.drivers.mms.UtcTimeData.accuracy">accuracy</a></code></li>
+<li><code><a title="hat.drivers.mms.UtcTimeData.clock_failure" href="#hat.drivers.mms.UtcTimeData.clock_failure">clock_failure</a></code></li>
+<li><code><a title="hat.drivers.mms.UtcTimeData.leap_second" href="#hat.drivers.mms.UtcTimeData.leap_second">leap_second</a></code></li>
+<li><code><a title="hat.drivers.mms.UtcTimeData.not_synchronized" href="#hat.drivers.mms.UtcTimeData.not_synchronized">not_synchronized</a></code></li>
+<li><code><a title="hat.drivers.mms.UtcTimeData.value" href="#hat.drivers.mms.UtcTimeData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.UtcTimeTypeDescription" href="#hat.drivers.mms.UtcTimeTypeDescription">UtcTimeTypeDescription</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.VariableDescriptionVariableSpecification" href="#hat.drivers.mms.VariableDescriptionVariableSpecification">VariableDescriptionVariableSpecification</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.VariableDescriptionVariableSpecification.address" href="#hat.drivers.mms.VariableDescriptionVariableSpecification.address">address</a></code></li>
+<li><code><a title="hat.drivers.mms.VariableDescriptionVariableSpecification.type_specification" href="#hat.drivers.mms.VariableDescriptionVariableSpecification.type_specification">type_specification</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.VariableSpecification" href="#hat.drivers.mms.VariableSpecification">VariableSpecification</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.VisibleStringData" href="#hat.drivers.mms.VisibleStringData">VisibleStringData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.VisibleStringData.value" href="#hat.drivers.mms.VisibleStringData.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.VisibleStringTypeDescription" href="#hat.drivers.mms.VisibleStringTypeDescription">VisibleStringTypeDescription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.VisibleStringTypeDescription.xyz" href="#hat.drivers.mms.VisibleStringTypeDescription.xyz">xyz</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.VmdSpecificObjectName" href="#hat.drivers.mms.VmdSpecificObjectName">VmdSpecificObjectName</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.VmdSpecificObjectName.identifier" href="#hat.drivers.mms.VmdSpecificObjectName.identifier">identifier</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.VmdSpecificObjectScope" href="#hat.drivers.mms.VmdSpecificObjectScope">VmdSpecificObjectScope</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.WriteRequest" href="#hat.drivers.mms.WriteRequest">WriteRequest</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.WriteRequest.data" href="#hat.drivers.mms.WriteRequest.data">data</a></code></li>
+<li><code><a title="hat.drivers.mms.WriteRequest.specification" href="#hat.drivers.mms.WriteRequest.specification">specification</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.WriteResponse" href="#hat.drivers.mms.WriteResponse">WriteResponse</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.WriteResponse.results" href="#hat.drivers.mms.WriteResponse.results">results</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.monitor.client API documentation</title>
+<meta name="description" content="Library used by components for communication with Monitor Server …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.monitor.client</code></h1>
+</header>
+<section id="section-intro">
+<p>Library used by components for communication with Monitor Server</p>
+<p>This module provides low-level interface (<code><a title="hat.monitor.client.connect" href="#hat.monitor.client.connect">connect()</a></code>/<code><a title="hat.monitor.client.Client" href="#hat.monitor.client.Client">Client</a></code>) and high-level
+interface (<code><a title="hat.monitor.client.run_component" href="#hat.monitor.client.run_component">run_component()</a></code>) for communication with Monitor Server.</p>
+<p><code><a title="hat.monitor.client.connect" href="#hat.monitor.client.connect">connect()</a></code> is used for establishing single chatter based connection
+with Monitor Server which is represented by <code><a title="hat.monitor.client.Client" href="#hat.monitor.client.Client">Client</a></code>. Termination of
+connection is signaled with <code><a title="hat.monitor.client.Client.wait_closed" href="../aio.html#hat.aio.Resource.wait_closed">Resource.wait_closed()</a></code>.</p>
+<p>Example of low-level interface usage::</p>
+<pre><code>client = await hat.monitor.client.connect({
+    'name': 'client1',
+    'group': 'group1',
+    'monitor_address': 'tcp+sbs://127.0.0.1:23010',
+    'component_address': None})
+assert client.info in client.components
+try:
+    await client.wait_closed()
+finally:
+    await client.async_close()
+</code></pre>
+<p><code><a title="hat.monitor.client.run_component" href="#hat.monitor.client.run_component">run_component()</a></code> provide high-level interface for communication with
+Monitor Server. This function first establishes connection to Monitor
+Server and then listens component changes and in regard to blessing
+and ready tokens calls or cancels <code>async_run_cb</code> callback.
+In case blessing token matches ready token, <code>async_run_cb</code> is called.
+While <code>async_run_cb</code> is running, once blessing token changes, <code>async_run_cb</code> is
+canceled. If <code>async_run_cb</code> finishes or raises exception, this function closes
+connection to monitor server and returns <code>async_run_cb</code> result. If connection
+to monitor server is closed, this function raises exception.</p>
+<p>Example of high-level interface usage::</p>
+<pre><code>async def monitor_async_run():
+    await asyncio.sleep(10)
+    return 13
+
+client = await hat.monitor.client.connect({
+    'name': 'client',
+    'group': 'test clients',
+    'monitor_address': 'tcp+sbs://127.0.0.1:23010',
+    'component_address': None})
+res = await hat.monitor.client.run_component(client, monitor_async_run)
+assert res == 13
+</code></pre>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Library used by components for communication with Monitor Server
+
+This module provides low-level interface (`connect`/`Client`) and high-level
+interface (`run_component`) for communication with Monitor Server.
+
+`connect` is used for establishing single chatter based connection
+with Monitor Server which is represented by `Client`. Termination of
+connection is signaled with `Client.wait_closed`.
+
+Example of low-level interface usage::
+
+    client = await hat.monitor.client.connect({
+        &#39;name&#39;: &#39;client1&#39;,
+        &#39;group&#39;: &#39;group1&#39;,
+        &#39;monitor_address&#39;: &#39;tcp+sbs://127.0.0.1:23010&#39;,
+        &#39;component_address&#39;: None})
+    assert client.info in client.components
+    try:
+        await client.wait_closed()
+    finally:
+        await client.async_close()
+
+`run_component` provide high-level interface for communication with
+Monitor Server. This function first establishes connection to Monitor
+Server and then listens component changes and in regard to blessing
+and ready tokens calls or cancels `async_run_cb` callback.
+In case blessing token matches ready token, `async_run_cb` is called.
+While `async_run_cb` is running, once blessing token changes, `async_run_cb` is
+canceled. If `async_run_cb` finishes or raises exception, this function closes
+connection to monitor server and returns `async_run_cb` result. If connection
+to monitor server is closed, this function raises exception.
+
+Example of high-level interface usage::
+
+    async def monitor_async_run():
+        await asyncio.sleep(10)
+        return 13
+
+    client = await hat.monitor.client.connect({
+        &#39;name&#39;: &#39;client&#39;,
+        &#39;group&#39;: &#39;test clients&#39;,
+        &#39;monitor_address&#39;: &#39;tcp+sbs://127.0.0.1:23010&#39;,
+        &#39;component_address&#39;: None})
+    res = await hat.monitor.client.run_component(client, monitor_async_run)
+    assert res == 13
+
+&#34;&#34;&#34;
+
+import asyncio
+import logging
+import typing
+
+from hat import aio
+from hat import chatter
+from hat import json
+from hat import util
+from hat.monitor import common
+
+
+mlog: logging.Logger = logging.getLogger(__name__)
+&#34;&#34;&#34;Module logger&#34;&#34;&#34;
+
+
+async def connect(conf: json.Data
+                  ) -&gt; &#39;Client&#39;:
+    &#34;&#34;&#34;Connect to local monitor server
+
+    Connection is established once chatter communication is established.
+
+    Args:
+        conf: configuration as defined by ``hat://monitor/client.yaml#``
+
+    &#34;&#34;&#34;
+    client = Client()
+    client._conf = conf
+    client._components = []
+    client._info = None
+    client._ready = None
+    client._change_cbs = util.CallbackRegistry()
+    client._async_group = aio.Group()
+
+    client._conn = await chatter.connect(common.sbs_repo,
+                                         conf[&#39;monitor_address&#39;])
+    client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
+    client._async_group.spawn(client._receive_loop)
+
+    mlog.debug(&#34;connected to local monitor server %s&#34;, conf[&#39;monitor_address&#39;])
+    return client
+
+
+class Client(aio.Resource):
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; typing.Optional[common.ComponentInfo]:
+        &#34;&#34;&#34;Client&#39;s component info&#34;&#34;&#34;
+        return self._info
+
+    @property
+    def components(self) -&gt; typing.List[common.ComponentInfo]:
+        &#34;&#34;&#34;Global component state&#34;&#34;&#34;
+        return self._components
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        Registered callback is called once info and/or components changes.
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    def set_ready(self, token: typing.Optional[int]):
+        &#34;&#34;&#34;Set ready token&#34;&#34;&#34;
+        if token == self._ready:
+            return
+
+        self._ready = token
+        self._send_msg_client()
+
+    async def _receive_loop(self):
+        try:
+            self._send_msg_client()
+
+            while True:
+                msg = await self._conn.receive()
+                msg_type = msg.data.module, msg.data.type
+
+                if msg_type == (&#39;HatMonitor&#39;, &#39;MsgServer&#39;):
+                    msg_server = common.msg_server_from_sbs(msg.data.data)
+                    self._process_msg_server(msg_server)
+
+                else:
+                    raise Exception(&#39;unsupported message type&#39;)
+
+        except ConnectionError:
+            mlog.debug(&#34;connection closed&#34;)
+
+        except Exception as e:
+            mlog.warning(&#34;monitor client error: %s&#34;, e, exc_info=e)
+
+        finally:
+            self._async_group.close()
+
+    def _send_msg_client(self):
+        msg_client = common.MsgClient(name=self._conf[&#39;name&#39;],
+                                      group=self._conf[&#39;group&#39;],
+                                      address=self._conf[&#39;component_address&#39;],
+                                      ready=self._ready)
+        self._conn.send(chatter.Data(
+            module=&#39;HatMonitor&#39;,
+            type=&#39;MsgClient&#39;,
+            data=common.msg_client_to_sbs(msg_client)))
+
+    def _process_msg_server(self, msg_server):
+        components = msg_server.components
+        info = util.first(components, lambda i: (i.cid == msg_server.cid and
+                                                 i.mid == msg_server.mid))
+
+        if (self._components == components and self._info == info):
+            return
+
+        self._components = components
+        self._info = info
+        self._change_cbs.notify()
+
+
+T = typing.TypeVar(&#39;T&#39;)
+
+
+async def run_component(client: Client,
+                        async_run_cb: typing.Callable[..., typing.Awaitable[T]],  # NOQA
+                        *args, **kwargs
+                        ) -&gt; T:
+    &#34;&#34;&#34;Run component
+
+    This starts client&#39;s loop which manages blessing/ready states based on
+    provided monitor client. This implementation sets ready token immediately
+    after blessing token is detected.
+
+    When blessing token matches ready token, `async_run_cb` is called with
+    additional `args` and `kwargs` arguments. While `async_run_cb` is running,
+    if blessing token changes, `async_run_cb` is canceled.
+
+    If `async_run_cb` finishes or raises exception, this function returns
+    `async_run_cb` result. If connection to monitor server is closed, this
+    function raises `ConnectionError`.
+
+    &#34;&#34;&#34;
+    change_queue = aio.Queue()
+    async_group = aio.Group()
+
+    def on_client_change():
+        change_queue.put_nowait(None)
+
+    closing_future = async_group.spawn(client.wait_closing)
+    change_handler = client.register_change_cb(on_client_change)
+    async_group.spawn(aio.call_on_cancel, change_handler.cancel)
+
+    async def wait_until_blessed_and_ready():
+        while True:
+            blessing = client.info.blessing if client.info else None
+            ready = client.info.ready if client.info else None
+
+            client.set_ready(blessing)
+            if blessing is not None and blessing == ready:
+                break
+
+            await change_queue.get_until_empty()
+
+    async def wait_while_blessed_and_ready():
+        while True:
+            blessing = client.info.blessing if client.info else None
+            ready = client.info.ready if client.info else None
+
+            if blessing is None or blessing != ready:
+                client.set_ready(None)
+                break
+
+            await change_queue.get_until_empty()
+
+    try:
+        while True:
+            async with async_group.create_subgroup() as subgroup:
+                mlog.debug(&#34;waiting blessing and ready&#34;)
+
+                ready_future = subgroup.spawn(wait_until_blessed_and_ready)
+
+                await asyncio.wait([ready_future,
+                                    closing_future],
+                                   return_when=asyncio.FIRST_COMPLETED)
+
+                if closing_future.done():
+                    raise ConnectionError()
+
+            async with async_group.create_subgroup() as subgroup:
+                mlog.debug(&#34;running component&#39;s async_run_cb&#34;)
+
+                run_future = subgroup.spawn(async_run_cb, *args, **kwargs)
+                ready_future = subgroup.spawn(wait_while_blessed_and_ready)
+
+                await asyncio.wait([run_future,
+                                    ready_future,
+                                    closing_future],
+                                   return_when=asyncio.FIRST_COMPLETED)
+
+                if run_future.done():
+                    return run_future.result()
+
+                if closing_future.done():
+                    raise ConnectionError()
+
+    except ConnectionError:
+        raise
+
+    except Exception as e:
+        mlog.warning(&#34;run component error: %s&#34;, e, exc_info=e)
+        raise
+
+    finally:
+        await aio.uncancellable(async_group.async_close())
+        mlog.debug(&#34;component closed&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.monitor.client.mlog"><code class="name">var <span class="ident">mlog</span> : logging.Logger</code></dt>
+<dd>
+<div class="desc"><p>Module logger</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.monitor.client.connect"><code class="name flex">
+<span>async def <span class="ident">connect</span></span>(<span>conf: typing.Union[NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')]]) ‑> <a title="hat.monitor.client.Client" href="#hat.monitor.client.Client">Client</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect to local monitor server</p>
+<p>Connection is established once chatter communication is established.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>conf</code></strong></dt>
+<dd>configuration as defined by <code>hat://monitor/client.yaml#</code></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def connect(conf: json.Data
+                  ) -&gt; &#39;Client&#39;:
+    &#34;&#34;&#34;Connect to local monitor server
+
+    Connection is established once chatter communication is established.
+
+    Args:
+        conf: configuration as defined by ``hat://monitor/client.yaml#``
+
+    &#34;&#34;&#34;
+    client = Client()
+    client._conf = conf
+    client._components = []
+    client._info = None
+    client._ready = None
+    client._change_cbs = util.CallbackRegistry()
+    client._async_group = aio.Group()
+
+    client._conn = await chatter.connect(common.sbs_repo,
+                                         conf[&#39;monitor_address&#39;])
+    client._async_group.spawn(aio.call_on_cancel, client._conn.async_close)
+    client._async_group.spawn(client._receive_loop)
+
+    mlog.debug(&#34;connected to local monitor server %s&#34;, conf[&#39;monitor_address&#39;])
+    return client</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.client.run_component"><code class="name flex">
+<span>async def <span class="ident">run_component</span></span>(<span>client: <a title="hat.monitor.client.Client" href="#hat.monitor.client.Client">Client</a>, async_run_cb: typing.Callable[..., typing.Awaitable[~T]], *args, **kwargs) ‑> ~T</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run component</p>
+<p>This starts client's loop which manages blessing/ready states based on
+provided monitor client. This implementation sets ready token immediately
+after blessing token is detected.</p>
+<p>When blessing token matches ready token, <code>async_run_cb</code> is called with
+additional <code>args</code> and <code>kwargs</code> arguments. While <code>async_run_cb</code> is running,
+if blessing token changes, <code>async_run_cb</code> is canceled.</p>
+<p>If <code>async_run_cb</code> finishes or raises exception, this function returns
+<code>async_run_cb</code> result. If connection to monitor server is closed, this
+function raises <code>ConnectionError</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def run_component(client: Client,
+                        async_run_cb: typing.Callable[..., typing.Awaitable[T]],  # NOQA
+                        *args, **kwargs
+                        ) -&gt; T:
+    &#34;&#34;&#34;Run component
+
+    This starts client&#39;s loop which manages blessing/ready states based on
+    provided monitor client. This implementation sets ready token immediately
+    after blessing token is detected.
+
+    When blessing token matches ready token, `async_run_cb` is called with
+    additional `args` and `kwargs` arguments. While `async_run_cb` is running,
+    if blessing token changes, `async_run_cb` is canceled.
+
+    If `async_run_cb` finishes or raises exception, this function returns
+    `async_run_cb` result. If connection to monitor server is closed, this
+    function raises `ConnectionError`.
+
+    &#34;&#34;&#34;
+    change_queue = aio.Queue()
+    async_group = aio.Group()
+
+    def on_client_change():
+        change_queue.put_nowait(None)
+
+    closing_future = async_group.spawn(client.wait_closing)
+    change_handler = client.register_change_cb(on_client_change)
+    async_group.spawn(aio.call_on_cancel, change_handler.cancel)
+
+    async def wait_until_blessed_and_ready():
+        while True:
+            blessing = client.info.blessing if client.info else None
+            ready = client.info.ready if client.info else None
+
+            client.set_ready(blessing)
+            if blessing is not None and blessing == ready:
+                break
+
+            await change_queue.get_until_empty()
+
+    async def wait_while_blessed_and_ready():
+        while True:
+            blessing = client.info.blessing if client.info else None
+            ready = client.info.ready if client.info else None
+
+            if blessing is None or blessing != ready:
+                client.set_ready(None)
+                break
+
+            await change_queue.get_until_empty()
+
+    try:
+        while True:
+            async with async_group.create_subgroup() as subgroup:
+                mlog.debug(&#34;waiting blessing and ready&#34;)
+
+                ready_future = subgroup.spawn(wait_until_blessed_and_ready)
+
+                await asyncio.wait([ready_future,
+                                    closing_future],
+                                   return_when=asyncio.FIRST_COMPLETED)
+
+                if closing_future.done():
+                    raise ConnectionError()
+
+            async with async_group.create_subgroup() as subgroup:
+                mlog.debug(&#34;running component&#39;s async_run_cb&#34;)
+
+                run_future = subgroup.spawn(async_run_cb, *args, **kwargs)
+                ready_future = subgroup.spawn(wait_while_blessed_and_ready)
+
+                await asyncio.wait([run_future,
+                                    ready_future,
+                                    closing_future],
+                                   return_when=asyncio.FIRST_COMPLETED)
+
+                if run_future.done():
+                    return run_future.result()
+
+                if closing_future.done():
+                    raise ConnectionError()
+
+    except ConnectionError:
+        raise
+
+    except Exception as e:
+        mlog.warning(&#34;run component error: %s&#34;, e, exc_info=e)
+        raise
+
+    finally:
+        await aio.uncancellable(async_group.async_close())
+        mlog.debug(&#34;component closed&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.monitor.client.Client"><code class="flex name class">
+<span>class <span class="ident">Client</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resource with lifetime control based on <code>Group</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Client(aio.Resource):
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; typing.Optional[common.ComponentInfo]:
+        &#34;&#34;&#34;Client&#39;s component info&#34;&#34;&#34;
+        return self._info
+
+    @property
+    def components(self) -&gt; typing.List[common.ComponentInfo]:
+        &#34;&#34;&#34;Global component state&#34;&#34;&#34;
+        return self._components
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        Registered callback is called once info and/or components changes.
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    def set_ready(self, token: typing.Optional[int]):
+        &#34;&#34;&#34;Set ready token&#34;&#34;&#34;
+        if token == self._ready:
+            return
+
+        self._ready = token
+        self._send_msg_client()
+
+    async def _receive_loop(self):
+        try:
+            self._send_msg_client()
+
+            while True:
+                msg = await self._conn.receive()
+                msg_type = msg.data.module, msg.data.type
+
+                if msg_type == (&#39;HatMonitor&#39;, &#39;MsgServer&#39;):
+                    msg_server = common.msg_server_from_sbs(msg.data.data)
+                    self._process_msg_server(msg_server)
+
+                else:
+                    raise Exception(&#39;unsupported message type&#39;)
+
+        except ConnectionError:
+            mlog.debug(&#34;connection closed&#34;)
+
+        except Exception as e:
+            mlog.warning(&#34;monitor client error: %s&#34;, e, exc_info=e)
+
+        finally:
+            self._async_group.close()
+
+    def _send_msg_client(self):
+        msg_client = common.MsgClient(name=self._conf[&#39;name&#39;],
+                                      group=self._conf[&#39;group&#39;],
+                                      address=self._conf[&#39;component_address&#39;],
+                                      ready=self._ready)
+        self._conn.send(chatter.Data(
+            module=&#39;HatMonitor&#39;,
+            type=&#39;MsgClient&#39;,
+            data=common.msg_client_to_sbs(msg_client)))
+
+    def _process_msg_server(self, msg_server):
+        components = msg_server.components
+        info = util.first(components, lambda i: (i.cid == msg_server.cid and
+                                                 i.mid == msg_server.mid))
+
+        if (self._components == components and self._info == info):
+            return
+
+        self._components = components
+        self._info = info
+        self._change_cbs.notify()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.monitor.client.Client.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.client.Client.components"><code class="name">var <span class="ident">components</span> : typing.List[<a title="hat.monitor.common.ComponentInfo" href="common.html#hat.monitor.common.ComponentInfo">ComponentInfo</a>]</code></dt>
+<dd>
+<div class="desc"><p>Global component state</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def components(self) -&gt; typing.List[common.ComponentInfo]:
+    &#34;&#34;&#34;Global component state&#34;&#34;&#34;
+    return self._components</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.client.Client.info"><code class="name">var <span class="ident">info</span> : typing.Union[<a title="hat.monitor.common.ComponentInfo" href="common.html#hat.monitor.common.ComponentInfo">ComponentInfo</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Client's component info</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self) -&gt; typing.Optional[common.ComponentInfo]:
+    &#34;&#34;&#34;Client&#39;s component info&#34;&#34;&#34;
+    return self._info</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.monitor.client.Client.register_change_cb"><code class="name flex">
+<span>def <span class="ident">register_change_cb</span></span>(<span>self, cb: typing.Callable[[], NoneType]) ‑> <a title="hat.util.RegisterCallbackHandle" href="../util.html#hat.util.RegisterCallbackHandle">RegisterCallbackHandle</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register change callback</p>
+<p>Registered callback is called once info and/or components changes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_change_cb(self,
+                       cb: typing.Callable[[], None]
+                       ) -&gt; util.RegisterCallbackHandle:
+    &#34;&#34;&#34;Register change callback
+
+    Registered callback is called once info and/or components changes.
+
+    &#34;&#34;&#34;
+    return self._change_cbs.register(cb)</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.client.Client.set_ready"><code class="name flex">
+<span>def <span class="ident">set_ready</span></span>(<span>self, token: typing.Union[int, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set ready token</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_ready(self, token: typing.Optional[int]):
+    &#34;&#34;&#34;Set ready token&#34;&#34;&#34;
+    if token == self._ready:
+        return
+
+    self._ready = token
+    self._send_msg_client()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.monitor" href="index.html">hat.monitor</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.monitor.client.mlog" href="#hat.monitor.client.mlog">mlog</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.monitor.client.connect" href="#hat.monitor.client.connect">connect</a></code></li>
+<li><code><a title="hat.monitor.client.run_component" href="#hat.monitor.client.run_component">run_component</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.monitor.client.Client" href="#hat.monitor.client.Client">Client</a></code></h4>
+<ul class="">
+<li><code><a title="hat.monitor.client.Client.async_group" href="#hat.monitor.client.Client.async_group">async_group</a></code></li>
+<li><code><a title="hat.monitor.client.Client.components" href="#hat.monitor.client.Client.components">components</a></code></li>
+<li><code><a title="hat.monitor.client.Client.info" href="#hat.monitor.client.Client.info">info</a></code></li>
+<li><code><a title="hat.monitor.client.Client.register_change_cb" href="#hat.monitor.client.Client.register_change_cb">register_change_cb</a></code></li>
+<li><code><a title="hat.monitor.client.Client.set_ready" href="#hat.monitor.client.Client.set_ready">set_ready</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>juggler.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-@hat-core_juggler.Application.html">Application</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_juggler.Application.html#send">send</a></li></ul></li><li><a href="module-@hat-core_juggler.Connection.html">Connection</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_juggler.Connection.html#close">close</a></li><li data-type='method'><a href="module-@hat-core_juggler.Connection.html#send">send</a></li><li data-type='method'><a href="module-@hat-core_juggler.Connection.html#setLocalData">setLocalData</a></li></ul></li><li><a href="module-@hat-core_renderer.Renderer.html">Renderer</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#change">change</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#get">get</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#init">init</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#render">render</a></li><li data-type='method'><a href="module-@hat-core_renderer.Renderer.html#set">set</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-@hat-core_future.html">@hat-core/future</a></li><li><a href="module-@hat-core_juggler.html">@hat-core/juggler</a></li><li><a href="module-@hat-core_renderer.html">@hat-core/renderer</a></li><li><a href="module-@hat-core_util.html">@hat-core/util</a><ul class='methods'><li data-type='method'><a href="module-@hat-core_util.html#.append">append</a></li><li data-type='method'><a href="module-@hat-core_util.html#.change">change</a></li><li data-type='method'><a href="module-@hat-core_util.html#.clone">clone</a></li><li data-type='method'><a href="module-@hat-core_util.html#.concat">concat</a></li><li data-type='method'><a href="module-@hat-core_util.html#.contains">contains</a></li><li data-type='method'><a href="module-@hat-core_util.html#.curry">curry</a></li><li data-type='method'><a href="module-@hat-core_util.html#.dec">dec</a></li><li data-type='method'><a href="module-@hat-core_util.html#.delay">delay</a></li><li data-type='method'><a href="module-@hat-core_util.html#.equals">equals</a></li><li data-type='method'><a href="module-@hat-core_util.html#.filter">filter</a></li><li data-type='method'><a href="module-@hat-core_util.html#.find">find</a></li><li data-type='method'><a href="module-@hat-core_util.html#.findIndex">findIndex</a></li><li data-type='method'><a href="module-@hat-core_util.html#.flap">flap</a></li><li data-type='method'><a href="module-@hat-core_util.html#.flatten">flatten</a></li><li data-type='method'><a href="module-@hat-core_util.html#.fromPairs">fromPairs</a></li><li data-type='method'><a href="module-@hat-core_util.html#.get">get</a></li><li data-type='method'><a href="module-@hat-core_util.html#.identity">identity</a></li><li data-type='method'><a href="module-@hat-core_util.html#.inc">inc</a></li><li data-type='method'><a href="module-@hat-core_util.html#.insert">insert</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isArray">isArray</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isBoolean">isBoolean</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isInteger">isInteger</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isNil">isNil</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isNumber">isNumber</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isObject">isObject</a></li><li data-type='method'><a href="module-@hat-core_util.html#.isString">isString</a></li><li data-type='method'><a href="module-@hat-core_util.html#.length">length</a></li><li data-type='method'><a href="module-@hat-core_util.html#.map">map</a></li><li data-type='method'><a href="module-@hat-core_util.html#.merge">merge</a></li><li data-type='method'><a href="module-@hat-core_util.html#.mergeAll">mergeAll</a></li><li data-type='method'><a href="module-@hat-core_util.html#.move">move</a></li><li data-type='method'><a href="module-@hat-core_util.html#.not">not</a></li><li data-type='method'><a href="module-@hat-core_util.html#.omit">omit</a></li><li data-type='method'><a href="module-@hat-core_util.html#.pick">pick</a></li><li data-type='method'><a href="module-@hat-core_util.html#.pipe">pipe</a></li><li data-type='method'><a href="module-@hat-core_util.html#.reduce">reduce</a></li><li data-type='method'><a href="module-@hat-core_util.html#.repeat">repeat</a></li><li data-type='method'><a href="module-@hat-core_util.html#.reverse">reverse</a></li><li data-type='method'><a href="module-@hat-core_util.html#.set">set</a></li><li data-type='method'><a href="module-@hat-core_util.html#.sleep">sleep</a></li><li data-type='method'><a href="module-@hat-core_util.html#.slice">slice</a></li><li data-type='method'><a href="module-@hat-core_util.html#.sort">sort</a></li><li data-type='method'><a href="module-@hat-core_util.html#.sortBy">sortBy</a></li><li data-type='method'><a href="module-@hat-core_util.html#.strictParseFloat">strictParseFloat</a></li><li data-type='method'><a href="module-@hat-core_util.html#.strictParseInt">strictParseInt</a></li><li data-type='method'><a href="module-@hat-core_util.html#.toPairs">toPairs</a></li><li data-type='method'><a href="module-@hat-core_util.html#.union">union</a></li><li data-type='method'><a href="module-@hat-core_util.html#.zip">zip</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">juggler.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module @hat-core/juggler
+ */
+
+import jiff from 'jiff';
+
+import * as u from '@hat-core/util';
+import * as future from '@hat-core/future';
+
+
+/**
+ * Settings
+ * @property {number} settings.syncDelay sync delay [ms]
+ * @property {number} settings.retryDelay retry delay [ms]
+ */
+export const settings = {
+    syncDelay: 100,
+    retryDelay: 5000
+};
+
+
+/** Juggler client connection */
+export class Connection {
+    /**
+     * Create connection
+     * @param {?string} address Juggler server address, formatted as
+     *     ``ws[s]://&lt;host>[:&lt;port>][/&lt;path>]``. If not provided, hostname
+     *     and port obtained from ``widow.location`` are used instead, with
+     *     ``ws`` as a path.
+     */
+    constructor(address) {
+        this._localData = null;
+        this._remoteData = null;
+        this._onOpen = () => {};
+        this._onClose = () => {};
+        this._onMessage = () => {};
+        this._onRemoteDataChange = () => {};
+        this._delayedSyncID = null;
+        this._syncedLocalData = null;
+
+        address = address || (() => {
+            const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
+            const hostname = window.location.hostname || 'localhost';
+            const port = window.location.port;
+            return `${protocol}://${hostname}` + (port ? `:${port}` : '') + '/ws';
+        })();
+        this._ws = new WebSocket(address);
+        this._ws.onopen = () => this._onOpen();
+        this._ws.onclose = () => {
+            clearTimeout(this._delayedSyncID);
+            this._onClose();
+        };
+        this._ws.onmessage = (evt) => {
+            try {
+                let msg = JSON.parse(evt.data);
+                if (msg.type == 'DATA') {
+                    this._remoteData = jiff.patch(msg.payload, this._remoteData);
+                    this._onRemoteDataChange(this._remoteData);
+                } else if (msg.type == 'MESSAGE') {
+                    this._onMessage(msg.payload);
+                } else {
+                    throw('unsupported message type');
+                }
+            } catch (e) {
+                this._ws.close();
+                throw e;
+            }
+        };
+    }
+
+    /**
+     * Local data
+     * @type {*}
+     */
+    get localData() {
+        return this._localData;
+    }
+
+    /**
+     * Remote data
+     * @type {*}
+     */
+    get remoteData() {
+        return this._remoteData;
+    }
+
+    /**
+     * WebSocket ready state
+     * @type {number}
+     */
+    get readyState() {
+        return this._ws.readyState;
+    }
+
+    /**
+     * Set on open callback
+     * @type {function}
+     */
+    set onOpen(cb) {
+        this._onOpen = cb;
+    }
+
+    /**
+     * Set on close callback
+     * @type {function}
+     */
+    set onClose(cb) {
+        this._onClose = cb;
+    }
+
+    /**
+     * Set on message callback
+     * @type {function(*)}
+     */
+    set onMessage(cb) {
+        this._onMessage = cb;
+    }
+
+    /**
+     * Set on remote data change callback
+     * @type {function(*)}
+     */
+    set onRemoteDataChange(cb) {
+        this._onRemoteDataChange = cb;
+    }
+
+    /**
+     * Close connection
+     */
+    close() {
+        this._ws.close(1000);
+    }
+
+    /**
+     * Send message
+     * @param {*} msg
+     */
+    send(msg) {
+        if (this.readyState != WebSocket.OPEN) {
+            throw new Error("Connection not open");
+        }
+        this._ws.send(JSON.stringify({
+            type: 'MESSAGE',
+            payload: msg
+        }));
+    }
+
+    /**
+     * Set local data
+     * @param {*} data
+     */
+    setLocalData(data) {
+        if (this.readyState != WebSocket.OPEN) {
+            throw new Error("Connection not open");
+        }
+        this._localData = data;
+        if (this._delayedSyncID == null) {
+            this._delayedSyncID = setTimeout(() => {
+                const patch = jiff.diff(this._syncedLocalData, this._localData);
+                if (patch.length > 0) {
+                    this._ws.send(JSON.stringify({
+                        type: 'DATA',
+                        payload: patch
+                    }));
+                    this._syncedLocalData = this._localData;
+                }
+                this._delayedSyncID = null;
+            }, settings.syncDelay);
+        }
+    }
+}
+
+
+/** Juggler based application */
+export class Application {
+    /**
+     * Create application
+     * @param {module:@hat-core/renderer.Renderer} r renderer
+     * @param {?string} address juggler server address, see
+     *     {@link module:@hat-core/juggler.Connection}
+     * @param {?module:@hat-core/util.Path} localPath local data state path
+     * @param {?module:@hat-core/util.Path} remotePath remote data state path
+     */
+    constructor(r, address, localPath, remotePath) {
+        this._conn = null;
+        this._onMessage = () => {};
+
+        if (localPath != null) {
+            r.addEventListener('change', () => {
+                if (this._conn &amp;&amp; this._conn.readyState == WebSocket.OPEN) {
+                    this._conn.setLocalData(r.get(localPath));
+                }
+            });
+        }
+
+        u.delay(async () => {
+            while (true) {
+                const closeFuture = future.create();
+                this._conn = new Connection(address);
+                this._conn._onOpen = () =>{
+                    if (localPath != null) {
+                        this._conn.setLocalData(r.get(localPath));
+                    }
+                };
+                this._conn._onMessage = this._onMessage;
+                this._conn._onRemoteDataChange = data => {
+                    if (remotePath != null) r.set(remotePath, data);
+                };
+                this._conn._onClose = () => {
+                    if (remotePath != null) r.set(remotePath, null);
+                    this._conn = null;
+                    closeFuture.setResult();
+                };
+                await closeFuture;
+                await u.sleep(settings.retryDelay);
+            }
+        });
+    }
+
+    /**
+     * Set on message callback
+     * @type {function(*)}
+     */
+    set onMessage(cb) {
+        this._onMessage = cb;
+        if (this._conn) {
+            this._conn._onMessage = cb;
+        }
+    }
+
+    /**
+     * Send message
+     * @param {*} msg
+     */
+    send(msg) {
+        if(this._conn) {
+            this._conn.send(msg);
+        } else {
+            throw new Error("Connection closed");
+        }
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a> on Mon Feb 01 2021 22:53:55 GMT+0000 (Coordinated Universal Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

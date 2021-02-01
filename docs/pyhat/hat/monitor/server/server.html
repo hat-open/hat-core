@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.monitor.server.server API documentation</title>
+<meta name="description" content="Implementation of local monitor server communication" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.monitor.server.server</code></h1>
+</header>
+<section id="section-intro">
+<p>Implementation of local monitor server communication</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Implementation of local monitor server communication&#34;&#34;&#34;
+
+import contextlib
+import logging
+import typing
+
+from hat import aio
+from hat import chatter
+from hat import json
+from hat import util
+from hat.monitor.server import common
+
+
+mlog: logging.Logger = logging.getLogger(__name__)
+&#34;&#34;&#34;Module logger&#34;&#34;&#34;
+
+
+async def create(conf: json.Data
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create local monitor server
+
+    Args:
+        conf: configuration defined by
+            ``hat://monitor/main.yaml#/definitions/server``
+
+    &#34;&#34;&#34;
+    server = Server()
+    server._default_rank = conf[&#39;default_rank&#39;]
+    server._last_cid = 0
+    server._mid = 0
+    server._rank_cache = {}
+    server._local_components = []
+    server._global_components = []
+    server._change_cbs = util.CallbackRegistry()
+
+    server._srv = await chatter.listen(
+        sbs_repo=common.sbs_repo,
+        address=conf[&#39;address&#39;],
+        connection_cb=server._create_client)
+
+    mlog.debug(&#39;monitor server listens clients on %s&#39;, conf[&#39;address&#39;])
+    return server
+
+
+class Server(aio.Resource):
+    &#34;&#34;&#34;Local monitor server
+
+    For creating new instance of this class see `create` function.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._srv.async_group
+
+    @property
+    def mid(self) -&gt; int:
+        &#34;&#34;&#34;Server&#39;s monitor id&#34;&#34;&#34;
+        return self._mid
+
+    @property
+    def local_components(self) -&gt; typing.List[common.ComponentInfo]:
+        &#34;&#34;&#34;Local components&#34;&#34;&#34;
+        return self._local_components
+
+    @property
+    def global_components(self) -&gt; typing.List[common.ComponentInfo]:
+        &#34;&#34;&#34;Global components&#34;&#34;&#34;
+        return self._global_components
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        Change callback is called once mid and/or local_components and/or
+        global_components property changes.
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    def update(self,
+               mid: int,
+               global_components: typing.List[common.ComponentInfo]):
+        &#34;&#34;&#34;Update server&#39;s monitor id and global components&#34;&#34;&#34;
+        if self._mid == mid and self._global_components == global_components:
+            return
+
+        self._global_components = global_components
+        if self._mid != mid:
+            self._mid = mid
+            self._local_components = [i._replace(mid=mid)
+                                      for i in self._local_components]
+        self._change_cbs.notify()
+
+    def set_rank(self,
+                 cid: int,
+                 rank: int):
+        &#34;&#34;&#34;Set component rank&#34;&#34;&#34;
+        info = util.first(self._local_components, lambda i: i.cid == cid)
+        if not info or info.rank == rank:
+            return
+
+        updated_info = info._replace(rank=rank)
+        self._local_components = [(updated_info if i is info else i)
+                                  for i in self._local_components]
+        if info.name is not None:
+            self._rank_cache[info.name, info.group] = rank
+        self._change_cbs.notify()
+
+    def _create_client(self, conn):
+        self._last_cid += 1
+        cid = self._last_cid
+
+        client = _Client(self, conn, cid)
+        self.async_group.spawn(client.client_loop)
+
+        info = common.ComponentInfo(cid=cid,
+                                    mid=self._mid,
+                                    name=None,
+                                    group=None,
+                                    address=None,
+                                    rank=self._default_rank,
+                                    blessing=None,
+                                    ready=None)
+        self._local_components = [*self._local_components, info]
+        self._change_cbs.notify()
+
+    def _set_client(self, cid, name, group, address, ready):
+        info = util.first(self._local_components, lambda i: i.cid == cid)
+        updated_info = info._replace(name=name,
+                                     group=group,
+                                     address=address,
+                                     ready=ready)
+
+        if info.name is None:
+            rank_cache_key = name, group
+            rank = self._rank_cache.get(rank_cache_key, info.rank)
+            updated_info = updated_info._replace(rank=rank)
+
+        if info == updated_info:
+            return
+
+        self._local_components = [(updated_info if i is info else i)
+                                  for i in self._local_components]
+        self._change_cbs.notify()
+
+    def _remove_client(self, cid):
+        self._local_components = [i for i in self._local_components
+                                  if i.cid != cid]
+        self._change_cbs.notify()
+
+
+class _Client:
+
+    def __init__(self, server, conn, cid):
+        self._server = server
+        self._conn = conn
+        self._cid = cid
+        self._mid = server.mid
+        self._global_components = server.global_components
+
+    async def client_loop(self):
+        try:
+            mlog.debug(&#39;connection %s established&#39;, self._cid)
+
+            self._mid = self._server.mid
+            self._global_components = self._server.global_components
+            self._send_msg_server()
+
+            with self._server.register_change_cb(self._on_change):
+                while True:
+                    msg = await self._conn.receive()
+                    msg_type = msg.data.module, msg.data.type
+
+                    if msg_type == (&#39;HatMonitor&#39;, &#39;MsgClient&#39;):
+                        msg_client = common.msg_client_from_sbs(msg.data.data)
+                        self._process_msg_client(msg_client)
+
+                    else:
+                        raise Exception(&#39;unsupported message type&#39;)
+
+        except ConnectionError:
+            pass
+
+        except Exception as e:
+            mlog.warning(&#39;connection loop error: %s&#39;, e, exc_info=e)
+
+        finally:
+            self._conn.close()
+            self._server._remove_client(self._cid)
+            mlog.debug(&#39;connection %s closed&#39;, self._cid)
+
+    def _on_change(self):
+        if (self._mid == self._server.mid and
+                self._global_components == self._server.global_components):
+            return
+
+        self._mid = self._server.mid
+        self._global_components = self._server.global_components
+        self._send_msg_server()
+
+    def _send_msg_server(self):
+        msg = common.MsgServer(cid=self._cid,
+                               mid=self._mid,
+                               components=self._global_components)
+
+        with contextlib.suppress(ConnectionError):
+            self._conn.send(chatter.Data(
+                module=&#39;HatMonitor&#39;,
+                type=&#39;MsgServer&#39;,
+                data=common.msg_server_to_sbs(msg)))
+
+    def _process_msg_client(self, msg_client):
+        self._server._set_client(cid=self._cid,
+                                 name=msg_client.name,
+                                 group=msg_client.group,
+                                 address=msg_client.address,
+                                 ready=msg_client.ready)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.monitor.server.server.mlog"><code class="name">var <span class="ident">mlog</span> : logging.Logger</code></dt>
+<dd>
+<div class="desc"><p>Module logger</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.monitor.server.server.create"><code class="name flex">
+<span>async def <span class="ident">create</span></span>(<span>conf: typing.Union[NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')]]) ‑> <a title="hat.monitor.server.server.Server" href="#hat.monitor.server.server.Server">Server</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create local monitor server</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>conf</code></strong></dt>
+<dd>configuration defined by
+<code>hat://monitor/main.yaml#/definitions/server</code></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create(conf: json.Data
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create local monitor server
+
+    Args:
+        conf: configuration defined by
+            ``hat://monitor/main.yaml#/definitions/server``
+
+    &#34;&#34;&#34;
+    server = Server()
+    server._default_rank = conf[&#39;default_rank&#39;]
+    server._last_cid = 0
+    server._mid = 0
+    server._rank_cache = {}
+    server._local_components = []
+    server._global_components = []
+    server._change_cbs = util.CallbackRegistry()
+
+    server._srv = await chatter.listen(
+        sbs_repo=common.sbs_repo,
+        address=conf[&#39;address&#39;],
+        connection_cb=server._create_client)
+
+    mlog.debug(&#39;monitor server listens clients on %s&#39;, conf[&#39;address&#39;])
+    return server</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.monitor.server.server.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Local monitor server</p>
+<p>For creating new instance of this class see <code><a title="hat.monitor.server.server.create" href="#hat.monitor.server.server.create">create()</a></code> function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server(aio.Resource):
+    &#34;&#34;&#34;Local monitor server
+
+    For creating new instance of this class see `create` function.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._srv.async_group
+
+    @property
+    def mid(self) -&gt; int:
+        &#34;&#34;&#34;Server&#39;s monitor id&#34;&#34;&#34;
+        return self._mid
+
+    @property
+    def local_components(self) -&gt; typing.List[common.ComponentInfo]:
+        &#34;&#34;&#34;Local components&#34;&#34;&#34;
+        return self._local_components
+
+    @property
+    def global_components(self) -&gt; typing.List[common.ComponentInfo]:
+        &#34;&#34;&#34;Global components&#34;&#34;&#34;
+        return self._global_components
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        Change callback is called once mid and/or local_components and/or
+        global_components property changes.
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    def update(self,
+               mid: int,
+               global_components: typing.List[common.ComponentInfo]):
+        &#34;&#34;&#34;Update server&#39;s monitor id and global components&#34;&#34;&#34;
+        if self._mid == mid and self._global_components == global_components:
+            return
+
+        self._global_components = global_components
+        if self._mid != mid:
+            self._mid = mid
+            self._local_components = [i._replace(mid=mid)
+                                      for i in self._local_components]
+        self._change_cbs.notify()
+
+    def set_rank(self,
+                 cid: int,
+                 rank: int):
+        &#34;&#34;&#34;Set component rank&#34;&#34;&#34;
+        info = util.first(self._local_components, lambda i: i.cid == cid)
+        if not info or info.rank == rank:
+            return
+
+        updated_info = info._replace(rank=rank)
+        self._local_components = [(updated_info if i is info else i)
+                                  for i in self._local_components]
+        if info.name is not None:
+            self._rank_cache[info.name, info.group] = rank
+        self._change_cbs.notify()
+
+    def _create_client(self, conn):
+        self._last_cid += 1
+        cid = self._last_cid
+
+        client = _Client(self, conn, cid)
+        self.async_group.spawn(client.client_loop)
+
+        info = common.ComponentInfo(cid=cid,
+                                    mid=self._mid,
+                                    name=None,
+                                    group=None,
+                                    address=None,
+                                    rank=self._default_rank,
+                                    blessing=None,
+                                    ready=None)
+        self._local_components = [*self._local_components, info]
+        self._change_cbs.notify()
+
+    def _set_client(self, cid, name, group, address, ready):
+        info = util.first(self._local_components, lambda i: i.cid == cid)
+        updated_info = info._replace(name=name,
+                                     group=group,
+                                     address=address,
+                                     ready=ready)
+
+        if info.name is None:
+            rank_cache_key = name, group
+            rank = self._rank_cache.get(rank_cache_key, info.rank)
+            updated_info = updated_info._replace(rank=rank)
+
+        if info == updated_info:
+            return
+
+        self._local_components = [(updated_info if i is info else i)
+                                  for i in self._local_components]
+        self._change_cbs.notify()
+
+    def _remove_client(self, cid):
+        self._local_components = [i for i in self._local_components
+                                  if i.cid != cid]
+        self._change_cbs.notify()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.monitor.server.server.Server.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._srv.async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.server.server.Server.global_components"><code class="name">var <span class="ident">global_components</span> : typing.List[<a title="hat.monitor.common.ComponentInfo" href="../common.html#hat.monitor.common.ComponentInfo">ComponentInfo</a>]</code></dt>
+<dd>
+<div class="desc"><p>Global components</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def global_components(self) -&gt; typing.List[common.ComponentInfo]:
+    &#34;&#34;&#34;Global components&#34;&#34;&#34;
+    return self._global_components</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.server.server.Server.local_components"><code class="name">var <span class="ident">local_components</span> : typing.List[<a title="hat.monitor.common.ComponentInfo" href="../common.html#hat.monitor.common.ComponentInfo">ComponentInfo</a>]</code></dt>
+<dd>
+<div class="desc"><p>Local components</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def local_components(self) -&gt; typing.List[common.ComponentInfo]:
+    &#34;&#34;&#34;Local components&#34;&#34;&#34;
+    return self._local_components</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.server.server.Server.mid"><code class="name">var <span class="ident">mid</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Server's monitor id</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def mid(self) -&gt; int:
+    &#34;&#34;&#34;Server&#39;s monitor id&#34;&#34;&#34;
+    return self._mid</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.monitor.server.server.Server.register_change_cb"><code class="name flex">
+<span>def <span class="ident">register_change_cb</span></span>(<span>self, cb: typing.Callable[[], NoneType]) ‑> <a title="hat.util.RegisterCallbackHandle" href="../../util.html#hat.util.RegisterCallbackHandle">RegisterCallbackHandle</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register change callback</p>
+<p>Change callback is called once mid and/or local_components and/or
+global_components property changes.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_change_cb(self,
+                       cb: typing.Callable[[], None]
+                       ) -&gt; util.RegisterCallbackHandle:
+    &#34;&#34;&#34;Register change callback
+
+    Change callback is called once mid and/or local_components and/or
+    global_components property changes.
+
+    &#34;&#34;&#34;
+    return self._change_cbs.register(cb)</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.server.server.Server.set_rank"><code class="name flex">
+<span>def <span class="ident">set_rank</span></span>(<span>self, cid: int, rank: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set component rank</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_rank(self,
+             cid: int,
+             rank: int):
+    &#34;&#34;&#34;Set component rank&#34;&#34;&#34;
+    info = util.first(self._local_components, lambda i: i.cid == cid)
+    if not info or info.rank == rank:
+        return
+
+    updated_info = info._replace(rank=rank)
+    self._local_components = [(updated_info if i is info else i)
+                              for i in self._local_components]
+    if info.name is not None:
+        self._rank_cache[info.name, info.group] = rank
+    self._change_cbs.notify()</code></pre>
+</details>
+</dd>
+<dt id="hat.monitor.server.server.Server.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self, mid: int, global_components: typing.List[<a title="hat.monitor.common.ComponentInfo" href="../common.html#hat.monitor.common.ComponentInfo">ComponentInfo</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update server's monitor id and global components</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self,
+           mid: int,
+           global_components: typing.List[common.ComponentInfo]):
+    &#34;&#34;&#34;Update server&#39;s monitor id and global components&#34;&#34;&#34;
+    if self._mid == mid and self._global_components == global_components:
+        return
+
+    self._global_components = global_components
+    if self._mid != mid:
+        self._mid = mid
+        self._local_components = [i._replace(mid=mid)
+                                  for i in self._local_components]
+    self._change_cbs.notify()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.monitor.server" href="index.html">hat.monitor.server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.monitor.server.server.mlog" href="#hat.monitor.server.server.mlog">mlog</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.monitor.server.server.create" href="#hat.monitor.server.server.create">create</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.monitor.server.server.Server" href="#hat.monitor.server.server.Server">Server</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.monitor.server.server.Server.async_group" href="#hat.monitor.server.server.Server.async_group">async_group</a></code></li>
+<li><code><a title="hat.monitor.server.server.Server.global_components" href="#hat.monitor.server.server.Server.global_components">global_components</a></code></li>
+<li><code><a title="hat.monitor.server.server.Server.local_components" href="#hat.monitor.server.server.Server.local_components">local_components</a></code></li>
+<li><code><a title="hat.monitor.server.server.Server.mid" href="#hat.monitor.server.server.Server.mid">mid</a></code></li>
+<li><code><a title="hat.monitor.server.server.Server.register_change_cb" href="#hat.monitor.server.server.Server.register_change_cb">register_change_cb</a></code></li>
+<li><code><a title="hat.monitor.server.server.Server.set_rank" href="#hat.monitor.server.server.Server.set_rank">set_rank</a></code></li>
+<li><code><a title="hat.monitor.server.server.Server.update" href="#hat.monitor.server.server.Server.update">update</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

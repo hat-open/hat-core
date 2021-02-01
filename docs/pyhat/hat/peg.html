@@ -1,0 +1,1473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.peg API documentation</title>
+<meta name="description" content="PEG Parser …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.peg</code></h1>
+</header>
+<section id="section-intro">
+<p>PEG Parser</p>
+<p>Implementation of PEG parser as described in paper "Parsing Expression
+Grammars: A Recognition-Based Syntactic Foundation" (Bryan Ford, 2004).
+PEG's grammar itself can be defined by PEG grammar::</p>
+<pre><code># Hierarchical syntax
+Grammar    &lt;- Spacing Definition+ EndOfFile
+Definition &lt;- Identifier LEFTARROW Expression
+Expression &lt;- Sequence (SLASH Sequence)*
+Sequence   &lt;- Prefix*
+Prefix     &lt;- (AND / NOT)? Suffix
+Suffix     &lt;- Primary (QUESTION / STAR / PLUS)?
+Primary    &lt;- Identifier !LEFTARROW
+            / OPEN Expression CLOSE
+            / Literal
+            / Class
+            / DOT
+
+# Lexical syntax
+Identifier &lt;- IdentStart IdentCont* Spacing
+IdentStart &lt;- [a-zA-Z_]
+IdentCont  &lt;- IdentStart / [0-9]
+Literal    &lt;- ['] (!['] Char)* ['] Spacing
+            / ["] (!["] Char)* ["] Spacing
+Class      &lt;- '[' (!']' Range)* ']' Spacing
+Range      &lt;- Char '-' Char / Char
+Char       &lt;- '\\' [nrt'"\[\]\\]
+            / '\\' 'x' Hex Hex
+            / '\\' 'u' Hex Hex Hex Hex
+            / !'\\' .
+Hex        &lt;- [0-9a-fA-F]
+
+LEFTARROW  &lt;- '&lt;-' Spacing
+SLASH      &lt;- '/' Spacing
+AND        &lt;- '&amp;' Spacing
+NOT        &lt;- '!' Spacing
+QUESTION   &lt;- '?' Spacing
+STAR       &lt;- '*' Spacing
+PLUS       &lt;- '+' Spacing
+OPEN       &lt;- '(' Spacing
+CLOSE      &lt;- ')' Spacing
+DOT        &lt;- '.' Spacing
+
+Spacing    &lt;- (Space / Comment)*
+Comment    &lt;- '#' (!EndOfLine .)* EndOfLine
+Space      &lt;- ' ' / '\t' / EndOfLine
+EndOfLine  &lt;- '\r\n' / '\n' / '\r'
+EndOfFile  &lt;- !.
+</code></pre>
+<p>Example usage of PEG parser::</p>
+<pre><code>import functools
+import hat.peg
+
+grammar = hat.peg.Grammar(r'''
+    Expr    &lt;- Sum
+    Sum     &lt;- Product (('+' / '-') Product)*
+    Product &lt;- Value (('*' / '/') Value)*
+    Value   &lt;- Spacing ([0-9]+ / '(' Expr ')') Spacing
+    Spacing &lt;- ' '*
+''', 'Expr')
+
+ast = grammar.parse('1 + 2 * 3 + (4 - 5) * 6 + 7')
+
+result = hat.peg.walk_ast(ast, {
+    'Expr': lambda n, c: c[0],
+    'Sum': lambda n, c: functools.reduce(
+        (lambda acc, x: acc + x[1] if x[0] == '+' else acc - x[1]),
+        zip(c[1::2], c[2::2]),
+        c[0]),
+    'Product': lambda n, c: functools.reduce(
+        (lambda acc, x: acc * x[1] if x[0] == '*' else acc / x[1]),
+        zip(c[1::2], c[2::2]),
+        c[0]),
+    'Value': lambda n, c: (c[2] if c[1] == '(' else
+                           int(''.join(c[1:-1])))})
+
+assert result == 8
+</code></pre>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">r&#34;&#34;&#34;PEG Parser
+
+Implementation of PEG parser as described in paper &#34;Parsing Expression
+Grammars: A Recognition-Based Syntactic Foundation&#34; (Bryan Ford, 2004).
+PEG&#39;s grammar itself can be defined by PEG grammar::
+
+    # Hierarchical syntax
+    Grammar    &lt;- Spacing Definition+ EndOfFile
+    Definition &lt;- Identifier LEFTARROW Expression
+    Expression &lt;- Sequence (SLASH Sequence)*
+    Sequence   &lt;- Prefix*
+    Prefix     &lt;- (AND / NOT)? Suffix
+    Suffix     &lt;- Primary (QUESTION / STAR / PLUS)?
+    Primary    &lt;- Identifier !LEFTARROW
+                / OPEN Expression CLOSE
+                / Literal
+                / Class
+                / DOT
+
+    # Lexical syntax
+    Identifier &lt;- IdentStart IdentCont* Spacing
+    IdentStart &lt;- [a-zA-Z_]
+    IdentCont  &lt;- IdentStart / [0-9]
+    Literal    &lt;- [&#39;] (![&#39;] Char)* [&#39;] Spacing
+                / [&#34;] (![&#34;] Char)* [&#34;] Spacing
+    Class      &lt;- &#39;[&#39; (!&#39;]&#39; Range)* &#39;]&#39; Spacing
+    Range      &lt;- Char &#39;-&#39; Char / Char
+    Char       &lt;- &#39;\\&#39; [nrt&#39;&#34;\[\]\\]
+                / &#39;\\&#39; &#39;x&#39; Hex Hex
+                / &#39;\\&#39; &#39;u&#39; Hex Hex Hex Hex
+                / !&#39;\\&#39; .
+    Hex        &lt;- [0-9a-fA-F]
+
+    LEFTARROW  &lt;- &#39;&lt;-&#39; Spacing
+    SLASH      &lt;- &#39;/&#39; Spacing
+    AND        &lt;- &#39;&amp;&#39; Spacing
+    NOT        &lt;- &#39;!&#39; Spacing
+    QUESTION   &lt;- &#39;?&#39; Spacing
+    STAR       &lt;- &#39;*&#39; Spacing
+    PLUS       &lt;- &#39;+&#39; Spacing
+    OPEN       &lt;- &#39;(&#39; Spacing
+    CLOSE      &lt;- &#39;)&#39; Spacing
+    DOT        &lt;- &#39;.&#39; Spacing
+
+    Spacing    &lt;- (Space / Comment)*
+    Comment    &lt;- &#39;#&#39; (!EndOfLine .)* EndOfLine
+    Space      &lt;- &#39; &#39; / &#39;\t&#39; / EndOfLine
+    EndOfLine  &lt;- &#39;\r\n&#39; / &#39;\n&#39; / &#39;\r&#39;
+    EndOfFile  &lt;- !.
+
+Example usage of PEG parser::
+
+    import functools
+    import hat.peg
+
+    grammar = hat.peg.Grammar(r&#39;&#39;&#39;
+        Expr    &lt;- Sum
+        Sum     &lt;- Product ((&#39;+&#39; / &#39;-&#39;) Product)*
+        Product &lt;- Value ((&#39;*&#39; / &#39;/&#39;) Value)*
+        Value   &lt;- Spacing ([0-9]+ / &#39;(&#39; Expr &#39;)&#39;) Spacing
+        Spacing &lt;- &#39; &#39;*
+    &#39;&#39;&#39;, &#39;Expr&#39;)
+
+    ast = grammar.parse(&#39;1 + 2 * 3 + (4 - 5) * 6 + 7&#39;)
+
+    result = hat.peg.walk_ast(ast, {
+        &#39;Expr&#39;: lambda n, c: c[0],
+        &#39;Sum&#39;: lambda n, c: functools.reduce(
+            (lambda acc, x: acc + x[1] if x[0] == &#39;+&#39; else acc - x[1]),
+            zip(c[1::2], c[2::2]),
+            c[0]),
+        &#39;Product&#39;: lambda n, c: functools.reduce(
+            (lambda acc, x: acc * x[1] if x[0] == &#39;*&#39; else acc / x[1]),
+            zip(c[1::2], c[2::2]),
+            c[0]),
+        &#39;Value&#39;: lambda n, c: (c[2] if c[1] == &#39;(&#39; else
+                               int(&#39;&#39;.join(c[1:-1])))})
+
+    assert result == 8
+
+&#34;&#34;&#34;
+
+import typing
+
+from hat import util
+
+
+class Node(typing.NamedTuple):
+    &#34;&#34;&#34;Abstract syntax tree node.
+
+    Node names are identifiers of parser&#39;s definitions and values
+    are other nodes or string values representing matched `Literal`, `Class`
+    or `Dot` leafs.
+
+    &#34;&#34;&#34;
+    name: str
+    value: typing.List[typing.Union[&#39;Node&#39;, str]]
+
+
+Action = typing.Callable[[Node, typing.List], typing.Any]
+&#34;&#34;&#34;Action&#34;&#34;&#34;
+
+
+def walk_ast(node: Node,
+             actions: typing.Dict[str, Action],
+             default_action: typing.Optional[Action] = None
+             ) -&gt; typing.Any:
+    &#34;&#34;&#34;Simple depth-first abstract syntax tree parser.
+
+    Actions are key value pairs where keys represent node names and values
+    are callables that should be called for appropriate node. Each callable
+    receives matched node and list of results from recursively applying
+    this function on child nodes. For nodes which name doesn&#39;t match any
+    action, default action is used. If default action is not defined and node
+    name doesn&#39;t match action, result is None and recursion is stopped.
+
+    &#34;&#34;&#34;
+    action = actions.get(node.name, default_action)
+    if not action:
+        return
+    children = [walk_ast(i, actions, default_action)
+                if isinstance(i, Node) else i
+                for i in node.value]
+    return action(node, children)
+
+
+class Sequence(typing.NamedTuple):
+    expressions: typing.List[&#39;Expression&#39;]
+
+
+class Choice(typing.NamedTuple):
+    expressions: typing.List[&#39;Expression&#39;]
+
+
+class Not(typing.NamedTuple):
+    expression: &#39;Expression&#39;
+
+
+class And(typing.NamedTuple):
+    expression: &#39;Expression&#39;
+
+
+class OneOrMore(typing.NamedTuple):
+    expression: &#39;Expression&#39;
+
+
+class ZeroOrMore(typing.NamedTuple):
+    expression: &#39;Expression&#39;
+
+
+class Optional(typing.NamedTuple):
+    expression: &#39;Expression&#39;
+
+
+class Identifier(typing.NamedTuple):
+    value: str
+
+
+class Literal(typing.NamedTuple):
+    value: str
+
+
+class Class(typing.NamedTuple):
+    values: typing.List[typing.Union[str, typing.Tuple[str, str]]]
+
+
+class Dot(typing.NamedTuple):
+    pass
+
+
+Expression = typing.Union[Sequence, Choice, Not, And, OneOrMore, ZeroOrMore,
+                          Optional, Identifier, Literal, Class, Dot]
+
+
+class MatchResult(typing.NamedTuple):
+    &#34;&#34;&#34;Match result
+
+    Args:
+        node: matched node or ``None`` if match failed
+        rest: remaining input data
+
+    &#34;&#34;&#34;
+    node: typing.Optional[Node]
+    rest: str
+
+
+class MatchCallFrame(typing.NamedTuple):
+    &#34;&#34;&#34;Match call frame
+
+    Args:
+        name: definition name
+        data: input data
+
+    &#34;&#34;&#34;
+    name: str
+    data: str
+
+
+MatchCallStack = typing.Iterable[MatchCallFrame]
+
+
+DebugCb = typing.Callable[[MatchResult, MatchCallStack], None]
+
+
+class Grammar:
+    &#34;&#34;&#34;PEG Grammar.
+
+    Args:
+        definitions: grammar definitions
+        starting: starting definition name
+
+    &#34;&#34;&#34;
+
+    def __init__(self,
+                 definitions: typing.Union[str,
+                                           typing.Dict[str, Expression]],
+                 starting: str):
+        if isinstance(definitions, str):
+            ast = _peg_grammar.parse(definitions)
+            definitions = walk_ast(ast, _peg_actions)
+            definitions = {k: _reduce_expression(v)
+                           for k, v in definitions.items()}
+        self._definitions = definitions
+        self._starting = starting
+
+    @property
+    def definitions(self) -&gt; typing.Dict[str, Expression]:
+        &#34;&#34;&#34;Definitions&#34;&#34;&#34;
+        return self._definitions
+
+    @property
+    def starting(self) -&gt; str:
+        &#34;&#34;&#34;Starting definition name&#34;&#34;&#34;
+        return self._starting
+
+    def parse(self,
+              data: str,
+              debug_cb: typing.Optional[DebugCb] = None
+              ) -&gt; Node:
+        &#34;&#34;&#34;Parse input data.
+
+        `debug_cb` is optional function which can be used for monitoring and
+        debugging parse steps. It is called each time named definition
+        is successfully or unsuccessfully matched. This function receives
+        match result and match call stack.
+
+        &#34;&#34;&#34;
+        state = _State(grammar=self,
+                       data=data,
+                       call_stack=_MatchCallStack(None, None),
+                       debug_cb=debug_cb)
+        result = _match(state, self._starting)
+        if result.node is None:
+            raise Exception(&#34;could not match starting definition&#34;)
+        x = _reduce_node(result.node)
+        return x
+
+
+def console_debug_cb(result: MatchResult, call_stack: MatchCallStack):
+    &#34;&#34;&#34;Simple console debugger.&#34;&#34;&#34;
+    success = &#39;+++&#39; if result.node else &#39;---&#39;
+    stack = &#39;, &#39;.join(frame.name for frame in call_stack)
+    consumed = util.first(call_stack).data[:-len(result.rest)]
+    print(success, stack)
+    print(&#39;&lt;&lt;&lt;&#39;, consumed)
+    print(&#39;&gt;&gt;&gt;&#39;, result.rest, flush=True)
+
+
+class _MatchCallStack(typing.NamedTuple):
+    frame: typing.Optional[MatchCallFrame]
+    previous: typing.Optional[&#39;_MatchCallStack&#39;]
+
+    def __iter__(self):
+        current = self
+        while current and current.frame:
+            yield current.frame
+            current = current.previous
+
+
+class _State(typing.NamedTuple):
+    grammar: Grammar
+    data: str
+    call_stack: _MatchCallStack
+    debug_cb: DebugCb
+
+
+def _match(state, name):
+    call_frame = MatchCallFrame(name, state.data)
+    if call_frame in state.call_stack:
+        raise Exception(&#39;Infinite matching recursion detected&#39;)
+    state = state._replace(
+        call_stack=_MatchCallStack(call_frame, state.call_stack))
+    result = _match_expression(state, state.grammar.definitions[name])
+    if result.node:
+        result = result._replace(
+            node=result.node._replace(name=name))
+    if state.debug_cb:
+        debug_result = MatchResult(
+            node=(_reduce_node(result.node) if result.node else None),
+            rest=result.rest)
+        state.debug_cb(debug_result, state.call_stack)
+    return result
+
+
+def _match_expression(state, expression):
+    t = type(expression)
+    if t == Choice:
+        return _match_choice(state, expression)
+    if t == Sequence:
+        return _match_sequence(state, expression)
+    if t == Not:
+        return _match_not(state, expression)
+    if t == And:
+        return _match_and(state, expression)
+    if t == OneOrMore:
+        return _match_oneormore(state, expression)
+    if t == ZeroOrMore:
+        return _match_zeroormore(state, expression)
+    if t == Optional:
+        return _match_optional(state, expression)
+    if t == Identifier:
+        return _match_identifier(state, expression)
+    if t == Literal:
+        return _match_literal(state, expression)
+    if t == Class:
+        return _match_class(state, expression)
+    if t == Dot:
+        return _match_dot(state, expression)
+    raise ValueError(&#39;unsupported expression type&#39;)
+
+
+def _match_choice(state, expression):
+    for i in expression.expressions:
+        result = _match_expression(state, i)
+        if result.node:
+            return result
+    return MatchResult(None, state.data)
+
+
+def _match_sequence(state, expression):
+    nodes = []
+    for i in expression.expressions:
+        result = _match_expression(state, i)
+        if not result.node:
+            return MatchResult(None, state.data)
+        nodes.append(result.node)
+        state = state._replace(data=result.rest)
+    return MatchResult(Node(None, nodes), state.data)
+
+
+def _match_not(state, expression):
+    result = _match_expression(state, expression.expression)
+    return (MatchResult(None, state.data) if result.node
+            else MatchResult(Node(None, []), state.data))
+
+
+def _match_and(state, expression):
+    node = _match_expression(state, expression.expression).node
+    return MatchResult(Node(None, []) if node else None, state.data)
+
+
+def _match_oneormore(state, expression):
+    return _match_expression(state, Sequence([
+        expression.expression,
+        ZeroOrMore(expression.expression)]))
+
+
+def _match_zeroormore(state, expression):
+    nodes = []
+    while True:
+        result = _match_expression(state, expression.expression)
+        if not result.node:
+            return MatchResult(Node(None, nodes), state.data)
+        nodes.append(result.node)
+        state = state._replace(data=result.rest)
+
+
+def _match_optional(state, expression):
+    result = _match_expression(state, expression.expression)
+    if result.node:
+        return result
+    return MatchResult(Node(None, []), state.data)
+
+
+def _match_identifier(state, expression):
+    result = _match(state, expression.value)
+    if result.node:
+        result = result._replace(node=Node(None, [result.node]))
+    return result
+
+
+def _match_literal(state, expression):
+    data = state.data[:len(expression.value)]
+    if data != expression.value:
+        return MatchResult(None, state.data)
+    rest = state.data[len(expression.value):]
+    return MatchResult(Node(None, [data]), rest)
+
+
+def _match_class(state, expression):
+    if state.data:
+        for i in expression.values:
+            if isinstance(i, str):
+                matched = state.data[0] == i
+            else:
+                matched = i[0] &lt;= state.data[0] &lt;= i[1]
+            if matched:
+                return MatchResult(Node(None, [state.data[:1]]),
+                                   state.data[1:])
+    return MatchResult(None, state.data)
+
+
+def _match_dot(state, expression):
+    if not state.data:
+        return MatchResult(None, state.data)
+    return MatchResult(Node(None, [state.data[:1]]), state.data[1:])
+
+
+def _reduce_expression(expr):
+    if hasattr(expr, &#39;expressions&#39;):
+        if len(expr.expressions) == 1:
+            return _reduce_expression(expr.expressions[0])
+        return expr._replace(expressions=[_reduce_expression(i)
+                                          for i in expr.expressions])
+    if hasattr(expr, &#39;expression&#39;):
+        return expr._replace(expression=_reduce_expression(expr.expression))
+    return expr
+
+
+def _reduce_node(node):
+    return node._replace(value=list(_reduce_node_list(node.value)))
+
+
+def _reduce_node_list(nodes):
+    for node in nodes:
+        if not isinstance(node, Node):
+            yield node
+        elif node.name is None:
+            yield from _reduce_node_list(node.value)
+        else:
+            yield _reduce_node(node)
+
+
+_peg_grammar = Grammar({
+    &#39;Grammar&#39;: Sequence([
+        Identifier(&#39;Spacing&#39;),
+        OneOrMore(Identifier(&#39;Definition&#39;)),
+        Identifier(&#39;EndOfFile&#39;)]),
+    &#39;Definition&#39;: Sequence([
+        Identifier(&#39;Identifier&#39;),
+        Identifier(&#39;LEFTARROW&#39;),
+        Identifier(&#39;Expression&#39;)]),
+    &#39;Expression&#39;: Sequence([
+        Identifier(&#39;Sequence&#39;),
+        ZeroOrMore(Sequence([
+            Identifier(&#39;SLASH&#39;),
+            Identifier(&#39;Sequence&#39;)]))]),
+    &#39;Sequence&#39;: ZeroOrMore(Identifier(&#39;Prefix&#39;)),
+    &#39;Prefix&#39;: Sequence([
+        Optional(Choice([
+            Identifier(&#39;AND&#39;),
+            Identifier(&#39;NOT&#39;)])),
+        Identifier(&#39;Suffix&#39;)]),
+    &#39;Suffix&#39;: Sequence([
+        Identifier(&#39;Primary&#39;),
+        Optional(Choice([
+            Identifier(&#39;QUESTION&#39;),
+            Identifier(&#39;STAR&#39;),
+            Identifier(&#39;PLUS&#39;)]))]),
+    &#39;Primary&#39;: Choice([
+        Sequence([
+            Identifier(&#39;Identifier&#39;),
+            Not(Identifier(&#39;LEFTARROW&#39;))]),
+        Sequence([
+            Identifier(&#39;OPEN&#39;),
+            Identifier(&#39;Expression&#39;),
+            Identifier(&#39;CLOSE&#39;)]),
+        Identifier(&#39;Literal&#39;),
+        Identifier(&#39;Class&#39;),
+        Identifier(&#39;DOT&#39;)]),
+    &#39;Identifier&#39;: Sequence([
+        Identifier(&#39;IdentStart&#39;),
+        ZeroOrMore(Identifier(&#39;IdentCont&#39;)),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;IdentStart&#39;: Class([(&#39;a&#39;, &#39;z&#39;),
+                         (&#39;A&#39;, &#39;Z&#39;),
+                         &#39;_&#39;]),
+    &#39;IdentCont&#39;: Choice([
+        Identifier(&#39;IdentStart&#39;),
+        Class([(&#39;0&#39;, &#39;9&#39;)])]),
+    &#39;Literal&#39;: Choice([
+        Sequence([
+            Class([&#34;&#39;&#34;]),
+            ZeroOrMore(Sequence([
+                Not(Class([&#34;&#39;&#34;])),
+                Identifier(&#39;Char&#39;)])),
+            Class([&#34;&#39;&#34;]),
+            Identifier(&#39;Spacing&#39;)]),
+        Sequence([
+            Class([&#39;&#34;&#39;]),
+            ZeroOrMore(Sequence([
+                Not(Class([&#39;&#34;&#39;])),
+                Identifier(&#39;Char&#39;)])),
+            Class([&#39;&#34;&#39;]),
+            Identifier(&#39;Spacing&#39;)])]),
+    &#39;Class&#39;: Sequence([
+        Literal(&#39;[&#39;),
+        ZeroOrMore(Sequence([
+            Not(Literal(&#39;]&#39;)),
+            Identifier(&#39;Range&#39;)])),
+        Literal(&#39;]&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;Range&#39;: Choice([
+        Sequence([
+            Identifier(&#39;Char&#39;),
+            Literal(&#39;-&#39;),
+            Identifier(&#39;Char&#39;)]),
+        Identifier(&#39;Char&#39;)]),
+    &#39;Char&#39;: Choice([
+        Sequence([
+            Literal(&#39;\\&#39;),
+            Class([&#39;n&#39;, &#39;r&#39;, &#39;t&#39;, &#34;&#39;&#34;, &#39;&#34;&#39;, &#39;[&#39;, &#39;]&#39;, &#39;\\&#39;])]),
+        Sequence([
+            Literal(&#39;\\&#39;),
+            Literal(&#39;x&#39;),
+            Identifier(&#39;Hex&#39;),
+            Identifier(&#39;Hex&#39;)]),
+        Sequence([
+            Literal(&#39;\\&#39;),
+            Literal(&#39;u&#39;),
+            Identifier(&#39;Hex&#39;),
+            Identifier(&#39;Hex&#39;),
+            Identifier(&#39;Hex&#39;),
+            Identifier(&#39;Hex&#39;)]),
+        Sequence([
+            Not(Literal(&#39;\\&#39;)),
+            Dot()])]),
+    &#39;Hex&#39;: Class([(&#39;0&#39;, &#39;9&#39;),
+                  (&#39;a&#39;, &#39;f&#39;),
+                  (&#39;A&#39;, &#39;F&#39;)]),
+    &#39;LEFTARROW&#39;: Sequence([
+        Literal(&#39;&lt;-&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;SLASH&#39;: Sequence([
+        Literal(&#39;/&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;AND&#39;: Sequence([
+        Literal(&#39;&amp;&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;NOT&#39;: Sequence([
+        Literal(&#39;!&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;QUESTION&#39;: Sequence([
+        Literal(&#39;?&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;STAR&#39;: Sequence([
+        Literal(&#39;*&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;PLUS&#39;: Sequence([
+        Literal(&#39;+&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;OPEN&#39;: Sequence([
+        Literal(&#39;(&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;CLOSE&#39;: Sequence([
+        Literal(&#39;)&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;DOT&#39;: Sequence([
+        Literal(&#39;.&#39;),
+        Identifier(&#39;Spacing&#39;)]),
+    &#39;Spacing&#39;: ZeroOrMore(Choice([
+        Identifier(&#39;Space&#39;),
+        Identifier(&#39;Comment&#39;)])),
+    &#39;Comment&#39;: Sequence([
+        Literal(&#39;#&#39;),
+        ZeroOrMore(Sequence([
+            Not(Identifier(&#39;EndOfLine&#39;)),
+            Dot()])),
+        Identifier(&#39;EndOfLine&#39;)]),
+    &#39;Space&#39;: Choice([
+        Literal(&#39; &#39;),
+        Literal(&#39;\t&#39;),
+        Identifier(&#39;EndOfLine&#39;)]),
+    &#39;EndOfLine&#39;: Choice([
+        Literal(&#39;\r\n&#39;),
+        Literal(&#39;\n&#39;),
+        Literal(&#39;\r&#39;)]),
+    &#39;EndOfFile&#39;: Not(Dot())
+}, &#39;Grammar&#39;)
+
+
+_peg_actions = {
+    &#39;Grammar&#39;: lambda n, c: {k: v for k, v in filter(bool, c)},
+    &#39;Definition&#39;: lambda n, c: (c[0].value, c[2]),
+    &#39;Expression&#39;: lambda n, c: Choice(list(c[::2])),
+    &#39;Sequence&#39;: lambda n, c: Sequence(c),
+    &#39;Prefix&#39;: lambda n, c: (c[0] if len(c) == 1 else
+                            c[0](c[1])),
+    &#39;Suffix&#39;: lambda n, c: (c[0] if len(c) == 1 else
+                            c[1](c[0])),
+    &#39;Primary&#39;: lambda n, c: (c[1] if c[0] is None else
+                             c[0]),
+    &#39;Identifier&#39;: lambda n, c: Identifier(&#39;&#39;.join(c[:-1])),
+    &#39;IdentStart&#39;: lambda n, c: c[0],
+    &#39;IdentCont&#39;: lambda n, c: c[0],
+    &#39;Literal&#39;: lambda n, c: Literal(&#39;&#39;.join(c[1:-2])),
+    &#39;Class&#39;: lambda n, c: Class(c[1:-2]),
+    &#39;Range&#39;: lambda n, c: (c[0] if len(c) == 1 else
+                           (c[0], c[2])),
+    &#39;Char&#39;: lambda n, c: (c[0] if c[0] != &#39;\\&#39; else
+                          &#39;\n&#39; if c[1] == &#39;n&#39; else
+                          &#39;\r&#39; if c[1] == &#39;r&#39; else
+                          &#39;\t&#39; if c[1] == &#39;t&#39; else
+                          &#34;&#39;&#34; if c[1] == &#34;&#39;&#34; else
+                          &#39;&#34;&#39; if c[1] == &#39;&#34;&#39; else
+                          &#39;[&#39; if c[1] == &#39;[&#39; else
+                          &#39;]&#39; if c[1] == &#39;]&#39; else
+                          &#39;\\&#39; if c[1] == &#39;\\&#39; else
+                          chr(int(c[2:], 16))),
+    &#39;Hex&#39;: lambda n, c: c[0],
+    &#39;AND&#39;: lambda n, c: And,
+    &#39;NOT&#39;: lambda n, c: Not,
+    &#39;QUESTION&#39;: lambda n, c: Optional,
+    &#39;STAR&#39;: lambda n, c: ZeroOrMore,
+    &#39;PLUS&#39;: lambda n, c: OneOrMore,
+    &#39;DOT&#39;: lambda n, c: Dot()
+}</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.peg.Action"><code class="name">var <span class="ident">Action</span></code></dt>
+<dd>
+<div class="desc"><p>Action</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.peg.console_debug_cb"><code class="name flex">
+<span>def <span class="ident">console_debug_cb</span></span>(<span>result: <a title="hat.peg.MatchResult" href="#hat.peg.MatchResult">MatchResult</a>, call_stack: typing.Iterable[<a title="hat.peg.MatchCallFrame" href="#hat.peg.MatchCallFrame">MatchCallFrame</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple console debugger.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def console_debug_cb(result: MatchResult, call_stack: MatchCallStack):
+    &#34;&#34;&#34;Simple console debugger.&#34;&#34;&#34;
+    success = &#39;+++&#39; if result.node else &#39;---&#39;
+    stack = &#39;, &#39;.join(frame.name for frame in call_stack)
+    consumed = util.first(call_stack).data[:-len(result.rest)]
+    print(success, stack)
+    print(&#39;&lt;&lt;&lt;&#39;, consumed)
+    print(&#39;&gt;&gt;&gt;&#39;, result.rest, flush=True)</code></pre>
+</details>
+</dd>
+<dt id="hat.peg.walk_ast"><code class="name flex">
+<span>def <span class="ident">walk_ast</span></span>(<span>node: <a title="hat.peg.Node" href="#hat.peg.Node">Node</a>, actions: typing.Dict[str, typing.Callable[[<a title="hat.peg.Node" href="#hat.peg.Node">Node</a>, typing.List], typing.Any]], default_action: typing.Union[typing.Callable[[<a title="hat.peg.Node" href="#hat.peg.Node">Node</a>, typing.List], typing.Any], NoneType] = None) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simple depth-first abstract syntax tree parser.</p>
+<p>Actions are key value pairs where keys represent node names and values
+are callables that should be called for appropriate node. Each callable
+receives matched node and list of results from recursively applying
+this function on child nodes. For nodes which name doesn't match any
+action, default action is used. If default action is not defined and node
+name doesn't match action, result is None and recursion is stopped.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def walk_ast(node: Node,
+             actions: typing.Dict[str, Action],
+             default_action: typing.Optional[Action] = None
+             ) -&gt; typing.Any:
+    &#34;&#34;&#34;Simple depth-first abstract syntax tree parser.
+
+    Actions are key value pairs where keys represent node names and values
+    are callables that should be called for appropriate node. Each callable
+    receives matched node and list of results from recursively applying
+    this function on child nodes. For nodes which name doesn&#39;t match any
+    action, default action is used. If default action is not defined and node
+    name doesn&#39;t match action, result is None and recursion is stopped.
+
+    &#34;&#34;&#34;
+    action = actions.get(node.name, default_action)
+    if not action:
+        return
+    children = [walk_ast(i, actions, default_action)
+                if isinstance(i, Node) else i
+                for i in node.value]
+    return action(node, children)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.peg.And"><code class="flex name class">
+<span>class <span class="ident">And</span></span>
+<span>(</span><span>expression: Expression)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>And(expression,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class And(typing.NamedTuple):
+    expression: &#39;Expression&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.And.expression"><code class="name">var <span class="ident">expression</span> : typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Choice"><code class="flex name class">
+<span>class <span class="ident">Choice</span></span>
+<span>(</span><span>expressions: typing.List[ForwardRef('Expression')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Choice(expressions,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Choice(typing.NamedTuple):
+    expressions: typing.List[&#39;Expression&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Choice.expressions"><code class="name">var <span class="ident">expressions</span> : typing.List[typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Class"><code class="flex name class">
+<span>class <span class="ident">Class</span></span>
+<span>(</span><span>values: typing.List[typing.Union[str, typing.Tuple[str, str]]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class(values,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Class(typing.NamedTuple):
+    values: typing.List[typing.Union[str, typing.Tuple[str, str]]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Class.values"><code class="name">var <span class="ident">values</span> : typing.List[typing.Union[str, typing.Tuple[str, str]]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Dot"><code class="flex name class">
+<span>class <span class="ident">Dot</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Dot()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Dot(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.peg.Grammar"><code class="flex name class">
+<span>class <span class="ident">Grammar</span></span>
+<span>(</span><span>definitions: typing.Union[str, typing.Dict[str, typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]]], starting: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>PEG Grammar.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>definitions</code></strong></dt>
+<dd>grammar definitions</dd>
+<dt><strong><code>starting</code></strong></dt>
+<dd>starting definition name</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Grammar:
+    &#34;&#34;&#34;PEG Grammar.
+
+    Args:
+        definitions: grammar definitions
+        starting: starting definition name
+
+    &#34;&#34;&#34;
+
+    def __init__(self,
+                 definitions: typing.Union[str,
+                                           typing.Dict[str, Expression]],
+                 starting: str):
+        if isinstance(definitions, str):
+            ast = _peg_grammar.parse(definitions)
+            definitions = walk_ast(ast, _peg_actions)
+            definitions = {k: _reduce_expression(v)
+                           for k, v in definitions.items()}
+        self._definitions = definitions
+        self._starting = starting
+
+    @property
+    def definitions(self) -&gt; typing.Dict[str, Expression]:
+        &#34;&#34;&#34;Definitions&#34;&#34;&#34;
+        return self._definitions
+
+    @property
+    def starting(self) -&gt; str:
+        &#34;&#34;&#34;Starting definition name&#34;&#34;&#34;
+        return self._starting
+
+    def parse(self,
+              data: str,
+              debug_cb: typing.Optional[DebugCb] = None
+              ) -&gt; Node:
+        &#34;&#34;&#34;Parse input data.
+
+        `debug_cb` is optional function which can be used for monitoring and
+        debugging parse steps. It is called each time named definition
+        is successfully or unsuccessfully matched. This function receives
+        match result and match call stack.
+
+        &#34;&#34;&#34;
+        state = _State(grammar=self,
+                       data=data,
+                       call_stack=_MatchCallStack(None, None),
+                       debug_cb=debug_cb)
+        result = _match(state, self._starting)
+        if result.node is None:
+            raise Exception(&#34;could not match starting definition&#34;)
+        x = _reduce_node(result.node)
+        return x</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Grammar.definitions"><code class="name">var <span class="ident">definitions</span> : typing.Dict[str, typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]]</code></dt>
+<dd>
+<div class="desc"><p>Definitions</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def definitions(self) -&gt; typing.Dict[str, Expression]:
+    &#34;&#34;&#34;Definitions&#34;&#34;&#34;
+    return self._definitions</code></pre>
+</details>
+</dd>
+<dt id="hat.peg.Grammar.starting"><code class="name">var <span class="ident">starting</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Starting definition name</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def starting(self) -&gt; str:
+    &#34;&#34;&#34;Starting definition name&#34;&#34;&#34;
+    return self._starting</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.peg.Grammar.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, data: str, debug_cb: typing.Union[typing.Callable[[<a title="hat.peg.MatchResult" href="#hat.peg.MatchResult">MatchResult</a>, typing.Iterable[<a title="hat.peg.MatchCallFrame" href="#hat.peg.MatchCallFrame">MatchCallFrame</a>]], NoneType], NoneType] = None) ‑> <a title="hat.peg.Node" href="#hat.peg.Node">Node</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse input data.</p>
+<p><code>debug_cb</code> is optional function which can be used for monitoring and
+debugging parse steps. It is called each time named definition
+is successfully or unsuccessfully matched. This function receives
+match result and match call stack.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self,
+          data: str,
+          debug_cb: typing.Optional[DebugCb] = None
+          ) -&gt; Node:
+    &#34;&#34;&#34;Parse input data.
+
+    `debug_cb` is optional function which can be used for monitoring and
+    debugging parse steps. It is called each time named definition
+    is successfully or unsuccessfully matched. This function receives
+    match result and match call stack.
+
+    &#34;&#34;&#34;
+    state = _State(grammar=self,
+                   data=data,
+                   call_stack=_MatchCallStack(None, None),
+                   debug_cb=debug_cb)
+    result = _match(state, self._starting)
+    if result.node is None:
+        raise Exception(&#34;could not match starting definition&#34;)
+    x = _reduce_node(result.node)
+    return x</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Identifier"><code class="flex name class">
+<span>class <span class="ident">Identifier</span></span>
+<span>(</span><span>value: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Identifier(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Identifier(typing.NamedTuple):
+    value: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Identifier.value"><code class="name">var <span class="ident">value</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Literal"><code class="flex name class">
+<span>class <span class="ident">Literal</span></span>
+<span>(</span><span>value: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Literal(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Literal(typing.NamedTuple):
+    value: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Literal.value"><code class="name">var <span class="ident">value</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.MatchCallFrame"><code class="flex name class">
+<span>class <span class="ident">MatchCallFrame</span></span>
+<span>(</span><span>name: str, data: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Match call frame</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong></dt>
+<dd>definition name</dd>
+<dt><strong><code>data</code></strong></dt>
+<dd>input data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MatchCallFrame(typing.NamedTuple):
+    &#34;&#34;&#34;Match call frame
+
+    Args:
+        name: definition name
+        data: input data
+
+    &#34;&#34;&#34;
+    name: str
+    data: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.MatchCallFrame.data"><code class="name">var <span class="ident">data</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.peg.MatchCallFrame.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.MatchResult"><code class="flex name class">
+<span>class <span class="ident">MatchResult</span></span>
+<span>(</span><span>node: typing.Union[<a title="hat.peg.Node" href="#hat.peg.Node">Node</a>, NoneType], rest: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Match result</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>node</code></strong></dt>
+<dd>matched node or <code>None</code> if match failed</dd>
+<dt><strong><code>rest</code></strong></dt>
+<dd>remaining input data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MatchResult(typing.NamedTuple):
+    &#34;&#34;&#34;Match result
+
+    Args:
+        node: matched node or ``None`` if match failed
+        rest: remaining input data
+
+    &#34;&#34;&#34;
+    node: typing.Optional[Node]
+    rest: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.MatchResult.node"><code class="name">var <span class="ident">node</span> : typing.Union[<a title="hat.peg.Node" href="#hat.peg.Node">Node</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.peg.MatchResult.rest"><code class="name">var <span class="ident">rest</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Node"><code class="flex name class">
+<span>class <span class="ident">Node</span></span>
+<span>(</span><span>name: str, value: typing.List[typing.Union[ForwardRef('<a title="hat.peg.Node" href="#hat.peg.Node">Node</a>'), str]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Abstract syntax tree node.</p>
+<p>Node names are identifiers of parser's definitions and values
+are other nodes or string values representing matched <code><a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a></code>, <code><a title="hat.peg.Class" href="#hat.peg.Class">Class</a></code>
+or <code><a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a></code> leafs.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Node(typing.NamedTuple):
+    &#34;&#34;&#34;Abstract syntax tree node.
+
+    Node names are identifiers of parser&#39;s definitions and values
+    are other nodes or string values representing matched `Literal`, `Class`
+    or `Dot` leafs.
+
+    &#34;&#34;&#34;
+    name: str
+    value: typing.List[typing.Union[&#39;Node&#39;, str]]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Node.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.peg.Node.value"><code class="name">var <span class="ident">value</span> : typing.List[typing.Union[<a title="hat.peg.Node" href="#hat.peg.Node">Node</a>, str]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Not"><code class="flex name class">
+<span>class <span class="ident">Not</span></span>
+<span>(</span><span>expression: Expression)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Not(expression,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Not(typing.NamedTuple):
+    expression: &#39;Expression&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Not.expression"><code class="name">var <span class="ident">expression</span> : typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.OneOrMore"><code class="flex name class">
+<span>class <span class="ident">OneOrMore</span></span>
+<span>(</span><span>expression: Expression)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>OneOrMore(expression,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OneOrMore(typing.NamedTuple):
+    expression: &#39;Expression&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.OneOrMore.expression"><code class="name">var <span class="ident">expression</span> : typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Optional"><code class="flex name class">
+<span>class <span class="ident">Optional</span></span>
+<span>(</span><span>expression: Expression)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Optional(expression,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Optional(typing.NamedTuple):
+    expression: &#39;Expression&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Optional.expression"><code class="name">var <span class="ident">expression</span> : typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.Sequence"><code class="flex name class">
+<span>class <span class="ident">Sequence</span></span>
+<span>(</span><span>expressions: typing.List[ForwardRef('Expression')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sequence(expressions,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Sequence(typing.NamedTuple):
+    expressions: typing.List[&#39;Expression&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.Sequence.expressions"><code class="name">var <span class="ident">expressions</span> : typing.List[typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.peg.ZeroOrMore"><code class="flex name class">
+<span>class <span class="ident">ZeroOrMore</span></span>
+<span>(</span><span>expression: Expression)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ZeroOrMore(expression,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ZeroOrMore(typing.NamedTuple):
+    expression: &#39;Expression&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.peg.ZeroOrMore.expression"><code class="name">var <span class="ident">expression</span> : typing.Union[<a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a>, <a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a>, <a title="hat.peg.Not" href="#hat.peg.Not">Not</a>, <a title="hat.peg.And" href="#hat.peg.And">And</a>, <a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a>, <a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a>, <a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a>, <a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a>, <a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a>, <a title="hat.peg.Class" href="#hat.peg.Class">Class</a>, <a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat" href="index.html">hat</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.peg.Action" href="#hat.peg.Action">Action</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.peg.console_debug_cb" href="#hat.peg.console_debug_cb">console_debug_cb</a></code></li>
+<li><code><a title="hat.peg.walk_ast" href="#hat.peg.walk_ast">walk_ast</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.peg.And" href="#hat.peg.And">And</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.And.expression" href="#hat.peg.And.expression">expression</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Choice" href="#hat.peg.Choice">Choice</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Choice.expressions" href="#hat.peg.Choice.expressions">expressions</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Class" href="#hat.peg.Class">Class</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Class.values" href="#hat.peg.Class.values">values</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Dot" href="#hat.peg.Dot">Dot</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.peg.Grammar" href="#hat.peg.Grammar">Grammar</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Grammar.definitions" href="#hat.peg.Grammar.definitions">definitions</a></code></li>
+<li><code><a title="hat.peg.Grammar.parse" href="#hat.peg.Grammar.parse">parse</a></code></li>
+<li><code><a title="hat.peg.Grammar.starting" href="#hat.peg.Grammar.starting">starting</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Identifier" href="#hat.peg.Identifier">Identifier</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Identifier.value" href="#hat.peg.Identifier.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Literal" href="#hat.peg.Literal">Literal</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Literal.value" href="#hat.peg.Literal.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.MatchCallFrame" href="#hat.peg.MatchCallFrame">MatchCallFrame</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.MatchCallFrame.data" href="#hat.peg.MatchCallFrame.data">data</a></code></li>
+<li><code><a title="hat.peg.MatchCallFrame.name" href="#hat.peg.MatchCallFrame.name">name</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.MatchResult" href="#hat.peg.MatchResult">MatchResult</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.MatchResult.node" href="#hat.peg.MatchResult.node">node</a></code></li>
+<li><code><a title="hat.peg.MatchResult.rest" href="#hat.peg.MatchResult.rest">rest</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Node" href="#hat.peg.Node">Node</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Node.name" href="#hat.peg.Node.name">name</a></code></li>
+<li><code><a title="hat.peg.Node.value" href="#hat.peg.Node.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Not" href="#hat.peg.Not">Not</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Not.expression" href="#hat.peg.Not.expression">expression</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.OneOrMore" href="#hat.peg.OneOrMore">OneOrMore</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.OneOrMore.expression" href="#hat.peg.OneOrMore.expression">expression</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Optional" href="#hat.peg.Optional">Optional</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Optional.expression" href="#hat.peg.Optional.expression">expression</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.Sequence" href="#hat.peg.Sequence">Sequence</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.Sequence.expressions" href="#hat.peg.Sequence.expressions">expressions</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.peg.ZeroOrMore" href="#hat.peg.ZeroOrMore">ZeroOrMore</a></code></h4>
+<ul class="">
+<li><code><a title="hat.peg.ZeroOrMore.expression" href="#hat.peg.ZeroOrMore.expression">expression</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

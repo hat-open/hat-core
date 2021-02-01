@@ -1,0 +1,911 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="SBS Schema definitions" href="sbs.html" />
+
+    <meta name="generator" content="sphinx-3.4.1, furo 2020.12.30.beta24"/>
+        <title>JSON Schema definitions - Hat Core documentation</title>
+      <link rel="stylesheet" href="../_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
+    <link rel="stylesheet" href="../_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="../_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" href="../_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script defer="defer" src="../_static/jquery.js"></script>
+    <script defer="defer" src="../_static/underscore.js"></script>
+    <script defer="defer" src="../_static/doctools.js"></script>
+    <script defer src="../_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Hat Core  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hat Core  documentation</span>
+  
+</a><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../libraries/index.html">Libraries</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label for="toctree-checkbox-1"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../libraries/util/index.html">Utility functions</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label for="toctree-checkbox-2"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../libraries/util/python.html"><cite>hat.util</cite> - Python utility library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../libraries/util/javascript.html"><cite>@hat-core/util</cite> - JavaScript utility library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/aio.html"><cite>hat.aio</cite> - Python asyncio utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/json.html"><cite>hat.json</cite> - Python JSON data library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/qt.html"><cite>hat.qt</cite> - Python Qt utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/peg.html"><cite>hat.peg</cite> - Python parsing expression grammar library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/stc/index.html"><cite>hat.stc</cite> - Python statechart library</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../libraries/sbs/index.html">Simple binary serialization</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label for="toctree-checkbox-3"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../libraries/sbs/python.html"><cite>hat.sbs</cite> - Python simple binary serialization library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../libraries/sbs/c.html"><cite>hat/sbs</cite> - C simple binary serialization library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../libraries/chatter/index.html">Chatter communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label for="toctree-checkbox-4"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../libraries/chatter/python.html"><cite>hat.chatter</cite> - Python chatter library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../libraries/juggler/index.html">Juggler communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label for="toctree-checkbox-5"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../libraries/juggler/python.html"><cite>hat.juggler</cite> - Python juggler library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/duktape.html"><cite>hat.duktape</cite> - Python Duktape wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/asn1.html"><cite>hat.asn1</cite> - Python Abstract Syntax Notation One library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libraries/drivers/index.html">Communication drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../components/index.html">Components</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label for="toctree-checkbox-6"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../components/syslog.html">Syslog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../components/orchestrator.html">Orchestrator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../components/monitor.html">Monitor Server</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../components/event/index.html">Event Server</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label for="toctree-checkbox-7"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../components/event/modules/dummy.html">Dummy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/event/backends/dummy.html">Dummy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/event/backends/sqlite.html">Sqlite backend</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../components/gateway/index.html">Gateway</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label for="toctree-checkbox-8"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../components/gateway/devices/dummy.html">Dummy device</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../components/gui/index.html">GUI Server</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label for="toctree-checkbox-9"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../components/gui/adapters/dummy.html">Dummy adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../components/gui/views/dummy.html">Dummy view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Appendix</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label for="toctree-checkbox-10"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api.html">Generated API documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ports.html">Default TCP ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="events.html">Event definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sbs.html">SBS Schema definitions</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">JSON Schema definitions</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="json-schema-definitions">
+<h1>JSON Schema definitions<a class="headerlink" href="#json-schema-definitions" title="Permalink to this headline">¶</a></h1>
+<dl>
+<dt>orchestrator.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://orchestrator.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Orchestrator</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Orchestrators</span><span class="s1">'s configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">type</span>
+    <span class="o">-</span> <span class="n">log</span>
+    <span class="o">-</span> <span class="n">components</span>
+    <span class="o">-</span> <span class="n">ui</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span>
+        <span class="n">enum</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">orchestrator</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">configuration</span> <span class="nb">type</span> <span class="n">identification</span>
+    <span class="n">version</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">component</span> <span class="n">version</span>
+    <span class="n">log</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://logging.yaml#"</span>
+    <span class="n">components</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Components</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+        <span class="n">items</span><span class="p">:</span>
+            <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://orchestrator.yaml#/definitions/component"</span>
+    <span class="n">ui</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://orchestrator.yaml#/definitions/ui"</span>
+<span class="n">definitions</span><span class="p">:</span>
+    <span class="n">component</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Component</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">name</span>
+            <span class="o">-</span> <span class="n">args</span>
+            <span class="o">-</span> <span class="n">delay</span>
+            <span class="o">-</span> <span class="n">revive</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Component</span> <span class="n">name</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">args</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Command</span> <span class="n">line</span> <span class="n">arguments</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">Shell</span> <span class="n">command</span> <span class="n">executed</span> <span class="n">by</span> <span class="n">orchestrator</span> <span class="kn">from</span>
+                    <span class="nn">orchestrator</span><span class="s1">'s current working directory</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">delay</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Delay</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">Startup</span> <span class="n">delay</span> <span class="n">applied</span> <span class="n">only</span> <span class="k">for</span> <span class="n">first</span> <span class="n">component</span><span class="s1">'s</span>
+                    <span class="n">startup</span><span class="o">.</span> <span class="n">If</span> <span class="n">value</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="n">ignored</span><span class="o">.</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">number</span>
+            <span class="n">revive</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Revive</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">If</span> <span class="n">this</span> <span class="nb">property</span> <span class="ow">is</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">true</span><span class="p">,</span> <span class="n">orchestrator</span> <span class="n">will</span> <span class="n">start</span>
+                    <span class="n">component</span><span class="s1">'s process if process is stopped.</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">boolean</span>
+    <span class="n">ui</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Server</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">address</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">UI</span> <span class="n">address</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">default</span><span class="p">:</span> <span class="s2">"http://localhost:23021"</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>logging.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://logging.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Logging</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Logging</span> <span class="n">configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">version</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="n">version</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Version</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">integer</span>
+        <span class="n">default</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="n">formatters</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Formatters</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">patternProperties</span><span class="p">:</span>
+            <span class="s2">"(.)+"</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Formatter</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">properties</span><span class="p">:</span>
+                    <span class="nb">format</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Format</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                        <span class="n">default</span><span class="p">:</span> <span class="n">null</span>
+                    <span class="n">datefmt</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Date</span> <span class="nb">format</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                        <span class="n">default</span><span class="p">:</span> <span class="n">null</span>
+    <span class="n">filters</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Filters</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">patternProperties</span><span class="p">:</span>
+            <span class="s2">"(.)+"</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Filter</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">properties</span><span class="p">:</span>
+                    <span class="n">name</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Logger</span> <span class="n">name</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                        <span class="n">default</span><span class="p">:</span> <span class="s1">''</span>
+    <span class="n">handlers</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Handlers</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">patternProperties</span><span class="p">:</span>
+            <span class="s2">"(.)+"</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Handler</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">Additional</span> <span class="n">properties</span> <span class="n">are</span> <span class="n">passed</span> <span class="k">as</span> <span class="n">keyword</span> <span class="n">arguments</span> <span class="n">to</span>
+                    <span class="n">constructor</span>
+                <span class="n">required</span><span class="p">:</span>
+                    <span class="o">-</span> <span class="k">class</span>
+                <span class="nc">properties</span><span class="p">:</span>
+                    <span class="n">class</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Class</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                    <span class="n">level</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Level</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                    <span class="n">formatter</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Formatter</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                    <span class="n">filters</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Filters</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                        <span class="n">items</span><span class="p">:</span>
+                            <span class="n">title</span><span class="p">:</span> <span class="n">Filter</span> <span class="nb">id</span>
+                            <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">loggers</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Loggers</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">patternProperties</span><span class="p">:</span>
+            <span class="s2">"(.)+"</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Logger</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">properties</span><span class="p">:</span>
+                    <span class="n">level</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Level</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                    <span class="n">propagate</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Propagate</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">boolean</span>
+                    <span class="n">filters</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Filters</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                        <span class="n">items</span><span class="p">:</span>
+                            <span class="n">title</span><span class="p">:</span> <span class="n">Filter</span> <span class="nb">id</span>
+                            <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                    <span class="n">handlers</span><span class="p">:</span>
+                        <span class="n">title</span><span class="p">:</span> <span class="n">Handlers</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                        <span class="n">items</span><span class="p">:</span>
+                            <span class="n">title</span><span class="p">:</span> <span class="n">Handler</span> <span class="nb">id</span>
+                            <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">root</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Root</span> <span class="n">logger</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">level</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Level</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">filters</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Filters</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="n">title</span><span class="p">:</span> <span class="n">Filter</span> <span class="nb">id</span>
+                    <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">handlers</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Handlers</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="n">title</span><span class="p">:</span> <span class="n">Handler</span> <span class="nb">id</span>
+                    <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">incremental</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Incremental</span> <span class="n">configuration</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">boolean</span>
+        <span class="n">default</span><span class="p">:</span> <span class="n">false</span>
+    <span class="n">disable_existing_loggers</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Disable</span> <span class="n">existing</span> <span class="n">loggers</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">boolean</span>
+        <span class="n">default</span><span class="p">:</span> <span class="n">true</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>syslog.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://syslog.yaml#"
+title: Syslog server
+description: Syslog server configuration
+type: object
+required:
+    - type
+    - log
+    - syslog_addr
+    - ui_addr
+    - db_path
+    - db_low_size
+    - db_high_size
+    - db_enable_archive
+    - db_disable_journal
+properties:
+    type:
+        enum:
+            - syslog
+        description: configuration type identification
+    version:
+        type: string
+        description: component version
+    log:
+        "$ref": "hat://logging.yaml#"
+    syslog_addr:
+        type: string
+        description: |
+            syslog listening address in form `&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;`
+            where `&lt;protocol&gt;` can be `tcp`, `udp` or `ssl`
+    syslog_pem:
+        type: string
+        description: |
+            path to PEM file is mandatory if syslog address is ssl
+    ui_addr:
+        type: string
+        description: |
+            web server listening address in form `&lt;protocol&gt;://&lt;host&gt;:&lt;port&gt;`
+            where `&lt;protocol&gt;` can be `http` or `https`
+    ui_pem:
+        type: string
+        description: |
+            path to PEM file is mandatory if ui address is https
+    db_path:
+        type: string
+        description: |
+            path to sqlite database file
+    db_low_size:
+        type: integer
+        description: |
+            number of messages kept in database after database cleanup
+    db_high_size:
+        type: integer
+        description: |
+            number of messages that will trigger database cleanup
+    db_enable_archive:
+        type: boolean
+        description: |
+            should messages, deleted during database cleanup, be kept in
+            archive files
+    db_disable_journal:
+        type: boolean
+        description: |
+            disable sqlite jurnaling
+...
+</pre></div>
+</div>
+</dd>
+<dt>gui/main.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">GUI</span> <span class="n">Server</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">GUI</span> <span class="n">Server</span><span class="s1">'s configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">type</span>
+    <span class="o">-</span> <span class="n">log</span>
+    <span class="o">-</span> <span class="n">monitor</span>
+    <span class="o">-</span> <span class="n">event_server_group</span>
+    <span class="o">-</span> <span class="n">adapters</span>
+    <span class="o">-</span> <span class="n">views</span>
+    <span class="o">-</span> <span class="n">server</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span>
+        <span class="n">enum</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">gui</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">configuration</span> <span class="nb">type</span> <span class="n">identification</span>
+    <span class="n">version</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">component</span> <span class="n">version</span>
+    <span class="n">log</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://logging.yaml#"</span>
+    <span class="n">monitor</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/client.yaml#"</span>
+    <span class="n">event_server_group</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">adapters</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/adapters"</span>
+    <span class="n">views</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/views"</span>
+    <span class="n">server</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/server"</span>
+<span class="n">definitions</span><span class="p">:</span>
+    <span class="n">adapters</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+        <span class="n">items</span><span class="p">:</span>
+            <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/adapter"</span>
+    <span class="n">views</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+        <span class="n">items</span><span class="p">:</span>
+            <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/view"</span>
+    <span class="n">server</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">address</span>
+            <span class="o">-</span> <span class="n">initial_view</span>
+            <span class="o">-</span> <span class="n">roles</span>
+            <span class="o">-</span> <span class="n">users</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">default</span><span class="p">:</span> <span class="s2">"http://localhost:23023"</span>
+            <span class="n">initial_view</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">roles</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/role"</span>
+            <span class="n">users</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gui/main.yaml#/definitions/user"</span>
+    <span class="n">view</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">name</span>
+            <span class="o">-</span> <span class="n">view_path</span>
+            <span class="o">-</span> <span class="n">conf_path</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">view_path</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">conf_path</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span>
+                    <span class="o">-</span> <span class="n">string</span>
+                    <span class="o">-</span> <span class="s2">"null"</span>
+    <span class="n">adapter</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">name</span>
+            <span class="o">-</span> <span class="n">module</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">module</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">user</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">name</span>
+            <span class="o">-</span> <span class="n">password</span>
+            <span class="o">-</span> <span class="n">roles</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">password</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">required</span><span class="p">:</span>
+                    <span class="o">-</span> <span class="nb">hash</span>
+                    <span class="o">-</span> <span class="n">salt</span>
+                <span class="n">properties</span><span class="p">:</span>
+                    <span class="nb">hash</span><span class="p">:</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                        <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                            <span class="n">SHA</span><span class="o">-</span><span class="mi">256</span> <span class="p">(</span><span class="n">salt</span> <span class="o">+</span> <span class="n">password</span><span class="p">)</span> <span class="nb">hash</span> <span class="n">encoded</span> <span class="k">as</span> <span class="nb">hex</span> <span class="n">string</span>
+                    <span class="n">salt</span><span class="p">:</span>
+                        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                        <span class="n">decription</span><span class="p">:</span> <span class="o">|</span>
+                            <span class="n">unique</span> <span class="n">salt</span> <span class="n">used</span> <span class="k">for</span> <span class="n">generating</span> <span class="nb">hash</span> <span class="n">encoded</span> <span class="k">as</span>
+                            <span class="nb">hex</span> <span class="n">string</span>
+            <span class="n">roles</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">user</span> <span class="n">can</span> <span class="n">use</span> <span class="nb">all</span> <span class="n">adapters</span> <span class="n">associated</span> <span class="k">with</span> <span class="nb">all</span> <span class="n">roles</span> <span class="ow">and</span>
+                    <span class="ow">is</span> <span class="n">provided</span> <span class="k">with</span> <span class="n">view</span> <span class="n">associated</span> <span class="k">with</span> <span class="n">first</span> <span class="n">role</span> <span class="kn">from</span> <span class="nn">this</span>
+                    <span class="nb">list</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">role</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">name</span>
+            <span class="o">-</span> <span class="n">view</span>
+            <span class="o">-</span> <span class="n">adapters</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">view</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+            <span class="n">adapters</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>event/main.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://event/main.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Event</span> <span class="n">Server</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Event</span> <span class="n">Server</span><span class="s1">'s configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">type</span>
+    <span class="o">-</span> <span class="n">log</span>
+    <span class="o">-</span> <span class="n">monitor</span>
+    <span class="o">-</span> <span class="n">backend_engine</span>
+    <span class="o">-</span> <span class="n">module_engine</span>
+    <span class="o">-</span> <span class="n">communication</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span>
+        <span class="n">enum</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">event</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">configuration</span> <span class="nb">type</span> <span class="n">identification</span>
+    <span class="n">version</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">component</span> <span class="n">version</span>
+    <span class="n">log</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://logging.yaml#"</span>
+    <span class="n">monitor</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/client.yaml#"</span>
+    <span class="n">backend_engine</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://event/main.yaml#/definitions/backend_engine"</span>
+    <span class="n">module_engine</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://event/main.yaml#/definitions/module_engine"</span>
+    <span class="n">communication</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://event/main.yaml#/definitions/communication"</span>
+<span class="n">definitions</span><span class="p">:</span>
+    <span class="n">backend_engine</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">server_id</span>
+            <span class="o">-</span> <span class="n">backend</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">server_id</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">integer</span>
+            <span class="n">backend</span><span class="p">:</span>
+                <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://event/main.yaml#/definitions/backend"</span>
+    <span class="n">module_engine</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">modules</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">modules</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://event/main.yaml#/definitions/module"</span>
+    <span class="n">communication</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">address</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">default</span><span class="p">:</span> <span class="s2">"tcp+sbs://localhost:23012"</span>
+    <span class="n">backend</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+            <span class="n">structure</span> <span class="n">of</span> <span class="n">backend</span> <span class="n">configuration</span> <span class="n">depends</span> <span class="n">on</span> <span class="n">backend</span> <span class="nb">type</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">module</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">module</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">full</span> <span class="n">python</span> <span class="n">module</span> <span class="n">name</span> <span class="n">that</span> <span class="n">implements</span> <span class="n">backend</span>
+    <span class="n">module</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+            <span class="n">structure</span> <span class="n">of</span> <span class="n">module</span> <span class="n">configuration</span> <span class="n">depends</span> <span class="n">on</span> <span class="n">module</span> <span class="nb">type</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">module</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">module</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">full</span> <span class="n">python</span> <span class="n">module</span> <span class="n">name</span> <span class="n">that</span> <span class="n">implements</span> <span class="n">module</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>event/backends/sqlite.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://event/backends/sqlite.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Sqlite</span> <span class="n">backend</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Sqlite</span> <span class="n">backend</span> <span class="n">configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">db_path</span>
+    <span class="o">-</span> <span class="n">query_pool_size</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="n">db_path</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">path</span> <span class="n">to</span> <span class="n">sqlite</span> <span class="n">database</span> <span class="n">file</span>
+    <span class="n">query_pool_size</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">integer</span>
+        <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+            <span class="n">number</span> <span class="n">of</span> <span class="n">connections</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">pool</span> <span class="n">used</span> <span class="k">for</span> <span class="n">querying</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>gateway/main.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://gateway/main.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Gateway</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Gateway</span><span class="s1">'s configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">type</span>
+    <span class="o">-</span> <span class="n">log</span>
+    <span class="o">-</span> <span class="n">monitor</span>
+    <span class="o">-</span> <span class="n">event_server_group</span>
+    <span class="o">-</span> <span class="n">gateway_name</span>
+    <span class="o">-</span> <span class="n">devices</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span>
+        <span class="n">enum</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">gateway</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">configuration</span> <span class="nb">type</span> <span class="n">identification</span>
+    <span class="n">version</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">component</span> <span class="n">version</span>
+    <span class="n">log</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://logging.yaml#"</span>
+    <span class="n">monitor</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/client.yaml#"</span>
+    <span class="n">event_server_group</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">gateway_name</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">devices</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+        <span class="n">items</span><span class="p">:</span>
+            <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://gateway/main.yaml#/definitions/device"</span>
+<span class="n">definitions</span><span class="p">:</span>
+    <span class="n">device</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+            <span class="n">structure</span> <span class="n">of</span> <span class="n">device</span> <span class="n">configuration</span> <span class="n">depends</span> <span class="n">on</span> <span class="n">device</span> <span class="nb">type</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">module</span>
+            <span class="o">-</span> <span class="n">name</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">module</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">full</span> <span class="n">python</span> <span class="n">module</span> <span class="n">name</span> <span class="n">that</span> <span class="n">implements</span> <span class="n">device</span>
+            <span class="n">name</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>monitor/client.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://monitor/client.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Monitor</span> <span class="n">client</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Monitor</span> <span class="n">client</span><span class="s1">'s configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span>
+    <span class="o">-</span> <span class="n">group</span>
+    <span class="o">-</span> <span class="n">monitor_address</span>
+    <span class="o">-</span> <span class="n">component_address</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">group</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">monitor_address</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">component_address</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">string</span>
+            <span class="o">-</span> <span class="s2">"null"</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+<dt>monitor/main.yaml</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="s2">"$schema"</span><span class="p">:</span> <span class="s2">"http://json-schema.org/schema#"</span>
+<span class="nb">id</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#"</span>
+<span class="n">title</span><span class="p">:</span> <span class="n">Monitor</span> <span class="n">Server</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Monitor</span> <span class="n">Server</span><span class="s1">'s configuration</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">required</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">type</span>
+    <span class="o">-</span> <span class="n">log</span>
+    <span class="o">-</span> <span class="n">server</span>
+    <span class="o">-</span> <span class="n">master</span>
+    <span class="o">-</span> <span class="n">slave</span>
+    <span class="o">-</span> <span class="n">ui</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="nb">type</span><span class="p">:</span>
+        <span class="n">enum</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">monitor</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">configuration</span> <span class="nb">type</span> <span class="n">identification</span>
+    <span class="n">version</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">description</span><span class="p">:</span> <span class="n">component</span> <span class="n">version</span>
+    <span class="n">log</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://logging.yaml#"</span>
+    <span class="n">server</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#/definitions/server"</span>
+    <span class="n">master</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#/definitions/master"</span>
+    <span class="n">slave</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#/definitions/slave"</span>
+    <span class="n">ui</span><span class="p">:</span>
+        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#/definitions/ui"</span>
+<span class="n">definitions</span><span class="p">:</span>
+    <span class="n">server</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Local</span> <span class="n">monitor</span> <span class="n">server</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">address</span>
+            <span class="o">-</span> <span class="n">default_rank</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Listening</span> <span class="n">address</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">default</span><span class="p">:</span> <span class="s2">"tcp+sbs://127.0.0.1:23010"</span>
+            <span class="n">default_rank</span><span class="p">:</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">integer</span>
+    <span class="n">master</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">Master</span> <span class="n">interface</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">address</span>
+            <span class="o">-</span> <span class="n">default_algorithm</span>
+            <span class="o">-</span> <span class="n">group_algorithms</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">Listening</span> <span class="n">address</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">default</span><span class="p">:</span> <span class="s2">"tcp+sbs://127.0.0.1:23011"</span>
+            <span class="n">default_algorithm</span><span class="p">:</span>
+                <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#/definitions/algorithm"</span>
+            <span class="n">group_algorithms</span><span class="p">:</span>
+                <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+                    <span class="n">keys</span> <span class="n">represent</span> <span class="n">group</span> <span class="n">names</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">patternProperties</span><span class="p">:</span>
+                    <span class="s2">"(.)+"</span><span class="p">:</span>
+                        <span class="s2">"$ref"</span><span class="p">:</span> <span class="s2">"hat://monitor/main.yaml#/definitions/algorithm"</span>
+    <span class="n">slave</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">parents</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">parents</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">parent</span> <span class="n">addresses</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">array</span>
+                <span class="n">items</span><span class="p">:</span>
+                    <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+    <span class="n">ui</span><span class="p">:</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">UI</span> <span class="n">Web</span> <span class="n">Server</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">required</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">address</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">address</span><span class="p">:</span>
+                <span class="n">title</span><span class="p">:</span> <span class="n">UI</span> <span class="n">address</span>
+                <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+                <span class="n">default</span><span class="p">:</span> <span class="s2">"http://127.0.0.1:23022"</span>
+    <span class="n">algorithm</span><span class="p">:</span>
+        <span class="n">enum</span><span class="p">:</span>
+            <span class="o">-</span> <span class="n">BLESS_ALL</span>
+            <span class="o">-</span> <span class="n">BLESS_ONE</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="sbs.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">SBS Schema definitions</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2020 - 2021, Hat Open AUTHORS
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>

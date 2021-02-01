@@ -1,0 +1,1868 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.iec104.connection API documentation</title>
+<meta name="description" content="IEC 60870-5-104 connection …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.iec104.connection</code></h1>
+</header>
+<section id="section-intro">
+<p>IEC 60870-5-104 connection</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>mlog</code></strong> :&ensp;<code>logging.Logger</code></dt>
+<dd>module logger</dd>
+<dt><strong><code>InterrogateCallback</code></strong> :&ensp;<code>Type[Callable]</code></dt>
+<dd>interrogate callback
+This method is called when local peer receives interrogate request.
+Called with asdu address, returns list of data.
+Can be regular function or coroutine.</dd>
+<dt><strong><code>CounterInterrogateCallback</code></strong> :&ensp;<code>Type[Callable]</code></dt>
+<dd>counter interrogate callback
+This method is called when local peer receives counter interrogate
+request. Called with asdu address and freeze code, returns list of
+data. Can be regular function or coroutine.</dd>
+<dt><strong><code>CommandCallback</code></strong> :&ensp;<code>Type[Callable]</code></dt>
+<dd>command callback
+This method is called when local peer receives command request.
+Called with list of commands, returns if commands are successful.
+Can be regular function or coroutine.</dd>
+</dl>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;IEC 60870-5-104 connection
+
+Attributes:
+    mlog (logging.Logger): module logger
+    InterrogateCallback (Type[Callable]): interrogate callback
+        This method is called when local peer receives interrogate request.
+        Called with asdu address, returns list of data.
+        Can be regular function or coroutine.
+    CounterInterrogateCallback (Type[Callable]): counter interrogate callback
+        This method is called when local peer receives counter interrogate
+        request. Called with asdu address and freeze code, returns list of
+        data. Can be regular function or coroutine.
+    CommandCallback (Type[Callable]): command callback
+        This method is called when local peer receives command request.
+        Called with list of commands, returns if commands are successful.
+        Can be regular function or coroutine.
+&#34;&#34;&#34;
+
+import typing
+import asyncio
+import contextlib
+import logging
+import enum
+
+from hat import aio
+from hat import util
+from hat.drivers.iec104 import _common
+from hat.drivers.iec104 import common
+
+
+mlog = logging.getLogger(__name__)
+
+InterrogateCallback = aio.AsyncCallable[
+   [&#39;Connection&#39;, int],
+   typing.Optional[typing.List[common.Data]]]
+
+CounterInterrogateCallback = aio.AsyncCallable[
+   [&#39;Connection&#39;, int, common.FreezeCode],
+   typing.Optional[typing.List[common.Data]]]
+
+CommandCallback = aio.AsyncCallable[
+    [&#39;Connection&#39;, typing.List[common.Command]],
+    typing.Union[bool,
+                 typing.Awaitable[bool]]]
+
+
+class Address(typing.NamedTuple):
+    host: str
+    port: int = 2404
+
+
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    remote_addr: Address
+
+
+class _CmdId(typing.NamedTuple):
+    type: &#39;_CommandType&#39;
+    asdu: int
+    io: int
+
+
+class _DataType(enum.Enum):
+    SINGLE = 1
+    DOUBLE = 2
+    STEP_POSITION = 3
+    BITSTRING = 4
+    NORMALIZED = 5
+    SCALED = 6
+    FLOATING = 7
+    BINARY_COUNTER = 8
+
+
+class _CommandType(enum.Enum):
+    SINGLE = 1
+    DOUBLE = 2
+    REGULATING = 3
+    NORMALIZED = 4
+    SCALED = 5
+    FLOATING = 6
+
+
+async def connect(host, port=2404, interrogate_cb=None,
+                  counter_interrogate_cb=None, command_cb=None,
+                  response_timeout=15, supervisory_timeout=10,
+                  test_timeout=20, send_window_size=12, receive_window_size=8):
+    &#34;&#34;&#34;Connect to remote device
+
+    Args:
+        host (str): remote server&#39;s hostname
+        port (int): remote server&#39;s port
+        interrogate_cb (Optional[InterrogateCallback]): interrogate callback
+        counter_interrogate_cb (Optional[CounterInterrogateCallback]):
+            counter interrogate callback
+        command_cb (Optional[CommandCallback]): command callback
+        response_timeout (float): response timeout (t1) in seconds
+        supervisory_timeout (float): supervisory timeout (t2) in seconds
+        test_timeout (float): test timeout (t3) in seconds
+        send_window_size (int): send window size (k)
+        receive_window_size (int): receive window size (w)
+
+    Returns:
+        Connection
+
+    &#34;&#34;&#34;
+
+    async def read_startdt_con():
+        while True:
+            apdu = await _common.read_apdu(reader)
+            if isinstance(apdu, _common.APDUU):
+                if apdu.function == _common.ApduFunctionType.STARTDT_CON:
+                    return
+                if apdu.function == _common.ApduFunctionType.TESTFR_ACT:
+                    _common.write_apdu(_common.APDUU(
+                        function=_common.ApduFunctionType.TESTFR_CON))
+                    continue
+            mlog.warn(&#39;while waiting for STARTDT con, received %s&#39;, apdu)
+
+    reader, writer = await asyncio.open_connection(host, port)
+    _common.write_apdu(writer, _common.APDUU(
+        function=_common.ApduFunctionType.STARTDT_ACT))
+    try:
+        await asyncio.wait_for(read_startdt_con(), response_timeout)
+    except Exception:
+        with contextlib.suppress(Exception):
+            writer.close()
+        raise
+
+    transport = _common.Transport(
+        reader, writer, True, response_timeout, supervisory_timeout,
+        test_timeout, send_window_size, receive_window_size)
+    return _create_connection(transport, interrogate_cb,
+                              counter_interrogate_cb, command_cb)
+
+
+async def listen(connection_cb, host=&#39;0.0.0.0&#39;, port=2404, interrogate_cb=None,
+                 counter_interrogate_cb=None, command_cb=None,
+                 response_timeout=15, supervisory_timeout=10, test_timeout=20,
+                 send_window_size=12, receive_window_size=8):
+    &#34;&#34;&#34;Create new IEC104 slave and listen for incoming connections
+
+    Args:
+        connection_cb (Callable[[Connection],None]): new connection callback
+        host (str): listening socket hostname
+        port (int): listening socket port
+        interrogate_cb (Optional[InterrogateCallback]): interrogate callback
+        counter_interrogate_cb (Optional[CounterInterrogateCallback]):
+            counter interrogate callback
+        command_cb (Optional[CommandCallback]): command callback
+        response_timeout (float): response timeout (t1) in seconds
+        supervisory_timeout (float): supervisory timeout (t2) in seconds
+        test_timeout (float): test timeout (t3) in seconds
+        send_window_size (int): send window size (k)
+        receive_window_size (int): receive window size (w)
+
+    Returns:
+        Server
+
+    &#34;&#34;&#34;
+
+    def on_client_connected(reader, writer):
+        transport = _common.Transport(
+            reader, writer, False, response_timeout, supervisory_timeout,
+            test_timeout, send_window_size, receive_window_size)
+        conn = _create_connection(transport, interrogate_cb,
+                                  counter_interrogate_cb, command_cb)
+        server._connections.append(conn)
+        server._async_group.spawn(server._conn_life, conn)
+        connection_cb(conn)
+
+    group = aio.Group(
+        lambda e: mlog.error(&#39;exception in server: %s&#39;, e, exc_info=e))
+    tcp_server = await asyncio.start_server(on_client_connected, host, port)
+    socknames = [socket.getsockname() for socket in tcp_server.sockets]
+    addresses = [Address(*sockname[:2]) for sockname in socknames]
+
+    server = Server()
+    server._async_group = group
+    server._srv = tcp_server
+    server._addresses = addresses
+    server._connections = []
+    server._async_group.spawn(aio.call_on_cancel, server._on_close)
+    return server
+
+
+class Server(aio.Resource):
+    &#34;&#34;&#34;Server
+
+    For creating new Server instances see :func:`listen`.
+
+    Closing server closes all incoming connections.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def addresses(self):
+        &#34;&#34;&#34;List[Address]: listening addresses&#34;&#34;&#34;
+        return self._addresses
+
+    async def _on_close(self):
+        await self._ser.async_close()
+        for conn in list(self._connections):
+            await conn.async_close()
+
+    async def _conn_life(self, conn):
+        try:
+            await conn.wait_closed()
+        finally:
+            if not conn.is_closed:
+                await conn.async_close()
+            self._connections.remove(conn)
+
+
+def _create_connection(transport, interrogate_cb, counter_interrogate_cb,
+                       command_cb):
+    sockname = transport._writer.get_extra_info(&#39;sockname&#39;)
+    peername = transport._writer.get_extra_info(&#39;peername&#39;)
+    info = ConnectionInfo(local_addr=Address(sockname[0], sockname[1]),
+                          remote_addr=Address(peername[0], peername[1]))
+
+    conn = Connection()
+    conn._transport = transport
+    conn._info = info
+    conn._interrogate_cb = interrogate_cb
+    conn._counter_interrogate_cb = counter_interrogate_cb
+    conn._command_cb = command_cb
+    conn._interrogate_queue = aio.Queue()
+    conn._interrogate_lock = asyncio.Lock()
+    conn._counter_interrogate_queue = aio.Queue()
+    conn._counter_interrogate_lock = asyncio.Lock()
+    conn._data_queue = aio.Queue()
+    conn._command_futures = {}
+    conn._async_group = aio.Group(
+        lambda e: mlog.error(&#39;exception in connection: %s&#39;, e, exc_info=e))
+    conn._async_group.spawn(conn._read_loop)
+    conn._async_group.spawn(aio.call_on_cancel, conn._transport.async_close)
+    return conn
+
+
+class Connection(aio.Resource):
+    &#34;&#34;&#34;Single IEC104 connection
+
+    For creating new Connection instances see :func:`connect`.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def info(self):
+        &#34;&#34;&#34;ConnectionInfo: connection info&#34;&#34;&#34;
+        return self._info
+
+    def notify_data_change(self, data):
+        &#34;&#34;&#34;Notify local data change
+
+        Args:
+            data (List[common.Data]): data
+
+        &#34;&#34;&#34;
+        for i in data:
+            # TODO: implement bulk send data
+            self._send_data(i, None)
+
+    async def interrogate(self, asdu_address=0xFFFF):
+        &#34;&#34;&#34;Interrogate remote device
+
+        Asdu broadcast address 0xFFFF is not supported by all devices
+
+        Args:
+            asdu_address (int): asdu address
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async with self._interrogate_lock:
+            # is this necessary (no one closes it)
+            if self._interrogate_queue.is_closed:
+                raise aio.QueueClosedError()
+            asdu = _common.ASDU(
+                type=_common.AsduType.C_IC_NA,
+                cause=common.Cause.ACTIVATION,
+                is_negative_confirm=False,
+                is_test=False,
+                originator_address=None,
+                address=asdu_address,
+                ios=[_common.IO(
+                    address=0,
+                    time=None,
+                    elements=[_common.create_io_element(
+                                _common.AsduType.C_IC_NA, 20)])])
+            self._transport.write(asdu)
+            if not self._interrogate_queue.empty():
+                self._interrogate_queue.get_nowait_until_empty()
+            data = []
+            async for asdu in self._interrogate_queue:
+                if (asdu.type == _common.AsduType.C_IC_NA and
+                        asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                    continue
+                if (asdu.type == _common.AsduType.C_IC_NA and
+                        asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                    return data
+                data.extend(_asdu_to_data(asdu))
+
+    async def counter_interrogate(self, asdu_address=0xFFFF,
+                                  freeze=common.FreezeCode.READ):
+        &#34;&#34;&#34;Interrogate remote device counters
+
+        Asdu broadcast address 0xFFFF is not supported by all devices
+
+        Args:
+            asdu_address (int): asdu address
+            freeze (common.FreezeCode): freeze code
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async with self._counter_interrogate_lock:
+            # is this necessary (no one closes it)
+            if self._counter_interrogate_queue.is_closed:
+                raise util.QueueClosedError()
+            asdu = _common.ASDU(
+                type=_common.AsduType.C_CI_NA,
+                cause=common.Cause.ACTIVATION,
+                is_negative_confirm=False,
+                is_test=False,
+                originator_address=None,
+                address=asdu_address,
+                ios=[_common.IO(
+                    address=0,
+                    time=None,
+                    elements=[_common.create_io_element(
+                                _common.AsduType.C_CI_NA, 5, freeze.value)])])
+            self._transport.write(asdu)
+            if not self._counter_interrogate_queue.empty():
+                self._counter_interrogate_queue.get_nowait_until_empty()
+            data = []
+            async for asdu in self._counter_interrogate_queue:
+                if (asdu.type == _common.AsduType.C_CI_NA and
+                        asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                    continue
+                if (asdu.type == _common.AsduType.C_CI_NA and
+                        asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                    return data
+                data.extend(_asdu_to_data(asdu))
+
+    async def receive(self):
+        &#34;&#34;&#34;Receive remote data change
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async for asdu in self._data_queue:
+            data = _asdu_to_data(asdu)
+            if data:
+                return data
+
+    async def send_command(self, cmd):
+        &#34;&#34;&#34;Send command
+
+        Args:
+            cmd (common.Command): command
+
+        Returns:
+            bool: command&#39;s success
+
+        &#34;&#34;&#34;
+        cmd_type = _command_type_from_value(cmd.value)
+        if cmd.time:
+            asdu_type = _command_type_to_asdu_type_with_time[cmd_type]
+        else:
+            asdu_type = _command_type_to_asdu_type_without_time[cmd_type]
+        req = _common.ASDU(
+            type=asdu_type,
+            cause=(common.Cause.DEACTIVATION
+                   if cmd.action == common.Action.CANCEL else
+                   common.Cause.ACTIVATION),
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=cmd.asdu_address,
+            ios=[_common.IO(
+                address=cmd.io_address,
+                time=cmd.time,
+                elements=[_common.create_io_element(
+                            asdu_type,
+                            value=cmd.value.value,
+                            select=cmd.action == common.Action.SELECT,
+                            qualifier=cmd.qualifier)])])
+        cmd_id = _CmdId(type=cmd_type,
+                        asdu=cmd.asdu_address,
+                        io=cmd.io_address)
+        if cmd_id in self._command_futures:
+            return False
+        self._transport.write(req)
+        cmd_future = asyncio.Future()
+        self._command_futures[cmd_id] = cmd_future
+        try:
+            resp = await cmd_future
+            return not resp.is_negative_confirm
+        finally:
+            del self._command_futures[cmd_id]
+        return False
+
+    async def _read_loop(self):
+        try:
+            while True:
+                asdu = await self._transport.read()
+                if not asdu:
+                    break
+                if asdu.cause in _interrogate_causes:
+                    self._interrogate_queue.put_nowait(asdu)
+                elif asdu.cause in _counter_interrogate_causes:
+                    self._counter_interrogate_queue.put_nowait(asdu)
+                elif asdu.type == _common.AsduType.C_IC_NA:
+                    if asdu.cause in _activate_causes:
+                        self._interrogate_queue.put_nowait(asdu)
+                    else:
+                        await self._process_interrogate(asdu)
+                elif asdu.type == _common.AsduType.C_CI_NA:
+                    if asdu.cause in _activate_causes:
+                        self._counter_interrogate_queue.put_nowait(asdu)
+                    else:
+                        await self._process_counter_interrogate(asdu)
+                elif asdu.type in _command_asdu_types:
+                    if asdu.cause in _activate_causes:
+                        # TODO: handle properly ACTIVATION_TERMINATION in the
+                        # command flow...
+                        if asdu.cause == common.Cause.ACTIVATION_TERMINATION:
+                            continue
+                        for i in asdu.ios:
+                            cmd_type = _asdu_type_to_command_type[asdu.type]
+                            cmd_id = _CmdId(type=cmd_type,
+                                            asdu=asdu.address,
+                                            io=i.address)
+                            cmd_future = self._command_futures.get(cmd_id)
+                            if not cmd_future or cmd_future.done():
+                                mlog.warning(&#39;received response for &#39;
+                                             &#39; non-waited command %s\n%s&#39;,
+                                             cmd_id,
+                                             self._command_futures)
+                                continue
+                            cmd_future.set_result(asdu)
+                    else:
+                        await self._process_command(asdu)
+                elif asdu.type in _asdu_type_to_data_type.keys():
+                    self._data_queue.put_nowait(asdu)
+                else:
+                    mlog.warn(&#39;discarding asdu %s&#39;, asdu)
+        finally:
+            mlog.debug(&#34;closing connection %s&#34;, self._info)
+            self._async_group.close()
+
+    async def _process_interrogate(self, asdu):
+        data = await aio.call(self._interrogate_cb, self, asdu.address)
+        if data is None:
+            return
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION_CONFIRMATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])]))
+        for i in data:
+            self._send_data(i, common.Cause.INTERROGATED_STATION)
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION_TERMINATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])]))
+
+    async def _process_counter_interrogate(self, asdu):
+        freeze = asdu.ios[0].elements[0].freeze
+        data = await aio.call(self._counter_interrogate_cb, self,
+                              asdu.address, common.FreezeCode(freeze))
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION_CONFIRMATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze)])]))
+        for i in data:
+            self._send_data(i, common.Cause.INTERROGATED_COUNTER)
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION_TERMINATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze)])]))
+
+    async def _process_command(self, asdu):
+        cmd_type = _asdu_type_to_command_type[asdu.type]
+        cmds = []
+        for i, io in enumerate(asdu.ios):
+            for ioe in io.elements:
+                if asdu.cause == common.Cause.DEACTIVATION:
+                    cmd_action = common.Action.CANCEL
+                else:
+                    cmd_action = (common.Action.SELECT if ioe.select else
+                                  common.Action.EXECUTE)
+                cmds.append(common.Command(
+                    action=cmd_action,
+                    value=_cmd_value_from_ioe(cmd_type, ioe),
+                    asdu_address=asdu.address,
+                    io_address=io.address + i,
+                    time=io.time,
+                    qualifier=ioe.qualifier))
+        result = await aio.call(self._command_cb, self, cmds)
+        self._transport.write(_common.ASDU(
+            type=asdu.type,
+            cause=common.Cause[asdu.cause.name + &#39;_CONFIRMATION&#39;],
+            is_negative_confirm=not result,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=asdu.ios))
+
+    def _send_data(self, data, cause):
+        data_type = _data_type_from_value(data.value)
+        if data_type == _DataType.NORMALIZED and data.quality is None:
+            asdu_type = _common.AsduType.M_ME_ND
+        elif data.time:
+            asdu_type = _data_type_to_asdu_type_with_time[data_type]
+        else:
+            asdu_type = _data_type_to_asdu_type_without_time[data_type]
+        ioe_args = {}
+        if asdu_type in (_common.AsduType.M_ST_NA, _common.AsduType.M_ST_TB):
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;quality&#39;] = data.quality
+            ioe_args[&#39;t&#39;] = data.value.transient
+        elif asdu_type in (_common.AsduType.M_IT_NA, _common.AsduType.M_IT_TB):
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;invalid&#39;] = data.value.invalid
+            ioe_args[&#39;adjusted&#39;] = data.value.adjusted
+            ioe_args[&#39;overflow&#39;] = data.value.overflow
+            ioe_args[&#39;sequence&#39;] = data.value.sequence
+        elif asdu_type == _common.AsduType.M_ME_ND:
+            ioe_args[&#39;value&#39;] = data.value.value
+        else:
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;quality&#39;] = data.quality
+        asdu = _common.ASDU(
+            type=asdu_type,
+            cause=cause if cause else data.cause,
+            is_negative_confirm=False,
+            is_test=data.is_test,
+            originator_address=None,
+            address=data.asdu_address,
+            ios=[_common.IO(
+                address=data.io_address,
+                elements=[_common.create_io_element(asdu_type, **ioe_args)],
+                time=data.time)])
+        self._transport.write(asdu)
+
+
+_activate_causes = {common.Cause.ACTIVATION_CONFIRMATION,
+                    common.Cause.ACTIVATION_TERMINATION,
+                    common.Cause.DEACTIVATION_CONFIRMATION}
+
+_interrogate_causes = {common.Cause.INTERROGATED_STATION,
+                       common.Cause.INTERROGATED_GROUP01,
+                       common.Cause.INTERROGATED_GROUP02,
+                       common.Cause.INTERROGATED_GROUP03,
+                       common.Cause.INTERROGATED_GROUP04,
+                       common.Cause.INTERROGATED_GROUP05,
+                       common.Cause.INTERROGATED_GROUP06,
+                       common.Cause.INTERROGATED_GROUP07,
+                       common.Cause.INTERROGATED_GROUP08,
+                       common.Cause.INTERROGATED_GROUP09,
+                       common.Cause.INTERROGATED_GROUP10,
+                       common.Cause.INTERROGATED_GROUP11,
+                       common.Cause.INTERROGATED_GROUP12,
+                       common.Cause.INTERROGATED_GROUP13,
+                       common.Cause.INTERROGATED_GROUP14,
+                       common.Cause.INTERROGATED_GROUP15,
+                       common.Cause.INTERROGATED_GROUP16}
+
+_counter_interrogate_causes = {common.Cause.INTERROGATED_COUNTER,
+                               common.Cause.INTERROGATED_COUNTER01,
+                               common.Cause.INTERROGATED_COUNTER02,
+                               common.Cause.INTERROGATED_COUNTER03,
+                               common.Cause.INTERROGATED_COUNTER04}
+
+_command_asdu_types = {_common.AsduType.C_SC_NA,
+                       _common.AsduType.C_DC_NA,
+                       _common.AsduType.C_RC_NA,
+                       _common.AsduType.C_SE_NA,
+                       _common.AsduType.C_SE_NB,
+                       _common.AsduType.C_SE_NC,
+                       _common.AsduType.C_SC_TA,
+                       _common.AsduType.C_DC_TA,
+                       _common.AsduType.C_RC_TA,
+                       _common.AsduType.C_SE_TA,
+                       _common.AsduType.C_SE_TB,
+                       _common.AsduType.C_SE_TC}
+
+_asdu_type_to_command_type = {
+    _common.AsduType.C_SC_NA: _CommandType.SINGLE,
+    _common.AsduType.C_DC_NA: _CommandType.DOUBLE,
+    _common.AsduType.C_RC_NA: _CommandType.REGULATING,
+    _common.AsduType.C_SE_NA: _CommandType.NORMALIZED,
+    _common.AsduType.C_SE_NB: _CommandType.SCALED,
+    _common.AsduType.C_SE_NC: _CommandType.FLOATING,
+    _common.AsduType.C_SC_TA: _CommandType.SINGLE,
+    _common.AsduType.C_DC_TA: _CommandType.DOUBLE,
+    _common.AsduType.C_RC_TA: _CommandType.REGULATING,
+    _common.AsduType.C_SE_TA: _CommandType.NORMALIZED,
+    _common.AsduType.C_SE_TB: _CommandType.SCALED,
+    _common.AsduType.C_SE_TC: _CommandType.FLOATING}
+
+_command_type_to_asdu_type_without_time = {
+    _CommandType.SINGLE: _common.AsduType.C_SC_NA,
+    _CommandType.DOUBLE: _common.AsduType.C_DC_NA,
+    _CommandType.REGULATING: _common.AsduType.C_RC_NA,
+    _CommandType.NORMALIZED: _common.AsduType.C_SE_NA,
+    _CommandType.SCALED: _common.AsduType.C_SE_NB,
+    _CommandType.FLOATING: _common.AsduType.C_SE_NC}
+
+_command_type_to_asdu_type_with_time = {
+    _CommandType.SINGLE: _common.AsduType.C_SC_TA,
+    _CommandType.DOUBLE: _common.AsduType.C_DC_TA,
+    _CommandType.REGULATING: _common.AsduType.C_RC_TA,
+    _CommandType.NORMALIZED: _common.AsduType.C_SE_TA,
+    _CommandType.SCALED: _common.AsduType.C_SE_TB,
+    _CommandType.FLOATING: _common.AsduType.C_SE_TC}
+
+_asdu_type_to_data_type = {
+    _common.AsduType.M_SP_NA: _DataType.SINGLE,
+    _common.AsduType.M_DP_NA: _DataType.DOUBLE,
+    _common.AsduType.M_ST_NA: _DataType.STEP_POSITION,
+    _common.AsduType.M_BO_NA: _DataType.BITSTRING,
+    _common.AsduType.M_ME_NA: _DataType.NORMALIZED,
+    _common.AsduType.M_ME_NB: _DataType.SCALED,
+    _common.AsduType.M_ME_NC: _DataType.FLOATING,
+    _common.AsduType.M_IT_NA: _DataType.BINARY_COUNTER,
+    _common.AsduType.M_ME_ND: _DataType.NORMALIZED,
+    _common.AsduType.M_SP_TB: _DataType.SINGLE,
+    _common.AsduType.M_DP_TB: _DataType.DOUBLE,
+    _common.AsduType.M_ST_TB: _DataType.STEP_POSITION,
+    _common.AsduType.M_BO_TB: _DataType.BITSTRING,
+    _common.AsduType.M_ME_TD: _DataType.NORMALIZED,
+    _common.AsduType.M_ME_TE: _DataType.SCALED,
+    _common.AsduType.M_ME_TF: _DataType.FLOATING,
+    _common.AsduType.M_IT_TB: _DataType.BINARY_COUNTER}
+
+_data_type_to_asdu_type_without_time = {
+    _DataType.SINGLE: _common.AsduType.M_SP_NA,
+    _DataType.DOUBLE: _common.AsduType.M_DP_NA,
+    _DataType.STEP_POSITION: _common.AsduType.M_ST_NA,
+    _DataType.BITSTRING: _common.AsduType.M_BO_NA,
+    _DataType.NORMALIZED: _common.AsduType.M_ME_NA,
+    _DataType.SCALED: _common.AsduType.M_ME_NB,
+    _DataType.FLOATING: _common.AsduType.M_ME_NC,
+    _DataType.BINARY_COUNTER: _common.AsduType.M_IT_NA}
+
+_data_type_to_asdu_type_with_time = {
+    _DataType.SINGLE: _common.AsduType.M_SP_TB,
+    _DataType.DOUBLE: _common.AsduType.M_DP_TB,
+    _DataType.STEP_POSITION: _common.AsduType.M_ST_TB,
+    _DataType.BITSTRING: _common.AsduType.M_BO_TB,
+    _DataType.NORMALIZED: _common.AsduType.M_ME_TD,
+    _DataType.SCALED: _common.AsduType.M_ME_TE,
+    _DataType.FLOATING: _common.AsduType.M_ME_TF,
+    _DataType.BINARY_COUNTER: _common.AsduType.M_IT_TB}
+
+
+def _asdu_to_data(asdu):
+    data_type = _asdu_type_to_data_type[asdu.type]
+    data = []
+    for io in asdu.ios:
+        for i, ioe in enumerate(io.elements):
+            try:
+                data.append(_io_element_to_data(
+                    ioe, data_type, io.time, asdu.address, io.address + i,
+                    asdu.cause, asdu.is_test))
+            except Exception as e:
+                mlog.warn(&#34;Could not convert IO element to data: %s&#34;, e,
+                          exc_info=True)
+    return data
+
+
+def _io_element_to_data(ioe, data_type, time, asdu_address, io_address, cause,
+                        is_test):
+    return common.Data(
+        value=_data_value_from_ioe(data_type, ioe),
+        quality=ioe.quality if hasattr(ioe, &#39;quality&#39;) else None,
+        time=time,
+        asdu_address=asdu_address,
+        io_address=io_address,
+        cause=cause,
+        is_test=is_test)
+
+
+def _data_value_from_ioe(data_type, ioe):
+    if data_type == _DataType.SINGLE:
+        return common.SingleValue(ioe.value)
+    elif data_type == _DataType.DOUBLE:
+        return common.DoubleValue(ioe.value)
+    elif data_type == _DataType.STEP_POSITION:
+        return common.StepPositionValue(
+            value=ioe.value,
+            transient=ioe.t)
+    elif data_type == _DataType.BITSTRING:
+        return common.BitstringValue(value=ioe.value)
+    elif data_type == _DataType.NORMALIZED:
+        return common.NormalizedValue(value=ioe.value)
+    elif data_type == _DataType.SCALED:
+        return common.ScaledValue(value=ioe.value)
+    elif data_type == _DataType.FLOATING:
+        return common.FloatingValue(value=ioe.value)
+    elif data_type == _DataType.BINARY_COUNTER:
+        return common.BinaryCounterValue(
+            value=ioe.value,
+            sequence=ioe.sequence,
+            overflow=ioe.overflow,
+            adjusted=ioe.adjusted,
+            invalid=ioe.invalid)
+
+
+def _cmd_value_from_ioe(cmd_type, ioe):
+    if cmd_type == _CommandType.SINGLE:
+        return common.SingleValue(ioe.value)
+    elif cmd_type == _CommandType.DOUBLE:
+        return common.DoubleValue(ioe.value)
+    elif cmd_type == _CommandType.REGULATING:
+        return common.RegulatingValue(ioe.value)
+    elif cmd_type == _CommandType.NORMALIZED:
+        return common.NormalizedValue(value=ioe.value)
+    elif cmd_type == _CommandType.SCALED:
+        return common.ScaledValue(value=ioe.value)
+    elif cmd_type == _CommandType.FLOATING:
+        return common.FloatingValue(value=ioe.value)
+
+
+def _data_type_from_value(data_value):
+    return {
+        common.SingleValue: _DataType.SINGLE,
+        common.DoubleValue: _DataType.DOUBLE,
+        common.StepPositionValue: _DataType.STEP_POSITION,
+        common.BitstringValue: _DataType.BITSTRING,
+        common.NormalizedValue: _DataType.NORMALIZED,
+        common.ScaledValue: _DataType.SCALED,
+        common.FloatingValue: _DataType.FLOATING,
+        common.BinaryCounterValue: _DataType.BINARY_COUNTER}[type(data_value)]
+
+
+def _command_type_from_value(command_value):
+    return {common.SingleValue: _CommandType.SINGLE,
+            common.DoubleValue: _CommandType.DOUBLE,
+            common.RegulatingValue: _CommandType.REGULATING,
+            common.NormalizedValue: _CommandType.NORMALIZED,
+            common.ScaledValue: _CommandType.SCALED,
+            common.FloatingValue: _CommandType.FLOATING}[type(command_value)]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.iec104.connection.connect"><code class="name flex">
+<span>async def <span class="ident">connect</span></span>(<span>host, port=2404, interrogate_cb=None, counter_interrogate_cb=None, command_cb=None, response_timeout=15, supervisory_timeout=10, test_timeout=20, send_window_size=12, receive_window_size=8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect to remote device</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>host</code></strong> :&ensp;<code>str</code></dt>
+<dd>remote server's hostname</dd>
+<dt><strong><code>port</code></strong> :&ensp;<code>int</code></dt>
+<dd>remote server's port</dd>
+<dt><strong><code>interrogate_cb</code></strong> :&ensp;<code>Optional[InterrogateCallback]</code></dt>
+<dd>interrogate callback</dd>
+<dt>counter_interrogate_cb (Optional[CounterInterrogateCallback]):</dt>
+<dt>counter interrogate callback</dt>
+<dt><strong><code>command_cb</code></strong> :&ensp;<code>Optional[CommandCallback]</code></dt>
+<dd>command callback</dd>
+<dt><strong><code>response_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>response timeout (t1) in seconds</dd>
+<dt><strong><code>supervisory_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>supervisory timeout (t2) in seconds</dd>
+<dt><strong><code>test_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>test timeout (t3) in seconds</dd>
+<dt><strong><code>send_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>send window size (k)</dd>
+<dt><strong><code>receive_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>receive window size (w)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Connection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def connect(host, port=2404, interrogate_cb=None,
+                  counter_interrogate_cb=None, command_cb=None,
+                  response_timeout=15, supervisory_timeout=10,
+                  test_timeout=20, send_window_size=12, receive_window_size=8):
+    &#34;&#34;&#34;Connect to remote device
+
+    Args:
+        host (str): remote server&#39;s hostname
+        port (int): remote server&#39;s port
+        interrogate_cb (Optional[InterrogateCallback]): interrogate callback
+        counter_interrogate_cb (Optional[CounterInterrogateCallback]):
+            counter interrogate callback
+        command_cb (Optional[CommandCallback]): command callback
+        response_timeout (float): response timeout (t1) in seconds
+        supervisory_timeout (float): supervisory timeout (t2) in seconds
+        test_timeout (float): test timeout (t3) in seconds
+        send_window_size (int): send window size (k)
+        receive_window_size (int): receive window size (w)
+
+    Returns:
+        Connection
+
+    &#34;&#34;&#34;
+
+    async def read_startdt_con():
+        while True:
+            apdu = await _common.read_apdu(reader)
+            if isinstance(apdu, _common.APDUU):
+                if apdu.function == _common.ApduFunctionType.STARTDT_CON:
+                    return
+                if apdu.function == _common.ApduFunctionType.TESTFR_ACT:
+                    _common.write_apdu(_common.APDUU(
+                        function=_common.ApduFunctionType.TESTFR_CON))
+                    continue
+            mlog.warn(&#39;while waiting for STARTDT con, received %s&#39;, apdu)
+
+    reader, writer = await asyncio.open_connection(host, port)
+    _common.write_apdu(writer, _common.APDUU(
+        function=_common.ApduFunctionType.STARTDT_ACT))
+    try:
+        await asyncio.wait_for(read_startdt_con(), response_timeout)
+    except Exception:
+        with contextlib.suppress(Exception):
+            writer.close()
+        raise
+
+    transport = _common.Transport(
+        reader, writer, True, response_timeout, supervisory_timeout,
+        test_timeout, send_window_size, receive_window_size)
+    return _create_connection(transport, interrogate_cb,
+                              counter_interrogate_cb, command_cb)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.connection.listen"><code class="name flex">
+<span>async def <span class="ident">listen</span></span>(<span>connection_cb, host='0.0.0.0', port=2404, interrogate_cb=None, counter_interrogate_cb=None, command_cb=None, response_timeout=15, supervisory_timeout=10, test_timeout=20, send_window_size=12, receive_window_size=8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new IEC104 slave and listen for incoming connections</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>connection_cb</code></strong> :&ensp;<code>Callable[[<a title="hat.drivers.iec104.connection.Connection" href="#hat.drivers.iec104.connection.Connection">Connection</a>],None]</code></dt>
+<dd>new connection callback</dd>
+<dt><strong><code>host</code></strong> :&ensp;<code>str</code></dt>
+<dd>listening socket hostname</dd>
+<dt><strong><code>port</code></strong> :&ensp;<code>int</code></dt>
+<dd>listening socket port</dd>
+<dt><strong><code>interrogate_cb</code></strong> :&ensp;<code>Optional[InterrogateCallback]</code></dt>
+<dd>interrogate callback</dd>
+<dt>counter_interrogate_cb (Optional[CounterInterrogateCallback]):</dt>
+<dt>counter interrogate callback</dt>
+<dt><strong><code>command_cb</code></strong> :&ensp;<code>Optional[CommandCallback]</code></dt>
+<dd>command callback</dd>
+<dt><strong><code>response_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>response timeout (t1) in seconds</dd>
+<dt><strong><code>supervisory_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>supervisory timeout (t2) in seconds</dd>
+<dt><strong><code>test_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>test timeout (t3) in seconds</dd>
+<dt><strong><code>send_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>send window size (k)</dd>
+<dt><strong><code>receive_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>receive window size (w)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Server</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def listen(connection_cb, host=&#39;0.0.0.0&#39;, port=2404, interrogate_cb=None,
+                 counter_interrogate_cb=None, command_cb=None,
+                 response_timeout=15, supervisory_timeout=10, test_timeout=20,
+                 send_window_size=12, receive_window_size=8):
+    &#34;&#34;&#34;Create new IEC104 slave and listen for incoming connections
+
+    Args:
+        connection_cb (Callable[[Connection],None]): new connection callback
+        host (str): listening socket hostname
+        port (int): listening socket port
+        interrogate_cb (Optional[InterrogateCallback]): interrogate callback
+        counter_interrogate_cb (Optional[CounterInterrogateCallback]):
+            counter interrogate callback
+        command_cb (Optional[CommandCallback]): command callback
+        response_timeout (float): response timeout (t1) in seconds
+        supervisory_timeout (float): supervisory timeout (t2) in seconds
+        test_timeout (float): test timeout (t3) in seconds
+        send_window_size (int): send window size (k)
+        receive_window_size (int): receive window size (w)
+
+    Returns:
+        Server
+
+    &#34;&#34;&#34;
+
+    def on_client_connected(reader, writer):
+        transport = _common.Transport(
+            reader, writer, False, response_timeout, supervisory_timeout,
+            test_timeout, send_window_size, receive_window_size)
+        conn = _create_connection(transport, interrogate_cb,
+                                  counter_interrogate_cb, command_cb)
+        server._connections.append(conn)
+        server._async_group.spawn(server._conn_life, conn)
+        connection_cb(conn)
+
+    group = aio.Group(
+        lambda e: mlog.error(&#39;exception in server: %s&#39;, e, exc_info=e))
+    tcp_server = await asyncio.start_server(on_client_connected, host, port)
+    socknames = [socket.getsockname() for socket in tcp_server.sockets]
+    addresses = [Address(*sockname[:2]) for sockname in socknames]
+
+    server = Server()
+    server._async_group = group
+    server._srv = tcp_server
+    server._addresses = addresses
+    server._connections = []
+    server._async_group.spawn(aio.call_on_cancel, server._on_close)
+    return server</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.iec104.connection.Address"><code class="flex name class">
+<span>class <span class="ident">Address</span></span>
+<span>(</span><span>host: str, port: int = 2404)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Address(host, port)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Address(typing.NamedTuple):
+    host: str
+    port: int = 2404</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.connection.Address.host"><code class="name">var <span class="ident">host</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.connection.Address.port"><code class="name">var <span class="ident">port</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.connection.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Single IEC104 connection</p>
+<p>For creating new Connection instances see :func:<code><a title="hat.drivers.iec104.connection.connect" href="#hat.drivers.iec104.connection.connect">connect()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connection(aio.Resource):
+    &#34;&#34;&#34;Single IEC104 connection
+
+    For creating new Connection instances see :func:`connect`.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def info(self):
+        &#34;&#34;&#34;ConnectionInfo: connection info&#34;&#34;&#34;
+        return self._info
+
+    def notify_data_change(self, data):
+        &#34;&#34;&#34;Notify local data change
+
+        Args:
+            data (List[common.Data]): data
+
+        &#34;&#34;&#34;
+        for i in data:
+            # TODO: implement bulk send data
+            self._send_data(i, None)
+
+    async def interrogate(self, asdu_address=0xFFFF):
+        &#34;&#34;&#34;Interrogate remote device
+
+        Asdu broadcast address 0xFFFF is not supported by all devices
+
+        Args:
+            asdu_address (int): asdu address
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async with self._interrogate_lock:
+            # is this necessary (no one closes it)
+            if self._interrogate_queue.is_closed:
+                raise aio.QueueClosedError()
+            asdu = _common.ASDU(
+                type=_common.AsduType.C_IC_NA,
+                cause=common.Cause.ACTIVATION,
+                is_negative_confirm=False,
+                is_test=False,
+                originator_address=None,
+                address=asdu_address,
+                ios=[_common.IO(
+                    address=0,
+                    time=None,
+                    elements=[_common.create_io_element(
+                                _common.AsduType.C_IC_NA, 20)])])
+            self._transport.write(asdu)
+            if not self._interrogate_queue.empty():
+                self._interrogate_queue.get_nowait_until_empty()
+            data = []
+            async for asdu in self._interrogate_queue:
+                if (asdu.type == _common.AsduType.C_IC_NA and
+                        asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                    continue
+                if (asdu.type == _common.AsduType.C_IC_NA and
+                        asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                    return data
+                data.extend(_asdu_to_data(asdu))
+
+    async def counter_interrogate(self, asdu_address=0xFFFF,
+                                  freeze=common.FreezeCode.READ):
+        &#34;&#34;&#34;Interrogate remote device counters
+
+        Asdu broadcast address 0xFFFF is not supported by all devices
+
+        Args:
+            asdu_address (int): asdu address
+            freeze (common.FreezeCode): freeze code
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async with self._counter_interrogate_lock:
+            # is this necessary (no one closes it)
+            if self._counter_interrogate_queue.is_closed:
+                raise util.QueueClosedError()
+            asdu = _common.ASDU(
+                type=_common.AsduType.C_CI_NA,
+                cause=common.Cause.ACTIVATION,
+                is_negative_confirm=False,
+                is_test=False,
+                originator_address=None,
+                address=asdu_address,
+                ios=[_common.IO(
+                    address=0,
+                    time=None,
+                    elements=[_common.create_io_element(
+                                _common.AsduType.C_CI_NA, 5, freeze.value)])])
+            self._transport.write(asdu)
+            if not self._counter_interrogate_queue.empty():
+                self._counter_interrogate_queue.get_nowait_until_empty()
+            data = []
+            async for asdu in self._counter_interrogate_queue:
+                if (asdu.type == _common.AsduType.C_CI_NA and
+                        asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                    continue
+                if (asdu.type == _common.AsduType.C_CI_NA and
+                        asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                    return data
+                data.extend(_asdu_to_data(asdu))
+
+    async def receive(self):
+        &#34;&#34;&#34;Receive remote data change
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async for asdu in self._data_queue:
+            data = _asdu_to_data(asdu)
+            if data:
+                return data
+
+    async def send_command(self, cmd):
+        &#34;&#34;&#34;Send command
+
+        Args:
+            cmd (common.Command): command
+
+        Returns:
+            bool: command&#39;s success
+
+        &#34;&#34;&#34;
+        cmd_type = _command_type_from_value(cmd.value)
+        if cmd.time:
+            asdu_type = _command_type_to_asdu_type_with_time[cmd_type]
+        else:
+            asdu_type = _command_type_to_asdu_type_without_time[cmd_type]
+        req = _common.ASDU(
+            type=asdu_type,
+            cause=(common.Cause.DEACTIVATION
+                   if cmd.action == common.Action.CANCEL else
+                   common.Cause.ACTIVATION),
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=cmd.asdu_address,
+            ios=[_common.IO(
+                address=cmd.io_address,
+                time=cmd.time,
+                elements=[_common.create_io_element(
+                            asdu_type,
+                            value=cmd.value.value,
+                            select=cmd.action == common.Action.SELECT,
+                            qualifier=cmd.qualifier)])])
+        cmd_id = _CmdId(type=cmd_type,
+                        asdu=cmd.asdu_address,
+                        io=cmd.io_address)
+        if cmd_id in self._command_futures:
+            return False
+        self._transport.write(req)
+        cmd_future = asyncio.Future()
+        self._command_futures[cmd_id] = cmd_future
+        try:
+            resp = await cmd_future
+            return not resp.is_negative_confirm
+        finally:
+            del self._command_futures[cmd_id]
+        return False
+
+    async def _read_loop(self):
+        try:
+            while True:
+                asdu = await self._transport.read()
+                if not asdu:
+                    break
+                if asdu.cause in _interrogate_causes:
+                    self._interrogate_queue.put_nowait(asdu)
+                elif asdu.cause in _counter_interrogate_causes:
+                    self._counter_interrogate_queue.put_nowait(asdu)
+                elif asdu.type == _common.AsduType.C_IC_NA:
+                    if asdu.cause in _activate_causes:
+                        self._interrogate_queue.put_nowait(asdu)
+                    else:
+                        await self._process_interrogate(asdu)
+                elif asdu.type == _common.AsduType.C_CI_NA:
+                    if asdu.cause in _activate_causes:
+                        self._counter_interrogate_queue.put_nowait(asdu)
+                    else:
+                        await self._process_counter_interrogate(asdu)
+                elif asdu.type in _command_asdu_types:
+                    if asdu.cause in _activate_causes:
+                        # TODO: handle properly ACTIVATION_TERMINATION in the
+                        # command flow...
+                        if asdu.cause == common.Cause.ACTIVATION_TERMINATION:
+                            continue
+                        for i in asdu.ios:
+                            cmd_type = _asdu_type_to_command_type[asdu.type]
+                            cmd_id = _CmdId(type=cmd_type,
+                                            asdu=asdu.address,
+                                            io=i.address)
+                            cmd_future = self._command_futures.get(cmd_id)
+                            if not cmd_future or cmd_future.done():
+                                mlog.warning(&#39;received response for &#39;
+                                             &#39; non-waited command %s\n%s&#39;,
+                                             cmd_id,
+                                             self._command_futures)
+                                continue
+                            cmd_future.set_result(asdu)
+                    else:
+                        await self._process_command(asdu)
+                elif asdu.type in _asdu_type_to_data_type.keys():
+                    self._data_queue.put_nowait(asdu)
+                else:
+                    mlog.warn(&#39;discarding asdu %s&#39;, asdu)
+        finally:
+            mlog.debug(&#34;closing connection %s&#34;, self._info)
+            self._async_group.close()
+
+    async def _process_interrogate(self, asdu):
+        data = await aio.call(self._interrogate_cb, self, asdu.address)
+        if data is None:
+            return
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION_CONFIRMATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])]))
+        for i in data:
+            self._send_data(i, common.Cause.INTERROGATED_STATION)
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION_TERMINATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])]))
+
+    async def _process_counter_interrogate(self, asdu):
+        freeze = asdu.ios[0].elements[0].freeze
+        data = await aio.call(self._counter_interrogate_cb, self,
+                              asdu.address, common.FreezeCode(freeze))
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION_CONFIRMATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze)])]))
+        for i in data:
+            self._send_data(i, common.Cause.INTERROGATED_COUNTER)
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION_TERMINATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze)])]))
+
+    async def _process_command(self, asdu):
+        cmd_type = _asdu_type_to_command_type[asdu.type]
+        cmds = []
+        for i, io in enumerate(asdu.ios):
+            for ioe in io.elements:
+                if asdu.cause == common.Cause.DEACTIVATION:
+                    cmd_action = common.Action.CANCEL
+                else:
+                    cmd_action = (common.Action.SELECT if ioe.select else
+                                  common.Action.EXECUTE)
+                cmds.append(common.Command(
+                    action=cmd_action,
+                    value=_cmd_value_from_ioe(cmd_type, ioe),
+                    asdu_address=asdu.address,
+                    io_address=io.address + i,
+                    time=io.time,
+                    qualifier=ioe.qualifier))
+        result = await aio.call(self._command_cb, self, cmds)
+        self._transport.write(_common.ASDU(
+            type=asdu.type,
+            cause=common.Cause[asdu.cause.name + &#39;_CONFIRMATION&#39;],
+            is_negative_confirm=not result,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=asdu.ios))
+
+    def _send_data(self, data, cause):
+        data_type = _data_type_from_value(data.value)
+        if data_type == _DataType.NORMALIZED and data.quality is None:
+            asdu_type = _common.AsduType.M_ME_ND
+        elif data.time:
+            asdu_type = _data_type_to_asdu_type_with_time[data_type]
+        else:
+            asdu_type = _data_type_to_asdu_type_without_time[data_type]
+        ioe_args = {}
+        if asdu_type in (_common.AsduType.M_ST_NA, _common.AsduType.M_ST_TB):
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;quality&#39;] = data.quality
+            ioe_args[&#39;t&#39;] = data.value.transient
+        elif asdu_type in (_common.AsduType.M_IT_NA, _common.AsduType.M_IT_TB):
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;invalid&#39;] = data.value.invalid
+            ioe_args[&#39;adjusted&#39;] = data.value.adjusted
+            ioe_args[&#39;overflow&#39;] = data.value.overflow
+            ioe_args[&#39;sequence&#39;] = data.value.sequence
+        elif asdu_type == _common.AsduType.M_ME_ND:
+            ioe_args[&#39;value&#39;] = data.value.value
+        else:
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;quality&#39;] = data.quality
+        asdu = _common.ASDU(
+            type=asdu_type,
+            cause=cause if cause else data.cause,
+            is_negative_confirm=False,
+            is_test=data.is_test,
+            originator_address=None,
+            address=data.asdu_address,
+            ios=[_common.IO(
+                address=data.io_address,
+                elements=[_common.create_io_element(asdu_type, **ioe_args)],
+                time=data.time)])
+        self._transport.write(asdu)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.connection.Connection.info"><code class="name">var <span class="ident">info</span></code></dt>
+<dd>
+<div class="desc"><p>ConnectionInfo: connection info</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self):
+    &#34;&#34;&#34;ConnectionInfo: connection info&#34;&#34;&#34;
+    return self._info</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.iec104.connection.Connection.counter_interrogate"><code class="name flex">
+<span>async def <span class="ident">counter_interrogate</span></span>(<span>self, asdu_address=65535, freeze=FreezeCode.READ)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interrogate remote device counters</p>
+<p>Asdu broadcast address 0xFFFF is not supported by all devices</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>asdu_address</code></strong> :&ensp;<code>int</code></dt>
+<dd>asdu address</dd>
+<dt><strong><code>freeze</code></strong> :&ensp;<code>common.FreezeCode</code></dt>
+<dd>freeze code</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[common.Data]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def counter_interrogate(self, asdu_address=0xFFFF,
+                              freeze=common.FreezeCode.READ):
+    &#34;&#34;&#34;Interrogate remote device counters
+
+    Asdu broadcast address 0xFFFF is not supported by all devices
+
+    Args:
+        asdu_address (int): asdu address
+        freeze (common.FreezeCode): freeze code
+
+    Returns:
+        List[common.Data]: data
+
+    &#34;&#34;&#34;
+    async with self._counter_interrogate_lock:
+        # is this necessary (no one closes it)
+        if self._counter_interrogate_queue.is_closed:
+            raise util.QueueClosedError()
+        asdu = _common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu_address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze.value)])])
+        self._transport.write(asdu)
+        if not self._counter_interrogate_queue.empty():
+            self._counter_interrogate_queue.get_nowait_until_empty()
+        data = []
+        async for asdu in self._counter_interrogate_queue:
+            if (asdu.type == _common.AsduType.C_CI_NA and
+                    asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                continue
+            if (asdu.type == _common.AsduType.C_CI_NA and
+                    asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                return data
+            data.extend(_asdu_to_data(asdu))</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.connection.Connection.interrogate"><code class="name flex">
+<span>async def <span class="ident">interrogate</span></span>(<span>self, asdu_address=65535)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interrogate remote device</p>
+<p>Asdu broadcast address 0xFFFF is not supported by all devices</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>asdu_address</code></strong> :&ensp;<code>int</code></dt>
+<dd>asdu address</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[common.Data]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def interrogate(self, asdu_address=0xFFFF):
+    &#34;&#34;&#34;Interrogate remote device
+
+    Asdu broadcast address 0xFFFF is not supported by all devices
+
+    Args:
+        asdu_address (int): asdu address
+
+    Returns:
+        List[common.Data]: data
+
+    &#34;&#34;&#34;
+    async with self._interrogate_lock:
+        # is this necessary (no one closes it)
+        if self._interrogate_queue.is_closed:
+            raise aio.QueueClosedError()
+        asdu = _common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu_address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])])
+        self._transport.write(asdu)
+        if not self._interrogate_queue.empty():
+            self._interrogate_queue.get_nowait_until_empty()
+        data = []
+        async for asdu in self._interrogate_queue:
+            if (asdu.type == _common.AsduType.C_IC_NA and
+                    asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                continue
+            if (asdu.type == _common.AsduType.C_IC_NA and
+                    asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                return data
+            data.extend(_asdu_to_data(asdu))</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.connection.Connection.notify_data_change"><code class="name flex">
+<span>def <span class="ident">notify_data_change</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Notify local data change</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>List[common.Data]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def notify_data_change(self, data):
+    &#34;&#34;&#34;Notify local data change
+
+    Args:
+        data (List[common.Data]): data
+
+    &#34;&#34;&#34;
+    for i in data:
+        # TODO: implement bulk send data
+        self._send_data(i, None)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.connection.Connection.receive"><code class="name flex">
+<span>async def <span class="ident">receive</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Receive remote data change</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[common.Data]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def receive(self):
+    &#34;&#34;&#34;Receive remote data change
+
+    Returns:
+        List[common.Data]: data
+
+    &#34;&#34;&#34;
+    async for asdu in self._data_queue:
+        data = _asdu_to_data(asdu)
+        if data:
+            return data</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.connection.Connection.send_command"><code class="name flex">
+<span>async def <span class="ident">send_command</span></span>(<span>self, cmd)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send command</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cmd</code></strong> :&ensp;<code>common.Command</code></dt>
+<dd>command</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>command's success</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def send_command(self, cmd):
+    &#34;&#34;&#34;Send command
+
+    Args:
+        cmd (common.Command): command
+
+    Returns:
+        bool: command&#39;s success
+
+    &#34;&#34;&#34;
+    cmd_type = _command_type_from_value(cmd.value)
+    if cmd.time:
+        asdu_type = _command_type_to_asdu_type_with_time[cmd_type]
+    else:
+        asdu_type = _command_type_to_asdu_type_without_time[cmd_type]
+    req = _common.ASDU(
+        type=asdu_type,
+        cause=(common.Cause.DEACTIVATION
+               if cmd.action == common.Action.CANCEL else
+               common.Cause.ACTIVATION),
+        is_negative_confirm=False,
+        is_test=False,
+        originator_address=None,
+        address=cmd.asdu_address,
+        ios=[_common.IO(
+            address=cmd.io_address,
+            time=cmd.time,
+            elements=[_common.create_io_element(
+                        asdu_type,
+                        value=cmd.value.value,
+                        select=cmd.action == common.Action.SELECT,
+                        qualifier=cmd.qualifier)])])
+    cmd_id = _CmdId(type=cmd_type,
+                    asdu=cmd.asdu_address,
+                    io=cmd.io_address)
+    if cmd_id in self._command_futures:
+        return False
+    self._transport.write(req)
+    cmd_future = asyncio.Future()
+    self._command_futures[cmd_id] = cmd_future
+    try:
+        resp = await cmd_future
+        return not resp.is_negative_confirm
+    finally:
+        del self._command_futures[cmd_id]
+    return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.iec104.connection.ConnectionInfo"><code class="flex name class">
+<span>class <span class="ident">ConnectionInfo</span></span>
+<span>(</span><span>local_addr: <a title="hat.drivers.iec104.connection.Address" href="#hat.drivers.iec104.connection.Address">Address</a>, remote_addr: <a title="hat.drivers.iec104.connection.Address" href="#hat.drivers.iec104.connection.Address">Address</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ConnectionInfo(local_addr, remote_addr)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    remote_addr: Address</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.connection.ConnectionInfo.local_addr"><code class="name">var <span class="ident">local_addr</span> : <a title="hat.drivers.iec104.connection.Address" href="#hat.drivers.iec104.connection.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.connection.ConnectionInfo.remote_addr"><code class="name">var <span class="ident">remote_addr</span> : <a title="hat.drivers.iec104.connection.Address" href="#hat.drivers.iec104.connection.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.connection.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Server</p>
+<p>For creating new Server instances see :func:<code><a title="hat.drivers.iec104.connection.listen" href="#hat.drivers.iec104.connection.listen">listen()</a></code>.</p>
+<p>Closing server closes all incoming connections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server(aio.Resource):
+    &#34;&#34;&#34;Server
+
+    For creating new Server instances see :func:`listen`.
+
+    Closing server closes all incoming connections.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def addresses(self):
+        &#34;&#34;&#34;List[Address]: listening addresses&#34;&#34;&#34;
+        return self._addresses
+
+    async def _on_close(self):
+        await self._ser.async_close()
+        for conn in list(self._connections):
+            await conn.async_close()
+
+    async def _conn_life(self, conn):
+        try:
+            await conn.wait_closed()
+        finally:
+            if not conn.is_closed:
+                await conn.async_close()
+            self._connections.remove(conn)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.connection.Server.addresses"><code class="name">var <span class="ident">addresses</span></code></dt>
+<dd>
+<div class="desc"><p>List[Address]: listening addresses</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def addresses(self):
+    &#34;&#34;&#34;List[Address]: listening addresses&#34;&#34;&#34;
+    return self._addresses</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers.iec104" href="index.html">hat.drivers.iec104</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.connection.connect" href="#hat.drivers.iec104.connection.connect">connect</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.listen" href="#hat.drivers.iec104.connection.listen">listen</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.iec104.connection.Address" href="#hat.drivers.iec104.connection.Address">Address</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.connection.Address.host" href="#hat.drivers.iec104.connection.Address.host">host</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.Address.port" href="#hat.drivers.iec104.connection.Address.port">port</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.connection.Connection" href="#hat.drivers.iec104.connection.Connection">Connection</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.connection.Connection.counter_interrogate" href="#hat.drivers.iec104.connection.Connection.counter_interrogate">counter_interrogate</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.Connection.info" href="#hat.drivers.iec104.connection.Connection.info">info</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.Connection.interrogate" href="#hat.drivers.iec104.connection.Connection.interrogate">interrogate</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.Connection.notify_data_change" href="#hat.drivers.iec104.connection.Connection.notify_data_change">notify_data_change</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.Connection.receive" href="#hat.drivers.iec104.connection.Connection.receive">receive</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.Connection.send_command" href="#hat.drivers.iec104.connection.Connection.send_command">send_command</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.connection.ConnectionInfo" href="#hat.drivers.iec104.connection.ConnectionInfo">ConnectionInfo</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.connection.ConnectionInfo.local_addr" href="#hat.drivers.iec104.connection.ConnectionInfo.local_addr">local_addr</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection.ConnectionInfo.remote_addr" href="#hat.drivers.iec104.connection.ConnectionInfo.remote_addr">remote_addr</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.connection.Server" href="#hat.drivers.iec104.connection.Server">Server</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.connection.Server.addresses" href="#hat.drivers.iec104.connection.Server.addresses">addresses</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

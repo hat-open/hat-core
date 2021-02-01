@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.doit.common API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.doit.common</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from pathlib import Path
+import datetime
+import enum
+import functools
+import itertools
+import os
+import shutil
+import subprocess
+import sys
+
+import mako.lookup
+import mako.template
+import packaging.version
+
+
+now = datetime.datetime.now()
+
+
+def mkdir_p(*paths):
+    for path in paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
+
+
+def rm_rf(*paths):
+    for path in paths:
+        p = Path(path)
+        if not p.exists():
+            continue
+        if p.is_dir():
+            shutil.rmtree(str(p), ignore_errors=True)
+        else:
+            p.unlink()
+
+
+def cp_r(src, dest):
+    src = Path(src)
+    dest = Path(dest)
+    if src.is_dir():
+        shutil.copytree(str(src), str(dest))
+    else:
+        shutil.copy2(str(src), str(dest))
+
+
+class StaticWebServer:
+
+    def __init__(self, dir, port):
+        self._p = subprocess.Popen([sys.executable,
+                                    &#39;-m&#39;, &#39;http.server&#39;,
+                                    &#39;-b&#39;, &#39;127.0.0.1&#39;,
+                                    &#39;-d&#39;, str(dir),
+                                    str(port)],
+                                   stdout=subprocess.DEVNULL,
+                                   stderr=subprocess.DEVNULL)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def close(self):
+        self._p.terminate()
+
+
+class VersionType(enum.Enum):
+    SEMVER = 0
+    PIP = 1
+
+
+@functools.lru_cache
+def get_version(version_type=VersionType.SEMVER):
+    with open(&#39;VERSION&#39;, encoding=&#39;utf-8&#39;) as f:
+        version = f.read().strip()
+
+    if version.endswith(&#39;dev&#39;):
+        version += now.strftime(&#34;%Y%m%d&#34;)
+
+    if version_type == VersionType.SEMVER:
+        return version
+
+    elif version_type == VersionType.PIP:
+        return packaging.version.Version(version).public
+
+    raise ValueError()
+
+
+def mako_build(tmpl_dir, src_path, dst_path, params):
+    tmpl_lookup = mako.lookup.TemplateLookup(directories=[str(tmpl_dir)],
+                                             input_encoding=&#39;utf-8&#39;)
+    tmpl_uri = tmpl_lookup.filename_to_uri(str(src_path))
+    tmpl = tmpl_lookup.get_template(tmpl_uri)
+    output = tmpl.render(**params)
+
+    dst_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(dst_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        f.write(output)
+
+
+class SphinxOutputType(enum.Enum):
+    HTML = &#39;html&#39;
+    LATEX = &#39;latex&#39;
+
+
+def sphinx_build(out_type, src, dest):
+    mkdir_p(dest)
+    subprocess.run([sys.executable, &#39;-m&#39;, &#39;sphinx&#39;, &#39;-q&#39;, &#39;-b&#39;, out_type.value,
+                    str(src), str(dest)],
+                   check=True)
+
+
+def latex_build(src, dest):
+    mkdir_p(dest)
+    for i in src.glob(&#39;*.tex&#39;):
+        subprocess.run([&#39;xelatex&#39;, &#39;-interaction=batchmode&#39;,
+                        f&#39;-output-directory={dest.resolve()}&#39;, i.name],
+                       cwd=src, stdout=subprocess.DEVNULL, check=True)
+
+
+if sys.platform == &#39;win32&#39;:
+    lib_suffix = &#39;.dll&#39;
+elif sys.platform == &#39;darwin&#39;:
+    lib_suffix = &#39;.dylib&#39;
+else:
+    lib_suffix = &#39;.so&#39;
+
+cpp = os.environ.get(&#39;CPP&#39;, &#39;cpp&#39;)
+cc = os.environ.get(&#39;CC&#39;, &#39;cc&#39;)
+ld = os.environ.get(&#39;LD&#39;, &#39;cc&#39;)
+
+
+class CBuild:
+
+    def __init__(self, src_paths, src_dir, build_dir, *,
+                 cpp=cpp, cc=cc, ld=ld,
+                 cpp_flags=[], cc_flags=[], ld_flags=[],
+                 libs=[]):
+        self._src_paths = src_paths
+        self._src_dir = src_dir
+        self._build_dir = build_dir
+        self._cpp = cpp
+        self._cc = cc
+        self._ld = ld
+        self._cpp_flags = cpp_flags
+        self._cc_flags = cc_flags
+        self._ld_flags = ld_flags
+
+    def get_task_lib(self, lib_path):
+        obj_paths = [self._get_obj_path(src_path)
+                     for src_path in self._src_paths]
+        shared_flag = &#39;-mdll&#39; if sys.platform == &#39;win32&#39; else &#39;-shared&#39;
+        return {&#39;actions&#39;: [(mkdir_p, [lib_path.parent]),
+                            [ld, *[str(obj_path) for obj_path in obj_paths],
+                             &#39;-o&#39;, str(lib_path), shared_flag,
+                             *self._ld_flags]],
+                &#39;file_dep&#39;: obj_paths,
+                &#39;targets&#39;: [lib_path]}
+
+    def get_task_objs(self):
+        for src_path in self._src_paths:
+            dep_path = self._get_dep_path(src_path)
+            obj_path = self._get_obj_path(src_path)
+            header_paths = self._parse_dep(dep_path)
+            yield {&#39;name&#39;: str(obj_path),
+                   &#39;actions&#39;: [(mkdir_p, [obj_path.parent]),
+                               [cc, *self._cpp_flags, *self._cc_flags, &#39;-c&#39;,
+                                &#39;-o&#39;, str(obj_path), str(src_path)]],
+                   &#39;file_dep&#39;: [src_path, dep_path, *header_paths],
+                   &#39;targets&#39;: [obj_path]}
+
+    def get_task_deps(self):
+        for src_path in self._src_paths:
+            dep_path = self._get_dep_path(src_path)
+            yield {&#39;name&#39;: str(dep_path),
+                   &#39;actions&#39;: [(mkdir_p, [dep_path.parent]),
+                               [cpp, *self._cpp_flags, &#39;-MM&#39;,
+                                &#39;-o&#39;, str(dep_path), str(src_path)]],
+                   &#39;file_dep&#39;: [src_path],
+                   &#39;targets&#39;: [dep_path]}
+
+    def _get_dep_path(self, src_path):
+        return (self._build_dir /
+                src_path.relative_to(self._src_dir)).with_suffix(&#39;.d&#39;)
+
+    def _get_obj_path(self, src_path):
+        return (self._build_dir /
+                src_path.relative_to(self._src_dir)).with_suffix(&#39;.o&#39;)
+
+    def _parse_dep(self, path):
+        if not path.exists():
+            return []
+        with open(path, &#39;r&#39;) as f:
+            content = f.readlines()
+        if not content:
+            return []
+        content[0] = content[0][content[0].find(&#39;:&#39;)+1:]
+        return list(itertools.chain.from_iterable(
+            (Path(path) for path in i.replace(&#39; \\\n&#39;, &#39;&#39;).strip().split(&#39; &#39;))
+            for i in content))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.doit.common.cp_r"><code class="name flex">
+<span>def <span class="ident">cp_r</span></span>(<span>src, dest)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cp_r(src, dest):
+    src = Path(src)
+    dest = Path(dest)
+    if src.is_dir():
+        shutil.copytree(str(src), str(dest))
+    else:
+        shutil.copy2(str(src), str(dest))</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.get_version"><code class="name flex">
+<span>def <span class="ident">get_version</span></span>(<span>version_type=VersionType.SEMVER)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@functools.lru_cache
+def get_version(version_type=VersionType.SEMVER):
+    with open(&#39;VERSION&#39;, encoding=&#39;utf-8&#39;) as f:
+        version = f.read().strip()
+
+    if version.endswith(&#39;dev&#39;):
+        version += now.strftime(&#34;%Y%m%d&#34;)
+
+    if version_type == VersionType.SEMVER:
+        return version
+
+    elif version_type == VersionType.PIP:
+        return packaging.version.Version(version).public
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.latex_build"><code class="name flex">
+<span>def <span class="ident">latex_build</span></span>(<span>src, dest)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def latex_build(src, dest):
+    mkdir_p(dest)
+    for i in src.glob(&#39;*.tex&#39;):
+        subprocess.run([&#39;xelatex&#39;, &#39;-interaction=batchmode&#39;,
+                        f&#39;-output-directory={dest.resolve()}&#39;, i.name],
+                       cwd=src, stdout=subprocess.DEVNULL, check=True)</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.mako_build"><code class="name flex">
+<span>def <span class="ident">mako_build</span></span>(<span>tmpl_dir, src_path, dst_path, params)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mako_build(tmpl_dir, src_path, dst_path, params):
+    tmpl_lookup = mako.lookup.TemplateLookup(directories=[str(tmpl_dir)],
+                                             input_encoding=&#39;utf-8&#39;)
+    tmpl_uri = tmpl_lookup.filename_to_uri(str(src_path))
+    tmpl = tmpl_lookup.get_template(tmpl_uri)
+    output = tmpl.render(**params)
+
+    dst_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(dst_path, &#39;w&#39;, encoding=&#39;utf-8&#39;) as f:
+        f.write(output)</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.mkdir_p"><code class="name flex">
+<span>def <span class="ident">mkdir_p</span></span>(<span>*paths)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mkdir_p(*paths):
+    for path in paths:
+        Path(path).mkdir(parents=True, exist_ok=True)</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.rm_rf"><code class="name flex">
+<span>def <span class="ident">rm_rf</span></span>(<span>*paths)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rm_rf(*paths):
+    for path in paths:
+        p = Path(path)
+        if not p.exists():
+            continue
+        if p.is_dir():
+            shutil.rmtree(str(p), ignore_errors=True)
+        else:
+            p.unlink()</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.sphinx_build"><code class="name flex">
+<span>def <span class="ident">sphinx_build</span></span>(<span>out_type, src, dest)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sphinx_build(out_type, src, dest):
+    mkdir_p(dest)
+    subprocess.run([sys.executable, &#39;-m&#39;, &#39;sphinx&#39;, &#39;-q&#39;, &#39;-b&#39;, out_type.value,
+                    str(src), str(dest)],
+                   check=True)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.doit.common.CBuild"><code class="flex name class">
+<span>class <span class="ident">CBuild</span></span>
+<span>(</span><span>src_paths, src_dir, build_dir, *, cpp='gcc', cc='gcc', ld='gcc', cpp_flags=[], cc_flags=[], ld_flags=[], libs=[])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CBuild:
+
+    def __init__(self, src_paths, src_dir, build_dir, *,
+                 cpp=cpp, cc=cc, ld=ld,
+                 cpp_flags=[], cc_flags=[], ld_flags=[],
+                 libs=[]):
+        self._src_paths = src_paths
+        self._src_dir = src_dir
+        self._build_dir = build_dir
+        self._cpp = cpp
+        self._cc = cc
+        self._ld = ld
+        self._cpp_flags = cpp_flags
+        self._cc_flags = cc_flags
+        self._ld_flags = ld_flags
+
+    def get_task_lib(self, lib_path):
+        obj_paths = [self._get_obj_path(src_path)
+                     for src_path in self._src_paths]
+        shared_flag = &#39;-mdll&#39; if sys.platform == &#39;win32&#39; else &#39;-shared&#39;
+        return {&#39;actions&#39;: [(mkdir_p, [lib_path.parent]),
+                            [ld, *[str(obj_path) for obj_path in obj_paths],
+                             &#39;-o&#39;, str(lib_path), shared_flag,
+                             *self._ld_flags]],
+                &#39;file_dep&#39;: obj_paths,
+                &#39;targets&#39;: [lib_path]}
+
+    def get_task_objs(self):
+        for src_path in self._src_paths:
+            dep_path = self._get_dep_path(src_path)
+            obj_path = self._get_obj_path(src_path)
+            header_paths = self._parse_dep(dep_path)
+            yield {&#39;name&#39;: str(obj_path),
+                   &#39;actions&#39;: [(mkdir_p, [obj_path.parent]),
+                               [cc, *self._cpp_flags, *self._cc_flags, &#39;-c&#39;,
+                                &#39;-o&#39;, str(obj_path), str(src_path)]],
+                   &#39;file_dep&#39;: [src_path, dep_path, *header_paths],
+                   &#39;targets&#39;: [obj_path]}
+
+    def get_task_deps(self):
+        for src_path in self._src_paths:
+            dep_path = self._get_dep_path(src_path)
+            yield {&#39;name&#39;: str(dep_path),
+                   &#39;actions&#39;: [(mkdir_p, [dep_path.parent]),
+                               [cpp, *self._cpp_flags, &#39;-MM&#39;,
+                                &#39;-o&#39;, str(dep_path), str(src_path)]],
+                   &#39;file_dep&#39;: [src_path],
+                   &#39;targets&#39;: [dep_path]}
+
+    def _get_dep_path(self, src_path):
+        return (self._build_dir /
+                src_path.relative_to(self._src_dir)).with_suffix(&#39;.d&#39;)
+
+    def _get_obj_path(self, src_path):
+        return (self._build_dir /
+                src_path.relative_to(self._src_dir)).with_suffix(&#39;.o&#39;)
+
+    def _parse_dep(self, path):
+        if not path.exists():
+            return []
+        with open(path, &#39;r&#39;) as f:
+            content = f.readlines()
+        if not content:
+            return []
+        content[0] = content[0][content[0].find(&#39;:&#39;)+1:]
+        return list(itertools.chain.from_iterable(
+            (Path(path) for path in i.replace(&#39; \\\n&#39;, &#39;&#39;).strip().split(&#39; &#39;))
+            for i in content))</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.doit.common.CBuild.get_task_deps"><code class="name flex">
+<span>def <span class="ident">get_task_deps</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_deps(self):
+    for src_path in self._src_paths:
+        dep_path = self._get_dep_path(src_path)
+        yield {&#39;name&#39;: str(dep_path),
+               &#39;actions&#39;: [(mkdir_p, [dep_path.parent]),
+                           [cpp, *self._cpp_flags, &#39;-MM&#39;,
+                            &#39;-o&#39;, str(dep_path), str(src_path)]],
+               &#39;file_dep&#39;: [src_path],
+               &#39;targets&#39;: [dep_path]}</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.CBuild.get_task_lib"><code class="name flex">
+<span>def <span class="ident">get_task_lib</span></span>(<span>self, lib_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_lib(self, lib_path):
+    obj_paths = [self._get_obj_path(src_path)
+                 for src_path in self._src_paths]
+    shared_flag = &#39;-mdll&#39; if sys.platform == &#39;win32&#39; else &#39;-shared&#39;
+    return {&#39;actions&#39;: [(mkdir_p, [lib_path.parent]),
+                        [ld, *[str(obj_path) for obj_path in obj_paths],
+                         &#39;-o&#39;, str(lib_path), shared_flag,
+                         *self._ld_flags]],
+            &#39;file_dep&#39;: obj_paths,
+            &#39;targets&#39;: [lib_path]}</code></pre>
+</details>
+</dd>
+<dt id="hat.doit.common.CBuild.get_task_objs"><code class="name flex">
+<span>def <span class="ident">get_task_objs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_objs(self):
+    for src_path in self._src_paths:
+        dep_path = self._get_dep_path(src_path)
+        obj_path = self._get_obj_path(src_path)
+        header_paths = self._parse_dep(dep_path)
+        yield {&#39;name&#39;: str(obj_path),
+               &#39;actions&#39;: [(mkdir_p, [obj_path.parent]),
+                           [cc, *self._cpp_flags, *self._cc_flags, &#39;-c&#39;,
+                            &#39;-o&#39;, str(obj_path), str(src_path)]],
+               &#39;file_dep&#39;: [src_path, dep_path, *header_paths],
+               &#39;targets&#39;: [obj_path]}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.doit.common.SphinxOutputType"><code class="flex name class">
+<span>class <span class="ident">SphinxOutputType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SphinxOutputType(enum.Enum):
+    HTML = &#39;html&#39;
+    LATEX = &#39;latex&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.doit.common.SphinxOutputType.HTML"><code class="name">var <span class="ident">HTML</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.doit.common.SphinxOutputType.LATEX"><code class="name">var <span class="ident">LATEX</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.doit.common.StaticWebServer"><code class="flex name class">
+<span>class <span class="ident">StaticWebServer</span></span>
+<span>(</span><span>dir, port)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StaticWebServer:
+
+    def __init__(self, dir, port):
+        self._p = subprocess.Popen([sys.executable,
+                                    &#39;-m&#39;, &#39;http.server&#39;,
+                                    &#39;-b&#39;, &#39;127.0.0.1&#39;,
+                                    &#39;-d&#39;, str(dir),
+                                    str(port)],
+                                   stdout=subprocess.DEVNULL,
+                                   stderr=subprocess.DEVNULL)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def close(self):
+        self._p.terminate()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.doit.common.StaticWebServer.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    self._p.terminate()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.doit.common.VersionType"><code class="flex name class">
+<span>class <span class="ident">VersionType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VersionType(enum.Enum):
+    SEMVER = 0
+    PIP = 1</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.doit.common.VersionType.PIP"><code class="name">var <span class="ident">PIP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.doit.common.VersionType.SEMVER"><code class="name">var <span class="ident">SEMVER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.doit" href="index.html">hat.doit</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="hat.doit.common.cp_r" href="#hat.doit.common.cp_r">cp_r</a></code></li>
+<li><code><a title="hat.doit.common.get_version" href="#hat.doit.common.get_version">get_version</a></code></li>
+<li><code><a title="hat.doit.common.latex_build" href="#hat.doit.common.latex_build">latex_build</a></code></li>
+<li><code><a title="hat.doit.common.mako_build" href="#hat.doit.common.mako_build">mako_build</a></code></li>
+<li><code><a title="hat.doit.common.mkdir_p" href="#hat.doit.common.mkdir_p">mkdir_p</a></code></li>
+<li><code><a title="hat.doit.common.rm_rf" href="#hat.doit.common.rm_rf">rm_rf</a></code></li>
+<li><code><a title="hat.doit.common.sphinx_build" href="#hat.doit.common.sphinx_build">sphinx_build</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.doit.common.CBuild" href="#hat.doit.common.CBuild">CBuild</a></code></h4>
+<ul class="">
+<li><code><a title="hat.doit.common.CBuild.get_task_deps" href="#hat.doit.common.CBuild.get_task_deps">get_task_deps</a></code></li>
+<li><code><a title="hat.doit.common.CBuild.get_task_lib" href="#hat.doit.common.CBuild.get_task_lib">get_task_lib</a></code></li>
+<li><code><a title="hat.doit.common.CBuild.get_task_objs" href="#hat.doit.common.CBuild.get_task_objs">get_task_objs</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.doit.common.SphinxOutputType" href="#hat.doit.common.SphinxOutputType">SphinxOutputType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.doit.common.SphinxOutputType.HTML" href="#hat.doit.common.SphinxOutputType.HTML">HTML</a></code></li>
+<li><code><a title="hat.doit.common.SphinxOutputType.LATEX" href="#hat.doit.common.SphinxOutputType.LATEX">LATEX</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.doit.common.StaticWebServer" href="#hat.doit.common.StaticWebServer">StaticWebServer</a></code></h4>
+<ul class="">
+<li><code><a title="hat.doit.common.StaticWebServer.close" href="#hat.doit.common.StaticWebServer.close">close</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.doit.common.VersionType" href="#hat.doit.common.VersionType">VersionType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.doit.common.VersionType.PIP" href="#hat.doit.common.VersionType.PIP">PIP</a></code></li>
+<li><code><a title="hat.doit.common.VersionType.SEMVER" href="#hat.doit.common.VersionType.SEMVER">SEMVER</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

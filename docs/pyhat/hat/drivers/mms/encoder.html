@@ -1,0 +1,1220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.mms.encoder API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.mms.encoder</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import datetime
+import struct
+
+from hat import asn1
+from hat.drivers.mms import common
+
+
+def encode_request(req: common.Request) -&gt; asn1.Value:
+    &#34;&#34;&#34;Encode request&#34;&#34;&#34;
+    if isinstance(req, common.StatusRequest):
+        return &#39;status&#39;, False
+
+    if isinstance(req, common.GetNameListRequest):
+        service = {
+            &#39;objectClass&#39;: (&#39;basicObjectClass&#39;, req.object_class.value),
+            &#39;objectScope&#39;: _encode_object_scope(req.object_scope)}
+        if req.continue_after is not None:
+            service[&#39;continueAfter&#39;] = req.continue_after
+        return &#39;getNameList&#39;, service
+
+    if isinstance(req, common.IdentifyRequest):
+        return &#39;identify&#39;, None
+
+    if isinstance(req, common.GetVariableAccessAttributesRequest):
+        if isinstance(req.value, common.ObjectName):
+            service = &#39;name&#39;, _encode_object_name(req.value)
+        else:
+            service = &#39;address&#39;, _encode_address(req.value)
+        return &#39;getVariableAccessAttributes&#39;, service
+
+    if isinstance(req, common.GetNamedVariableListAttributesRequest):
+        return &#39;getNamedVariableListAttributes&#39;, _encode_object_name(req.value)
+
+    if isinstance(req, common.ReadRequest):
+        if isinstance(req.value, common.ObjectName):
+            specification = &#39;variableListName&#39;, _encode_object_name(req.value)
+        else:
+            specification = &#39;listOfVariable&#39;, [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in req.value]
+        return &#39;read&#39;, {&#39;variableAccessSpecification&#39;: specification}
+
+    if isinstance(req, common.WriteRequest):
+        if isinstance(req.specification, common.ObjectName):
+            specification = (&#39;variableListName&#39;,
+                             _encode_object_name(req.specification))
+        else:
+            specification = &#39;listOfVariable&#39;, [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in req.specification]
+        data = [_encode_data(i) for i in req.data]
+        return &#39;write&#39;, {
+            &#39;variableAccessSpecification&#39;: specification,
+            &#39;listOfData&#39;: data}
+
+    if isinstance(req, common.DefineNamedVariableListRequest):
+        return &#39;defineNamedVariableList&#39;, {
+            &#39;variableListName&#39;: _encode_object_name(req.name),
+            &#39;listOfVariable&#39;: [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in req.specification]}
+
+    if isinstance(req, common.DeleteNamedVariableListRequest):
+        return &#39;deleteNamedVariableList&#39;, {
+            &#39;listOfVariableListName&#39;: [_encode_object_name(i)
+                                       for i in req.names]}
+
+    raise ValueError()
+
+
+def decode_request(req: asn1.Value) -&gt; common.Request:
+    &#34;&#34;&#34;Decode request&#34;&#34;&#34;
+    name, data = req
+
+    if name == &#39;status&#39;:
+        return common.StatusRequest()
+
+    if name == &#39;getNameList&#39;:
+        subname, subdata = data[&#39;objectClass&#39;]
+        if subname == &#39;basicObjectClass&#39;:
+            object_class = common.ObjectClass(subdata)
+        else:
+            object_class = common.ObjectClass.UNDEFINED
+        object_scope = _decode_object_scope(data[&#39;objectScope&#39;])
+        continue_after = data.get(&#39;continueAfter&#39;)
+        return common.GetNameListRequest(object_class=object_class,
+                                         object_scope=object_scope,
+                                         continue_after=continue_after)
+
+    if name == &#39;identify&#39;:
+        return common.IdentifyRequest()
+
+    if name == &#39;getVariableAccessAttributes&#39;:
+        subname, subdata = data
+        if subname == &#39;address&#39;:
+            value = _decode_address(subdata)
+        elif subname == &#39;name&#39;:
+            value = _decode_object_name(subdata)
+        else:
+            raise ValueError()
+        return common.GetVariableAccessAttributesRequest(value)
+
+    if name == &#39;getNamedVariableListAttributes&#39;:
+        return common.GetNamedVariableListAttributesRequest(
+            _decode_object_name(data))
+
+    if name == &#39;read&#39;:
+        subname, subdata = data[&#39;variableAccessSpecification&#39;]
+        if subname == &#39;variableListName&#39;:
+            value = _decode_object_name(subdata)
+        elif subname == &#39;listOfVariable&#39;:
+            value = [_decode_variable_specification(i[&#39;variableSpecification&#39;])
+                     for i in subdata]
+        else:
+            raise ValueError()
+        return common.ReadRequest(value)
+
+    if name == &#39;write&#39;:
+        subname, subdata = data[&#39;variableAccessSpecification&#39;]
+        if subname == &#39;variableListName&#39;:
+            specification = _decode_object_name(subdata)
+        elif subname == &#39;listOfVariable&#39;:
+            specification = [
+                _decode_variable_specification(i[&#39;variableSpecification&#39;])
+                for i in subdata]
+        else:
+            raise ValueError()
+        return common.WriteRequest(
+            specification, [_decode_data(i) for i in data[&#39;listOfData&#39;]])
+
+    if name == &#39;defineNamedVariableList&#39;:
+        return common.DefineNamedVariableListRequest(
+            _decode_object_name(data[&#39;variableListName&#39;]),
+            [_decode_variable_specification(i[&#39;variableSpecification&#39;])
+             for i in data[&#39;listOfVariable&#39;]])
+
+    if name == &#39;deleteNamedVariableList&#39;:
+        return common.DeleteNamedVariableListRequest(
+            [_decode_object_name(i)
+             for i in data.get(&#39;listOfVariableListName&#39;, [])])
+
+    raise ValueError()
+
+
+def encode_response(res: common.Response) -&gt; asn1.Value:
+    &#34;&#34;&#34;Encode response
+
+    `common.ErrorResponse` is not supported.
+
+    &#34;&#34;&#34;
+    if isinstance(res, common.StatusResponse):
+        return &#39;status&#39;, {
+            &#39;vmdLogicalStatus&#39;: res.logical,
+            &#39;vmdPhysicalStatus&#39;: res.physical}
+
+    if isinstance(res, common.GetNameListResponse):
+        return &#39;getNameList&#39;, {
+            &#39;listOfIdentifier&#39;: res.identifiers,
+            &#39;moreFollows&#39;: res.more_follows}
+
+    if isinstance(res, common.IdentifyResponse):
+        service = {&#39;vendorName&#39;: res.vendor,
+                   &#39;modelName&#39;: res.model,
+                   &#39;revision&#39;: res.revision}
+        if res.syntaxes is not None:
+            service[&#39;listOfAbstractSyntaxes&#39;] = res.syntaxes
+        return &#39;identify&#39;, service
+
+    if isinstance(res, common.GetVariableAccessAttributesResponse):
+        return &#39;getVariableAccessAttributes&#39;, {
+            &#39;mmsDeletable&#39;: res.mms_deletable,
+            &#39;typeDescription&#39;: _encode_type_description(res.type_description)}
+
+    if isinstance(res, common.GetNamedVariableListAttributesResponse):
+        return &#39;getNamedVariableListAttributes&#39;, {
+            &#39;mmsDeletable&#39;: res.mms_deletable,
+            &#39;listOfVariable&#39;: [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in res.specification]}
+
+    if isinstance(res, common.ReadResponse):
+        results = [
+            ((&#39;failure&#39;, i.value) if isinstance(i, common.DataAccessError)
+             else (&#39;success&#39;, _encode_data(i)))
+            for i in res.results]
+        return &#39;read&#39;, {&#39;listOfAccessResult&#39;: results}
+
+    if isinstance(res, common.WriteResponse):
+        results = [
+            ((&#39;success&#39;, None) if i is None else (&#39;failure&#39;, i.value))
+            for i in res.results]
+        return &#39;write&#39;, results
+
+    if isinstance(res, common.DefineNamedVariableListResponse):
+        return &#39;defineNamedVariableList&#39;, None
+
+    if isinstance(res, common.DeleteNamedVariableListResponse):
+        return &#39;deleteNamedVariableList&#39;, {
+            &#39;numberMatched&#39;: res.matched,
+            &#39;numberDeleted&#39;: res.deleted}
+
+    raise ValueError()
+
+
+def decode_response(res: asn1.Value) -&gt; common.Response:
+    &#34;&#34;&#34;Decode response
+
+    `common.ErrorResponse` is not supported.
+
+    &#34;&#34;&#34;
+    name, data = res
+
+    if name == &#39;status&#39;:
+        return common.StatusResponse(data[&#39;vmdLogicalStatus&#39;],
+                                     data[&#39;vmdPhysicalStatus&#39;])
+
+    if name == &#39;getNameList&#39;:
+        return common.GetNameListResponse(data[&#39;listOfIdentifier&#39;],
+                                          data.get(&#39;moreFollows&#39;, True))
+
+    if name == &#39;identify&#39;:
+        return common.IdentifyResponse(
+            vendor=data[&#39;vendorName&#39;],
+            model=data[&#39;modelName&#39;],
+            revision=data[&#39;revision&#39;],
+            syntaxes=data.get(&#39;listOfAbstractSyntaxes&#39;))
+
+    if name == &#39;getVariableAccessAttributes&#39;:
+        return common.GetVariableAccessAttributesResponse(
+            data[&#39;mmsDeletable&#39;],
+            _decode_type_description(data[&#39;typeDescription&#39;]))
+
+    if name == &#39;getNamedVariableListAttributes&#39;:
+        specification = [
+            _decode_variable_specification(i[&#39;variableSpecification&#39;])
+            for i in data[&#39;listOfVariable&#39;]]
+        return common.GetNamedVariableListAttributesResponse(
+            data[&#39;mmsDeletable&#39;], specification)
+
+    if name == &#39;read&#39;:
+        results = [
+            (common.DataAccessError(i[1]) if i[0] == &#39;failure&#39; else
+             _decode_data(i[1]))
+            for i in data[&#39;listOfAccessResult&#39;]]
+        return common.ReadResponse(results)
+
+    if name == &#39;write&#39;:
+        results = [
+            (None if i[0] == &#39;success&#39; else common.DataAccessError(i[1]))
+            for i in data]
+        return common.WriteResponse(results)
+
+    if name == &#39;defineNamedVariableList&#39;:
+        return common.DefineNamedVariableListResponse()
+
+    if name == &#39;deleteNamedVariableList&#39;:
+        return common.DeleteNamedVariableListResponse(data[&#39;numberMatched&#39;],
+                                                      data[&#39;numberDeleted&#39;])
+
+    raise ValueError()
+
+
+def encode_unconfirmed(unconfirmed: common.Unconfirmed) -&gt; asn1.Value:
+    &#34;&#34;&#34;Encode unconfirmed&#34;&#34;&#34;
+    if isinstance(unconfirmed, common.EventNotificationUnconfirmed):
+        if unconfirmed.time is None:
+            transition_time = &#39;undefined&#39;, None
+        elif isinstance(unconfirmed.time, int):
+            transition_time = &#39;timeSequenceIdentifier&#39;, unconfirmed.time
+        else:
+            transition_time = &#39;timeOfDay&#39;, unconfirmed.time
+        return &#39;eventNotification&#39;, {
+            &#39;eventEnrollmentName&#39;: _encode_object_name(unconfirmed.enrollment),
+            &#39;eventConditionName&#39;: _encode_object_name(unconfirmed.condition),
+            &#39;severity&#39;: unconfirmed.severity,
+            &#39;transitionTime&#39;: transition_time}
+
+    if isinstance(unconfirmed, common.InformationReportUnconfirmed):
+        if isinstance(unconfirmed.specification, common.ObjectName):
+            specification = (&#39;variableListName&#39;,
+                             _encode_object_name(unconfirmed.specification))
+        else:
+            specification = &#39;listOfVariable&#39;, [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in unconfirmed.specification]
+        data = [((&#39;failure&#39;, i.value)
+                 if isinstance(i, common.DataAccessError)
+                 else (&#39;success&#39;, _encode_data(i)))
+                for i in unconfirmed.data]
+        return &#39;informationReport&#39;, {
+            &#39;variableAccessSpecification&#39;: specification,
+            &#39;listOfAccessResult&#39;: data}
+
+    if isinstance(unconfirmed, common.UnsolicitedStatusUnconfirmed):
+        return &#39;unsolicitedStatus&#39;, {
+            &#39;vmdLogicalStatus&#39;: unconfirmed.logical,
+            &#39;vmdPhysicalStatus&#39;: unconfirmed.physical}
+
+    raise ValueError()
+
+
+def decode_unconfirmed(unconfirmed: asn1.Value) -&gt; common.Unconfirmed:
+    &#34;&#34;&#34;Decode unconfirmed&#34;&#34;&#34;
+    name, data = unconfirmed
+
+    if name == &#39;eventNotification&#39;:
+        return common.EventNotificationUnconfirmed(
+            enrollment=_decode_object_name(data[&#39;eventEnrollmentName&#39;]),
+            condition=_decode_object_name(data[&#39;eventConditionName&#39;]),
+            severity=data[&#39;severity&#39;],
+            time=data[&#39;transitionTime&#39;][1])
+
+    if name == &#39;informationReport&#39;:
+        subname, subdata = data[&#39;variableAccessSpecification&#39;]
+        if subname == &#39;variableListName&#39;:
+            specification = _decode_object_name(subdata)
+        elif subname == &#39;listOfVariable&#39;:
+            specification = [
+                _decode_variable_specification(i[&#39;variableSpecification&#39;])
+                for i in subdata]
+        else:
+            raise ValueError()
+        data = [(common.DataAccessError(v) if k == &#39;failure&#39;
+                 else _decode_data(v))
+                for k, v in data[&#39;listOfAccessResult&#39;]]
+        return common.InformationReportUnconfirmed(specification, data)
+
+    if name == &#39;unsolicitedStatus&#39;:
+        return common.UnsolicitedStatusUnconfirmed(
+            data[&#39;vmdLogicalStatus&#39;], data[&#39;vmdPhysicalStatus&#39;])
+
+    raise ValueError()
+
+
+def _encode_data(data):
+    if isinstance(data, common.ArrayData):
+        return &#39;array&#39;, [_encode_data(i) for i in data.elements]
+
+    if isinstance(data, common.BcdData):
+        return &#39;bcd&#39;, data.value
+
+    if isinstance(data, common.BinaryTimeData):
+        epoch = datetime.datetime(1984, 1, 1, tzinfo=datetime.timezone.utc)
+        delta = data.value - epoch
+        binary_time = [0xFF &amp; (delta.seconds &gt;&gt; 24),
+                       0xFF &amp; (delta.seconds &gt;&gt; 16),
+                       0xFF &amp; (delta.seconds &gt;&gt; 8),
+                       0xFF &amp; delta.seconds,
+                       0xFF &amp; (delta.days &gt;&gt; 8),
+                       0xFF &amp; delta.days]
+        return &#39;binary-time&#39;, bytes(binary_time)
+
+    if isinstance(data, common.BitStringData):
+        return &#39;bit-string&#39;, data.value
+
+    if isinstance(data, common.BooleanData):
+        return &#39;boolean&#39;, data.value
+
+    if isinstance(data, common.BooleanArrayData):
+        return &#39;booleanArray&#39;, data.value
+
+    if isinstance(data, common.FloatingPointData):
+        floating_point = b&#39;\x08&#39; + struct.pack(&#34;&gt;f&#34;, data.value)
+        return &#39;floating-point&#39;, floating_point
+
+    if isinstance(data, common.GeneralizedTimeData):
+        return &#39;generalized-time&#39;, data.value
+
+    if isinstance(data, common.IntegerData):
+        return &#39;integer&#39;, data.value
+
+    if isinstance(data, common.MmsStringData):
+        return &#39;mMSString&#39;, data.value
+
+    if isinstance(data, common.ObjIdData):
+        return &#39;objId&#39;, data.value
+
+    if isinstance(data, common.OctetStringData):
+        return &#39;octet-string&#39;, data.value
+
+    if isinstance(data, common.StructureData):
+        return &#39;structure&#39;, [_encode_data(i) for i in data.elements]
+
+    if isinstance(data, common.UnsignedData):
+        return &#39;unsigned&#39;, data.value
+
+    if isinstance(data, common.UtcTimeData):
+        if data.accuracy is not None and not (0 &lt;= data.accuracy &lt;= 24):
+            raise ValueError(&#39;invalid UtcTime accuracy&#39;)
+        ts = data.value.timestamp()
+        decimal = ts - int(ts)
+        fraction = bytearray([0, 0, 0])
+        for i in range(24):
+            if decimal &gt;= 2 ** -(i + 1):
+                decimal -= 2 ** -(i + 1)
+                fraction[i // 8] |= 1 &lt;&lt; (7 - (i % 8))
+        quality = ((0x80 if data.leap_second else 0) |
+                   (0x40 if data.clock_failure else 0) |
+                   (0x20 if data.not_synchronized else 0) |
+                   (0x1F if data.accuracy is None else data.accuracy))
+        utc_time = bytes([*struct.pack(&#34;&gt;I&#34;, int(ts)),
+                          *fraction,
+                          quality])
+        return &#39;utc-time&#39;, utc_time
+
+    if isinstance(data, common.VisibleStringData):
+        return &#39;visible-string&#39;, data.value
+
+    raise ValueError()
+
+
+def _decode_data(data):
+    name, data = data
+
+    if name == &#39;array&#39;:
+        return common.ArrayData([_decode_data(i) for i in data])
+
+    if name == &#39;bcd&#39;:
+        return common.BcdData(data)
+
+    if name == &#39;binary-time&#39;:
+        delta = datetime.timedelta(
+            days=(data[4] &lt;&lt; 8) | data[5],
+            seconds=((data[0] &lt;&lt; 24) |
+                     (data[1] &lt;&lt; 16) |
+                     (data[2] &lt;&lt; 8) |
+                     data[3]))
+        epoch = datetime.datetime(1984, 1, 1, tzinfo=datetime.timezone.utc)
+        return common.BinaryTimeData(epoch + delta)
+
+    if name == &#39;bit-string&#39;:
+        return common.BitStringData(data)
+
+    if name == &#39;boolean&#39;:
+        return common.BooleanData(data)
+
+    if name == &#39;booleanArray&#39;:
+        return common.BooleanArrayData(data)
+
+    if name == &#39;floating-point&#39;:
+        floating_point = struct.unpack(&#34;&gt;f&#34;, data[1:])[0]
+        return common.FloatingPointData(floating_point)
+
+    if name == &#39;generalized-time&#39;:
+        return common.GeneralizedTimeData(data)
+
+    if name == &#39;integer&#39;:
+        return common.IntegerData(data)
+
+    if name == &#39;mMSString&#39;:
+        return common.MmsStringData(data)
+
+    if name == &#39;objId&#39;:
+        return common.ObjIdData(data)
+
+    if name == &#39;octet-string&#39;:
+        return common.OctetStringData(data)
+
+    if name == &#39;structure&#39;:
+        return common.StructureData([_decode_data(i) for i in data])
+
+    if name == &#39;unsigned&#39;:
+        return common.UnsignedData(data)
+
+    if name == &#39;utc-time&#39;:
+        ts = struct.unpack(&#34;&gt;I&#34;, data[:4])[0]
+        for i in range(24):
+            if data[4 + i // 8] &amp; (1 &lt;&lt; (7 - (i % 8))):
+                ts += 2 ** -(i + 1)
+        t = datetime.datetime.fromtimestamp(ts, datetime.timezone.utc)
+        leap_second = bool(0x80 &amp; data[7])
+        clock_failure = bool(0x40 &amp; data[7])
+        not_synchronized = bool(0x20 &amp; data[7])
+        accuracy = 0x1F &amp; data[7]
+        if accuracy &gt; 24:
+            accuracy = None
+        return common.UtcTimeData(value=t,
+                                  leap_second=leap_second,
+                                  clock_failure=clock_failure,
+                                  not_synchronized=not_synchronized,
+                                  accuracy=accuracy)
+
+    if name == &#39;visible-string&#39;:
+        return common.VisibleStringData(data)
+
+    raise ValueError()
+
+
+def _encode_type_description(t):
+    if isinstance(t, common.ArrayTypeDescription):
+        if isinstance(t.element_type, common.TypeDescription):
+            element_type = (&#39;typeDescription&#39;,
+                            _encode_type_description(t.element_type))
+        elif isinstance(t.element_type, common.ObjectName):
+            element_type = (&#39;typeName&#39;,
+                            _encode_object_name(t.element_type))
+        else:
+            raise ValueError()
+        return &#39;array&#39;, {
+            &#39;numberOfElements&#39;: t.number_of_elements,
+            &#39;elementType&#39;: element_type}
+
+    if isinstance(t, common.BcdTypeDescription):
+        return &#39;bcd&#39;, t.xyz
+
+    if isinstance(t, common.BinaryTimeTypeDescription):
+        return &#39;binary-time&#39;, t.xyz
+
+    if isinstance(t, common.BitStringTypeDescription):
+        return &#39;bit-string&#39;, t.xyz
+
+    if isinstance(t, common.BooleanTypeDescription):
+        return &#39;boolean&#39;, None
+
+    if isinstance(t, common.FloatingPointTypeDescription):
+        return &#39;floating-point&#39;, {
+            &#39;format-width&#39;: t.format_width,
+            &#39;exponent-width&#39;: t.exponent_width}
+
+    if isinstance(t, common.GeneralizedTimeTypeDescription):
+        return &#39;generalized-time&#39;, None
+
+    if isinstance(t, common.IntegerTypeDescription):
+        return &#39;integer&#39;, t.xyz
+
+    if isinstance(t, common.MmsStringTypeDescription):
+        return &#39;mMSString&#39;, t.xyz
+
+    if isinstance(t, common.ObjIdTypeDescription):
+        return &#39;objId&#39;, None
+
+    if isinstance(t, common.OctetStringTypeDescription):
+        return &#39;octet-string&#39;, t.xyz
+
+    if isinstance(t, common.StructureTypeDescription):
+        components = []
+        for k, v in t.components:
+            if isinstance(v, common.TypeDescription):
+                component_type = &#39;typeDescription&#39;, _encode_type_description(v)
+            elif isinstance(v, common.ObjectName):
+                component_type = &#39;typeName&#39;, _encode_object_name(v)
+            else:
+                raise ValueError()
+            component = {&#39;componentType&#39;: component_type}
+            if k is not None:
+                component[&#39;componentName&#39;] = k
+            components.append(component)
+        return &#39;structure&#39;, {&#39;components&#39;: components}
+
+    if isinstance(t, common.UnsignedTypeDescription):
+        return &#39;unsigned&#39;, t.xyz
+
+    if isinstance(t, common.UtcTimeTypeDescription):
+        return &#39;utc-time&#39;, None
+
+    if isinstance(t, common.VisibleStringTypeDescription):
+        return &#39;visible-string&#39;, t.xyz
+
+    raise ValueError()
+
+
+def _decode_type_description(t):
+    name, data = t
+
+    if name == &#39;array&#39;:
+        subname, subdata = data[&#39;elementType&#39;]
+        if subname == &#39;typeDescription&#39;:
+            element_type = _decode_type_description(subdata)
+        elif subname == &#39;typeName&#39;:
+            element_type = _decode_object_name(subdata)
+        else:
+            raise ValueError()
+        return common.ArrayTypeDescription(data[&#39;numberOfElements&#39;],
+                                           element_type)
+
+    if name == &#39;bcd&#39;:
+        return common.BcdTypeDescription(data)
+
+    if name == &#39;binary-time&#39;:
+        return common.BinaryTimeTypeDescription(data)
+
+    if name == &#39;bit-string&#39;:
+        return common.BitStringTypeDescription(data)
+
+    if name == &#39;boolean&#39;:
+        return common.BooleanTypeDescription()
+
+    if name == &#39;floating-point&#39;:
+        return common.FloatingPointTypeDescription(data[&#39;format-width&#39;],
+                                                   data[&#39;exponent-width&#39;])
+
+    if name == &#39;generalized-time&#39;:
+        return common.GeneralizedTimeTypeDescription()
+
+    if name == &#39;integer&#39;:
+        return common.IntegerTypeDescription(data)
+
+    if name == &#39;mMSString&#39;:
+        return common.MmsStringTypeDescription(data)
+
+    if name == &#39;objId&#39;:
+        return common.ObjIdTypeDescription()
+
+    if name == &#39;octet-string&#39;:
+        return common.OctetStringTypeDescription(data)
+
+    if name == &#39;structure&#39;:
+        components = []
+        for i in data[&#39;components&#39;]:
+            subname, subdata = i[&#39;componentType&#39;]
+            if subname == &#39;typeDescription&#39;:
+                component_type = _decode_type_description(subdata)
+            elif subname == &#39;typeName&#39;:
+                component_type = _decode_object_name(subdata)
+            else:
+                raise ValueError()
+            component = i.get(&#39;componentName&#39;), component_type
+            components.append(component)
+        return common.StructureTypeDescription(components)
+
+    if name == &#39;unsigned&#39;:
+        return common.UnsignedTypeDescription(data)
+
+    if name == &#39;utc-time&#39;:
+        return common.UtcTimeTypeDescription()
+
+    if name == &#39;visible-string&#39;:
+        return common.VisibleStringTypeDescription(data)
+
+    raise ValueError()
+
+
+def _encode_object_name(object_name):
+    if isinstance(object_name, common.AaSpecificObjectName):
+        return &#39;aa-specific&#39;, object_name.identifier
+
+    if isinstance(object_name, common.DomainSpecificObjectName):
+        return &#39;domain-specific&#39;, {
+            &#39;domainID&#39;: object_name.domain_id,
+            &#39;itemID&#39;: object_name.item_id}
+
+    if isinstance(object_name, common.VmdSpecificObjectName):
+        return &#39;vmd-specific&#39;, object_name.identifier
+
+    raise ValueError()
+
+
+def _decode_object_name(object_name):
+    name, data = object_name
+    if name == &#39;aa-specific&#39;:
+        return common.AaSpecificObjectName(data)
+
+    if name == &#39;domain-specific&#39;:
+        return common.DomainSpecificObjectName(data[&#39;domainID&#39;],
+                                               data[&#39;itemID&#39;])
+
+    if name == &#39;vmd-specific&#39;:
+        return common.VmdSpecificObjectName(data)
+
+    raise ValueError()
+
+
+def _encode_object_scope(object_scope):
+    if isinstance(object_scope, common.AaSpecificObjectScope):
+        return &#39;aaSpecific&#39;, None
+
+    if isinstance(object_scope, common.DomainSpecificObjectScope):
+        return &#39;domainSpecific&#39;, object_scope.identifier
+
+    if isinstance(object_scope, common.VmdSpecificObjectScope):
+        return &#39;vmdSpecific&#39;, None
+
+    raise ValueError()
+
+
+def _decode_object_scope(object_scope):
+    name, data = object_scope
+    if name == &#39;aaSpecific&#39;:
+        return common.AaSpecificObjectScope()
+
+    if name == &#39;domainSpecific&#39;:
+        return common.DomainSpecificObjectScope(data)
+
+    if name == &#39;vmdSpecific&#39;:
+        return common.VmdSpecificObjectScope()
+
+    raise ValueError()
+
+
+def _encode_address(address):
+    if isinstance(address, int):
+        return &#39;numericAddress&#39;, address
+
+    if isinstance(address, str):
+        return &#39;symbolicAddress&#39;, address
+
+    return &#39;unconstrainedAddress&#39;, address
+
+
+def _decode_address(address):
+    _, data = address
+    return data
+
+
+def _encode_variable_specification(var_spec):
+    if isinstance(var_spec, common.AddressVariableSpecification):
+        return &#39;address&#39;, _encode_address(var_spec.address)
+
+    if isinstance(var_spec, common.InvalidatedVariableSpecification):
+        return &#39;invalidated&#39;, None
+
+    if isinstance(var_spec, common.NameVariableSpecification):
+        return &#39;name&#39;, _encode_object_name(var_spec.name)
+
+    if isinstance(var_spec,
+                  common.ScatteredAccessDescriptionVariableSpecification):
+        return &#39;scatteredAccessDescription&#39;, [
+            {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+            for i in var_spec.specifications]
+
+    if isinstance(var_spec, common.VariableDescriptionVariableSpecification):
+        if isinstance(var_spec.type_specification, common.TypeDescription):
+            type_specification = (
+                &#39;typeDescription&#39;,
+                _encode_type_description(var_spec.type_specification))
+        elif isinstance(var_spec.type_specification, common.ObjectName):
+            type_specification = (
+                &#39;typeName&#39;,
+                _encode_object_name(var_spec.type_specification))
+        else:
+            raise ValueError()
+        return &#39;variableDescription&#39;, {
+            &#39;address&#39;: _encode_address(var_spec.address),
+            &#39;typeSpecification&#39;: type_specification}
+
+    raise ValueError()
+
+
+def _decode_variable_specification(var_spec):
+    name, data = var_spec
+    if name == &#39;address&#39;:
+        return common.AddressVariableSpecification(_decode_address(data))
+
+    if name == &#39;invalidated&#39;:
+        return common.InvalidatedVariableSpecification()
+
+    if name == &#39;name&#39;:
+        return common.NameVariableSpecification(_decode_object_name(data))
+
+    if name == &#39;scatteredAccessDescription&#39;:
+        return common.ScatteredAccessDescriptionVariableSpecification([
+            _decode_variable_specification(i[&#39;variableSpecification&#39;])
+            for i in data])
+
+    if name == &#39;variableDescription&#39;:
+        subname, subdata = data[&#39;typeSpecification&#39;]
+        if subname == &#39;typeDescription&#39;:
+            type_specification = _decode_type_description(subdata)
+        elif subname == &#39;typeName&#39;:
+            type_specification = _decode_object_name(subdata)
+        else:
+            raise ValueError()
+        return common.VariableDescriptionVariableSpecification(
+            _decode_address(data[&#39;address&#39;]), type_specification)
+
+    raise ValueError()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.mms.encoder.decode_request"><code class="name flex">
+<span>def <span class="ident">decode_request</span></span>(<span>req: typing.Union[ForwardRef('Boolean'), ForwardRef('Integer'), ForwardRef('BitString'), ForwardRef('OctetString'), ForwardRef('Null'), ForwardRef('ObjectIdentifier'), ForwardRef('String'), ForwardRef('External'), ForwardRef('Real'), ForwardRef('Enumerated'), ForwardRef('EmbeddedPDV'), ForwardRef('Choice'), ForwardRef('Set'), ForwardRef('SetOf'), ForwardRef('Sequence'), ForwardRef('SequenceOf'), ForwardRef('Entity')]) ‑> abc.Request</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode request</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_request(req: asn1.Value) -&gt; common.Request:
+    &#34;&#34;&#34;Decode request&#34;&#34;&#34;
+    name, data = req
+
+    if name == &#39;status&#39;:
+        return common.StatusRequest()
+
+    if name == &#39;getNameList&#39;:
+        subname, subdata = data[&#39;objectClass&#39;]
+        if subname == &#39;basicObjectClass&#39;:
+            object_class = common.ObjectClass(subdata)
+        else:
+            object_class = common.ObjectClass.UNDEFINED
+        object_scope = _decode_object_scope(data[&#39;objectScope&#39;])
+        continue_after = data.get(&#39;continueAfter&#39;)
+        return common.GetNameListRequest(object_class=object_class,
+                                         object_scope=object_scope,
+                                         continue_after=continue_after)
+
+    if name == &#39;identify&#39;:
+        return common.IdentifyRequest()
+
+    if name == &#39;getVariableAccessAttributes&#39;:
+        subname, subdata = data
+        if subname == &#39;address&#39;:
+            value = _decode_address(subdata)
+        elif subname == &#39;name&#39;:
+            value = _decode_object_name(subdata)
+        else:
+            raise ValueError()
+        return common.GetVariableAccessAttributesRequest(value)
+
+    if name == &#39;getNamedVariableListAttributes&#39;:
+        return common.GetNamedVariableListAttributesRequest(
+            _decode_object_name(data))
+
+    if name == &#39;read&#39;:
+        subname, subdata = data[&#39;variableAccessSpecification&#39;]
+        if subname == &#39;variableListName&#39;:
+            value = _decode_object_name(subdata)
+        elif subname == &#39;listOfVariable&#39;:
+            value = [_decode_variable_specification(i[&#39;variableSpecification&#39;])
+                     for i in subdata]
+        else:
+            raise ValueError()
+        return common.ReadRequest(value)
+
+    if name == &#39;write&#39;:
+        subname, subdata = data[&#39;variableAccessSpecification&#39;]
+        if subname == &#39;variableListName&#39;:
+            specification = _decode_object_name(subdata)
+        elif subname == &#39;listOfVariable&#39;:
+            specification = [
+                _decode_variable_specification(i[&#39;variableSpecification&#39;])
+                for i in subdata]
+        else:
+            raise ValueError()
+        return common.WriteRequest(
+            specification, [_decode_data(i) for i in data[&#39;listOfData&#39;]])
+
+    if name == &#39;defineNamedVariableList&#39;:
+        return common.DefineNamedVariableListRequest(
+            _decode_object_name(data[&#39;variableListName&#39;]),
+            [_decode_variable_specification(i[&#39;variableSpecification&#39;])
+             for i in data[&#39;listOfVariable&#39;]])
+
+    if name == &#39;deleteNamedVariableList&#39;:
+        return common.DeleteNamedVariableListRequest(
+            [_decode_object_name(i)
+             for i in data.get(&#39;listOfVariableListName&#39;, [])])
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.encoder.decode_response"><code class="name flex">
+<span>def <span class="ident">decode_response</span></span>(<span>res: typing.Union[ForwardRef('Boolean'), ForwardRef('Integer'), ForwardRef('BitString'), ForwardRef('OctetString'), ForwardRef('Null'), ForwardRef('ObjectIdentifier'), ForwardRef('String'), ForwardRef('External'), ForwardRef('Real'), ForwardRef('Enumerated'), ForwardRef('EmbeddedPDV'), ForwardRef('Choice'), ForwardRef('Set'), ForwardRef('SetOf'), ForwardRef('Sequence'), ForwardRef('SequenceOf'), ForwardRef('Entity')]) ‑> abc.Response</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode response</p>
+<p><code>common.ErrorResponse</code> is not supported.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_response(res: asn1.Value) -&gt; common.Response:
+    &#34;&#34;&#34;Decode response
+
+    `common.ErrorResponse` is not supported.
+
+    &#34;&#34;&#34;
+    name, data = res
+
+    if name == &#39;status&#39;:
+        return common.StatusResponse(data[&#39;vmdLogicalStatus&#39;],
+                                     data[&#39;vmdPhysicalStatus&#39;])
+
+    if name == &#39;getNameList&#39;:
+        return common.GetNameListResponse(data[&#39;listOfIdentifier&#39;],
+                                          data.get(&#39;moreFollows&#39;, True))
+
+    if name == &#39;identify&#39;:
+        return common.IdentifyResponse(
+            vendor=data[&#39;vendorName&#39;],
+            model=data[&#39;modelName&#39;],
+            revision=data[&#39;revision&#39;],
+            syntaxes=data.get(&#39;listOfAbstractSyntaxes&#39;))
+
+    if name == &#39;getVariableAccessAttributes&#39;:
+        return common.GetVariableAccessAttributesResponse(
+            data[&#39;mmsDeletable&#39;],
+            _decode_type_description(data[&#39;typeDescription&#39;]))
+
+    if name == &#39;getNamedVariableListAttributes&#39;:
+        specification = [
+            _decode_variable_specification(i[&#39;variableSpecification&#39;])
+            for i in data[&#39;listOfVariable&#39;]]
+        return common.GetNamedVariableListAttributesResponse(
+            data[&#39;mmsDeletable&#39;], specification)
+
+    if name == &#39;read&#39;:
+        results = [
+            (common.DataAccessError(i[1]) if i[0] == &#39;failure&#39; else
+             _decode_data(i[1]))
+            for i in data[&#39;listOfAccessResult&#39;]]
+        return common.ReadResponse(results)
+
+    if name == &#39;write&#39;:
+        results = [
+            (None if i[0] == &#39;success&#39; else common.DataAccessError(i[1]))
+            for i in data]
+        return common.WriteResponse(results)
+
+    if name == &#39;defineNamedVariableList&#39;:
+        return common.DefineNamedVariableListResponse()
+
+    if name == &#39;deleteNamedVariableList&#39;:
+        return common.DeleteNamedVariableListResponse(data[&#39;numberMatched&#39;],
+                                                      data[&#39;numberDeleted&#39;])
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.encoder.decode_unconfirmed"><code class="name flex">
+<span>def <span class="ident">decode_unconfirmed</span></span>(<span>unconfirmed: typing.Union[ForwardRef('Boolean'), ForwardRef('Integer'), ForwardRef('BitString'), ForwardRef('OctetString'), ForwardRef('Null'), ForwardRef('ObjectIdentifier'), ForwardRef('String'), ForwardRef('External'), ForwardRef('Real'), ForwardRef('Enumerated'), ForwardRef('EmbeddedPDV'), ForwardRef('Choice'), ForwardRef('Set'), ForwardRef('SetOf'), ForwardRef('Sequence'), ForwardRef('SequenceOf'), ForwardRef('Entity')]) ‑> abc.Unconfirmed</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode unconfirmed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_unconfirmed(unconfirmed: asn1.Value) -&gt; common.Unconfirmed:
+    &#34;&#34;&#34;Decode unconfirmed&#34;&#34;&#34;
+    name, data = unconfirmed
+
+    if name == &#39;eventNotification&#39;:
+        return common.EventNotificationUnconfirmed(
+            enrollment=_decode_object_name(data[&#39;eventEnrollmentName&#39;]),
+            condition=_decode_object_name(data[&#39;eventConditionName&#39;]),
+            severity=data[&#39;severity&#39;],
+            time=data[&#39;transitionTime&#39;][1])
+
+    if name == &#39;informationReport&#39;:
+        subname, subdata = data[&#39;variableAccessSpecification&#39;]
+        if subname == &#39;variableListName&#39;:
+            specification = _decode_object_name(subdata)
+        elif subname == &#39;listOfVariable&#39;:
+            specification = [
+                _decode_variable_specification(i[&#39;variableSpecification&#39;])
+                for i in subdata]
+        else:
+            raise ValueError()
+        data = [(common.DataAccessError(v) if k == &#39;failure&#39;
+                 else _decode_data(v))
+                for k, v in data[&#39;listOfAccessResult&#39;]]
+        return common.InformationReportUnconfirmed(specification, data)
+
+    if name == &#39;unsolicitedStatus&#39;:
+        return common.UnsolicitedStatusUnconfirmed(
+            data[&#39;vmdLogicalStatus&#39;], data[&#39;vmdPhysicalStatus&#39;])
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.encoder.encode_request"><code class="name flex">
+<span>def <span class="ident">encode_request</span></span>(<span>req: abc.Request) ‑> typing.Union[bool, int, typing.List[bool], bytes, NoneType, typing.List[typing.Union[int, typing.Tuple[str, int]]], str, <a title="hat.asn1.common.External" href="../../asn1/common.html#hat.asn1.common.External">External</a>, float, int, <a title="hat.asn1.common.EmbeddedPDV" href="../../asn1/common.html#hat.asn1.common.EmbeddedPDV">EmbeddedPDV</a>, typing.Tuple[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Dict[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Iterable[typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Dict[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.List[typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encode request</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_request(req: common.Request) -&gt; asn1.Value:
+    &#34;&#34;&#34;Encode request&#34;&#34;&#34;
+    if isinstance(req, common.StatusRequest):
+        return &#39;status&#39;, False
+
+    if isinstance(req, common.GetNameListRequest):
+        service = {
+            &#39;objectClass&#39;: (&#39;basicObjectClass&#39;, req.object_class.value),
+            &#39;objectScope&#39;: _encode_object_scope(req.object_scope)}
+        if req.continue_after is not None:
+            service[&#39;continueAfter&#39;] = req.continue_after
+        return &#39;getNameList&#39;, service
+
+    if isinstance(req, common.IdentifyRequest):
+        return &#39;identify&#39;, None
+
+    if isinstance(req, common.GetVariableAccessAttributesRequest):
+        if isinstance(req.value, common.ObjectName):
+            service = &#39;name&#39;, _encode_object_name(req.value)
+        else:
+            service = &#39;address&#39;, _encode_address(req.value)
+        return &#39;getVariableAccessAttributes&#39;, service
+
+    if isinstance(req, common.GetNamedVariableListAttributesRequest):
+        return &#39;getNamedVariableListAttributes&#39;, _encode_object_name(req.value)
+
+    if isinstance(req, common.ReadRequest):
+        if isinstance(req.value, common.ObjectName):
+            specification = &#39;variableListName&#39;, _encode_object_name(req.value)
+        else:
+            specification = &#39;listOfVariable&#39;, [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in req.value]
+        return &#39;read&#39;, {&#39;variableAccessSpecification&#39;: specification}
+
+    if isinstance(req, common.WriteRequest):
+        if isinstance(req.specification, common.ObjectName):
+            specification = (&#39;variableListName&#39;,
+                             _encode_object_name(req.specification))
+        else:
+            specification = &#39;listOfVariable&#39;, [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in req.specification]
+        data = [_encode_data(i) for i in req.data]
+        return &#39;write&#39;, {
+            &#39;variableAccessSpecification&#39;: specification,
+            &#39;listOfData&#39;: data}
+
+    if isinstance(req, common.DefineNamedVariableListRequest):
+        return &#39;defineNamedVariableList&#39;, {
+            &#39;variableListName&#39;: _encode_object_name(req.name),
+            &#39;listOfVariable&#39;: [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in req.specification]}
+
+    if isinstance(req, common.DeleteNamedVariableListRequest):
+        return &#39;deleteNamedVariableList&#39;, {
+            &#39;listOfVariableListName&#39;: [_encode_object_name(i)
+                                       for i in req.names]}
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.encoder.encode_response"><code class="name flex">
+<span>def <span class="ident">encode_response</span></span>(<span>res: abc.Response) ‑> typing.Union[bool, int, typing.List[bool], bytes, NoneType, typing.List[typing.Union[int, typing.Tuple[str, int]]], str, <a title="hat.asn1.common.External" href="../../asn1/common.html#hat.asn1.common.External">External</a>, float, int, <a title="hat.asn1.common.EmbeddedPDV" href="../../asn1/common.html#hat.asn1.common.EmbeddedPDV">EmbeddedPDV</a>, typing.Tuple[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Dict[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Iterable[typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Dict[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.List[typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encode response</p>
+<p><code>common.ErrorResponse</code> is not supported.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_response(res: common.Response) -&gt; asn1.Value:
+    &#34;&#34;&#34;Encode response
+
+    `common.ErrorResponse` is not supported.
+
+    &#34;&#34;&#34;
+    if isinstance(res, common.StatusResponse):
+        return &#39;status&#39;, {
+            &#39;vmdLogicalStatus&#39;: res.logical,
+            &#39;vmdPhysicalStatus&#39;: res.physical}
+
+    if isinstance(res, common.GetNameListResponse):
+        return &#39;getNameList&#39;, {
+            &#39;listOfIdentifier&#39;: res.identifiers,
+            &#39;moreFollows&#39;: res.more_follows}
+
+    if isinstance(res, common.IdentifyResponse):
+        service = {&#39;vendorName&#39;: res.vendor,
+                   &#39;modelName&#39;: res.model,
+                   &#39;revision&#39;: res.revision}
+        if res.syntaxes is not None:
+            service[&#39;listOfAbstractSyntaxes&#39;] = res.syntaxes
+        return &#39;identify&#39;, service
+
+    if isinstance(res, common.GetVariableAccessAttributesResponse):
+        return &#39;getVariableAccessAttributes&#39;, {
+            &#39;mmsDeletable&#39;: res.mms_deletable,
+            &#39;typeDescription&#39;: _encode_type_description(res.type_description)}
+
+    if isinstance(res, common.GetNamedVariableListAttributesResponse):
+        return &#39;getNamedVariableListAttributes&#39;, {
+            &#39;mmsDeletable&#39;: res.mms_deletable,
+            &#39;listOfVariable&#39;: [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in res.specification]}
+
+    if isinstance(res, common.ReadResponse):
+        results = [
+            ((&#39;failure&#39;, i.value) if isinstance(i, common.DataAccessError)
+             else (&#39;success&#39;, _encode_data(i)))
+            for i in res.results]
+        return &#39;read&#39;, {&#39;listOfAccessResult&#39;: results}
+
+    if isinstance(res, common.WriteResponse):
+        results = [
+            ((&#39;success&#39;, None) if i is None else (&#39;failure&#39;, i.value))
+            for i in res.results]
+        return &#39;write&#39;, results
+
+    if isinstance(res, common.DefineNamedVariableListResponse):
+        return &#39;defineNamedVariableList&#39;, None
+
+    if isinstance(res, common.DeleteNamedVariableListResponse):
+        return &#39;deleteNamedVariableList&#39;, {
+            &#39;numberMatched&#39;: res.matched,
+            &#39;numberDeleted&#39;: res.deleted}
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.encoder.encode_unconfirmed"><code class="name flex">
+<span>def <span class="ident">encode_unconfirmed</span></span>(<span>unconfirmed: abc.Unconfirmed) ‑> typing.Union[bool, int, typing.List[bool], bytes, NoneType, typing.List[typing.Union[int, typing.Tuple[str, int]]], str, <a title="hat.asn1.common.External" href="../../asn1/common.html#hat.asn1.common.External">External</a>, float, int, <a title="hat.asn1.common.EmbeddedPDV" href="../../asn1/common.html#hat.asn1.common.EmbeddedPDV">EmbeddedPDV</a>, typing.Tuple[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Dict[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Iterable[typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.Dict[str, typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], typing.List[typing.Union[Boolean, Integer, BitString, OctetString, Null, ObjectIdentifier, String, External, Real, Enumerated, EmbeddedPDV, Choice, Set, SetOf, Sequence, SequenceOf, Entity]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encode unconfirmed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_unconfirmed(unconfirmed: common.Unconfirmed) -&gt; asn1.Value:
+    &#34;&#34;&#34;Encode unconfirmed&#34;&#34;&#34;
+    if isinstance(unconfirmed, common.EventNotificationUnconfirmed):
+        if unconfirmed.time is None:
+            transition_time = &#39;undefined&#39;, None
+        elif isinstance(unconfirmed.time, int):
+            transition_time = &#39;timeSequenceIdentifier&#39;, unconfirmed.time
+        else:
+            transition_time = &#39;timeOfDay&#39;, unconfirmed.time
+        return &#39;eventNotification&#39;, {
+            &#39;eventEnrollmentName&#39;: _encode_object_name(unconfirmed.enrollment),
+            &#39;eventConditionName&#39;: _encode_object_name(unconfirmed.condition),
+            &#39;severity&#39;: unconfirmed.severity,
+            &#39;transitionTime&#39;: transition_time}
+
+    if isinstance(unconfirmed, common.InformationReportUnconfirmed):
+        if isinstance(unconfirmed.specification, common.ObjectName):
+            specification = (&#39;variableListName&#39;,
+                             _encode_object_name(unconfirmed.specification))
+        else:
+            specification = &#39;listOfVariable&#39;, [
+                {&#39;variableSpecification&#39;: _encode_variable_specification(i)}
+                for i in unconfirmed.specification]
+        data = [((&#39;failure&#39;, i.value)
+                 if isinstance(i, common.DataAccessError)
+                 else (&#39;success&#39;, _encode_data(i)))
+                for i in unconfirmed.data]
+        return &#39;informationReport&#39;, {
+            &#39;variableAccessSpecification&#39;: specification,
+            &#39;listOfAccessResult&#39;: data}
+
+    if isinstance(unconfirmed, common.UnsolicitedStatusUnconfirmed):
+        return &#39;unsolicitedStatus&#39;, {
+            &#39;vmdLogicalStatus&#39;: unconfirmed.logical,
+            &#39;vmdPhysicalStatus&#39;: unconfirmed.physical}
+
+    raise ValueError()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers.mms" href="index.html">hat.drivers.mms</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="hat.drivers.mms.encoder.decode_request" href="#hat.drivers.mms.encoder.decode_request">decode_request</a></code></li>
+<li><code><a title="hat.drivers.mms.encoder.decode_response" href="#hat.drivers.mms.encoder.decode_response">decode_response</a></code></li>
+<li><code><a title="hat.drivers.mms.encoder.decode_unconfirmed" href="#hat.drivers.mms.encoder.decode_unconfirmed">decode_unconfirmed</a></code></li>
+<li><code><a title="hat.drivers.mms.encoder.encode_request" href="#hat.drivers.mms.encoder.encode_request">encode_request</a></code></li>
+<li><code><a title="hat.drivers.mms.encoder.encode_response" href="#hat.drivers.mms.encoder.encode_response">encode_response</a></code></li>
+<li><code><a title="hat.drivers.mms.encoder.encode_unconfirmed" href="#hat.drivers.mms.encoder.encode_unconfirmed">encode_unconfirmed</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

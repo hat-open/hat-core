@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.event.server.backends.sqlite API documentation</title>
+<meta name="description" content="Sqlite backend …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.event.server.backends.sqlite</code></h1>
+</header>
+<section id="section-intro">
+<p>Sqlite backend</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>json_schema_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>JSON schema id</dd>
+</dl>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Sqlite backend
+
+Attributes:
+    json_schema_id (str): JSON schema id
+
+&#34;&#34;&#34;
+
+from pathlib import Path
+import asyncio
+import contextlib
+
+from hat import aio
+from hat import json
+from hat import sqlite3
+from hat.event.server import common
+
+
+json_schema_id = &#34;hat://event/backends/sqlite.yaml#&#34;
+json_schema_repo = common.json_schema_repo
+
+_db_structure = &#34;&#34;&#34;
+    BEGIN;
+    CREATE TABLE IF NOT EXISTS mappings (
+        event_type_id INTEGER PRIMARY KEY NOT NULL,
+        event_type TEXT NOT NULL UNIQUE);
+    CREATE TABLE IF NOT EXISTS events (
+        server_id INTEGER NOT NULL,
+        instance_id INTEGER NOT NULL,
+        event_type_id INTEGER NOT NULL,
+        timestamp BLOB NOT NULL,
+        source_timestamp BLOB,
+        payload BLOB,
+        PRIMARY KEY (server_id, instance_id));
+    CREATE INDEX IF NOT EXISTS events_ts_idx ON events (
+        timestamp DESC);
+    CREATE INDEX IF NOT EXISTS events_source_ts_idx ON events (
+        source_timestamp DESC);
+    CREATE INDEX IF NOT EXISTS events_evt_type_ts_idx ON events (
+        event_type_id, timestamp DESC);
+    CREATE INDEX IF NOT EXISTS events_evt_type_source_ts_idx ON events (
+        event_type_id, source_timestamp DESC);
+    CREATE INDEX IF NOT EXISTS events_payload_idx ON events(payload);
+    COMMIT;
+&#34;&#34;&#34;
+
+
+async def create(conf):
+    &#34;&#34;&#34;Create SqliteBackend
+
+    Args:
+        conf (json.Data):
+            configuration defined by ``hat://event/backends/sqlite.yaml#``
+
+    Returns:
+        SqliteBackend
+
+    &#34;&#34;&#34;
+    backend = SqliteBackend()
+    backend._async_group = aio.Group()
+    backend._last_instance_ids = {}
+    db_path = Path(conf[&#39;db_path&#39;])
+    backend._conn = await _create_connection(db_path)
+    await backend._conn.execute_script(_db_structure)
+    backend._query_pool = await _create_connection_pool(
+        db_path, conf[&#39;query_pool_size&#39;])
+    backend._event_type_registry = await common.create_event_type_registry(
+        backend)
+    backend._async_group.spawn(aio.call_on_cancel,
+                               backend._query_pool.async_close)
+    backend._async_group.spawn(aio.call_on_cancel,
+                               backend._conn.async_close)
+    return backend
+
+
+class SqliteBackend(common.Backend, common.EventTypeRegistryStorage):
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    async def get_event_type_mappings(self):
+        &#34;&#34;&#34;See :meth:`common.EventTypeRegistryStorage.get_event_type_mappings`&#34;&#34;&#34;  # NOQA
+        result = await self._conn.execute(&#34;SELECT * FROM mappings&#34;)
+        return {row[0]: json.decode(row[1]) for row in result}
+
+    async def add_event_type_mappings(self, mappings):
+        &#34;&#34;&#34;See :meth:`common.EventTypeRegistryStorage.add_event_type_mappings`&#34;&#34;&#34;  # NOQA
+        labels = [
+            &#39;event_type_id&#39;,
+            &#39;event_type&#39;]
+        sql = &#34;INSERT INTO mappings ({columns}) VALUES({values})&#34;.format(
+            columns=&#39;, &#39;.join(labels),
+            values=&#39;, &#39;.join(f&#39;:{label}&#39; for label in labels))
+        params = [{
+            &#39;event_type_id&#39;: event_type_id,
+            &#39;event_type&#39;: json.encode(event_type)
+        } for event_type_id, event_type in mappings.items()]
+
+        async with self._conn.transaction():
+            await self._conn.execute_many(sql, params)
+
+    async def get_last_event_id(self, server_id):
+        &#34;&#34;&#34;See :meth:`common.Backend.get_last_event_id`&#34;&#34;&#34;
+        if server_id not in self._last_instance_ids:
+            result = await self._conn.execute(
+                &#34;SELECT max(instance_id) FROM events &#34;
+                &#34;WHERE server_id = :server_id&#34;,
+                {&#39;server_id&#39;: server_id})
+            instance_id = result[0][0] if result[0][0] is not None else 0
+            self._last_instance_ids[server_id] = instance_id
+        return common.EventId(server=server_id,
+                              instance=self._last_instance_ids[server_id])
+
+    async def register(self, events):
+        &#34;&#34;&#34;See :meth:`common.Backend.register`&#34;&#34;&#34;
+        labels = [
+            &#39;server_id&#39;,
+            &#39;instance_id&#39;,
+            &#39;event_type_id&#39;,
+            &#39;timestamp&#39;,
+            &#39;source_timestamp&#39;,
+            &#39;payload&#39;]
+        sql = &#34;INSERT INTO events ({columns}) VALUES({values})&#34;.format(
+            columns=&#39;, &#39;.join(labels),
+            values=&#39;, &#39;.join(f&#39;:{label}&#39; for label in labels))
+        event_type_ids = await self._event_type_registry.get_identifiers(
+            event.event_type for event in events)
+        params = [{
+            &#39;server_id&#39;: event.event_id.server,
+            &#39;instance_id&#39;: event.event_id.instance,
+            &#39;event_type_id&#39;: event_type_id,
+            &#39;timestamp&#39;: common.timestamp_to_bytes(event.timestamp),
+            &#39;source_timestamp&#39;:
+                common.timestamp_to_bytes(event.source_timestamp)
+                if event.source_timestamp else None,
+            &#39;payload&#39;: (self._encode_payload(event.payload)
+                        if event.payload else None)
+        } for event, event_type_id in zip(events, event_type_ids)]
+
+        async with self._conn.transaction():
+            await self._conn.execute_many(sql, params)
+        _update_last_instance_ids(self._last_instance_ids, events)
+        return events
+
+    async def query(self, data):
+        &#34;&#34;&#34;See :meth:`common.Backend.query`&#34;&#34;&#34;
+        conditions = []
+        event_type_id_condition = None
+        params = {}
+
+        if data.max_results is not None and data.max_results &lt;= 0:
+            return []
+        if data.event_ids is not None:
+            if not data.event_ids:
+                return []
+            subconditions = []
+            for i, event_id in enumerate(data.event_ids):
+                server_label = f&#39;server_id_{i}&#39;
+                instance_label = f&#39;instance_id_{i}&#39;
+                params[server_label] = event_id.server
+                params[instance_label] = event_id.instance
+                subconditions.append(f&#34;(server_id = :{server_label} AND &#34;
+                                     f&#34;instance_id = :{instance_label})&#34;)
+            conditions.append(f&#34;({&#39; OR &#39;.join(subconditions)})&#34;)
+        if data.event_types is not None:
+            event_type_ids = self._event_type_registry.query_identifiers(
+                data.event_types)
+            if not event_type_ids:
+                return []
+            labels = []
+            for i, event_type_id in enumerate(event_type_ids):
+                label = f&#39;event_type_id_{i}&#39;
+                params[label] = event_type_id
+                labels.append(label)
+            event_type_id_condition = (
+                &#34;event_type_id IN (&#34; +
+                &#39;, &#39;.join(f&#34;:{label}&#34; for label in labels) + &#34;)&#34;)
+        if data.t_from is not None:
+            conditions.append(&#34;timestamp &gt;= :t_from&#34;)
+            params[&#39;t_from&#39;] = common.timestamp_to_bytes(data.t_from)
+        if data.t_to is not None:
+            conditions.append(&#34;timestamp &lt;= :t_to&#34;)
+            params[&#39;t_to&#39;] = common.timestamp_to_bytes(data.t_to)
+        if data.source_t_from is not None:
+            conditions.append(&#34;source_timestamp &gt;= :source_t_from&#34;)
+            params[&#39;source_t_from&#39;] = common.timestamp_to_bytes(
+                data.source_t_from)
+        if data.source_t_to is not None:
+            conditions.append(&#34;source_timestamp &lt;= :source_t_to&#34;)
+            params[&#39;source_t_to&#39;] = common.timestamp_to_bytes(data.source_t_to)
+        if data.payload is not None:
+            conditions.append(&#34;payload = :payload&#34;)
+            params[&#39;payload&#39;] = self._encode_payload(data.payload)
+
+        order_cols = {
+            common.OrderBy.TIMESTAMP: (&#39;timestamp&#39;, &#39;source_timestamp&#39;),
+            common.OrderBy.SOURCE_TIMESTAMP: (&#39;source_timestamp&#39;, &#39;timestamp&#39;)
+        }[data.order_by]
+        order_by = {common.Order.ASCENDING: &#34; ASC NULLS LAST&#34;,
+                    common.Order.DESCENDING: &#34; DESC NULLS LAST&#34;}
+        ordering_term = (f&#34;{order_cols[0]} {order_by[data.order]}, &#34;
+                         f&#34;{order_cols[1]} DESC NULLS LAST&#34;)
+
+        if data.unique_type:
+            key_columns = [&#39;server_id&#39;, &#39;instance_id&#39;]
+            # uglier, but much, much faster than PARTITION BY if
+            # len(mappings) &lt;&lt; len(events) because with this query
+            # proper indexes are used
+            sql = (
+                &#34;SELECT e.* FROM events AS e JOIN (SELECT &#34; +
+                &#34;, &#34;.join(f&#34;(SELECT {column} FROM events &#34; +
+                          &#34; WHERE event_type_id = m.event_type_id&#34; +
+                          (&#34; AND &#34; + &#34; AND &#34;.join(conditions)
+                           if conditions else &#34;&#34;) +
+                          f&#34; ORDER BY {ordering_term} LIMIT 1) AS t_{column}&#34;
+                          for column in key_columns) +
+                &#34; FROM mappings m&#34; +
+                (f&#34; WHERE {event_type_id_condition}&#34;
+                 if event_type_id_condition else &#34;&#34;) +
+                &#34;) ON &#34; + &#34; AND &#34;.join(f&#34;e.{column} = t_{column}&#34;
+                                       for column in key_columns) +
+                f&#34; ORDER BY {ordering_term}&#34; +
+                (f&#34; LIMIT {data.max_results}&#34; if data.max_results else &#34;&#34;))
+        else:
+            if event_type_id_condition:
+                conditions.append(event_type_id_condition)
+            sql = (
+                &#34;SELECT * FROM events&#34; +
+                (&#34; WHERE &#34; + &#34; AND &#34;.join(conditions) if conditions else &#34;&#34;) +
+                f&#34; ORDER BY {ordering_term}&#34; +
+                (f&#34; LIMIT {data.max_results}&#34; if data.max_results else &#34;&#34;))
+
+        async with self._query_pool.acquire() as conn:
+            result = await conn.execute(sql, params)
+
+        return [common.Event(
+            event_id=common.EventId(server=row[0], instance=row[1]),
+            event_type=self._event_type_registry.get_event_type(row[2]),
+            timestamp=common.timestamp_from_bytes(row[3]),
+            source_timestamp=(common.timestamp_from_bytes(row[4])
+                              if row[4] is not None else None),
+            payload=(self._decode_payload(row[5])
+                     if row[5] is not None else None)
+        ) for row in result]
+
+    def _encode_payload(self, payload):
+        return common.sbs_repo.encode(&#39;HatEvent&#39;, &#39;EventPayload&#39;,
+                                      common.event_payload_to_sbs(payload))
+
+    def _decode_payload(self, payload):
+        return common.event_payload_from_sbs(common.sbs_repo.decode(
+            &#39;HatEvent&#39;, &#39;EventPayload&#39;, payload))
+
+
+def _update_last_instance_ids(last_ids, events):
+    for event in events:
+        instance_id = last_ids.get(event.event_id.server, None)
+        last_ids[event.event_id.server] = (
+            max(instance_id, event.event_id.instance)
+            if instance_id is not None else event.event_id.instance)
+
+
+async def _create_connection_pool(db_path, pool_size=5):
+    pool = _ConnectionPool()
+    conn_futures = (_create_connection(db_path) for _ in range(pool_size))
+    pool._conns = await asyncio.gather(*conn_futures)
+    pool._queue = aio.Queue()
+    for conn in pool._conns:
+        pool._queue.put_nowait(conn)
+    return pool
+
+
+class _ConnectionPool:
+
+    async def async_close(self):
+        self._queue.close()
+        close_futures = (i.async_close() for i in self._conns)
+        await asyncio.gather(*close_futures)
+
+    @contextlib.asynccontextmanager
+    async def acquire(self):
+        conn = await self._queue.get()
+        try:
+            yield conn
+        finally:
+            self.release(conn)
+
+    def release(self, conn):
+        self._queue.put_nowait(conn)
+
+
+async def _create_connection(db_path):
+    conn = _Connection()
+    conn._executor = aio.create_executor(1)
+    conn._db = await conn._executor(_ext_connect, db_path)
+    return conn
+
+
+class _Connection:
+
+    async def async_close(self):
+        await self._executor(self._db.close)
+
+    @contextlib.asynccontextmanager
+    async def transaction(self):
+        await self.execute(&#39;BEGIN&#39;)
+        try:
+            yield
+            await self.execute(&#39;COMMIT&#39;)
+        except Exception:
+            await self.execute(&#39;ROLLBACK&#39;)
+
+    async def execute(self, sql, parameters=()):
+        return await self._executor(_ext_execute, self._db, sql, parameters)
+
+    async def execute_many(self, sql, parameters=[]):
+        return await self._executor(_ext_execute_many, self._db,
+                                    sql, parameters)
+
+    async def execute_script(self, sql):
+        return await self._executor(_ext_execute_script, self._db, sql)
+
+
+def _ext_connect(db_path):
+    db_path.parent.mkdir(exist_ok=True)
+    db = sqlite3.connect(&#39;file:{}?nolock=1&#39;.format(str(db_path)), uri=True,
+                         isolation_level=None,
+                         detect_types=sqlite3.PARSE_DECLTYPES)
+    return db
+
+
+def _ext_execute(db, sql, parameters):
+    return db.execute(sql, parameters).fetchall()
+
+
+def _ext_execute_many(db, sql, parameters):
+    return db.executemany(sql, parameters).fetchall()
+
+
+def _ext_execute_script(db, sql):
+    return db.executescript(sql).fetchall()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.event.server.backends.sqlite.create"><code class="name flex">
+<span>async def <span class="ident">create</span></span>(<span>conf)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create SqliteBackend</p>
+<h2 id="args">Args</h2>
+<p>conf (json.Data):
+configuration defined by <code>hat://event/backends/sqlite.yaml#</code></p>
+<h2 id="returns">Returns</h2>
+<p>SqliteBackend</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create(conf):
+    &#34;&#34;&#34;Create SqliteBackend
+
+    Args:
+        conf (json.Data):
+            configuration defined by ``hat://event/backends/sqlite.yaml#``
+
+    Returns:
+        SqliteBackend
+
+    &#34;&#34;&#34;
+    backend = SqliteBackend()
+    backend._async_group = aio.Group()
+    backend._last_instance_ids = {}
+    db_path = Path(conf[&#39;db_path&#39;])
+    backend._conn = await _create_connection(db_path)
+    await backend._conn.execute_script(_db_structure)
+    backend._query_pool = await _create_connection_pool(
+        db_path, conf[&#39;query_pool_size&#39;])
+    backend._event_type_registry = await common.create_event_type_registry(
+        backend)
+    backend._async_group.spawn(aio.call_on_cancel,
+                               backend._query_pool.async_close)
+    backend._async_group.spawn(aio.call_on_cancel,
+                               backend._conn.async_close)
+    return backend</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.event.server.backends.sqlite.SqliteBackend"><code class="flex name class">
+<span>class <span class="ident">SqliteBackend</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Backend ABC</p>
+<p>Backend is implemented as python module which is dynamically imported.
+It is expected that this module implements:</p>
+<ul>
+<li>json_schema_id (typing.Optional[str]): JSON schema id</li>
+<li>json_schema_repo (typing.Optional[json.SchemaRepository]):
+JSON schema repo</li>
+<li>create (CreateBackend): create new backend instance</li>
+</ul>
+<p>If module defines JSON schema repositoy and JSON schema id, JSON schema
+repository will be used for additional validation of backend configuration
+with JSON schema id.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SqliteBackend(common.Backend, common.EventTypeRegistryStorage):
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    async def get_event_type_mappings(self):
+        &#34;&#34;&#34;See :meth:`common.EventTypeRegistryStorage.get_event_type_mappings`&#34;&#34;&#34;  # NOQA
+        result = await self._conn.execute(&#34;SELECT * FROM mappings&#34;)
+        return {row[0]: json.decode(row[1]) for row in result}
+
+    async def add_event_type_mappings(self, mappings):
+        &#34;&#34;&#34;See :meth:`common.EventTypeRegistryStorage.add_event_type_mappings`&#34;&#34;&#34;  # NOQA
+        labels = [
+            &#39;event_type_id&#39;,
+            &#39;event_type&#39;]
+        sql = &#34;INSERT INTO mappings ({columns}) VALUES({values})&#34;.format(
+            columns=&#39;, &#39;.join(labels),
+            values=&#39;, &#39;.join(f&#39;:{label}&#39; for label in labels))
+        params = [{
+            &#39;event_type_id&#39;: event_type_id,
+            &#39;event_type&#39;: json.encode(event_type)
+        } for event_type_id, event_type in mappings.items()]
+
+        async with self._conn.transaction():
+            await self._conn.execute_many(sql, params)
+
+    async def get_last_event_id(self, server_id):
+        &#34;&#34;&#34;See :meth:`common.Backend.get_last_event_id`&#34;&#34;&#34;
+        if server_id not in self._last_instance_ids:
+            result = await self._conn.execute(
+                &#34;SELECT max(instance_id) FROM events &#34;
+                &#34;WHERE server_id = :server_id&#34;,
+                {&#39;server_id&#39;: server_id})
+            instance_id = result[0][0] if result[0][0] is not None else 0
+            self._last_instance_ids[server_id] = instance_id
+        return common.EventId(server=server_id,
+                              instance=self._last_instance_ids[server_id])
+
+    async def register(self, events):
+        &#34;&#34;&#34;See :meth:`common.Backend.register`&#34;&#34;&#34;
+        labels = [
+            &#39;server_id&#39;,
+            &#39;instance_id&#39;,
+            &#39;event_type_id&#39;,
+            &#39;timestamp&#39;,
+            &#39;source_timestamp&#39;,
+            &#39;payload&#39;]
+        sql = &#34;INSERT INTO events ({columns}) VALUES({values})&#34;.format(
+            columns=&#39;, &#39;.join(labels),
+            values=&#39;, &#39;.join(f&#39;:{label}&#39; for label in labels))
+        event_type_ids = await self._event_type_registry.get_identifiers(
+            event.event_type for event in events)
+        params = [{
+            &#39;server_id&#39;: event.event_id.server,
+            &#39;instance_id&#39;: event.event_id.instance,
+            &#39;event_type_id&#39;: event_type_id,
+            &#39;timestamp&#39;: common.timestamp_to_bytes(event.timestamp),
+            &#39;source_timestamp&#39;:
+                common.timestamp_to_bytes(event.source_timestamp)
+                if event.source_timestamp else None,
+            &#39;payload&#39;: (self._encode_payload(event.payload)
+                        if event.payload else None)
+        } for event, event_type_id in zip(events, event_type_ids)]
+
+        async with self._conn.transaction():
+            await self._conn.execute_many(sql, params)
+        _update_last_instance_ids(self._last_instance_ids, events)
+        return events
+
+    async def query(self, data):
+        &#34;&#34;&#34;See :meth:`common.Backend.query`&#34;&#34;&#34;
+        conditions = []
+        event_type_id_condition = None
+        params = {}
+
+        if data.max_results is not None and data.max_results &lt;= 0:
+            return []
+        if data.event_ids is not None:
+            if not data.event_ids:
+                return []
+            subconditions = []
+            for i, event_id in enumerate(data.event_ids):
+                server_label = f&#39;server_id_{i}&#39;
+                instance_label = f&#39;instance_id_{i}&#39;
+                params[server_label] = event_id.server
+                params[instance_label] = event_id.instance
+                subconditions.append(f&#34;(server_id = :{server_label} AND &#34;
+                                     f&#34;instance_id = :{instance_label})&#34;)
+            conditions.append(f&#34;({&#39; OR &#39;.join(subconditions)})&#34;)
+        if data.event_types is not None:
+            event_type_ids = self._event_type_registry.query_identifiers(
+                data.event_types)
+            if not event_type_ids:
+                return []
+            labels = []
+            for i, event_type_id in enumerate(event_type_ids):
+                label = f&#39;event_type_id_{i}&#39;
+                params[label] = event_type_id
+                labels.append(label)
+            event_type_id_condition = (
+                &#34;event_type_id IN (&#34; +
+                &#39;, &#39;.join(f&#34;:{label}&#34; for label in labels) + &#34;)&#34;)
+        if data.t_from is not None:
+            conditions.append(&#34;timestamp &gt;= :t_from&#34;)
+            params[&#39;t_from&#39;] = common.timestamp_to_bytes(data.t_from)
+        if data.t_to is not None:
+            conditions.append(&#34;timestamp &lt;= :t_to&#34;)
+            params[&#39;t_to&#39;] = common.timestamp_to_bytes(data.t_to)
+        if data.source_t_from is not None:
+            conditions.append(&#34;source_timestamp &gt;= :source_t_from&#34;)
+            params[&#39;source_t_from&#39;] = common.timestamp_to_bytes(
+                data.source_t_from)
+        if data.source_t_to is not None:
+            conditions.append(&#34;source_timestamp &lt;= :source_t_to&#34;)
+            params[&#39;source_t_to&#39;] = common.timestamp_to_bytes(data.source_t_to)
+        if data.payload is not None:
+            conditions.append(&#34;payload = :payload&#34;)
+            params[&#39;payload&#39;] = self._encode_payload(data.payload)
+
+        order_cols = {
+            common.OrderBy.TIMESTAMP: (&#39;timestamp&#39;, &#39;source_timestamp&#39;),
+            common.OrderBy.SOURCE_TIMESTAMP: (&#39;source_timestamp&#39;, &#39;timestamp&#39;)
+        }[data.order_by]
+        order_by = {common.Order.ASCENDING: &#34; ASC NULLS LAST&#34;,
+                    common.Order.DESCENDING: &#34; DESC NULLS LAST&#34;}
+        ordering_term = (f&#34;{order_cols[0]} {order_by[data.order]}, &#34;
+                         f&#34;{order_cols[1]} DESC NULLS LAST&#34;)
+
+        if data.unique_type:
+            key_columns = [&#39;server_id&#39;, &#39;instance_id&#39;]
+            # uglier, but much, much faster than PARTITION BY if
+            # len(mappings) &lt;&lt; len(events) because with this query
+            # proper indexes are used
+            sql = (
+                &#34;SELECT e.* FROM events AS e JOIN (SELECT &#34; +
+                &#34;, &#34;.join(f&#34;(SELECT {column} FROM events &#34; +
+                          &#34; WHERE event_type_id = m.event_type_id&#34; +
+                          (&#34; AND &#34; + &#34; AND &#34;.join(conditions)
+                           if conditions else &#34;&#34;) +
+                          f&#34; ORDER BY {ordering_term} LIMIT 1) AS t_{column}&#34;
+                          for column in key_columns) +
+                &#34; FROM mappings m&#34; +
+                (f&#34; WHERE {event_type_id_condition}&#34;
+                 if event_type_id_condition else &#34;&#34;) +
+                &#34;) ON &#34; + &#34; AND &#34;.join(f&#34;e.{column} = t_{column}&#34;
+                                       for column in key_columns) +
+                f&#34; ORDER BY {ordering_term}&#34; +
+                (f&#34; LIMIT {data.max_results}&#34; if data.max_results else &#34;&#34;))
+        else:
+            if event_type_id_condition:
+                conditions.append(event_type_id_condition)
+            sql = (
+                &#34;SELECT * FROM events&#34; +
+                (&#34; WHERE &#34; + &#34; AND &#34;.join(conditions) if conditions else &#34;&#34;) +
+                f&#34; ORDER BY {ordering_term}&#34; +
+                (f&#34; LIMIT {data.max_results}&#34; if data.max_results else &#34;&#34;))
+
+        async with self._query_pool.acquire() as conn:
+            result = await conn.execute(sql, params)
+
+        return [common.Event(
+            event_id=common.EventId(server=row[0], instance=row[1]),
+            event_type=self._event_type_registry.get_event_type(row[2]),
+            timestamp=common.timestamp_from_bytes(row[3]),
+            source_timestamp=(common.timestamp_from_bytes(row[4])
+                              if row[4] is not None else None),
+            payload=(self._decode_payload(row[5])
+                     if row[5] is not None else None)
+        ) for row in result]
+
+    def _encode_payload(self, payload):
+        return common.sbs_repo.encode(&#39;HatEvent&#39;, &#39;EventPayload&#39;,
+                                      common.event_payload_to_sbs(payload))
+
+    def _decode_payload(self, payload):
+        return common.event_payload_from_sbs(common.sbs_repo.decode(
+            &#39;HatEvent&#39;, &#39;EventPayload&#39;, payload))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.event.server.common.Backend" href="../common.html#hat.event.server.common.Backend">Backend</a></li>
+<li><a title="hat.aio.Resource" href="../../../aio.html#hat.aio.Resource">Resource</a></li>
+<li><a title="hat.event.server.common.EventTypeRegistryStorage" href="../common.html#hat.event.server.common.EventTypeRegistryStorage">EventTypeRegistryStorage</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.backends.sqlite.SqliteBackend.add_event_type_mappings"><code class="name flex">
+<span>async def <span class="ident">add_event_type_mappings</span></span>(<span>self, mappings)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>See :meth:<code>common.EventTypeRegistryStorage.add_event_type_mappings</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def add_event_type_mappings(self, mappings):
+    &#34;&#34;&#34;See :meth:`common.EventTypeRegistryStorage.add_event_type_mappings`&#34;&#34;&#34;  # NOQA
+    labels = [
+        &#39;event_type_id&#39;,
+        &#39;event_type&#39;]
+    sql = &#34;INSERT INTO mappings ({columns}) VALUES({values})&#34;.format(
+        columns=&#39;, &#39;.join(labels),
+        values=&#39;, &#39;.join(f&#39;:{label}&#39; for label in labels))
+    params = [{
+        &#39;event_type_id&#39;: event_type_id,
+        &#39;event_type&#39;: json.encode(event_type)
+    } for event_type_id, event_type in mappings.items()]
+
+    async with self._conn.transaction():
+        await self._conn.execute_many(sql, params)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.backends.sqlite.SqliteBackend.get_event_type_mappings"><code class="name flex">
+<span>async def <span class="ident">get_event_type_mappings</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>See :meth:<code>common.EventTypeRegistryStorage.get_event_type_mappings</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_event_type_mappings(self):
+    &#34;&#34;&#34;See :meth:`common.EventTypeRegistryStorage.get_event_type_mappings`&#34;&#34;&#34;  # NOQA
+    result = await self._conn.execute(&#34;SELECT * FROM mappings&#34;)
+    return {row[0]: json.decode(row[1]) for row in result}</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.backends.sqlite.SqliteBackend.get_last_event_id"><code class="name flex">
+<span>async def <span class="ident">get_last_event_id</span></span>(<span>self, server_id)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>See :meth:<code>common.Backend.get_last_event_id</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_last_event_id(self, server_id):
+    &#34;&#34;&#34;See :meth:`common.Backend.get_last_event_id`&#34;&#34;&#34;
+    if server_id not in self._last_instance_ids:
+        result = await self._conn.execute(
+            &#34;SELECT max(instance_id) FROM events &#34;
+            &#34;WHERE server_id = :server_id&#34;,
+            {&#39;server_id&#39;: server_id})
+        instance_id = result[0][0] if result[0][0] is not None else 0
+        self._last_instance_ids[server_id] = instance_id
+    return common.EventId(server=server_id,
+                          instance=self._last_instance_ids[server_id])</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.backends.sqlite.SqliteBackend.query"><code class="name flex">
+<span>async def <span class="ident">query</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>See :meth:<code>common.Backend.query</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def query(self, data):
+    &#34;&#34;&#34;See :meth:`common.Backend.query`&#34;&#34;&#34;
+    conditions = []
+    event_type_id_condition = None
+    params = {}
+
+    if data.max_results is not None and data.max_results &lt;= 0:
+        return []
+    if data.event_ids is not None:
+        if not data.event_ids:
+            return []
+        subconditions = []
+        for i, event_id in enumerate(data.event_ids):
+            server_label = f&#39;server_id_{i}&#39;
+            instance_label = f&#39;instance_id_{i}&#39;
+            params[server_label] = event_id.server
+            params[instance_label] = event_id.instance
+            subconditions.append(f&#34;(server_id = :{server_label} AND &#34;
+                                 f&#34;instance_id = :{instance_label})&#34;)
+        conditions.append(f&#34;({&#39; OR &#39;.join(subconditions)})&#34;)
+    if data.event_types is not None:
+        event_type_ids = self._event_type_registry.query_identifiers(
+            data.event_types)
+        if not event_type_ids:
+            return []
+        labels = []
+        for i, event_type_id in enumerate(event_type_ids):
+            label = f&#39;event_type_id_{i}&#39;
+            params[label] = event_type_id
+            labels.append(label)
+        event_type_id_condition = (
+            &#34;event_type_id IN (&#34; +
+            &#39;, &#39;.join(f&#34;:{label}&#34; for label in labels) + &#34;)&#34;)
+    if data.t_from is not None:
+        conditions.append(&#34;timestamp &gt;= :t_from&#34;)
+        params[&#39;t_from&#39;] = common.timestamp_to_bytes(data.t_from)
+    if data.t_to is not None:
+        conditions.append(&#34;timestamp &lt;= :t_to&#34;)
+        params[&#39;t_to&#39;] = common.timestamp_to_bytes(data.t_to)
+    if data.source_t_from is not None:
+        conditions.append(&#34;source_timestamp &gt;= :source_t_from&#34;)
+        params[&#39;source_t_from&#39;] = common.timestamp_to_bytes(
+            data.source_t_from)
+    if data.source_t_to is not None:
+        conditions.append(&#34;source_timestamp &lt;= :source_t_to&#34;)
+        params[&#39;source_t_to&#39;] = common.timestamp_to_bytes(data.source_t_to)
+    if data.payload is not None:
+        conditions.append(&#34;payload = :payload&#34;)
+        params[&#39;payload&#39;] = self._encode_payload(data.payload)
+
+    order_cols = {
+        common.OrderBy.TIMESTAMP: (&#39;timestamp&#39;, &#39;source_timestamp&#39;),
+        common.OrderBy.SOURCE_TIMESTAMP: (&#39;source_timestamp&#39;, &#39;timestamp&#39;)
+    }[data.order_by]
+    order_by = {common.Order.ASCENDING: &#34; ASC NULLS LAST&#34;,
+                common.Order.DESCENDING: &#34; DESC NULLS LAST&#34;}
+    ordering_term = (f&#34;{order_cols[0]} {order_by[data.order]}, &#34;
+                     f&#34;{order_cols[1]} DESC NULLS LAST&#34;)
+
+    if data.unique_type:
+        key_columns = [&#39;server_id&#39;, &#39;instance_id&#39;]
+        # uglier, but much, much faster than PARTITION BY if
+        # len(mappings) &lt;&lt; len(events) because with this query
+        # proper indexes are used
+        sql = (
+            &#34;SELECT e.* FROM events AS e JOIN (SELECT &#34; +
+            &#34;, &#34;.join(f&#34;(SELECT {column} FROM events &#34; +
+                      &#34; WHERE event_type_id = m.event_type_id&#34; +
+                      (&#34; AND &#34; + &#34; AND &#34;.join(conditions)
+                       if conditions else &#34;&#34;) +
+                      f&#34; ORDER BY {ordering_term} LIMIT 1) AS t_{column}&#34;
+                      for column in key_columns) +
+            &#34; FROM mappings m&#34; +
+            (f&#34; WHERE {event_type_id_condition}&#34;
+             if event_type_id_condition else &#34;&#34;) +
+            &#34;) ON &#34; + &#34; AND &#34;.join(f&#34;e.{column} = t_{column}&#34;
+                                   for column in key_columns) +
+            f&#34; ORDER BY {ordering_term}&#34; +
+            (f&#34; LIMIT {data.max_results}&#34; if data.max_results else &#34;&#34;))
+    else:
+        if event_type_id_condition:
+            conditions.append(event_type_id_condition)
+        sql = (
+            &#34;SELECT * FROM events&#34; +
+            (&#34; WHERE &#34; + &#34; AND &#34;.join(conditions) if conditions else &#34;&#34;) +
+            f&#34; ORDER BY {ordering_term}&#34; +
+            (f&#34; LIMIT {data.max_results}&#34; if data.max_results else &#34;&#34;))
+
+    async with self._query_pool.acquire() as conn:
+        result = await conn.execute(sql, params)
+
+    return [common.Event(
+        event_id=common.EventId(server=row[0], instance=row[1]),
+        event_type=self._event_type_registry.get_event_type(row[2]),
+        timestamp=common.timestamp_from_bytes(row[3]),
+        source_timestamp=(common.timestamp_from_bytes(row[4])
+                          if row[4] is not None else None),
+        payload=(self._decode_payload(row[5])
+                 if row[5] is not None else None)
+    ) for row in result]</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.backends.sqlite.SqliteBackend.register"><code class="name flex">
+<span>async def <span class="ident">register</span></span>(<span>self, events)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>See :meth:<code>common.Backend.register</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def register(self, events):
+    &#34;&#34;&#34;See :meth:`common.Backend.register`&#34;&#34;&#34;
+    labels = [
+        &#39;server_id&#39;,
+        &#39;instance_id&#39;,
+        &#39;event_type_id&#39;,
+        &#39;timestamp&#39;,
+        &#39;source_timestamp&#39;,
+        &#39;payload&#39;]
+    sql = &#34;INSERT INTO events ({columns}) VALUES({values})&#34;.format(
+        columns=&#39;, &#39;.join(labels),
+        values=&#39;, &#39;.join(f&#39;:{label}&#39; for label in labels))
+    event_type_ids = await self._event_type_registry.get_identifiers(
+        event.event_type for event in events)
+    params = [{
+        &#39;server_id&#39;: event.event_id.server,
+        &#39;instance_id&#39;: event.event_id.instance,
+        &#39;event_type_id&#39;: event_type_id,
+        &#39;timestamp&#39;: common.timestamp_to_bytes(event.timestamp),
+        &#39;source_timestamp&#39;:
+            common.timestamp_to_bytes(event.source_timestamp)
+            if event.source_timestamp else None,
+        &#39;payload&#39;: (self._encode_payload(event.payload)
+                    if event.payload else None)
+    } for event, event_type_id in zip(events, event_type_ids)]
+
+    async with self._conn.transaction():
+        await self._conn.execute_many(sql, params)
+    _update_last_instance_ids(self._last_instance_ids, events)
+    return events</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.event.server.common.Backend" href="../common.html#hat.event.server.common.Backend">Backend</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.event.server.common.Backend.async_close" href="../../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.async_group" href="../../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.close" href="../../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.is_closed" href="../../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.is_closing" href="../../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.is_open" href="../../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.wait_closed" href="../../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.wait_closing" href="../../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.event.server.backends" href="index.html">hat.event.server.backends</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.event.server.backends.sqlite.create" href="#hat.event.server.backends.sqlite.create">create</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.event.server.backends.sqlite.SqliteBackend" href="#hat.event.server.backends.sqlite.SqliteBackend">SqliteBackend</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.backends.sqlite.SqliteBackend.add_event_type_mappings" href="#hat.event.server.backends.sqlite.SqliteBackend.add_event_type_mappings">add_event_type_mappings</a></code></li>
+<li><code><a title="hat.event.server.backends.sqlite.SqliteBackend.get_event_type_mappings" href="#hat.event.server.backends.sqlite.SqliteBackend.get_event_type_mappings">get_event_type_mappings</a></code></li>
+<li><code><a title="hat.event.server.backends.sqlite.SqliteBackend.get_last_event_id" href="#hat.event.server.backends.sqlite.SqliteBackend.get_last_event_id">get_last_event_id</a></code></li>
+<li><code><a title="hat.event.server.backends.sqlite.SqliteBackend.query" href="#hat.event.server.backends.sqlite.SqliteBackend.query">query</a></code></li>
+<li><code><a title="hat.event.server.backends.sqlite.SqliteBackend.register" href="#hat.event.server.backends.sqlite.SqliteBackend.register">register</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

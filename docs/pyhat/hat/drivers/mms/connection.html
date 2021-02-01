@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.mms.connection API documentation</title>
+<meta name="description" content="Manufacturing Message Specification" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.mms.connection</code></h1>
+</header>
+<section id="section-intro">
+<p>Manufacturing Message Specification</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Manufacturing Message Specification&#34;&#34;&#34;
+
+from pathlib import Path
+import asyncio
+import logging
+import typing
+
+from hat import aio
+from hat import asn1
+from hat.drivers import acse
+from hat.drivers.mms import common
+from hat.drivers.mms import encoder
+
+
+mlog = logging.getLogger(__name__)
+
+
+Address = acse.Address
+&#34;&#34;&#34;Address&#34;&#34;&#34;
+
+
+IdentifiedEntity = acse.IdentifiedEntity
+&#34;&#34;&#34;Identified entity&#34;&#34;&#34;
+
+
+ConnectionInfo = acse.ConnectionInfo
+&#34;&#34;&#34;Connection info&#34;&#34;&#34;
+
+
+RequestCb = aio.AsyncCallable[[&#39;Connection&#39;, common.Request], common.Response]
+&#34;&#34;&#34;Request callback&#34;&#34;&#34;
+
+
+ConnectionCb = aio.AsyncCallable[[&#39;Connection&#39;], None]
+&#34;&#34;&#34;Connection callback&#34;&#34;&#34;
+
+
+async def connect(request_cb: RequestCb,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  local_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  remote_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  local_ae_qualifier: typing.Optional[int] = None,
+                  remote_ae_qualifier: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -&gt; &#39;Connection&#39;:
+    &#34;&#34;&#34;Connect to ACSE server&#34;&#34;&#34;
+    initiate_req = &#39;initiate-RequestPDU&#39;, {
+        &#39;proposedMaxServOutstandingCalling&#39;: 5,
+        &#39;proposedMaxServOutstandingCalled&#39;: 5,
+        &#39;initRequestDetail&#39;: {
+            &#39;proposedVersionNumber&#39;: 1,
+            &#39;proposedParameterCBB&#39;: _parameter_cbb,
+            &#39;servicesSupportedCalling&#39;: _service_support}}
+    req_user_data = _encode(initiate_req)
+    acse_conn = await acse.connect(syntax_name_list=[_mms_syntax_name],
+                                   app_context_name=_mms_app_context_name,
+                                   addr=addr,
+                                   local_tsel=local_tsel,
+                                   remote_tsel=remote_tsel,
+                                   local_ssel=local_ssel,
+                                   remote_ssel=remote_ssel,
+                                   local_psel=local_psel,
+                                   remote_psel=remote_psel,
+                                   local_ap_title=local_ap_title,
+                                   remote_ap_title=remote_ap_title,
+                                   local_ae_qualifier=local_ae_qualifier,
+                                   remote_ae_qualifier=remote_ae_qualifier,
+                                   user_data=(_mms_syntax_name, req_user_data))
+    try:
+        res_syntax_name, res_user_data = acse_conn.conn_res_user_data
+        if not asn1.is_oid_eq(res_syntax_name, _mms_syntax_name):
+            raise Exception(&#34;invalid syntax name&#34;)
+        initiate_res = _decode(res_user_data)
+        if initiate_res[0] != &#39;initiate-ResponsePDU&#39;:
+            raise Exception(&#34;invalid initiate response&#34;)
+        return _create_connection(request_cb, acse_conn)
+    except Exception:
+        await aio.uncancellable(acse_conn.async_close())
+        raise
+
+
+async def listen(connection_cb: ConnectionCb,
+                 request_cb: RequestCb,
+                 addr: Address = Address(&#39;0.0.0.0&#39;, 102)
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create MMS listening server
+
+    Args:
+        connection_cb: new connection callback
+        request_cb: received request callback
+        addr: local listening address
+
+    &#34;&#34;&#34;
+
+    async def on_validate(syntax_names, user_data):
+        syntax_name, req_user_data = user_data
+        if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
+            raise Exception(&#39;invalid mms syntax name&#39;)
+        initiate_req = _decode(req_user_data)
+        if initiate_req[0] != &#39;initiate-RequestPDU&#39;:
+            raise Exception(&#39;invalid initiate request&#39;)
+        initiate_res = &#39;initiate-ResponsePDU&#39;, {
+            &#39;negotiatedMaxServOutstandingCalling&#39;: 5,
+            &#39;negotiatedMaxServOutstandingCalled&#39;: 5,
+            &#39;negotiatedDataStructureNestingLevel&#39;: 4,  # TODO compatibility
+            &#39;initResponseDetail&#39;: {
+                &#39;negotiatedVersionNumber&#39;: 1,
+                &#39;negotiatedParameterCBB&#39;: _parameter_cbb,
+                &#39;servicesSupportedCalled&#39;: _service_support}}
+        if &#39;localDetailCalling&#39; in initiate_req[1]:
+            initiate_res[1][&#39;localDetailCalled&#39;] = \
+                initiate_req[1][&#39;localDetailCalling&#39;]
+        res_user_data = _encode(initiate_res)
+        return _mms_syntax_name, res_user_data
+
+    async def on_connection(acse_conn):
+        try:
+            try:
+                conn = _create_connection(request_cb, acse_conn)
+            except Exception:
+                await aio.uncancellable(acse_conn.async_close())
+                raise
+            try:
+                await aio.call(connection_cb, conn)
+            except BaseException:
+                await aio.uncancellable(conn.async_close())
+                raise
+        except Exception as e:
+            mlog.error(&#34;error creating new incomming connection: %s&#34;,
+                       e, exc_info=e)
+
+    async def wait_acse_server_closed():
+        try:
+            await acse_server.wait_closed()
+        finally:
+            async_group.close()
+
+    async_group = aio.Group()
+    acse_server = await acse.listen(on_validate, on_connection, addr)
+    async_group.spawn(aio.call_on_cancel, acse_server.async_close)
+    async_group.spawn(wait_acse_server_closed)
+
+    srv = Server()
+    srv._async_group = async_group
+    srv._acse_server = acse_server
+    return srv
+
+
+class Server(aio.Resource):
+    &#34;&#34;&#34;MMS listening server
+
+    For creating new server see :func:`listen`
+
+    Closing server doesn&#39;t close active incomming connections
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def addresses(self) -&gt; typing.List[Address]:
+        &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+        return self._acse_server.addresses
+
+
+def _create_connection(request_cb, acse_conn):
+    conn = Connection()
+    conn._request_cb = request_cb
+    conn._acse_conn = acse_conn
+    conn._last_invoke_id = 0
+    conn._unconfirmed_queue = aio.Queue()
+    conn._response_futures = {}
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
+    return conn
+
+
+class Connection(aio.Resource):
+    &#34;&#34;&#34;MMS connection
+
+    For creating new connection see :func:`connect`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; ConnectionInfo:
+        &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+        return self._acse_conn.info
+
+    async def receive_unconfirmed(self) -&gt; common.Unconfirmed:
+        &#34;&#34;&#34;Receive unconfirmed message
+
+        Raises:
+            ConnectionError: in case connection is not open
+
+        &#34;&#34;&#34;
+        try:
+            return await self._unconfirmed_queue.get()
+        except aio.QueueClosedError:
+            raise ConnectionError(&#39;connection is not open&#39;)
+
+    def send_unconfirmed(self, unconfirmed: common.Unconfirmed):
+        &#34;&#34;&#34;Send unconfirmed message&#34;&#34;&#34;
+        pdu = &#39;unconfirmed-PDU&#39;, {
+            &#39;service&#39;: encoder.encode_unconfirmed(unconfirmed)}
+        data = _mms_syntax_name, _encode(pdu)
+        self._acse_conn.write(data)
+
+    async def send_confirmed(self,
+                             req: common.Request
+                             ) -&gt; common.Response:
+        &#34;&#34;&#34;Send confirmed request and wait for response
+
+        Raises:
+            ConnectionError: in case connection is not open
+
+        &#34;&#34;&#34;
+        if self._async_group.is_closing:
+            raise ConnectionError(&#39;connection is not open&#39;)
+        invoke_id = self._last_invoke_id + 1
+        pdu = &#39;confirmed-RequestPDU&#39;, {
+            &#39;invokeID&#39;: invoke_id,
+            &#39;service&#39;: encoder.encode_request(req)}
+        data = _mms_syntax_name, _encode(pdu)
+        self._acse_conn.write(data)
+        self._last_invoke_id = invoke_id
+        self._response_futures[invoke_id] = asyncio.Future()
+        try:
+            return await self._response_futures[invoke_id]
+        finally:
+            del self._response_futures[invoke_id]
+
+    async def _read_loop(self):
+        running = True
+        try:
+            while running:
+                syntax_name, entity = await self._acse_conn.read()
+                if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
+                    continue
+                pdu = _decode(entity)
+                running = await self._process_pdu(pdu)
+        except asyncio.CancelledError:
+            pdu = &#39;conclude-RequestPDU&#39;, None
+            data = _mms_syntax_name, _encode(pdu)
+            self._acse_conn.write(data)
+            # TODO: wait for response
+            raise
+        finally:
+            self._async_group.close()
+            self._unconfirmed_queue.close()
+            for response_future in self._response_futures.values():
+                if not response_future.done():
+                    response_future.set_exception(
+                        ConnectionError(&#39;connection is not open&#39;))
+            await aio.uncancellable(self._acse_conn.async_close())
+
+    async def _process_pdu(self, pdu):
+        name, data = pdu
+
+        if name == &#39;unconfirmed-PDU&#39;:
+            unconfirmed = encoder.decode_unconfirmed(data[&#39;service&#39;])
+            await self._unconfirmed_queue.put(unconfirmed)
+            return True
+
+        elif name == &#39;confirmed-RequestPDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            req = encoder.decode_request(data[&#39;service&#39;])
+            res = await aio.call(self._request_cb, self, req)
+            if isinstance(res, common.ErrorResponse):
+                res_pdu = &#39;confirmed-ErrorPDU&#39;, {
+                    &#39;invokeID&#39;: invoke_id,
+                    &#39;serviceError&#39;: {
+                        &#39;errorClass&#39;: (res.error_class.value, res.value)}}
+            else:
+                res_pdu = &#39;confirmed-ResponsePDU&#39;, {
+                    &#39;invokeID&#39;: invoke_id,
+                    &#39;service&#39;: encoder.encode_response(res)}
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
+            return True
+
+        elif name == &#39;confirmed-ResponsePDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            res = encoder.decode_response(data[&#39;service&#39;])
+            future = self._response_futures.get(invoke_id)
+            if future and not future.done():
+                future.set_result(res)
+            else:
+                mlog.warn(f&#34;dropping confirmed response &#34;
+                          f&#34;(invoke_id: {invoke_id})&#34;)
+            return True
+
+        elif name == &#39;confirmed-ErrorPDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            error_class_name, value = data[&#39;serviceError&#39;][&#39;errorClass&#39;]
+            error_class = common.ErrorClass(error_class_name)
+            res = common.ErrorResponse(error_class, value)
+            future = self._response_futures.get(invoke_id)
+            if future and not future.done():
+                future.set_result(res)
+            else:
+                mlog.warn(f&#34;dropping confirmed error &#34;
+                          f&#34;(invoke_id: {invoke_id})&#34;)
+            return True
+
+        elif name == &#39;conclude-RequestPDU&#39;:
+            res_pdu = &#39;conclude-ResponsePDU&#39;, None
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
+            return False
+
+        return False
+
+
+_parameter_cbb = [False] * 10  # 18
+_parameter_cbb[0] = True  # str1
+_parameter_cbb[1] = True  # str2
+_parameter_cbb[2] = True  # vnam
+_parameter_cbb[3] = True  # valt
+_parameter_cbb[4] = True  # vadr
+_parameter_cbb[6] = True  # tpy
+_parameter_cbb[7] = True  # vlis
+
+_service_support = [False] * 85  # 93
+_service_support[0] = True  # status
+_service_support[1] = True  # getNameList
+_service_support[2] = True  # identify
+_service_support[4] = True  # read
+_service_support[5] = True  # write
+_service_support[6] = True  # getVariableAccessAttributes
+_service_support[11] = True  # defineNamedVariableList
+_service_support[12] = True  # getNamedVariableListAttributes
+_service_support[13] = True  # deleteNamedVariableList
+_service_support[79] = True  # informationReport
+
+# not supported - compatibility flags
+_service_support[18] = True  # output
+_service_support[83] = True  # conclude
+
+
+_mms_syntax_name = [(&#39;iso&#39;, 1),
+                    (&#39;standard&#39;, 0),
+                    (&#39;iso9506&#39;, 9506),
+                    (&#39;part&#39;, 2),
+                    (&#39;mms-abstract-syntax-version1&#39;, 1)]
+_mms_app_context_name = [(&#39;iso&#39;, 1),
+                         (&#39;standard&#39;, 0),
+                         (&#39;iso9506&#39;, 9506),
+                         (&#39;part&#39;, 2),
+                         (&#39;mms-annex-version1&#39;, 3)]
+_encoder = asn1.Encoder(asn1.Encoding.BER,
+                        asn1.Repository.from_json(Path(__file__).parent /
+                                                  &#39;asn1_repo.json&#39;))
+
+
+def _encode(value):
+    return _encoder.encode_value(&#39;ISO-9506-MMS-1&#39;, &#39;MMSpdu&#39;, value)
+
+
+def _decode(entity):
+    return _encoder.decode_value(&#39;ISO-9506-MMS-1&#39;, &#39;MMSpdu&#39;, entity)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.drivers.mms.connection.ConnectionCb"><code class="name">var <span class="ident">ConnectionCb</span></code></dt>
+<dd>
+<div class="desc"><p>Connection callback</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.IdentifiedEntity"><code class="name">var <span class="ident">IdentifiedEntity</span></code></dt>
+<dd>
+<div class="desc"><p>Identified entity</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.RequestCb"><code class="name">var <span class="ident">RequestCb</span></code></dt>
+<dd>
+<div class="desc"><p>Request callback</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.mms.connection.connect"><code class="name flex">
+<span>async def <span class="ident">connect</span></span>(<span>request_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.mms.connection.Connection" href="#hat.drivers.mms.connection.Connection">Connection</a>'), abc.Request], typing.Union[abc.Response, typing.Awaitable[abc.Response]]], addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, local_tsel: typing.Union[int, NoneType] = None, remote_tsel: typing.Union[int, NoneType] = None, local_ssel: typing.Union[int, NoneType] = None, remote_ssel: typing.Union[int, NoneType] = None, local_psel: typing.Union[int, NoneType] = None, remote_psel: typing.Union[int, NoneType] = None, local_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType] = None, remote_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType] = None, local_ae_qualifier: typing.Union[int, NoneType] = None, remote_ae_qualifier: typing.Union[int, NoneType] = None, user_data: typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType] = None) ‑> <a title="hat.drivers.mms.connection.Connection" href="#hat.drivers.mms.connection.Connection">Connection</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect to ACSE server</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def connect(request_cb: RequestCb,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  local_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  remote_ap_title: typing.Optional[asn1.ObjectIdentifier] = None,  # NOQA
+                  local_ae_qualifier: typing.Optional[int] = None,
+                  remote_ae_qualifier: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -&gt; &#39;Connection&#39;:
+    &#34;&#34;&#34;Connect to ACSE server&#34;&#34;&#34;
+    initiate_req = &#39;initiate-RequestPDU&#39;, {
+        &#39;proposedMaxServOutstandingCalling&#39;: 5,
+        &#39;proposedMaxServOutstandingCalled&#39;: 5,
+        &#39;initRequestDetail&#39;: {
+            &#39;proposedVersionNumber&#39;: 1,
+            &#39;proposedParameterCBB&#39;: _parameter_cbb,
+            &#39;servicesSupportedCalling&#39;: _service_support}}
+    req_user_data = _encode(initiate_req)
+    acse_conn = await acse.connect(syntax_name_list=[_mms_syntax_name],
+                                   app_context_name=_mms_app_context_name,
+                                   addr=addr,
+                                   local_tsel=local_tsel,
+                                   remote_tsel=remote_tsel,
+                                   local_ssel=local_ssel,
+                                   remote_ssel=remote_ssel,
+                                   local_psel=local_psel,
+                                   remote_psel=remote_psel,
+                                   local_ap_title=local_ap_title,
+                                   remote_ap_title=remote_ap_title,
+                                   local_ae_qualifier=local_ae_qualifier,
+                                   remote_ae_qualifier=remote_ae_qualifier,
+                                   user_data=(_mms_syntax_name, req_user_data))
+    try:
+        res_syntax_name, res_user_data = acse_conn.conn_res_user_data
+        if not asn1.is_oid_eq(res_syntax_name, _mms_syntax_name):
+            raise Exception(&#34;invalid syntax name&#34;)
+        initiate_res = _decode(res_user_data)
+        if initiate_res[0] != &#39;initiate-ResponsePDU&#39;:
+            raise Exception(&#34;invalid initiate response&#34;)
+        return _create_connection(request_cb, acse_conn)
+    except Exception:
+        await aio.uncancellable(acse_conn.async_close())
+        raise</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.connection.listen"><code class="name flex">
+<span>async def <span class="ident">listen</span></span>(<span>connection_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.mms.connection.Connection" href="#hat.drivers.mms.connection.Connection">Connection</a>')], typing.Union[NoneType, typing.Awaitable[NoneType]]], request_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.mms.connection.Connection" href="#hat.drivers.mms.connection.Connection">Connection</a>'), abc.Request], typing.Union[abc.Response, typing.Awaitable[abc.Response]]], addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a> = Address(host='0.0.0.0', port=102)) ‑> <a title="hat.drivers.mms.connection.Server" href="#hat.drivers.mms.connection.Server">Server</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create MMS listening server</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>connection_cb</code></strong></dt>
+<dd>new connection callback</dd>
+<dt><strong><code>request_cb</code></strong></dt>
+<dd>received request callback</dd>
+<dt><strong><code>addr</code></strong></dt>
+<dd>local listening address</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def listen(connection_cb: ConnectionCb,
+                 request_cb: RequestCb,
+                 addr: Address = Address(&#39;0.0.0.0&#39;, 102)
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create MMS listening server
+
+    Args:
+        connection_cb: new connection callback
+        request_cb: received request callback
+        addr: local listening address
+
+    &#34;&#34;&#34;
+
+    async def on_validate(syntax_names, user_data):
+        syntax_name, req_user_data = user_data
+        if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
+            raise Exception(&#39;invalid mms syntax name&#39;)
+        initiate_req = _decode(req_user_data)
+        if initiate_req[0] != &#39;initiate-RequestPDU&#39;:
+            raise Exception(&#39;invalid initiate request&#39;)
+        initiate_res = &#39;initiate-ResponsePDU&#39;, {
+            &#39;negotiatedMaxServOutstandingCalling&#39;: 5,
+            &#39;negotiatedMaxServOutstandingCalled&#39;: 5,
+            &#39;negotiatedDataStructureNestingLevel&#39;: 4,  # TODO compatibility
+            &#39;initResponseDetail&#39;: {
+                &#39;negotiatedVersionNumber&#39;: 1,
+                &#39;negotiatedParameterCBB&#39;: _parameter_cbb,
+                &#39;servicesSupportedCalled&#39;: _service_support}}
+        if &#39;localDetailCalling&#39; in initiate_req[1]:
+            initiate_res[1][&#39;localDetailCalled&#39;] = \
+                initiate_req[1][&#39;localDetailCalling&#39;]
+        res_user_data = _encode(initiate_res)
+        return _mms_syntax_name, res_user_data
+
+    async def on_connection(acse_conn):
+        try:
+            try:
+                conn = _create_connection(request_cb, acse_conn)
+            except Exception:
+                await aio.uncancellable(acse_conn.async_close())
+                raise
+            try:
+                await aio.call(connection_cb, conn)
+            except BaseException:
+                await aio.uncancellable(conn.async_close())
+                raise
+        except Exception as e:
+            mlog.error(&#34;error creating new incomming connection: %s&#34;,
+                       e, exc_info=e)
+
+    async def wait_acse_server_closed():
+        try:
+            await acse_server.wait_closed()
+        finally:
+            async_group.close()
+
+    async_group = aio.Group()
+    acse_server = await acse.listen(on_validate, on_connection, addr)
+    async_group.spawn(aio.call_on_cancel, acse_server.async_close)
+    async_group.spawn(wait_acse_server_closed)
+
+    srv = Server()
+    srv._async_group = async_group
+    srv._acse_server = acse_server
+    return srv</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.mms.connection.Address"><code class="flex name class">
+<span>class <span class="ident">Address</span></span>
+<span>(</span><span>host: str, port: int = 102)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Address(host, port)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Address(typing.NamedTuple):
+    host: str
+    port: int = 102</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.connection.Address.host"><code class="name">var <span class="ident">host</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.Address.port"><code class="name">var <span class="ident">port</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.connection.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>MMS connection</p>
+<p>For creating new connection see :func:<code><a title="hat.drivers.mms.connection.connect" href="#hat.drivers.mms.connection.connect">connect()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connection(aio.Resource):
+    &#34;&#34;&#34;MMS connection
+
+    For creating new connection see :func:`connect`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; ConnectionInfo:
+        &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+        return self._acse_conn.info
+
+    async def receive_unconfirmed(self) -&gt; common.Unconfirmed:
+        &#34;&#34;&#34;Receive unconfirmed message
+
+        Raises:
+            ConnectionError: in case connection is not open
+
+        &#34;&#34;&#34;
+        try:
+            return await self._unconfirmed_queue.get()
+        except aio.QueueClosedError:
+            raise ConnectionError(&#39;connection is not open&#39;)
+
+    def send_unconfirmed(self, unconfirmed: common.Unconfirmed):
+        &#34;&#34;&#34;Send unconfirmed message&#34;&#34;&#34;
+        pdu = &#39;unconfirmed-PDU&#39;, {
+            &#39;service&#39;: encoder.encode_unconfirmed(unconfirmed)}
+        data = _mms_syntax_name, _encode(pdu)
+        self._acse_conn.write(data)
+
+    async def send_confirmed(self,
+                             req: common.Request
+                             ) -&gt; common.Response:
+        &#34;&#34;&#34;Send confirmed request and wait for response
+
+        Raises:
+            ConnectionError: in case connection is not open
+
+        &#34;&#34;&#34;
+        if self._async_group.is_closing:
+            raise ConnectionError(&#39;connection is not open&#39;)
+        invoke_id = self._last_invoke_id + 1
+        pdu = &#39;confirmed-RequestPDU&#39;, {
+            &#39;invokeID&#39;: invoke_id,
+            &#39;service&#39;: encoder.encode_request(req)}
+        data = _mms_syntax_name, _encode(pdu)
+        self._acse_conn.write(data)
+        self._last_invoke_id = invoke_id
+        self._response_futures[invoke_id] = asyncio.Future()
+        try:
+            return await self._response_futures[invoke_id]
+        finally:
+            del self._response_futures[invoke_id]
+
+    async def _read_loop(self):
+        running = True
+        try:
+            while running:
+                syntax_name, entity = await self._acse_conn.read()
+                if not asn1.is_oid_eq(syntax_name, _mms_syntax_name):
+                    continue
+                pdu = _decode(entity)
+                running = await self._process_pdu(pdu)
+        except asyncio.CancelledError:
+            pdu = &#39;conclude-RequestPDU&#39;, None
+            data = _mms_syntax_name, _encode(pdu)
+            self._acse_conn.write(data)
+            # TODO: wait for response
+            raise
+        finally:
+            self._async_group.close()
+            self._unconfirmed_queue.close()
+            for response_future in self._response_futures.values():
+                if not response_future.done():
+                    response_future.set_exception(
+                        ConnectionError(&#39;connection is not open&#39;))
+            await aio.uncancellable(self._acse_conn.async_close())
+
+    async def _process_pdu(self, pdu):
+        name, data = pdu
+
+        if name == &#39;unconfirmed-PDU&#39;:
+            unconfirmed = encoder.decode_unconfirmed(data[&#39;service&#39;])
+            await self._unconfirmed_queue.put(unconfirmed)
+            return True
+
+        elif name == &#39;confirmed-RequestPDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            req = encoder.decode_request(data[&#39;service&#39;])
+            res = await aio.call(self._request_cb, self, req)
+            if isinstance(res, common.ErrorResponse):
+                res_pdu = &#39;confirmed-ErrorPDU&#39;, {
+                    &#39;invokeID&#39;: invoke_id,
+                    &#39;serviceError&#39;: {
+                        &#39;errorClass&#39;: (res.error_class.value, res.value)}}
+            else:
+                res_pdu = &#39;confirmed-ResponsePDU&#39;, {
+                    &#39;invokeID&#39;: invoke_id,
+                    &#39;service&#39;: encoder.encode_response(res)}
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
+            return True
+
+        elif name == &#39;confirmed-ResponsePDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            res = encoder.decode_response(data[&#39;service&#39;])
+            future = self._response_futures.get(invoke_id)
+            if future and not future.done():
+                future.set_result(res)
+            else:
+                mlog.warn(f&#34;dropping confirmed response &#34;
+                          f&#34;(invoke_id: {invoke_id})&#34;)
+            return True
+
+        elif name == &#39;confirmed-ErrorPDU&#39;:
+            invoke_id = data[&#39;invokeID&#39;]
+            error_class_name, value = data[&#39;serviceError&#39;][&#39;errorClass&#39;]
+            error_class = common.ErrorClass(error_class_name)
+            res = common.ErrorResponse(error_class, value)
+            future = self._response_futures.get(invoke_id)
+            if future and not future.done():
+                future.set_result(res)
+            else:
+                mlog.warn(f&#34;dropping confirmed error &#34;
+                          f&#34;(invoke_id: {invoke_id})&#34;)
+            return True
+
+        elif name == &#39;conclude-RequestPDU&#39;:
+            res_pdu = &#39;conclude-ResponsePDU&#39;, None
+            res_data = _mms_syntax_name, _encode(res_pdu)
+            self._acse_conn.write(res_data)
+            return False
+
+        return False</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.connection.Connection.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.connection.Connection.info"><code class="name">var <span class="ident">info</span> : <a title="hat.drivers.acse.ConnectionInfo" href="../acse/index.html#hat.drivers.acse.ConnectionInfo">ConnectionInfo</a></code></dt>
+<dd>
+<div class="desc"><p>Connection info</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self) -&gt; ConnectionInfo:
+    &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+    return self._acse_conn.info</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.mms.connection.Connection.receive_unconfirmed"><code class="name flex">
+<span>async def <span class="ident">receive_unconfirmed</span></span>(<span>self) ‑> abc.Unconfirmed</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Receive unconfirmed message</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ConnectionError</code></dt>
+<dd>in case connection is not open</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def receive_unconfirmed(self) -&gt; common.Unconfirmed:
+    &#34;&#34;&#34;Receive unconfirmed message
+
+    Raises:
+        ConnectionError: in case connection is not open
+
+    &#34;&#34;&#34;
+    try:
+        return await self._unconfirmed_queue.get()
+    except aio.QueueClosedError:
+        raise ConnectionError(&#39;connection is not open&#39;)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.connection.Connection.send_confirmed"><code class="name flex">
+<span>async def <span class="ident">send_confirmed</span></span>(<span>self, req: abc.Request) ‑> abc.Response</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send confirmed request and wait for response</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ConnectionError</code></dt>
+<dd>in case connection is not open</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def send_confirmed(self,
+                         req: common.Request
+                         ) -&gt; common.Response:
+    &#34;&#34;&#34;Send confirmed request and wait for response
+
+    Raises:
+        ConnectionError: in case connection is not open
+
+    &#34;&#34;&#34;
+    if self._async_group.is_closing:
+        raise ConnectionError(&#39;connection is not open&#39;)
+    invoke_id = self._last_invoke_id + 1
+    pdu = &#39;confirmed-RequestPDU&#39;, {
+        &#39;invokeID&#39;: invoke_id,
+        &#39;service&#39;: encoder.encode_request(req)}
+    data = _mms_syntax_name, _encode(pdu)
+    self._acse_conn.write(data)
+    self._last_invoke_id = invoke_id
+    self._response_futures[invoke_id] = asyncio.Future()
+    try:
+        return await self._response_futures[invoke_id]
+    finally:
+        del self._response_futures[invoke_id]</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.connection.Connection.send_unconfirmed"><code class="name flex">
+<span>def <span class="ident">send_unconfirmed</span></span>(<span>self, unconfirmed: abc.Unconfirmed)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send unconfirmed message</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_unconfirmed(self, unconfirmed: common.Unconfirmed):
+    &#34;&#34;&#34;Send unconfirmed message&#34;&#34;&#34;
+    pdu = &#39;unconfirmed-PDU&#39;, {
+        &#39;service&#39;: encoder.encode_unconfirmed(unconfirmed)}
+    data = _mms_syntax_name, _encode(pdu)
+    self._acse_conn.write(data)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo"><code class="flex name class">
+<span>class <span class="ident">ConnectionInfo</span></span>
+<span>(</span><span>local_addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, local_tsel: typing.Union[int, NoneType], local_ssel: typing.Union[int, NoneType], local_psel: typing.Union[int, NoneType], local_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType], local_ae_qualifier: typing.Union[int, NoneType], remote_addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, remote_tsel: typing.Union[int, NoneType], remote_ssel: typing.Union[int, NoneType], remote_psel: typing.Union[int, NoneType], remote_ap_title: typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType], remote_ae_qualifier: typing.Union[int, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ConnectionInfo(local_addr, local_tsel, local_ssel, local_psel, local_ap_title, local_ae_qualifier, remote_addr, remote_tsel, remote_ssel, remote_psel, remote_ap_title, remote_ae_qualifier)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    local_psel: typing.Optional[int]
+    local_ap_title: typing.Optional[asn1.ObjectIdentifier]
+    local_ae_qualifier: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
+    remote_psel: typing.Optional[int]
+    remote_ap_title: typing.Optional[asn1.ObjectIdentifier]
+    remote_ae_qualifier: typing.Optional[int]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.local_addr"><code class="name">var <span class="ident">local_addr</span> : <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.local_ae_qualifier"><code class="name">var <span class="ident">local_ae_qualifier</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.local_ap_title"><code class="name">var <span class="ident">local_ap_title</span> : typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.local_psel"><code class="name">var <span class="ident">local_psel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.local_ssel"><code class="name">var <span class="ident">local_ssel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.local_tsel"><code class="name">var <span class="ident">local_tsel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.remote_addr"><code class="name">var <span class="ident">remote_addr</span> : <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.remote_ae_qualifier"><code class="name">var <span class="ident">remote_ae_qualifier</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 11</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.remote_ap_title"><code class="name">var <span class="ident">remote_ap_title</span> : typing.Union[typing.List[typing.Union[int, typing.Tuple[str, int]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 10</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.remote_psel"><code class="name">var <span class="ident">remote_psel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 9</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.remote_ssel"><code class="name">var <span class="ident">remote_ssel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 8</p></div>
+</dd>
+<dt id="hat.drivers.mms.connection.ConnectionInfo.remote_tsel"><code class="name">var <span class="ident">remote_tsel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.mms.connection.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>MMS listening server</p>
+<p>For creating new server see :func:<code><a title="hat.drivers.mms.connection.listen" href="#hat.drivers.mms.connection.listen">listen()</a></code></p>
+<p>Closing server doesn't close active incomming connections</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server(aio.Resource):
+    &#34;&#34;&#34;MMS listening server
+
+    For creating new server see :func:`listen`
+
+    Closing server doesn&#39;t close active incomming connections
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def addresses(self) -&gt; typing.List[Address]:
+        &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+        return self._acse_server.addresses</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.mms.connection.Server.addresses"><code class="name">var <span class="ident">addresses</span> : typing.List[<a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>]</code></dt>
+<dd>
+<div class="desc"><p>Listening addresses</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def addresses(self) -&gt; typing.List[Address]:
+    &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+    return self._acse_server.addresses</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.mms.connection.Server.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers.mms" href="index.html">hat.drivers.mms</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.mms.connection.ConnectionCb" href="#hat.drivers.mms.connection.ConnectionCb">ConnectionCb</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.IdentifiedEntity" href="#hat.drivers.mms.connection.IdentifiedEntity">IdentifiedEntity</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.RequestCb" href="#hat.drivers.mms.connection.RequestCb">RequestCb</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.mms.connection.connect" href="#hat.drivers.mms.connection.connect">connect</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.listen" href="#hat.drivers.mms.connection.listen">listen</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.mms.connection.Address" href="#hat.drivers.mms.connection.Address">Address</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.connection.Address.host" href="#hat.drivers.mms.connection.Address.host">host</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.Address.port" href="#hat.drivers.mms.connection.Address.port">port</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.connection.Connection" href="#hat.drivers.mms.connection.Connection">Connection</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.connection.Connection.async_group" href="#hat.drivers.mms.connection.Connection.async_group">async_group</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.Connection.info" href="#hat.drivers.mms.connection.Connection.info">info</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.Connection.receive_unconfirmed" href="#hat.drivers.mms.connection.Connection.receive_unconfirmed">receive_unconfirmed</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.Connection.send_confirmed" href="#hat.drivers.mms.connection.Connection.send_confirmed">send_confirmed</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.Connection.send_unconfirmed" href="#hat.drivers.mms.connection.Connection.send_unconfirmed">send_unconfirmed</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.connection.ConnectionInfo" href="#hat.drivers.mms.connection.ConnectionInfo">ConnectionInfo</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.local_addr" href="#hat.drivers.mms.connection.ConnectionInfo.local_addr">local_addr</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.local_ae_qualifier" href="#hat.drivers.mms.connection.ConnectionInfo.local_ae_qualifier">local_ae_qualifier</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.local_ap_title" href="#hat.drivers.mms.connection.ConnectionInfo.local_ap_title">local_ap_title</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.local_psel" href="#hat.drivers.mms.connection.ConnectionInfo.local_psel">local_psel</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.local_ssel" href="#hat.drivers.mms.connection.ConnectionInfo.local_ssel">local_ssel</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.local_tsel" href="#hat.drivers.mms.connection.ConnectionInfo.local_tsel">local_tsel</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.remote_addr" href="#hat.drivers.mms.connection.ConnectionInfo.remote_addr">remote_addr</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.remote_ae_qualifier" href="#hat.drivers.mms.connection.ConnectionInfo.remote_ae_qualifier">remote_ae_qualifier</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.remote_ap_title" href="#hat.drivers.mms.connection.ConnectionInfo.remote_ap_title">remote_ap_title</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.remote_psel" href="#hat.drivers.mms.connection.ConnectionInfo.remote_psel">remote_psel</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.remote_ssel" href="#hat.drivers.mms.connection.ConnectionInfo.remote_ssel">remote_ssel</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.ConnectionInfo.remote_tsel" href="#hat.drivers.mms.connection.ConnectionInfo.remote_tsel">remote_tsel</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.mms.connection.Server" href="#hat.drivers.mms.connection.Server">Server</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.mms.connection.Server.addresses" href="#hat.drivers.mms.connection.Server.addresses">addresses</a></code></li>
+<li><code><a title="hat.drivers.mms.connection.Server.async_group" href="#hat.drivers.mms.connection.Server.async_group">async_group</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

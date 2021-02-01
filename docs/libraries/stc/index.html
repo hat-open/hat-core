@@ -1,0 +1,822 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Simple binary serialization" href="../sbs/index.html" /><link rel="prev" title="hat.peg - Python parsing expression grammar library" href="../peg.html" />
+
+    <meta name="generator" content="sphinx-3.4.1, furo 2020.12.30.beta24"/>
+        <title>hat.stc - Python statechart library - Hat Core documentation</title>
+      <link rel="stylesheet" href="../../_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
+    <link rel="stylesheet" href="../../_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="../../_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" href="../../_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script defer="defer" src="../../_static/jquery.js"></script>
+    <script defer="defer" src="../../_static/underscore.js"></script>
+    <script defer="defer" src="../../_static/doctools.js"></script>
+    <script defer src="../../_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Hat Core  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hat Core  documentation</span>
+  
+</a><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Libraries</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label for="toctree-checkbox-1"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../util/index.html">Utility functions</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label for="toctree-checkbox-2"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../util/python.html"><cite>hat.util</cite> - Python utility library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../util/javascript.html"><cite>@hat-core/util</cite> - JavaScript utility library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../aio.html"><cite>hat.aio</cite> - Python asyncio utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../json.html"><cite>hat.json</cite> - Python JSON data library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../qt.html"><cite>hat.qt</cite> - Python Qt utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../peg.html"><cite>hat.peg</cite> - Python parsing expression grammar library</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#"><cite>hat.stc</cite> - Python statechart library</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../sbs/index.html">Simple binary serialization</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label for="toctree-checkbox-3"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../sbs/python.html"><cite>hat.sbs</cite> - Python simple binary serialization library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../sbs/c.html"><cite>hat/sbs</cite> - C simple binary serialization library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../chatter/index.html">Chatter communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label for="toctree-checkbox-4"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../chatter/python.html"><cite>hat.chatter</cite> - Python chatter library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../juggler/index.html">Juggler communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label for="toctree-checkbox-5"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../juggler/python.html"><cite>hat.juggler</cite> - Python juggler library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../duktape.html"><cite>hat.duktape</cite> - Python Duktape wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../asn1.html"><cite>hat.asn1</cite> - Python Abstract Syntax Notation One library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../drivers/index.html">Communication drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../components/index.html">Components</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label for="toctree-checkbox-6"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../components/syslog.html">Syslog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../components/orchestrator.html">Orchestrator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../components/monitor.html">Monitor Server</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../components/event/index.html">Event Server</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label for="toctree-checkbox-7"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../components/event/modules/dummy.html">Dummy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../components/event/backends/dummy.html">Dummy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../components/event/backends/sqlite.html">Sqlite backend</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../components/gateway/index.html">Gateway</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label for="toctree-checkbox-8"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../components/gateway/devices/dummy.html">Dummy device</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../components/gui/index.html">GUI Server</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label for="toctree-checkbox-9"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../components/gui/adapters/dummy.html">Dummy adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../components/gui/views/dummy.html">Dummy view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../appendix/index.html">Appendix</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label for="toctree-checkbox-10"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/api.html">Generated API documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/ports.html">Default TCP ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/events.html">Event definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/sbs.html">SBS Schema definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../appendix/json.html">JSON Schema definitions</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="hat-stc-python-statechart-library">
+<span id="hat-stc"></span><h1><cite>hat.stc</cite> - Python statechart library<a class="headerlink" href="#hat-stc-python-statechart-library" title="Permalink to this headline">¶</a></h1>
+<p>This library provides basic implementation of
+<a class="reference external" href="https://en.wikipedia.org/wiki/UML_state_machine">hierarchical state machine</a>
+engine. Statechart definition can be provided as structures defined by API or
+by <a class="reference external" href="https://www.w3.org/TR/scxml/">SCXML definition</a>. Additionally,
+<a class="reference external" href="https://graphviz.org/">Graphviz</a> DOT graph can be generated based on state
+definition.</p>
+<div class="section" id="statechart-definitions">
+<h2>Statechart definitions<a class="headerlink" href="#statechart-definitions" title="Permalink to this headline">¶</a></h2>
+<p>Prior to statechart execution, state with all transition definitions are
+required:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EventName</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">StateName</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">ActionName</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="n">ConditionName</span> <span class="o">=</span> <span class="nb">str</span>
+
+<span class="k">class</span> <span class="nc">Transition</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">event</span><span class="p">:</span> <span class="n">EventName</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StateName</span><span class="p">]</span>
+    <span class="n">actions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ActionName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conditions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConditionName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">internal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">StateName</span>
+    <span class="n">children</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="s1">'State'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">transitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Transition</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">entries</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ActionName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">exits</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ActionName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">final</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>State is defined by:</p>
+<blockquote>
+<div><ul>
+<li><p><cite>name</cite></p>
+<blockquote>
+<div><p>Unique state identifier.</p>
+</div></blockquote>
+</li>
+<li><p><cite>children</cite></p>
+<blockquote>
+<div><p>Optional child states. If state has children, first child is
+considered as its initial state.</p>
+</div></blockquote>
+</li>
+<li><p><cite>transitions</cite></p>
+<blockquote>
+<div><p>Possible transitions to other states.</p>
+</div></blockquote>
+</li>
+<li><p><cite>entries</cite></p>
+<blockquote>
+<div><p>Actions executed when state is entered.</p>
+</div></blockquote>
+</li>
+<li><p><cite>exists</cite></p>
+<blockquote>
+<div><p>Actions executed when state is exited.</p>
+</div></blockquote>
+</li>
+<li><p><cite>final</cite></p>
+<blockquote>
+<div><p>Is state final.</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p>Transition is defined by:</p>
+<blockquote>
+<div><ul>
+<li><p><cite>event</cite></p>
+<blockquote>
+<div><p>Event identifier. Occurrence of event with this exact identifier can
+trigger state transition.</p>
+</div></blockquote>
+</li>
+<li><p><cite>target</cite></p>
+<blockquote>
+<div><p>Destination state identifier. If destination state is not defined,
+local transition is assumed - state is not changed and transition
+actions are triggered.</p>
+</div></blockquote>
+</li>
+<li><p><cite>conditions</cite></p>
+<blockquote>
+<div><p>List of conditions. Transition is triggered only if all provided
+conditions are met.</p>
+</div></blockquote>
+</li>
+<li><p><cite>internal</cite></p>
+<blockquote>
+<div><p>Internal transition modifier. Determines whether the source state is
+exited in transitions whose target state is a descendant of the source
+state.</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="importing-scxml">
+<h2>Importing SCXML<a class="headerlink" href="#importing-scxml" title="Permalink to this headline">¶</a></h2>
+<p>State definitions can be created based on SCXML definitions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_scxml</span><span class="p">(</span><span class="n">scxml</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">TextIO</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">State</span><span class="p">]:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Notable differences between <cite>hat.stc</cite> and SCXML standard:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>initial child state (in <cite>scxml</cite> and <cite>state</cite> tag) should be defined
+only by setting parent’s <cite>initial</cite> attribute</p></li>
+<li><p>transitions without associated event name are not supported</p></li>
+<li><p>parallel substates are not supported</p></li>
+<li><p>history pseudo-state is not supported</p></li>
+<li><p>data model is not supported</p></li>
+<li><p>external communications is not supported</p></li>
+<li><p>all actions and conditions are identified by name - arbitrary expressions
+or executable contents are not supported</p></li>
+<li><p>transition event identifiers are used as exact event names without
+support for substring segmentation matching</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="running-statechart">
+<h2>Running statechart<a class="headerlink" href="#running-statechart" title="Permalink to this headline">¶</a></h2>
+<p>Statechart instance is represented with instance of <cite>hat.stc.Statechart</cite>
+class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Action</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Event</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="n">Condition</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Event</span><span class="p">]],</span> <span class="nb">bool</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">EventName</span>
+    <span class="n">payload</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="k">class</span> <span class="nc">Statechart</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">states</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">State</span><span class="p">],</span>
+                 <span class="n">actions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Action</span><span class="p">],</span>
+                 <span class="n">conditions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Condition</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}):</span> <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StateName</span><span class="p">]:</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">):</span> <span class="o">...</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Each instance is initialized with state definitions (first state is considered
+initial) and action and condition definitions. Statechart execution is
+simulated by calling <cite>run</cite> coroutine. When this coroutine is called,
+statechart will transition to initial state and wait for new event occurrences.
+New events are registered with <cite>register</cite> method which accepts event instances
+containing event name and optional event payload. All event registrations are
+queued and processed sequentially. Coroutine <cite>run</cite> continues execution until
+statechart transitions to final state. Once final state is reached, <cite>run</cite>
+finishes execution. During statechart execution, actions and conditions
+are called based on state changes and associated transitions provided during
+initialization. Condition is considered met only if result of calling
+condition function is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</div>
+<div class="section" id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
+<p><cite>hat.stc</cite> provides function for generating Graphviz DOT graph definitions
+based on state definitions (which can be obtained by importing SCXML):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_dot_graph</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">State</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Sphinx extension <cite>hat.sphinx.scxml</cite> can be used for generating statechart
+definition visualization.</p>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="graphviz"><img alt='digraph "stc" {
+    fontname = Helvetica
+    fontsize = 12
+    penwidth = 2.0
+    splines = true
+    ordering = out
+    compound = true
+    overlap = scale
+    nodesep = 0.3
+    ranksep = 0.1
+    node [
+        shape = plaintext
+        style = filled
+        fillcolor = transparent
+        fontname = Helvetica
+        fontsize = 12
+        penwidth = 2.0
+    ]
+    edge [
+        fontname = Helvetica
+        fontsize = 12
+    ]
+    state_initial [
+    shape = circle
+    style = filled
+    fillcolor = black
+    fixedsize = true
+    height = 0.15
+    label = ""
+]
+subgraph "cluster_state_0" {
+    label = &lt;
+        &lt;table cellborder="0" border="0"&gt;
+            &lt;tr&gt;&lt;td&gt;on&lt;/td&gt;&lt;/tr&gt;
+            &lt;hr/&gt;
+            &lt;tr&gt;&lt;td align="left"&gt;entry/ clear&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td align="left"&gt;exit/ clear&lt;/td&gt;&lt;/tr&gt;
+        &lt;/table&gt;
+    &gt;
+    style = rounded
+    penwidth = 2.0
+    state_0_initial [
+    shape = circle
+    style = filled
+    fillcolor = black
+    fixedsize = true
+    height = 0.15
+    label = ""
+]
+subgraph "cluster_state_0_0" {
+    label = &lt;
+        &lt;table cellborder="0" border="0"&gt;
+            &lt;tr&gt;&lt;td&gt;operand1&lt;/td&gt;&lt;/tr&gt;
+
+
+        &lt;/table&gt;
+    &gt;
+    style = rounded
+    penwidth = 2.0
+
+    state_0_0 [
+        shape=point
+        style=invis
+        margin=0
+        width=0
+        height=0
+        fixedsize=true
+    ]
+}
+subgraph "cluster_state_0_1" {
+    label = &lt;
+        &lt;table cellborder="0" border="0"&gt;
+            &lt;tr&gt;&lt;td&gt;opEntered&lt;/td&gt;&lt;/tr&gt;
+            &lt;hr/&gt;
+            &lt;tr&gt;&lt;td align="left"&gt;entry/ setOp&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td align="left"&gt;exit/ setOp&lt;/td&gt;&lt;/tr&gt;
+        &lt;/table&gt;
+    &gt;
+    style = rounded
+    penwidth = 2.0
+
+    state_0_1 [
+        shape=point
+        style=invis
+        margin=0
+        width=0
+        height=0
+        fixedsize=true
+    ]
+}
+subgraph "cluster_state_0_2" {
+    label = &lt;
+        &lt;table cellborder="0" border="0"&gt;
+            &lt;tr&gt;&lt;td&gt;operand2&lt;/td&gt;&lt;/tr&gt;
+
+
+        &lt;/table&gt;
+    &gt;
+    style = rounded
+    penwidth = 2.0
+
+    state_0_2 [
+        shape=point
+        style=invis
+        margin=0
+        width=0
+        height=0
+        fixedsize=true
+    ]
+}
+subgraph "cluster_state_0_3" {
+    label = &lt;
+        &lt;table cellborder="0" border="0"&gt;
+            &lt;tr&gt;&lt;td&gt;result&lt;/td&gt;&lt;/tr&gt;
+            &lt;hr/&gt;
+            &lt;tr&gt;&lt;td align="left"&gt;entry/ calculate&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td align="left"&gt;exit/ calculate&lt;/td&gt;&lt;/tr&gt;
+        &lt;/table&gt;
+    &gt;
+    style = rounded
+    penwidth = 2.0
+
+    state_0_3 [
+        shape=point
+        style=invis
+        margin=0
+        width=0
+        height=0
+        fixedsize=true
+    ]
+}
+    state_0 [
+        shape=point
+        style=invis
+        margin=0
+        width=0
+        height=0
+        fixedsize=true
+    ]
+}
+subgraph "cluster_state_1" {
+    label = &lt;
+        &lt;table cellborder="0" border="0"&gt;
+            &lt;tr&gt;&lt;td&gt;off&lt;/td&gt;&lt;/tr&gt;
+
+
+        &lt;/table&gt;
+    &gt;
+    style = rounded
+    penwidth = 2.0
+
+    state_1 [
+        shape=point
+        style=invis
+        margin=0
+        width=0
+        height=0
+        fixedsize=true
+    ]
+}
+    state_initial -&gt; state_0 [
+    label = ""
+    lhead = "cluster_state_0"
+    ltail = ""
+]
+state_0 -&gt; state_0 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;C&lt;/td&gt;&lt;/tr&gt;
+
+
+&lt;/table&gt;
+&gt;
+    lhead = ""
+    ltail = ""
+]
+state_0 -&gt; state_1 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;OFF&lt;/td&gt;&lt;/tr&gt;
+
+
+&lt;/table&gt;
+&gt;
+    lhead = "cluster_state_1"
+    ltail = "cluster_state_0"
+]
+state_0_initial -&gt; state_0_0 [
+    label = ""
+    lhead = "cluster_state_0_0"
+    ltail = ""
+]
+state_0_0 -&gt; state_0_0 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;number&lt;/td&gt;&lt;/tr&gt;
+    &lt;hr/&gt;
+    &lt;tr&gt;&lt;td&gt;appendOperand1&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&gt;
+    lhead = ""
+    ltail = ""
+]
+state_0_0 -&gt; state_0_1 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;operator&lt;/td&gt;&lt;/tr&gt;
+
+
+&lt;/table&gt;
+&gt;
+    lhead = "cluster_state_0_1"
+    ltail = "cluster_state_0_0"
+]
+state_0_1 -&gt; state_0_2 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;number&lt;/td&gt;&lt;/tr&gt;
+    &lt;hr/&gt;
+    &lt;tr&gt;&lt;td&gt;setOperand2&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&gt;
+    lhead = "cluster_state_0_2"
+    ltail = "cluster_state_0_1"
+]
+state_0_2 -&gt; state_0_2 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;number&lt;/td&gt;&lt;/tr&gt;
+    &lt;hr/&gt;
+    &lt;tr&gt;&lt;td&gt;appendOperand2&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&gt;
+    lhead = ""
+    ltail = ""
+]
+state_0_2 -&gt; state_0_3 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;equals&lt;/td&gt;&lt;/tr&gt;
+
+
+&lt;/table&gt;
+&gt;
+    lhead = "cluster_state_0_3"
+    ltail = "cluster_state_0_2"
+]
+state_0_3 -&gt; state_0_0 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;number&lt;/td&gt;&lt;/tr&gt;
+    &lt;hr/&gt;
+    &lt;tr&gt;&lt;td&gt;setOperand1&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&gt;
+    lhead = "cluster_state_0_0"
+    ltail = "cluster_state_0_3"
+]
+state_0_3 -&gt; state_0_1 [
+    label = &lt;
+&lt;table cellborder="0" border="0"&gt;
+    &lt;tr&gt;&lt;td&gt;operator&lt;/td&gt;&lt;/tr&gt;
+    &lt;hr/&gt;
+    &lt;tr&gt;&lt;td&gt;resultAsOperand1&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&gt;
+    lhead = "cluster_state_0_1"
+    ltail = "cluster_state_0_3"
+]
+}' class="graphviz" src="../../_images/graphviz-e57b59b4ff7f548c6a6bc3a1c25e227620aff425.png"/></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">states</span> <span class="o">=</span> <span class="n">stc</span><span class="o">.</span><span class="n">parse_scxml</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="sa">r</span><span class="s2">"""&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="s2">    &lt;scxml xmlns="http://www.w3.org/2005/07/scxml" initial="on" version="1.0"&gt;</span>
+<span class="s2">        &lt;state id="on" initial="operand1"&gt;</span>
+<span class="s2">            &lt;onentry&gt;clear&lt;/onentry&gt;</span>
+<span class="s2">            &lt;transition event="C" target="on"/&gt;</span>
+<span class="s2">            &lt;transition event="OFF" target="off"/&gt;</span>
+<span class="s2">            &lt;state id="operand1"&gt;</span>
+<span class="s2">                &lt;transition event="number" target="operand1"&gt;appendOperand1&lt;/transition&gt;</span>
+<span class="s2">                &lt;transition event="operator" target="opEntered"/&gt;</span>
+<span class="s2">            &lt;/state&gt;</span>
+<span class="s2">            &lt;state id="opEntered"&gt;</span>
+<span class="s2">                &lt;onentry&gt;setOperator&lt;/onentry&gt;</span>
+<span class="s2">                &lt;transition event="number" target="operand2"&gt;setOperand2&lt;/transition&gt;</span>
+<span class="s2">            &lt;/state&gt;</span>
+<span class="s2">            &lt;state id="operand2"&gt;</span>
+<span class="s2">                &lt;transition event="number" target="operand2"&gt;appendOperand2&lt;/transition&gt;</span>
+<span class="s2">                &lt;transition event="equals" target="result"/&gt;</span>
+<span class="s2">            &lt;/state&gt;</span>
+<span class="s2">            &lt;state id="result"&gt;</span>
+<span class="s2">                &lt;onentry&gt;calculate&lt;/onentry&gt;</span>
+<span class="s2">                &lt;transition event="number" target="operand1"&gt;setOperand1&lt;/transition&gt;</span>
+<span class="s2">                &lt;transition event="operator" target="opEntered"&gt;resultAsOperand1&lt;/transition&gt;</span>
+<span class="s2">            &lt;/state&gt;</span>
+<span class="s2">        &lt;/state&gt;</span>
+<span class="s2">        &lt;final id="off"/&gt;</span>
+<span class="s2">    &lt;/scxml&gt;"""</span><span class="p">))</span>  <span class="c1"># NOQA</span>
+
+<span class="k">class</span> <span class="nc">Calculator</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'clear'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_clear</span><span class="p">,</span>
+                   <span class="s1">'setOperand1'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_setOperand1</span><span class="p">,</span>
+                   <span class="s1">'appendOperand1'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_appendOperand1</span><span class="p">,</span>
+                   <span class="s1">'setOperand2'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_setOperand2</span><span class="p">,</span>
+                   <span class="s1">'appendOperand2'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_appendOperand2</span><span class="p">,</span>
+                   <span class="s1">'resultAsOperand1'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_resultAsOperand1</span><span class="p">,</span>
+                   <span class="s1">'setOperator'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_setOperator</span><span class="p">,</span>
+                   <span class="s1">'calculate'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_act_calculate</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span> <span class="o">=</span> <span class="n">stc</span><span class="o">.</span><span class="n">Statechart</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
+
+    <span class="k">def</span> <span class="nf">push_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">stc</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="s1">'number'</span><span class="p">,</span> <span class="n">number</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">push_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operator</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">stc</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="s1">'operator'</span><span class="p">,</span> <span class="n">operator</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">push_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">stc</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="s1">'equals'</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">push_C</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">stc</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="s1">'C'</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">push_OFF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">stc</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span><span class="s1">'OFF'</span><span class="p">))</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_act_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_act_setOperand1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">=</span> <span class="n">evt</span><span class="o">.</span><span class="n">payload</span>
+
+    <span class="k">def</span> <span class="nf">_act_appendOperand1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">evt</span><span class="o">.</span><span class="n">payload</span>
+
+    <span class="k">def</span> <span class="nf">_act_setOperand2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span> <span class="o">=</span> <span class="n">evt</span><span class="o">.</span><span class="n">payload</span>
+
+    <span class="k">def</span> <span class="nf">_act_appendOperand2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">evt</span><span class="o">.</span><span class="n">payload</span>
+
+    <span class="k">def</span> <span class="nf">_act_resultAsOperand1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
+
+    <span class="k">def</span> <span class="nf">_act_setOperator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">=</span> <span class="n">evt</span><span class="o">.</span><span class="n">payload</span>
+
+    <span class="k">def</span> <span class="nf">_act_calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">==</span> <span class="s1">'+'</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">==</span> <span class="s1">'-'</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">==</span> <span class="s1">'*'</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operator</span> <span class="o">==</span> <span class="s1">'/'</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operand2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'invalid operator'</span><span class="p">)</span>
+
+<span class="n">calc</span> <span class="o">=</span> <span class="n">Calculator</span><span class="p">()</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_number</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_number</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_number</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_operator</span><span class="p">(</span><span class="s1">'*'</span><span class="p">)</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_number</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_equals</span><span class="p">()</span>
+<span class="n">calc</span><span class="o">.</span><span class="n">push_OFF</span><span class="p">()</span>
+<span class="k">await</span> <span class="n">calc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">calc</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="mi">246</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>API reference is available as part of generated documentation:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="../pyhat/hat/stc.html">Python hat.stc module</a></p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../sbs/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Simple binary serialization</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../peg.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title"><cite>hat.peg</cite> - Python parsing expression grammar library</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2020 - 2021, Hat Open AUTHORS
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#"><cite>hat.stc</cite> - Python statechart library</a><ul>
+<li><a class="reference internal" href="#statechart-definitions">Statechart definitions</a></li>
+<li><a class="reference internal" href="#importing-scxml">Importing SCXML</a></li>
+<li><a class="reference internal" href="#running-statechart">Running statechart</a></li>
+<li><a class="reference internal" href="#visualization">Visualization</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>

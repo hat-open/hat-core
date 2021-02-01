@@ -1,0 +1,2117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.iec104 API documentation</title>
+<meta name="description" content="IEC 60870-5-104 communication protocol" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.iec104</code></h1>
+</header>
+<section id="section-intro">
+<p>IEC 60870-5-104 communication protocol</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;IEC 60870-5-104 communication protocol&#34;&#34;&#34;
+
+from hat.drivers.iec104.common import (time_from_datetime,
+                                       time_to_datetime,
+                                       Action,
+                                       BinaryCounterValue,
+                                       BitstringValue,
+                                       Cause,
+                                       Command,
+                                       CommandValue,
+                                       Data,
+                                       DataValue,
+                                       DoubleValue,
+                                       FloatingValue,
+                                       FreezeCode,
+                                       NormalizedValue,
+                                       Quality,
+                                       RegulatingValue,
+                                       ScaledValue,
+                                       SingleValue,
+                                       StepPositionValue,
+                                       Time)
+from hat.drivers.iec104.connection import (connect,
+                                           listen,
+                                           Connection,
+                                           Server)
+
+
+__all__ = [&#39;connect&#39;,
+           &#39;listen&#39;,
+           &#39;time_from_datetime&#39;,
+           &#39;time_to_datetime&#39;,
+           &#39;Action&#39;,
+           &#39;BinaryCounterValue&#39;,
+           &#39;BitstringValue&#39;,
+           &#39;Cause&#39;,
+           &#39;Command&#39;,
+           &#39;CommandValue&#39;,
+           &#39;Connection&#39;,
+           &#39;Data&#39;,
+           &#39;DataValue&#39;,
+           &#39;DoubleValue&#39;,
+           &#39;FloatingValue&#39;,
+           &#39;FreezeCode&#39;,
+           &#39;NormalizedValue&#39;,
+           &#39;Quality&#39;,
+           &#39;RegulatingValue&#39;,
+           &#39;ScaledValue&#39;,
+           &#39;Server&#39;,
+           &#39;SingleValue&#39;,
+           &#39;StepPositionValue&#39;,
+           &#39;Time&#39;]</code></pre>
+</details>
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="hat.drivers.iec104.common" href="common.html">hat.drivers.iec104.common</a></code></dt>
+<dd>
+<div class="desc"><p>IEC 60870-5-104 data structures</p></div>
+</dd>
+<dt><code class="name"><a title="hat.drivers.iec104.connection" href="connection.html">hat.drivers.iec104.connection</a></code></dt>
+<dd>
+<div class="desc"><p>IEC 60870-5-104 connection …</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.iec104.connect"><code class="name flex">
+<span>async def <span class="ident">connect</span></span>(<span>host, port=2404, interrogate_cb=None, counter_interrogate_cb=None, command_cb=None, response_timeout=15, supervisory_timeout=10, test_timeout=20, send_window_size=12, receive_window_size=8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect to remote device</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>host</code></strong> :&ensp;<code>str</code></dt>
+<dd>remote server's hostname</dd>
+<dt><strong><code>port</code></strong> :&ensp;<code>int</code></dt>
+<dd>remote server's port</dd>
+<dt><strong><code>interrogate_cb</code></strong> :&ensp;<code>Optional[InterrogateCallback]</code></dt>
+<dd>interrogate callback</dd>
+<dt>counter_interrogate_cb (Optional[CounterInterrogateCallback]):</dt>
+<dt>counter interrogate callback</dt>
+<dt><strong><code>command_cb</code></strong> :&ensp;<code>Optional[CommandCallback]</code></dt>
+<dd>command callback</dd>
+<dt><strong><code>response_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>response timeout (t1) in seconds</dd>
+<dt><strong><code>supervisory_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>supervisory timeout (t2) in seconds</dd>
+<dt><strong><code>test_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>test timeout (t3) in seconds</dd>
+<dt><strong><code>send_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>send window size (k)</dd>
+<dt><strong><code>receive_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>receive window size (w)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Connection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def connect(host, port=2404, interrogate_cb=None,
+                  counter_interrogate_cb=None, command_cb=None,
+                  response_timeout=15, supervisory_timeout=10,
+                  test_timeout=20, send_window_size=12, receive_window_size=8):
+    &#34;&#34;&#34;Connect to remote device
+
+    Args:
+        host (str): remote server&#39;s hostname
+        port (int): remote server&#39;s port
+        interrogate_cb (Optional[InterrogateCallback]): interrogate callback
+        counter_interrogate_cb (Optional[CounterInterrogateCallback]):
+            counter interrogate callback
+        command_cb (Optional[CommandCallback]): command callback
+        response_timeout (float): response timeout (t1) in seconds
+        supervisory_timeout (float): supervisory timeout (t2) in seconds
+        test_timeout (float): test timeout (t3) in seconds
+        send_window_size (int): send window size (k)
+        receive_window_size (int): receive window size (w)
+
+    Returns:
+        Connection
+
+    &#34;&#34;&#34;
+
+    async def read_startdt_con():
+        while True:
+            apdu = await _common.read_apdu(reader)
+            if isinstance(apdu, _common.APDUU):
+                if apdu.function == _common.ApduFunctionType.STARTDT_CON:
+                    return
+                if apdu.function == _common.ApduFunctionType.TESTFR_ACT:
+                    _common.write_apdu(_common.APDUU(
+                        function=_common.ApduFunctionType.TESTFR_CON))
+                    continue
+            mlog.warn(&#39;while waiting for STARTDT con, received %s&#39;, apdu)
+
+    reader, writer = await asyncio.open_connection(host, port)
+    _common.write_apdu(writer, _common.APDUU(
+        function=_common.ApduFunctionType.STARTDT_ACT))
+    try:
+        await asyncio.wait_for(read_startdt_con(), response_timeout)
+    except Exception:
+        with contextlib.suppress(Exception):
+            writer.close()
+        raise
+
+    transport = _common.Transport(
+        reader, writer, True, response_timeout, supervisory_timeout,
+        test_timeout, send_window_size, receive_window_size)
+    return _create_connection(transport, interrogate_cb,
+                              counter_interrogate_cb, command_cb)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.listen"><code class="name flex">
+<span>async def <span class="ident">listen</span></span>(<span>connection_cb, host='0.0.0.0', port=2404, interrogate_cb=None, counter_interrogate_cb=None, command_cb=None, response_timeout=15, supervisory_timeout=10, test_timeout=20, send_window_size=12, receive_window_size=8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new IEC104 slave and listen for incoming connections</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>connection_cb</code></strong> :&ensp;<code>Callable[[<a title="hat.drivers.iec104.Connection" href="#hat.drivers.iec104.Connection">Connection</a>],None]</code></dt>
+<dd>new connection callback</dd>
+<dt><strong><code>host</code></strong> :&ensp;<code>str</code></dt>
+<dd>listening socket hostname</dd>
+<dt><strong><code>port</code></strong> :&ensp;<code>int</code></dt>
+<dd>listening socket port</dd>
+<dt><strong><code>interrogate_cb</code></strong> :&ensp;<code>Optional[InterrogateCallback]</code></dt>
+<dd>interrogate callback</dd>
+<dt>counter_interrogate_cb (Optional[CounterInterrogateCallback]):</dt>
+<dt>counter interrogate callback</dt>
+<dt><strong><code>command_cb</code></strong> :&ensp;<code>Optional[CommandCallback]</code></dt>
+<dd>command callback</dd>
+<dt><strong><code>response_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>response timeout (t1) in seconds</dd>
+<dt><strong><code>supervisory_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>supervisory timeout (t2) in seconds</dd>
+<dt><strong><code>test_timeout</code></strong> :&ensp;<code>float</code></dt>
+<dd>test timeout (t3) in seconds</dd>
+<dt><strong><code>send_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>send window size (k)</dd>
+<dt><strong><code>receive_window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>receive window size (w)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Server</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def listen(connection_cb, host=&#39;0.0.0.0&#39;, port=2404, interrogate_cb=None,
+                 counter_interrogate_cb=None, command_cb=None,
+                 response_timeout=15, supervisory_timeout=10, test_timeout=20,
+                 send_window_size=12, receive_window_size=8):
+    &#34;&#34;&#34;Create new IEC104 slave and listen for incoming connections
+
+    Args:
+        connection_cb (Callable[[Connection],None]): new connection callback
+        host (str): listening socket hostname
+        port (int): listening socket port
+        interrogate_cb (Optional[InterrogateCallback]): interrogate callback
+        counter_interrogate_cb (Optional[CounterInterrogateCallback]):
+            counter interrogate callback
+        command_cb (Optional[CommandCallback]): command callback
+        response_timeout (float): response timeout (t1) in seconds
+        supervisory_timeout (float): supervisory timeout (t2) in seconds
+        test_timeout (float): test timeout (t3) in seconds
+        send_window_size (int): send window size (k)
+        receive_window_size (int): receive window size (w)
+
+    Returns:
+        Server
+
+    &#34;&#34;&#34;
+
+    def on_client_connected(reader, writer):
+        transport = _common.Transport(
+            reader, writer, False, response_timeout, supervisory_timeout,
+            test_timeout, send_window_size, receive_window_size)
+        conn = _create_connection(transport, interrogate_cb,
+                                  counter_interrogate_cb, command_cb)
+        server._connections.append(conn)
+        server._async_group.spawn(server._conn_life, conn)
+        connection_cb(conn)
+
+    group = aio.Group(
+        lambda e: mlog.error(&#39;exception in server: %s&#39;, e, exc_info=e))
+    tcp_server = await asyncio.start_server(on_client_connected, host, port)
+    socknames = [socket.getsockname() for socket in tcp_server.sockets]
+    addresses = [Address(*sockname[:2]) for sockname in socknames]
+
+    server = Server()
+    server._async_group = group
+    server._srv = tcp_server
+    server._addresses = addresses
+    server._connections = []
+    server._async_group.spawn(aio.call_on_cancel, server._on_close)
+    return server</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.time_from_datetime"><code class="name flex">
+<span>def <span class="ident">time_from_datetime</span></span>(<span>dt, invalid=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create Time from datetime.datetime</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dt</code></strong> :&ensp;<code>datetime.datetime</code></dt>
+<dd>datetime</dd>
+<dt><strong><code>invalid</code></strong> :&ensp;<code>bool</code></dt>
+<dd>invalid flag value</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Time</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def time_from_datetime(dt, invalid=False):
+    &#34;&#34;&#34;Create Time from datetime.datetime
+
+    Args:
+        dt (datetime.datetime): datetime
+        invalid (bool): invalid flag value
+
+    Returns:
+        Time
+
+    &#34;&#34;&#34;
+    #  rounding microseconds to the nearest millisecond
+    dt_rounded = (
+        dt.replace(microsecond=0) +
+        datetime.timedelta(milliseconds=round(dt.microsecond / 1000)))
+    local_time = time.localtime(
+        dt_rounded.replace(tzinfo=datetime.timezone.utc).timestamp())
+    return Time(
+        milliseconds=(local_time.tm_sec * 1000 +
+                      dt_rounded.microsecond // 1000),
+        invalid=invalid,
+        minutes=local_time.tm_min,
+        summer_time=bool(local_time.tm_isdst),
+        hours=local_time.tm_hour,
+        day_of_week=local_time.tm_wday + 1,
+        day_of_month=local_time.tm_mday,
+        months=local_time.tm_mon,
+        years=local_time.tm_year % 100)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.time_to_datetime"><code class="name flex">
+<span>def <span class="ident">time_to_datetime</span></span>(<span>t)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert Time to datetime.datetime</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>t</code></strong> :&ensp;<code><a title="hat.drivers.iec104.Time" href="#hat.drivers.iec104.Time">Time</a></code></dt>
+<dd>time</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>datetime.datetime</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def time_to_datetime(t):
+    &#34;&#34;&#34;Convert Time to datetime.datetime
+
+    Args:
+        t (Time): time
+
+    Returns:
+        datetime.datetime
+
+    &#34;&#34;&#34;
+    local_dt = datetime.datetime(
+        year=2000 + t.years if t.years &lt; 70 else 1900 + t.years,
+        month=t.months,
+        day=t.day_of_month,
+        hour=t.hours,
+        minute=t.minutes,
+        second=int(t.milliseconds / 1000),
+        microsecond=(t.milliseconds % 1000) * 1000,
+        fold=not t.summer_time)
+    return local_dt.astimezone(tz=datetime.timezone.utc)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.iec104.Action"><code class="flex name class">
+<span>class <span class="ident">Action</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Action(enum.Enum):
+    EXECUTE = &#39;execute&#39;
+    SELECT = &#39;select&#39;
+    CANCEL = &#39;cancel&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Action.CANCEL"><code class="name">var <span class="ident">CANCEL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Action.EXECUTE"><code class="name">var <span class="ident">EXECUTE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Action.SELECT"><code class="name">var <span class="ident">SELECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.BinaryCounterValue"><code class="flex name class">
+<span>class <span class="ident">BinaryCounterValue</span></span>
+<span>(</span><span>value: int, sequence: int, overflow: bool, adjusted: bool, invalid: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BinaryCounterValue(value, sequence, overflow, adjusted, invalid)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BinaryCounterValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-2^31, 2^31-1]&#34;&#34;&#34;
+    sequence: int
+    overflow: bool
+    adjusted: bool
+    invalid: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.BinaryCounterValue.adjusted"><code class="name">var <span class="ident">adjusted</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.BinaryCounterValue.invalid"><code class="name">var <span class="ident">invalid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.BinaryCounterValue.overflow"><code class="name">var <span class="ident">overflow</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.BinaryCounterValue.sequence"><code class="name">var <span class="ident">sequence</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.BinaryCounterValue.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>value in range [-2^31, 2^31-1]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.BitstringValue"><code class="flex name class">
+<span>class <span class="ident">BitstringValue</span></span>
+<span>(</span><span>value: bytes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BitstringValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BitstringValue(typing.NamedTuple):
+    value: bytes
+    &#34;&#34;&#34;bitstring encoded as 4 bytes&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.BitstringValue.value"><code class="name">var <span class="ident">value</span> : bytes</code></dt>
+<dd>
+<div class="desc"><p>bitstring encoded as 4 bytes</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.Cause"><code class="flex name class">
+<span>class <span class="ident">Cause</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Cause(enum.Enum):
+    UNDEFINED = 0
+    PERIODIC = 1
+    BACKGROUND_SCAN = 2
+    SPONTANEOUS = 3
+    INITIALIZED = 4
+    REQUEST = 5
+    ACTIVATION = 6
+    ACTIVATION_CONFIRMATION = 7
+    DEACTIVATION = 8
+    DEACTIVATION_CONFIRMATION = 9
+    ACTIVATION_TERMINATION = 10
+    REMOTE_COMMAND = 11
+    LOCAL_COMMAND = 12
+    FILE_TRANSFER = 13
+    INTERROGATED_STATION = 20
+    INTERROGATED_GROUP01 = 21
+    INTERROGATED_GROUP02 = 22
+    INTERROGATED_GROUP03 = 23
+    INTERROGATED_GROUP04 = 24
+    INTERROGATED_GROUP05 = 25
+    INTERROGATED_GROUP06 = 26
+    INTERROGATED_GROUP07 = 27
+    INTERROGATED_GROUP08 = 28
+    INTERROGATED_GROUP09 = 29
+    INTERROGATED_GROUP10 = 30
+    INTERROGATED_GROUP11 = 31
+    INTERROGATED_GROUP12 = 32
+    INTERROGATED_GROUP13 = 33
+    INTERROGATED_GROUP14 = 34
+    INTERROGATED_GROUP15 = 35
+    INTERROGATED_GROUP16 = 36
+    INTERROGATED_COUNTER = 37
+    INTERROGATED_COUNTER01 = 38
+    INTERROGATED_COUNTER02 = 39
+    INTERROGATED_COUNTER03 = 40
+    INTERROGATED_COUNTER04 = 41
+    UNKNOWN_TYPE = 44
+    UNKNOWN_CAUSE = 45
+    UNKNOWN_ASDU_ADDRESS = 46
+    UNKNOWN_IO_ADDRESS = 47</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Cause.ACTIVATION"><code class="name">var <span class="ident">ACTIVATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.ACTIVATION_CONFIRMATION"><code class="name">var <span class="ident">ACTIVATION_CONFIRMATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.ACTIVATION_TERMINATION"><code class="name">var <span class="ident">ACTIVATION_TERMINATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.BACKGROUND_SCAN"><code class="name">var <span class="ident">BACKGROUND_SCAN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.DEACTIVATION"><code class="name">var <span class="ident">DEACTIVATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.DEACTIVATION_CONFIRMATION"><code class="name">var <span class="ident">DEACTIVATION_CONFIRMATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.FILE_TRANSFER"><code class="name">var <span class="ident">FILE_TRANSFER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INITIALIZED"><code class="name">var <span class="ident">INITIALIZED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_COUNTER"><code class="name">var <span class="ident">INTERROGATED_COUNTER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_COUNTER01"><code class="name">var <span class="ident">INTERROGATED_COUNTER01</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_COUNTER02"><code class="name">var <span class="ident">INTERROGATED_COUNTER02</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_COUNTER03"><code class="name">var <span class="ident">INTERROGATED_COUNTER03</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_COUNTER04"><code class="name">var <span class="ident">INTERROGATED_COUNTER04</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP01"><code class="name">var <span class="ident">INTERROGATED_GROUP01</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP02"><code class="name">var <span class="ident">INTERROGATED_GROUP02</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP03"><code class="name">var <span class="ident">INTERROGATED_GROUP03</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP04"><code class="name">var <span class="ident">INTERROGATED_GROUP04</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP05"><code class="name">var <span class="ident">INTERROGATED_GROUP05</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP06"><code class="name">var <span class="ident">INTERROGATED_GROUP06</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP07"><code class="name">var <span class="ident">INTERROGATED_GROUP07</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP08"><code class="name">var <span class="ident">INTERROGATED_GROUP08</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP09"><code class="name">var <span class="ident">INTERROGATED_GROUP09</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP10"><code class="name">var <span class="ident">INTERROGATED_GROUP10</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP11"><code class="name">var <span class="ident">INTERROGATED_GROUP11</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP12"><code class="name">var <span class="ident">INTERROGATED_GROUP12</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP13"><code class="name">var <span class="ident">INTERROGATED_GROUP13</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP14"><code class="name">var <span class="ident">INTERROGATED_GROUP14</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP15"><code class="name">var <span class="ident">INTERROGATED_GROUP15</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_GROUP16"><code class="name">var <span class="ident">INTERROGATED_GROUP16</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.INTERROGATED_STATION"><code class="name">var <span class="ident">INTERROGATED_STATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.LOCAL_COMMAND"><code class="name">var <span class="ident">LOCAL_COMMAND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.PERIODIC"><code class="name">var <span class="ident">PERIODIC</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.REMOTE_COMMAND"><code class="name">var <span class="ident">REMOTE_COMMAND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.REQUEST"><code class="name">var <span class="ident">REQUEST</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.SPONTANEOUS"><code class="name">var <span class="ident">SPONTANEOUS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.UNDEFINED"><code class="name">var <span class="ident">UNDEFINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.UNKNOWN_ASDU_ADDRESS"><code class="name">var <span class="ident">UNKNOWN_ASDU_ADDRESS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.UNKNOWN_CAUSE"><code class="name">var <span class="ident">UNKNOWN_CAUSE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.UNKNOWN_IO_ADDRESS"><code class="name">var <span class="ident">UNKNOWN_IO_ADDRESS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.Cause.UNKNOWN_TYPE"><code class="name">var <span class="ident">UNKNOWN_TYPE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.Command"><code class="flex name class">
+<span>class <span class="ident">Command</span></span>
+<span>(</span><span>action: <a title="hat.drivers.iec104.Action" href="#hat.drivers.iec104.Action">Action</a>, value: CommandValue, asdu_address: int, io_address: int, time: typing.Union[ForwardRef('<a title="hat.drivers.iec104.Time" href="#hat.drivers.iec104.Time">Time</a>'), NoneType], qualifier: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Command(action, value, asdu_address, io_address, time, qualifier)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Command(typing.NamedTuple):
+    action: &#39;Action&#39;
+    value: &#39;CommandValue&#39;
+    asdu_address: int
+    io_address: int
+    time: typing.Optional[&#39;Time&#39;]
+    qualifier: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Command.action"><code class="name">var <span class="ident">action</span> : <a title="hat.drivers.iec104.common.Action" href="common.html#hat.drivers.iec104.common.Action">Action</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Command.asdu_address"><code class="name">var <span class="ident">asdu_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Command.io_address"><code class="name">var <span class="ident">io_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Command.qualifier"><code class="name">var <span class="ident">qualifier</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Command.time"><code class="name">var <span class="ident">time</span> : typing.Union[<a title="hat.drivers.iec104.common.Time" href="common.html#hat.drivers.iec104.common.Time">Time</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Command.value"><code class="name">var <span class="ident">value</span> : typing.Union[<a title="hat.drivers.iec104.common.SingleValue" href="common.html#hat.drivers.iec104.common.SingleValue">SingleValue</a>, <a title="hat.drivers.iec104.common.DoubleValue" href="common.html#hat.drivers.iec104.common.DoubleValue">DoubleValue</a>, <a title="hat.drivers.iec104.common.RegulatingValue" href="common.html#hat.drivers.iec104.common.RegulatingValue">RegulatingValue</a>, <a title="hat.drivers.iec104.common.NormalizedValue" href="common.html#hat.drivers.iec104.common.NormalizedValue">NormalizedValue</a>, <a title="hat.drivers.iec104.common.ScaledValue" href="common.html#hat.drivers.iec104.common.ScaledValue">ScaledValue</a>, <a title="hat.drivers.iec104.common.FloatingValue" href="common.html#hat.drivers.iec104.common.FloatingValue">FloatingValue</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Single IEC104 connection</p>
+<p>For creating new Connection instances see :func:<code><a title="hat.drivers.iec104.connect" href="#hat.drivers.iec104.connect">connect()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connection(aio.Resource):
+    &#34;&#34;&#34;Single IEC104 connection
+
+    For creating new Connection instances see :func:`connect`.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def info(self):
+        &#34;&#34;&#34;ConnectionInfo: connection info&#34;&#34;&#34;
+        return self._info
+
+    def notify_data_change(self, data):
+        &#34;&#34;&#34;Notify local data change
+
+        Args:
+            data (List[common.Data]): data
+
+        &#34;&#34;&#34;
+        for i in data:
+            # TODO: implement bulk send data
+            self._send_data(i, None)
+
+    async def interrogate(self, asdu_address=0xFFFF):
+        &#34;&#34;&#34;Interrogate remote device
+
+        Asdu broadcast address 0xFFFF is not supported by all devices
+
+        Args:
+            asdu_address (int): asdu address
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async with self._interrogate_lock:
+            # is this necessary (no one closes it)
+            if self._interrogate_queue.is_closed:
+                raise aio.QueueClosedError()
+            asdu = _common.ASDU(
+                type=_common.AsduType.C_IC_NA,
+                cause=common.Cause.ACTIVATION,
+                is_negative_confirm=False,
+                is_test=False,
+                originator_address=None,
+                address=asdu_address,
+                ios=[_common.IO(
+                    address=0,
+                    time=None,
+                    elements=[_common.create_io_element(
+                                _common.AsduType.C_IC_NA, 20)])])
+            self._transport.write(asdu)
+            if not self._interrogate_queue.empty():
+                self._interrogate_queue.get_nowait_until_empty()
+            data = []
+            async for asdu in self._interrogate_queue:
+                if (asdu.type == _common.AsduType.C_IC_NA and
+                        asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                    continue
+                if (asdu.type == _common.AsduType.C_IC_NA and
+                        asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                    return data
+                data.extend(_asdu_to_data(asdu))
+
+    async def counter_interrogate(self, asdu_address=0xFFFF,
+                                  freeze=common.FreezeCode.READ):
+        &#34;&#34;&#34;Interrogate remote device counters
+
+        Asdu broadcast address 0xFFFF is not supported by all devices
+
+        Args:
+            asdu_address (int): asdu address
+            freeze (common.FreezeCode): freeze code
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async with self._counter_interrogate_lock:
+            # is this necessary (no one closes it)
+            if self._counter_interrogate_queue.is_closed:
+                raise util.QueueClosedError()
+            asdu = _common.ASDU(
+                type=_common.AsduType.C_CI_NA,
+                cause=common.Cause.ACTIVATION,
+                is_negative_confirm=False,
+                is_test=False,
+                originator_address=None,
+                address=asdu_address,
+                ios=[_common.IO(
+                    address=0,
+                    time=None,
+                    elements=[_common.create_io_element(
+                                _common.AsduType.C_CI_NA, 5, freeze.value)])])
+            self._transport.write(asdu)
+            if not self._counter_interrogate_queue.empty():
+                self._counter_interrogate_queue.get_nowait_until_empty()
+            data = []
+            async for asdu in self._counter_interrogate_queue:
+                if (asdu.type == _common.AsduType.C_CI_NA and
+                        asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                    continue
+                if (asdu.type == _common.AsduType.C_CI_NA and
+                        asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                    return data
+                data.extend(_asdu_to_data(asdu))
+
+    async def receive(self):
+        &#34;&#34;&#34;Receive remote data change
+
+        Returns:
+            List[common.Data]: data
+
+        &#34;&#34;&#34;
+        async for asdu in self._data_queue:
+            data = _asdu_to_data(asdu)
+            if data:
+                return data
+
+    async def send_command(self, cmd):
+        &#34;&#34;&#34;Send command
+
+        Args:
+            cmd (common.Command): command
+
+        Returns:
+            bool: command&#39;s success
+
+        &#34;&#34;&#34;
+        cmd_type = _command_type_from_value(cmd.value)
+        if cmd.time:
+            asdu_type = _command_type_to_asdu_type_with_time[cmd_type]
+        else:
+            asdu_type = _command_type_to_asdu_type_without_time[cmd_type]
+        req = _common.ASDU(
+            type=asdu_type,
+            cause=(common.Cause.DEACTIVATION
+                   if cmd.action == common.Action.CANCEL else
+                   common.Cause.ACTIVATION),
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=cmd.asdu_address,
+            ios=[_common.IO(
+                address=cmd.io_address,
+                time=cmd.time,
+                elements=[_common.create_io_element(
+                            asdu_type,
+                            value=cmd.value.value,
+                            select=cmd.action == common.Action.SELECT,
+                            qualifier=cmd.qualifier)])])
+        cmd_id = _CmdId(type=cmd_type,
+                        asdu=cmd.asdu_address,
+                        io=cmd.io_address)
+        if cmd_id in self._command_futures:
+            return False
+        self._transport.write(req)
+        cmd_future = asyncio.Future()
+        self._command_futures[cmd_id] = cmd_future
+        try:
+            resp = await cmd_future
+            return not resp.is_negative_confirm
+        finally:
+            del self._command_futures[cmd_id]
+        return False
+
+    async def _read_loop(self):
+        try:
+            while True:
+                asdu = await self._transport.read()
+                if not asdu:
+                    break
+                if asdu.cause in _interrogate_causes:
+                    self._interrogate_queue.put_nowait(asdu)
+                elif asdu.cause in _counter_interrogate_causes:
+                    self._counter_interrogate_queue.put_nowait(asdu)
+                elif asdu.type == _common.AsduType.C_IC_NA:
+                    if asdu.cause in _activate_causes:
+                        self._interrogate_queue.put_nowait(asdu)
+                    else:
+                        await self._process_interrogate(asdu)
+                elif asdu.type == _common.AsduType.C_CI_NA:
+                    if asdu.cause in _activate_causes:
+                        self._counter_interrogate_queue.put_nowait(asdu)
+                    else:
+                        await self._process_counter_interrogate(asdu)
+                elif asdu.type in _command_asdu_types:
+                    if asdu.cause in _activate_causes:
+                        # TODO: handle properly ACTIVATION_TERMINATION in the
+                        # command flow...
+                        if asdu.cause == common.Cause.ACTIVATION_TERMINATION:
+                            continue
+                        for i in asdu.ios:
+                            cmd_type = _asdu_type_to_command_type[asdu.type]
+                            cmd_id = _CmdId(type=cmd_type,
+                                            asdu=asdu.address,
+                                            io=i.address)
+                            cmd_future = self._command_futures.get(cmd_id)
+                            if not cmd_future or cmd_future.done():
+                                mlog.warning(&#39;received response for &#39;
+                                             &#39; non-waited command %s\n%s&#39;,
+                                             cmd_id,
+                                             self._command_futures)
+                                continue
+                            cmd_future.set_result(asdu)
+                    else:
+                        await self._process_command(asdu)
+                elif asdu.type in _asdu_type_to_data_type.keys():
+                    self._data_queue.put_nowait(asdu)
+                else:
+                    mlog.warn(&#39;discarding asdu %s&#39;, asdu)
+        finally:
+            mlog.debug(&#34;closing connection %s&#34;, self._info)
+            self._async_group.close()
+
+    async def _process_interrogate(self, asdu):
+        data = await aio.call(self._interrogate_cb, self, asdu.address)
+        if data is None:
+            return
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION_CONFIRMATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])]))
+        for i in data:
+            self._send_data(i, common.Cause.INTERROGATED_STATION)
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION_TERMINATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])]))
+
+    async def _process_counter_interrogate(self, asdu):
+        freeze = asdu.ios[0].elements[0].freeze
+        data = await aio.call(self._counter_interrogate_cb, self,
+                              asdu.address, common.FreezeCode(freeze))
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION_CONFIRMATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze)])]))
+        for i in data:
+            self._send_data(i, common.Cause.INTERROGATED_COUNTER)
+        self._transport.write(_common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION_TERMINATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze)])]))
+
+    async def _process_command(self, asdu):
+        cmd_type = _asdu_type_to_command_type[asdu.type]
+        cmds = []
+        for i, io in enumerate(asdu.ios):
+            for ioe in io.elements:
+                if asdu.cause == common.Cause.DEACTIVATION:
+                    cmd_action = common.Action.CANCEL
+                else:
+                    cmd_action = (common.Action.SELECT if ioe.select else
+                                  common.Action.EXECUTE)
+                cmds.append(common.Command(
+                    action=cmd_action,
+                    value=_cmd_value_from_ioe(cmd_type, ioe),
+                    asdu_address=asdu.address,
+                    io_address=io.address + i,
+                    time=io.time,
+                    qualifier=ioe.qualifier))
+        result = await aio.call(self._command_cb, self, cmds)
+        self._transport.write(_common.ASDU(
+            type=asdu.type,
+            cause=common.Cause[asdu.cause.name + &#39;_CONFIRMATION&#39;],
+            is_negative_confirm=not result,
+            is_test=False,
+            originator_address=None,
+            address=asdu.address,
+            ios=asdu.ios))
+
+    def _send_data(self, data, cause):
+        data_type = _data_type_from_value(data.value)
+        if data_type == _DataType.NORMALIZED and data.quality is None:
+            asdu_type = _common.AsduType.M_ME_ND
+        elif data.time:
+            asdu_type = _data_type_to_asdu_type_with_time[data_type]
+        else:
+            asdu_type = _data_type_to_asdu_type_without_time[data_type]
+        ioe_args = {}
+        if asdu_type in (_common.AsduType.M_ST_NA, _common.AsduType.M_ST_TB):
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;quality&#39;] = data.quality
+            ioe_args[&#39;t&#39;] = data.value.transient
+        elif asdu_type in (_common.AsduType.M_IT_NA, _common.AsduType.M_IT_TB):
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;invalid&#39;] = data.value.invalid
+            ioe_args[&#39;adjusted&#39;] = data.value.adjusted
+            ioe_args[&#39;overflow&#39;] = data.value.overflow
+            ioe_args[&#39;sequence&#39;] = data.value.sequence
+        elif asdu_type == _common.AsduType.M_ME_ND:
+            ioe_args[&#39;value&#39;] = data.value.value
+        else:
+            ioe_args[&#39;value&#39;] = data.value.value
+            ioe_args[&#39;quality&#39;] = data.quality
+        asdu = _common.ASDU(
+            type=asdu_type,
+            cause=cause if cause else data.cause,
+            is_negative_confirm=False,
+            is_test=data.is_test,
+            originator_address=None,
+            address=data.asdu_address,
+            ios=[_common.IO(
+                address=data.io_address,
+                elements=[_common.create_io_element(asdu_type, **ioe_args)],
+                time=data.time)])
+        self._transport.write(asdu)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Connection.info"><code class="name">var <span class="ident">info</span></code></dt>
+<dd>
+<div class="desc"><p>ConnectionInfo: connection info</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self):
+    &#34;&#34;&#34;ConnectionInfo: connection info&#34;&#34;&#34;
+    return self._info</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.iec104.Connection.counter_interrogate"><code class="name flex">
+<span>async def <span class="ident">counter_interrogate</span></span>(<span>self, asdu_address=65535, freeze=FreezeCode.READ)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interrogate remote device counters</p>
+<p>Asdu broadcast address 0xFFFF is not supported by all devices</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>asdu_address</code></strong> :&ensp;<code>int</code></dt>
+<dd>asdu address</dd>
+<dt><strong><code>freeze</code></strong> :&ensp;<code><a title="hat.drivers.iec104.common.FreezeCode" href="common.html#hat.drivers.iec104.common.FreezeCode">FreezeCode</a></code></dt>
+<dd>freeze code</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="hat.drivers.iec104.common.Data" href="common.html#hat.drivers.iec104.common.Data">Data</a>]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def counter_interrogate(self, asdu_address=0xFFFF,
+                              freeze=common.FreezeCode.READ):
+    &#34;&#34;&#34;Interrogate remote device counters
+
+    Asdu broadcast address 0xFFFF is not supported by all devices
+
+    Args:
+        asdu_address (int): asdu address
+        freeze (common.FreezeCode): freeze code
+
+    Returns:
+        List[common.Data]: data
+
+    &#34;&#34;&#34;
+    async with self._counter_interrogate_lock:
+        # is this necessary (no one closes it)
+        if self._counter_interrogate_queue.is_closed:
+            raise util.QueueClosedError()
+        asdu = _common.ASDU(
+            type=_common.AsduType.C_CI_NA,
+            cause=common.Cause.ACTIVATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu_address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_CI_NA, 5, freeze.value)])])
+        self._transport.write(asdu)
+        if not self._counter_interrogate_queue.empty():
+            self._counter_interrogate_queue.get_nowait_until_empty()
+        data = []
+        async for asdu in self._counter_interrogate_queue:
+            if (asdu.type == _common.AsduType.C_CI_NA and
+                    asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                continue
+            if (asdu.type == _common.AsduType.C_CI_NA and
+                    asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                return data
+            data.extend(_asdu_to_data(asdu))</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.Connection.interrogate"><code class="name flex">
+<span>async def <span class="ident">interrogate</span></span>(<span>self, asdu_address=65535)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Interrogate remote device</p>
+<p>Asdu broadcast address 0xFFFF is not supported by all devices</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>asdu_address</code></strong> :&ensp;<code>int</code></dt>
+<dd>asdu address</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="hat.drivers.iec104.common.Data" href="common.html#hat.drivers.iec104.common.Data">Data</a>]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def interrogate(self, asdu_address=0xFFFF):
+    &#34;&#34;&#34;Interrogate remote device
+
+    Asdu broadcast address 0xFFFF is not supported by all devices
+
+    Args:
+        asdu_address (int): asdu address
+
+    Returns:
+        List[common.Data]: data
+
+    &#34;&#34;&#34;
+    async with self._interrogate_lock:
+        # is this necessary (no one closes it)
+        if self._interrogate_queue.is_closed:
+            raise aio.QueueClosedError()
+        asdu = _common.ASDU(
+            type=_common.AsduType.C_IC_NA,
+            cause=common.Cause.ACTIVATION,
+            is_negative_confirm=False,
+            is_test=False,
+            originator_address=None,
+            address=asdu_address,
+            ios=[_common.IO(
+                address=0,
+                time=None,
+                elements=[_common.create_io_element(
+                            _common.AsduType.C_IC_NA, 20)])])
+        self._transport.write(asdu)
+        if not self._interrogate_queue.empty():
+            self._interrogate_queue.get_nowait_until_empty()
+        data = []
+        async for asdu in self._interrogate_queue:
+            if (asdu.type == _common.AsduType.C_IC_NA and
+                    asdu.cause == common.Cause.ACTIVATION_CONFIRMATION):
+                continue
+            if (asdu.type == _common.AsduType.C_IC_NA and
+                    asdu.cause == common.Cause.ACTIVATION_TERMINATION):
+                return data
+            data.extend(_asdu_to_data(asdu))</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.Connection.notify_data_change"><code class="name flex">
+<span>def <span class="ident">notify_data_change</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Notify local data change</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>List[<a title="hat.drivers.iec104.common.Data" href="common.html#hat.drivers.iec104.common.Data">Data</a>]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def notify_data_change(self, data):
+    &#34;&#34;&#34;Notify local data change
+
+    Args:
+        data (List[common.Data]): data
+
+    &#34;&#34;&#34;
+    for i in data:
+        # TODO: implement bulk send data
+        self._send_data(i, None)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.Connection.receive"><code class="name flex">
+<span>async def <span class="ident">receive</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Receive remote data change</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="hat.drivers.iec104.common.Data" href="common.html#hat.drivers.iec104.common.Data">Data</a>]</code></dt>
+<dd>data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def receive(self):
+    &#34;&#34;&#34;Receive remote data change
+
+    Returns:
+        List[common.Data]: data
+
+    &#34;&#34;&#34;
+    async for asdu in self._data_queue:
+        data = _asdu_to_data(asdu)
+        if data:
+            return data</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.Connection.send_command"><code class="name flex">
+<span>async def <span class="ident">send_command</span></span>(<span>self, cmd)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send command</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cmd</code></strong> :&ensp;<code><a title="hat.drivers.iec104.common.Command" href="common.html#hat.drivers.iec104.common.Command">Command</a></code></dt>
+<dd>command</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>command's success</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def send_command(self, cmd):
+    &#34;&#34;&#34;Send command
+
+    Args:
+        cmd (common.Command): command
+
+    Returns:
+        bool: command&#39;s success
+
+    &#34;&#34;&#34;
+    cmd_type = _command_type_from_value(cmd.value)
+    if cmd.time:
+        asdu_type = _command_type_to_asdu_type_with_time[cmd_type]
+    else:
+        asdu_type = _command_type_to_asdu_type_without_time[cmd_type]
+    req = _common.ASDU(
+        type=asdu_type,
+        cause=(common.Cause.DEACTIVATION
+               if cmd.action == common.Action.CANCEL else
+               common.Cause.ACTIVATION),
+        is_negative_confirm=False,
+        is_test=False,
+        originator_address=None,
+        address=cmd.asdu_address,
+        ios=[_common.IO(
+            address=cmd.io_address,
+            time=cmd.time,
+            elements=[_common.create_io_element(
+                        asdu_type,
+                        value=cmd.value.value,
+                        select=cmd.action == common.Action.SELECT,
+                        qualifier=cmd.qualifier)])])
+    cmd_id = _CmdId(type=cmd_type,
+                    asdu=cmd.asdu_address,
+                    io=cmd.io_address)
+    if cmd_id in self._command_futures:
+        return False
+    self._transport.write(req)
+    cmd_future = asyncio.Future()
+    self._command_futures[cmd_id] = cmd_future
+    try:
+        resp = await cmd_future
+        return not resp.is_negative_confirm
+    finally:
+        del self._command_futures[cmd_id]
+    return False</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.iec104.Data"><code class="flex name class">
+<span>class <span class="ident">Data</span></span>
+<span>(</span><span>value: DataValue, quality: <a title="hat.drivers.iec104.Quality" href="#hat.drivers.iec104.Quality">Quality</a>, time: typing.Union[ForwardRef('<a title="hat.drivers.iec104.Time" href="#hat.drivers.iec104.Time">Time</a>'), NoneType], asdu_address: int, io_address: int, cause: <a title="hat.drivers.iec104.Cause" href="#hat.drivers.iec104.Cause">Cause</a>, is_test: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Data(value, quality, time, asdu_address, io_address, cause, is_test)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Data(typing.NamedTuple):
+    value: &#39;DataValue&#39;
+    quality: &#39;Quality&#39;
+    &#34;&#34;&#34;quality (optional in case of NormalizedValue without quality and BinaryCounterValue)&#34;&#34;&#34;  # NOQA
+    time: typing.Optional[&#39;Time&#39;]
+    asdu_address: int
+    io_address: int
+    cause: &#39;Cause&#39;
+    is_test: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Data.asdu_address"><code class="name">var <span class="ident">asdu_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Data.cause"><code class="name">var <span class="ident">cause</span> : <a title="hat.drivers.iec104.common.Cause" href="common.html#hat.drivers.iec104.common.Cause">Cause</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Data.io_address"><code class="name">var <span class="ident">io_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Data.is_test"><code class="name">var <span class="ident">is_test</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Data.quality"><code class="name">var <span class="ident">quality</span> : <a title="hat.drivers.iec104.common.Quality" href="common.html#hat.drivers.iec104.common.Quality">Quality</a></code></dt>
+<dd>
+<div class="desc"><p>quality (optional in case of NormalizedValue without quality and BinaryCounterValue)</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Data.time"><code class="name">var <span class="ident">time</span> : typing.Union[<a title="hat.drivers.iec104.common.Time" href="common.html#hat.drivers.iec104.common.Time">Time</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Data.value"><code class="name">var <span class="ident">value</span> : typing.Union[<a title="hat.drivers.iec104.common.SingleValue" href="common.html#hat.drivers.iec104.common.SingleValue">SingleValue</a>, <a title="hat.drivers.iec104.common.DoubleValue" href="common.html#hat.drivers.iec104.common.DoubleValue">DoubleValue</a>, <a title="hat.drivers.iec104.common.StepPositionValue" href="common.html#hat.drivers.iec104.common.StepPositionValue">StepPositionValue</a>, <a title="hat.drivers.iec104.common.BitstringValue" href="common.html#hat.drivers.iec104.common.BitstringValue">BitstringValue</a>, <a title="hat.drivers.iec104.common.NormalizedValue" href="common.html#hat.drivers.iec104.common.NormalizedValue">NormalizedValue</a>, <a title="hat.drivers.iec104.common.ScaledValue" href="common.html#hat.drivers.iec104.common.ScaledValue">ScaledValue</a>, <a title="hat.drivers.iec104.common.FloatingValue" href="common.html#hat.drivers.iec104.common.FloatingValue">FloatingValue</a>, <a title="hat.drivers.iec104.common.BinaryCounterValue" href="common.html#hat.drivers.iec104.common.BinaryCounterValue">BinaryCounterValue</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.DoubleValue"><code class="flex name class">
+<span>class <span class="ident">DoubleValue</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DoubleDataValue</p>
+<p><code>FAULT</code> stands for value 3, defined in the protocol as <em>INDETERMINATE</em>.
+This is in order to make it more distinguishable from <code>INTERMEDIATE</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DoubleValue(enum.Enum):
+    &#34;&#34;&#34;DoubleDataValue
+
+    `FAULT` stands for value 3, defined in the protocol as *INDETERMINATE*.
+    This is in order to make it more distinguishable from ``INTERMEDIATE``.
+
+    &#34;&#34;&#34;
+    INTERMEDIATE = 0
+    OFF = 1
+    ON = 2
+    FAULT = 3</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.DoubleValue.FAULT"><code class="name">var <span class="ident">FAULT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.DoubleValue.INTERMEDIATE"><code class="name">var <span class="ident">INTERMEDIATE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.DoubleValue.OFF"><code class="name">var <span class="ident">OFF</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.DoubleValue.ON"><code class="name">var <span class="ident">ON</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.FloatingValue"><code class="flex name class">
+<span>class <span class="ident">FloatingValue</span></span>
+<span>(</span><span>value: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>FloatingValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FloatingValue(typing.NamedTuple):
+    value: float</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.FloatingValue.value"><code class="name">var <span class="ident">value</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.FreezeCode"><code class="flex name class">
+<span>class <span class="ident">FreezeCode</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FreezeCode(enum.Enum):
+    READ = 0
+    FREEZE = 1
+    FREEZE_AND_RESET = 2
+    RESET = 3</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.FreezeCode.FREEZE"><code class="name">var <span class="ident">FREEZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.FreezeCode.FREEZE_AND_RESET"><code class="name">var <span class="ident">FREEZE_AND_RESET</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.FreezeCode.READ"><code class="name">var <span class="ident">READ</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.FreezeCode.RESET"><code class="name">var <span class="ident">RESET</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.NormalizedValue"><code class="flex name class">
+<span>class <span class="ident">NormalizedValue</span></span>
+<span>(</span><span>value: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>NormalizedValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NormalizedValue(typing.NamedTuple):
+    value: float
+    &#34;&#34;&#34;value in range [-1.0, 1.0]&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.NormalizedValue.value"><code class="name">var <span class="ident">value</span> : float</code></dt>
+<dd>
+<div class="desc"><p>value in range [-1.0, 1.0]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.Quality"><code class="flex name class">
+<span>class <span class="ident">Quality</span></span>
+<span>(</span><span>invalid: bool, not_topical: bool, substituted: bool, blocked: bool, overflow: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Quality(invalid, not_topical, substituted, blocked, overflow)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Quality(typing.NamedTuple):
+    invalid: bool
+    not_topical: bool
+    substituted: bool
+    blocked: bool
+    overflow: bool
+    &#34;&#34;&#34;owerflow flag (for SingleValue and DoubleValue always False)&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Quality.blocked"><code class="name">var <span class="ident">blocked</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Quality.invalid"><code class="name">var <span class="ident">invalid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Quality.not_topical"><code class="name">var <span class="ident">not_topical</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Quality.overflow"><code class="name">var <span class="ident">overflow</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>owerflow flag (for SingleValue and DoubleValue always False)</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Quality.substituted"><code class="name">var <span class="ident">substituted</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.RegulatingValue"><code class="flex name class">
+<span>class <span class="ident">RegulatingValue</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegulatingValue(enum.Enum):
+    LOWER = 1
+    HIGHER = 2</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.RegulatingValue.HIGHER"><code class="name">var <span class="ident">HIGHER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.RegulatingValue.LOWER"><code class="name">var <span class="ident">LOWER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.ScaledValue"><code class="flex name class">
+<span>class <span class="ident">ScaledValue</span></span>
+<span>(</span><span>value: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ScaledValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ScaledValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-2^15, 2^15-1]&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.ScaledValue.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>value in range [-2^15, 2^15-1]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Server</p>
+<p>For creating new Server instances see :func:<code><a title="hat.drivers.iec104.listen" href="#hat.drivers.iec104.listen">listen()</a></code>.</p>
+<p>Closing server closes all incoming connections.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server(aio.Resource):
+    &#34;&#34;&#34;Server
+
+    For creating new Server instances see :func:`listen`.
+
+    Closing server closes all incoming connections.
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def addresses(self):
+        &#34;&#34;&#34;List[Address]: listening addresses&#34;&#34;&#34;
+        return self._addresses
+
+    async def _on_close(self):
+        await self._ser.async_close()
+        for conn in list(self._connections):
+            await conn.async_close()
+
+    async def _conn_life(self, conn):
+        try:
+            await conn.wait_closed()
+        finally:
+            if not conn.is_closed:
+                await conn.async_close()
+            self._connections.remove(conn)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Server.addresses"><code class="name">var <span class="ident">addresses</span></code></dt>
+<dd>
+<div class="desc"><p>List[Address]: listening addresses</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def addresses(self):
+    &#34;&#34;&#34;List[Address]: listening addresses&#34;&#34;&#34;
+    return self._addresses</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.iec104.SingleValue"><code class="flex name class">
+<span>class <span class="ident">SingleValue</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SingleValue(enum.Enum):
+    OFF = 0
+    ON = 1</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.SingleValue.OFF"><code class="name">var <span class="ident">OFF</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.SingleValue.ON"><code class="name">var <span class="ident">ON</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.StepPositionValue"><code class="flex name class">
+<span>class <span class="ident">StepPositionValue</span></span>
+<span>(</span><span>value: int, transient: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>StepPositionValue(value, transient)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StepPositionValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-64, 63]&#34;&#34;&#34;
+    transient: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.StepPositionValue.transient"><code class="name">var <span class="ident">transient</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.StepPositionValue.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>value in range [-64, 63]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.Time"><code class="flex name class">
+<span>class <span class="ident">Time</span></span>
+<span>(</span><span>milliseconds: int, invalid: bool, minutes: int, summer_time: bool, hours: int, day_of_week: int, day_of_month: int, months: int, years: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Time(milliseconds, invalid, minutes, summer_time, hours, day_of_week, day_of_month, months, years)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Time(typing.NamedTuple):
+    milliseconds: int
+    invalid: bool
+    minutes: int
+    summer_time: bool
+    hours: int
+    day_of_week: int
+    day_of_month: int
+    months: int
+    years: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.Time.day_of_month"><code class="name">var <span class="ident">day_of_month</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.day_of_week"><code class="name">var <span class="ident">day_of_week</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.hours"><code class="name">var <span class="ident">hours</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.invalid"><code class="name">var <span class="ident">invalid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.milliseconds"><code class="name">var <span class="ident">milliseconds</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.minutes"><code class="name">var <span class="ident">minutes</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.months"><code class="name">var <span class="ident">months</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.summer_time"><code class="name">var <span class="ident">summer_time</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.Time.years"><code class="name">var <span class="ident">years</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 8</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers" href="../index.html">hat.drivers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="hat.drivers.iec104.common" href="common.html">hat.drivers.iec104.common</a></code></li>
+<li><code><a title="hat.drivers.iec104.connection" href="connection.html">hat.drivers.iec104.connection</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.connect" href="#hat.drivers.iec104.connect">connect</a></code></li>
+<li><code><a title="hat.drivers.iec104.listen" href="#hat.drivers.iec104.listen">listen</a></code></li>
+<li><code><a title="hat.drivers.iec104.time_from_datetime" href="#hat.drivers.iec104.time_from_datetime">time_from_datetime</a></code></li>
+<li><code><a title="hat.drivers.iec104.time_to_datetime" href="#hat.drivers.iec104.time_to_datetime">time_to_datetime</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.iec104.Action" href="#hat.drivers.iec104.Action">Action</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.Action.CANCEL" href="#hat.drivers.iec104.Action.CANCEL">CANCEL</a></code></li>
+<li><code><a title="hat.drivers.iec104.Action.EXECUTE" href="#hat.drivers.iec104.Action.EXECUTE">EXECUTE</a></code></li>
+<li><code><a title="hat.drivers.iec104.Action.SELECT" href="#hat.drivers.iec104.Action.SELECT">SELECT</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.BinaryCounterValue" href="#hat.drivers.iec104.BinaryCounterValue">BinaryCounterValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.BinaryCounterValue.adjusted" href="#hat.drivers.iec104.BinaryCounterValue.adjusted">adjusted</a></code></li>
+<li><code><a title="hat.drivers.iec104.BinaryCounterValue.invalid" href="#hat.drivers.iec104.BinaryCounterValue.invalid">invalid</a></code></li>
+<li><code><a title="hat.drivers.iec104.BinaryCounterValue.overflow" href="#hat.drivers.iec104.BinaryCounterValue.overflow">overflow</a></code></li>
+<li><code><a title="hat.drivers.iec104.BinaryCounterValue.sequence" href="#hat.drivers.iec104.BinaryCounterValue.sequence">sequence</a></code></li>
+<li><code><a title="hat.drivers.iec104.BinaryCounterValue.value" href="#hat.drivers.iec104.BinaryCounterValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.BitstringValue" href="#hat.drivers.iec104.BitstringValue">BitstringValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.BitstringValue.value" href="#hat.drivers.iec104.BitstringValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Cause" href="#hat.drivers.iec104.Cause">Cause</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.Cause.ACTIVATION" href="#hat.drivers.iec104.Cause.ACTIVATION">ACTIVATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.ACTIVATION_CONFIRMATION" href="#hat.drivers.iec104.Cause.ACTIVATION_CONFIRMATION">ACTIVATION_CONFIRMATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.ACTIVATION_TERMINATION" href="#hat.drivers.iec104.Cause.ACTIVATION_TERMINATION">ACTIVATION_TERMINATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.BACKGROUND_SCAN" href="#hat.drivers.iec104.Cause.BACKGROUND_SCAN">BACKGROUND_SCAN</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.DEACTIVATION" href="#hat.drivers.iec104.Cause.DEACTIVATION">DEACTIVATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.DEACTIVATION_CONFIRMATION" href="#hat.drivers.iec104.Cause.DEACTIVATION_CONFIRMATION">DEACTIVATION_CONFIRMATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.FILE_TRANSFER" href="#hat.drivers.iec104.Cause.FILE_TRANSFER">FILE_TRANSFER</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INITIALIZED" href="#hat.drivers.iec104.Cause.INITIALIZED">INITIALIZED</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_COUNTER" href="#hat.drivers.iec104.Cause.INTERROGATED_COUNTER">INTERROGATED_COUNTER</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_COUNTER01" href="#hat.drivers.iec104.Cause.INTERROGATED_COUNTER01">INTERROGATED_COUNTER01</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_COUNTER02" href="#hat.drivers.iec104.Cause.INTERROGATED_COUNTER02">INTERROGATED_COUNTER02</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_COUNTER03" href="#hat.drivers.iec104.Cause.INTERROGATED_COUNTER03">INTERROGATED_COUNTER03</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_COUNTER04" href="#hat.drivers.iec104.Cause.INTERROGATED_COUNTER04">INTERROGATED_COUNTER04</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP01" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP01">INTERROGATED_GROUP01</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP02" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP02">INTERROGATED_GROUP02</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP03" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP03">INTERROGATED_GROUP03</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP04" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP04">INTERROGATED_GROUP04</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP05" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP05">INTERROGATED_GROUP05</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP06" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP06">INTERROGATED_GROUP06</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP07" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP07">INTERROGATED_GROUP07</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP08" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP08">INTERROGATED_GROUP08</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP09" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP09">INTERROGATED_GROUP09</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP10" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP10">INTERROGATED_GROUP10</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP11" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP11">INTERROGATED_GROUP11</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP12" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP12">INTERROGATED_GROUP12</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP13" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP13">INTERROGATED_GROUP13</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP14" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP14">INTERROGATED_GROUP14</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP15" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP15">INTERROGATED_GROUP15</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_GROUP16" href="#hat.drivers.iec104.Cause.INTERROGATED_GROUP16">INTERROGATED_GROUP16</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.INTERROGATED_STATION" href="#hat.drivers.iec104.Cause.INTERROGATED_STATION">INTERROGATED_STATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.LOCAL_COMMAND" href="#hat.drivers.iec104.Cause.LOCAL_COMMAND">LOCAL_COMMAND</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.PERIODIC" href="#hat.drivers.iec104.Cause.PERIODIC">PERIODIC</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.REMOTE_COMMAND" href="#hat.drivers.iec104.Cause.REMOTE_COMMAND">REMOTE_COMMAND</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.REQUEST" href="#hat.drivers.iec104.Cause.REQUEST">REQUEST</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.SPONTANEOUS" href="#hat.drivers.iec104.Cause.SPONTANEOUS">SPONTANEOUS</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.UNDEFINED" href="#hat.drivers.iec104.Cause.UNDEFINED">UNDEFINED</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.UNKNOWN_ASDU_ADDRESS" href="#hat.drivers.iec104.Cause.UNKNOWN_ASDU_ADDRESS">UNKNOWN_ASDU_ADDRESS</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.UNKNOWN_CAUSE" href="#hat.drivers.iec104.Cause.UNKNOWN_CAUSE">UNKNOWN_CAUSE</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.UNKNOWN_IO_ADDRESS" href="#hat.drivers.iec104.Cause.UNKNOWN_IO_ADDRESS">UNKNOWN_IO_ADDRESS</a></code></li>
+<li><code><a title="hat.drivers.iec104.Cause.UNKNOWN_TYPE" href="#hat.drivers.iec104.Cause.UNKNOWN_TYPE">UNKNOWN_TYPE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Command" href="#hat.drivers.iec104.Command">Command</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.Command.action" href="#hat.drivers.iec104.Command.action">action</a></code></li>
+<li><code><a title="hat.drivers.iec104.Command.asdu_address" href="#hat.drivers.iec104.Command.asdu_address">asdu_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.Command.io_address" href="#hat.drivers.iec104.Command.io_address">io_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.Command.qualifier" href="#hat.drivers.iec104.Command.qualifier">qualifier</a></code></li>
+<li><code><a title="hat.drivers.iec104.Command.time" href="#hat.drivers.iec104.Command.time">time</a></code></li>
+<li><code><a title="hat.drivers.iec104.Command.value" href="#hat.drivers.iec104.Command.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Connection" href="#hat.drivers.iec104.Connection">Connection</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.Connection.counter_interrogate" href="#hat.drivers.iec104.Connection.counter_interrogate">counter_interrogate</a></code></li>
+<li><code><a title="hat.drivers.iec104.Connection.info" href="#hat.drivers.iec104.Connection.info">info</a></code></li>
+<li><code><a title="hat.drivers.iec104.Connection.interrogate" href="#hat.drivers.iec104.Connection.interrogate">interrogate</a></code></li>
+<li><code><a title="hat.drivers.iec104.Connection.notify_data_change" href="#hat.drivers.iec104.Connection.notify_data_change">notify_data_change</a></code></li>
+<li><code><a title="hat.drivers.iec104.Connection.receive" href="#hat.drivers.iec104.Connection.receive">receive</a></code></li>
+<li><code><a title="hat.drivers.iec104.Connection.send_command" href="#hat.drivers.iec104.Connection.send_command">send_command</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Data" href="#hat.drivers.iec104.Data">Data</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.Data.asdu_address" href="#hat.drivers.iec104.Data.asdu_address">asdu_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.Data.cause" href="#hat.drivers.iec104.Data.cause">cause</a></code></li>
+<li><code><a title="hat.drivers.iec104.Data.io_address" href="#hat.drivers.iec104.Data.io_address">io_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.Data.is_test" href="#hat.drivers.iec104.Data.is_test">is_test</a></code></li>
+<li><code><a title="hat.drivers.iec104.Data.quality" href="#hat.drivers.iec104.Data.quality">quality</a></code></li>
+<li><code><a title="hat.drivers.iec104.Data.time" href="#hat.drivers.iec104.Data.time">time</a></code></li>
+<li><code><a title="hat.drivers.iec104.Data.value" href="#hat.drivers.iec104.Data.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.DoubleValue" href="#hat.drivers.iec104.DoubleValue">DoubleValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.DoubleValue.FAULT" href="#hat.drivers.iec104.DoubleValue.FAULT">FAULT</a></code></li>
+<li><code><a title="hat.drivers.iec104.DoubleValue.INTERMEDIATE" href="#hat.drivers.iec104.DoubleValue.INTERMEDIATE">INTERMEDIATE</a></code></li>
+<li><code><a title="hat.drivers.iec104.DoubleValue.OFF" href="#hat.drivers.iec104.DoubleValue.OFF">OFF</a></code></li>
+<li><code><a title="hat.drivers.iec104.DoubleValue.ON" href="#hat.drivers.iec104.DoubleValue.ON">ON</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.FloatingValue" href="#hat.drivers.iec104.FloatingValue">FloatingValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.FloatingValue.value" href="#hat.drivers.iec104.FloatingValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.FreezeCode" href="#hat.drivers.iec104.FreezeCode">FreezeCode</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.FreezeCode.FREEZE" href="#hat.drivers.iec104.FreezeCode.FREEZE">FREEZE</a></code></li>
+<li><code><a title="hat.drivers.iec104.FreezeCode.FREEZE_AND_RESET" href="#hat.drivers.iec104.FreezeCode.FREEZE_AND_RESET">FREEZE_AND_RESET</a></code></li>
+<li><code><a title="hat.drivers.iec104.FreezeCode.READ" href="#hat.drivers.iec104.FreezeCode.READ">READ</a></code></li>
+<li><code><a title="hat.drivers.iec104.FreezeCode.RESET" href="#hat.drivers.iec104.FreezeCode.RESET">RESET</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.NormalizedValue" href="#hat.drivers.iec104.NormalizedValue">NormalizedValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.NormalizedValue.value" href="#hat.drivers.iec104.NormalizedValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Quality" href="#hat.drivers.iec104.Quality">Quality</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.Quality.blocked" href="#hat.drivers.iec104.Quality.blocked">blocked</a></code></li>
+<li><code><a title="hat.drivers.iec104.Quality.invalid" href="#hat.drivers.iec104.Quality.invalid">invalid</a></code></li>
+<li><code><a title="hat.drivers.iec104.Quality.not_topical" href="#hat.drivers.iec104.Quality.not_topical">not_topical</a></code></li>
+<li><code><a title="hat.drivers.iec104.Quality.overflow" href="#hat.drivers.iec104.Quality.overflow">overflow</a></code></li>
+<li><code><a title="hat.drivers.iec104.Quality.substituted" href="#hat.drivers.iec104.Quality.substituted">substituted</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.RegulatingValue" href="#hat.drivers.iec104.RegulatingValue">RegulatingValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.RegulatingValue.HIGHER" href="#hat.drivers.iec104.RegulatingValue.HIGHER">HIGHER</a></code></li>
+<li><code><a title="hat.drivers.iec104.RegulatingValue.LOWER" href="#hat.drivers.iec104.RegulatingValue.LOWER">LOWER</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.ScaledValue" href="#hat.drivers.iec104.ScaledValue">ScaledValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.ScaledValue.value" href="#hat.drivers.iec104.ScaledValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Server" href="#hat.drivers.iec104.Server">Server</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.Server.addresses" href="#hat.drivers.iec104.Server.addresses">addresses</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.SingleValue" href="#hat.drivers.iec104.SingleValue">SingleValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.SingleValue.OFF" href="#hat.drivers.iec104.SingleValue.OFF">OFF</a></code></li>
+<li><code><a title="hat.drivers.iec104.SingleValue.ON" href="#hat.drivers.iec104.SingleValue.ON">ON</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.StepPositionValue" href="#hat.drivers.iec104.StepPositionValue">StepPositionValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.StepPositionValue.transient" href="#hat.drivers.iec104.StepPositionValue.transient">transient</a></code></li>
+<li><code><a title="hat.drivers.iec104.StepPositionValue.value" href="#hat.drivers.iec104.StepPositionValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.Time" href="#hat.drivers.iec104.Time">Time</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.Time.day_of_month" href="#hat.drivers.iec104.Time.day_of_month">day_of_month</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.day_of_week" href="#hat.drivers.iec104.Time.day_of_week">day_of_week</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.hours" href="#hat.drivers.iec104.Time.hours">hours</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.invalid" href="#hat.drivers.iec104.Time.invalid">invalid</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.milliseconds" href="#hat.drivers.iec104.Time.milliseconds">milliseconds</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.minutes" href="#hat.drivers.iec104.Time.minutes">minutes</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.months" href="#hat.drivers.iec104.Time.months">months</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.summer_time" href="#hat.drivers.iec104.Time.summer_time">summer_time</a></code></li>
+<li><code><a title="hat.drivers.iec104.Time.years" href="#hat.drivers.iec104.Time.years">years</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

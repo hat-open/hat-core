@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.duktape API documentation</title>
+<meta name="description" content="Python ctypes wrapper for duktape JavaScript interpreter" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.duktape</code></h1>
+</header>
+<section id="section-intro">
+<p>Python ctypes wrapper for duktape JavaScript interpreter</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Python ctypes wrapper for duktape JavaScript interpreter&#34;&#34;&#34;
+
+from pathlib import Path
+import ctypes
+import sys
+
+
+class Interpreter:
+    &#34;&#34;&#34;JavaScript interpreter
+
+    High-level python wrapper to duktape JavaScript interpreter.
+
+    Current implementation caches all function objects for preventing
+    garbage collection.
+
+    &#34;&#34;&#34;
+
+    def __init__(self):
+
+        @_lib.duk_fatal_function
+        def fatal_handler(udata, msg):
+            try:
+                print(f&#34;duktape fatal error: {msg.decode(&#39;utf-8&#39;)}&#34;)
+            finally:
+                sys.exit(1)
+
+        self._ctx = _lib.duk_create_heap(None, None, None, None, fatal_handler)
+        self._fns = [fatal_handler]
+
+    def __del__(self):
+        _lib.duk_destroy_heap(self._ctx)
+        self._fns = []
+
+    def eval(self, code):
+        &#34;&#34;&#34;Evaluate JS code
+
+        Args:
+            code (str): JS code
+
+        Returns:
+            Any
+
+        &#34;&#34;&#34;
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            _lib.duk_eval_string(self._ctx, code.encode(&#39;utf-8&#39;))
+            return self._peek(-1)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+    def get(self, name):
+        &#34;&#34;&#34;Get global value
+
+        Args:
+            name (str): global name
+
+        Returns:
+            Any
+
+        &#34;&#34;&#34;
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            key = name.encode(&#39;utf-8&#39;)
+            _lib.duk_get_global_string(self._ctx, key)
+            return self._peek(-1)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+    def set(self, name, value):
+        &#34;&#34;&#34;Set global value
+
+        Args:
+            name (str): global name
+            value (Any): value
+
+        &#34;&#34;&#34;
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            self._push(value)
+            key = name.encode(&#39;utf-8&#39;)
+            _lib.duk_put_global_string(self._ctx, key)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+    def _peek(self, idx):
+        if _lib.duk_is_null_or_undefined(self._ctx, idx):
+            return
+        if _lib.duk_is_boolean(self._ctx, idx):
+            return self._peek_boolean(idx)
+        if _lib.duk_is_number(self._ctx, idx):
+            return self._peek_number(idx)
+        if _lib.duk_is_string(self._ctx, idx):
+            return self._peek_string(idx)
+        if _lib.duk_is_array(self._ctx, idx):
+            return self._peek_array(idx)
+        if _lib.duk_is_function(self._ctx, idx):
+            return self._peek_function(idx)
+        if _lib.duk_is_object(self._ctx, idx):
+            return self._peek_object(idx)
+        raise ValueError()
+
+    def _peek_boolean(self, idx):
+        return bool(_lib.duk_get_boolean(self._ctx, idx))
+
+    def _peek_number(self, idx):
+        return _lib.duk_get_number(self._ctx, idx)
+
+    def _peek_string(self, idx):
+        return _lib.duk_get_string(self._ctx, idx).decode(&#39;utf-8&#39;)
+
+    def _peek_array(self, idx):
+        result = []
+        top = _lib.duk_get_top(self._ctx)
+        _lib.duk_enum(self._ctx, idx, _lib.DUK_ENUM_ARRAY_INDICES_ONLY)
+        try:
+            while _lib.duk_next(self._ctx, top, 1):
+                result.append(self._peek(-1))
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+        return result
+
+    def _peek_object(self, idx):
+        result = {}
+        top = _lib.duk_get_top(self._ctx)
+        _lib.duk_enum(self._ctx, idx, _lib.DUK_ENUM_OWN_PROPERTIES_ONLY)
+        try:
+            while _lib.duk_next(self._ctx, top, 1):
+                key = self._peek(-2)
+                value = self._peek(-1)
+                result[key] = value
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+        return result
+
+    def _peek_function(self, idx):
+        fn_ptr = _lib.duk_get_heapptr(self._ctx, idx)
+        self._stash(fn_ptr)
+
+        def wrapper(*args):
+            top = _lib.duk_push_heapptr(self._ctx, fn_ptr)
+            try:
+                for arg in args:
+                    self._push(arg)
+                _lib.duk_call(self._ctx, len(args))
+                return self._peek(-1)
+            finally:
+                _lib.duk_set_top(self._ctx, top)
+
+        return wrapper
+
+    def _push(self, value):
+        if value is None:
+            self._push_null()
+        elif isinstance(value, bool):
+            self._push_boolean(value)
+        elif isinstance(value, int) or isinstance(value, float):
+            self._push_number(value)
+        elif isinstance(value, str):
+            self._push_string(value)
+        elif isinstance(value, list) or isinstance(value, tuple):
+            self._push_array(value)
+        elif isinstance(value, dict):
+            self._push_object(value)
+        elif callable(value):
+            self._push_function(value)
+        else:
+            raise ValueError()
+
+    def _push_null(self):
+        _lib.duk_push_null(self._ctx)
+
+    def _push_boolean(self, value):
+        _lib.duk_push_boolean(self._ctx, value)
+
+    def _push_number(self, value):
+        _lib.duk_push_number(self._ctx, value)
+
+    def _push_string(self, value):
+        _lib.duk_push_string(self._ctx, value.encode(&#39;utf-8&#39;))
+
+    def _push_array(self, value):
+        arr_idx = _lib.duk_push_array(self._ctx)
+        try:
+            for index, element in enumerate(value):
+                self._push(element)
+                if _lib.duk_put_prop_index(self._ctx, arr_idx,
+                                           index) != 1:
+                    raise Exception(&#39;could not add element to array&#39;)
+        except Exception:
+            _lib.duk_set_top(self._ctx, arr_idx)
+            raise
+
+    def _push_object(self, value):
+        obj_idx = _lib.duk_push_object(self._ctx)
+        try:
+            for k, v in value.items():
+                self._push(v)
+                if _lib.duk_put_prop_string(self._ctx, obj_idx,
+                                            k.encode(&#39;utf-8&#39;)) != 1:
+                    raise Exception(&#39;could not add property to object&#39;)
+        except Exception:
+            _lib.duk_set_top(self._ctx, obj_idx)
+            raise
+
+    def _push_function(self, value):
+
+        @_lib.duk_c_function
+        def wrapper(ctx):
+            args = []
+            args_count = _lib.duk_get_top(self._ctx)
+            try:
+                for i in range(args_count):
+                    args.append(self._peek(i))
+                result = value(*args)
+                self._push(result)
+            except Exception:
+                return _lib.DUK_RET_ERROR
+            return 1
+
+        _lib.duk_push_c_function(self._ctx, wrapper, _lib.DUK_VARARGS)
+        self._fns.append(wrapper)
+
+    def _stash(self, ptr):
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            ptr_id = int(ptr)
+            _lib.duk_push_heap_stash(self._ctx)
+            _lib.duk_push_heapptr(self._ctx, ptr)
+            if _lib.duk_put_prop_index(self._ctx, -2, ptr_id) != 1:
+                raise Exception(&#34;couldn&#39;t stash pointer&#34;)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+
+class _Lib:
+
+    def __init__(self, path):
+        lib = ctypes.cdll.LoadLibrary(str(path))
+        self._init_functions(lib)
+        self._init_constants(lib)
+
+    def _init_functions(self, lib):
+        duk_size_t = ctypes.c_size_t
+        duk_int_t = ctypes.c_int
+        duk_uint_t = ctypes.c_uint
+        duk_small_int_t = ctypes.c_int
+        duk_small_uint_t = ctypes.c_uint
+        duk_bool_t = duk_small_uint_t
+        duk_idx_t = duk_int_t
+        duk_uarridx_t = duk_uint_t
+        duk_ret_t = duk_small_int_t
+        duk_double_t = ctypes.c_double
+        duk_context_p = ctypes.c_void_p
+
+        self.duk_c_function = ctypes.CFUNCTYPE(duk_ret_t,
+                                               duk_context_p)
+        self.duk_fatal_function = ctypes.CFUNCTYPE(None,
+                                                   ctypes.c_void_p,
+                                                   ctypes.c_char_p)
+
+        functions = [
+            (None, &#39;duk_call&#39;, [duk_context_p,
+                                duk_idx_t]),
+            (duk_context_p, &#39;duk_create_heap&#39;, [ctypes.c_void_p,
+                                                ctypes.c_void_p,
+                                                ctypes.c_void_p,
+                                                ctypes.c_void_p,
+                                                self.duk_fatal_function]),
+            (None, &#39;duk_destroy_heap&#39;, [duk_context_p]),
+            (None, &#39;duk_enum&#39;, [duk_context_p,
+                                duk_idx_t,
+                                duk_uint_t]),
+            (duk_int_t, &#39;duk_eval_raw&#39;, [duk_context_p,
+                                         ctypes.c_char_p,
+                                         duk_size_t,
+                                         duk_uint_t]),
+            (duk_bool_t, &#39;duk_get_boolean&#39;, [duk_context_p,
+                                             duk_idx_t]),
+            (duk_bool_t, &#39;duk_get_global_string&#39;, [duk_context_p,
+                                                   ctypes.c_char_p]),
+            (ctypes.c_void_p, &#39;duk_get_heapptr&#39;, [duk_context_p,
+                                                  duk_idx_t]),
+            (duk_double_t, &#39;duk_get_number&#39;, [duk_context_p,
+                                              duk_idx_t]),
+            (ctypes.c_char_p, &#39;duk_get_string&#39;, [duk_context_p,
+                                                 duk_idx_t]),
+            (duk_idx_t, &#39;duk_get_top&#39;, [duk_context_p]),
+            (duk_uint_t, &#39;duk_get_type_mask&#39;, [duk_context_p,
+                                               duk_idx_t]),
+            (duk_bool_t, &#39;duk_is_array&#39;, [duk_context_p,
+                                          duk_idx_t]),
+            (duk_bool_t, &#39;duk_is_boolean&#39;, [duk_context_p,
+                                            duk_idx_t]),
+            (duk_bool_t, &#39;duk_is_function&#39;, [duk_context_p,
+                                             duk_idx_t]),
+            (duk_bool_t, &#39;duk_is_number&#39;, [duk_context_p,
+                                           duk_idx_t]),
+            (duk_bool_t, &#39;duk_is_object&#39;, [duk_context_p,
+                                           duk_idx_t]),
+            (duk_bool_t, &#39;duk_is_string&#39;, [duk_context_p,
+                                           duk_idx_t]),
+            (duk_bool_t, &#39;duk_next&#39;, [duk_context_p,
+                                      duk_idx_t,
+                                      duk_bool_t]),
+            (duk_idx_t, &#39;duk_push_array&#39;, [duk_context_p]),
+            (None, &#39;duk_push_boolean&#39;, [duk_context_p,
+                                        duk_bool_t]),
+            (duk_idx_t, &#39;duk_push_c_function&#39;, [duk_context_p,
+                                                self.duk_c_function,
+                                                duk_idx_t]),
+            (duk_idx_t, &#39;duk_push_heapptr&#39;, [duk_context_p,
+                                             ctypes.c_void_p]),
+            (None, &#39;duk_push_heap_stash&#39;, [duk_context_p]),
+            (None, &#39;duk_push_null&#39;, [duk_context_p]),
+            (None, &#39;duk_push_number&#39;, [duk_context_p,
+                                       duk_double_t]),
+            (duk_idx_t, &#39;duk_push_object&#39;, [duk_context_p]),
+            (ctypes.c_char_p, &#39;duk_push_string&#39;, [duk_context_p,
+                                                  ctypes.c_char_p]),
+            (duk_bool_t, &#39;duk_put_global_string&#39;, [duk_context_p,
+                                                   ctypes.c_char_p]),
+            (duk_bool_t, &#39;duk_put_prop_index&#39;, [duk_context_p,
+                                                duk_idx_t,
+                                                duk_uarridx_t]),
+            (duk_bool_t, &#39;duk_put_prop_string&#39;, [duk_context_p,
+                                                 duk_idx_t,
+                                                 ctypes.c_char_p]),
+            (None, &#39;duk_set_top&#39;, [duk_context_p,
+                                   duk_idx_t])
+        ]
+
+        for restype, name, argtypes in functions:
+            function = getattr(lib, name)
+            function.argtypes = argtypes
+            function.restype = restype
+            setattr(self, name, function)
+
+    def _init_constants(self, lib):
+        DUK_ERR_ERROR = 1
+        DUK_COMPILE_EVAL = (1 &lt;&lt; 3)
+        DUK_COMPILE_NOSOURCE = (1 &lt;&lt; 9)
+        DUK_COMPILE_STRLEN = (1 &lt;&lt; 10)
+        DUK_COMPILE_NOFILENAME = (1 &lt;&lt; 11)
+        DUK_TYPE_MASK_UNDEFINED = (1 &lt;&lt; 1)
+        DUK_TYPE_MASK_NULL = (1 &lt;&lt; 2)
+
+        self.DUK_ENUM_OWN_PROPERTIES_ONLY = (1 &lt;&lt; 4)
+        self.DUK_ENUM_ARRAY_INDICES_ONLY = (1 &lt;&lt; 5)
+        self.DUK_VARARGS = -1
+        self.DUK_RET_ERROR = - DUK_ERR_ERROR
+
+        self.duk_eval_string = lambda ctx, src: lib.duk_eval_raw(
+            ctx, src, 0,
+            0 | DUK_COMPILE_EVAL | DUK_COMPILE_NOSOURCE |
+            DUK_COMPILE_STRLEN | DUK_COMPILE_NOFILENAME)
+
+        self.duk_is_null_or_undefined = lambda ctx, idx: bool(
+            lib.duk_get_type_mask(ctx, idx) &amp;
+            (DUK_TYPE_MASK_NULL | DUK_TYPE_MASK_UNDEFINED))
+
+
+if sys.platform == &#39;win32&#39;:
+    _lib_suffix = &#39;.dll&#39;
+elif sys.platform == &#39;darwin&#39;:
+    _lib_suffix = &#39;.dylib&#39;
+else:
+    _lib_suffix = &#39;.so&#39;
+
+
+_lib = _Lib(Path(__file__).parent / f&#39;duktape{_lib_suffix}&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.duktape.Interpreter"><code class="flex name class">
+<span>class <span class="ident">Interpreter</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>JavaScript interpreter</p>
+<p>High-level python wrapper to duktape JavaScript interpreter.</p>
+<p>Current implementation caches all function objects for preventing
+garbage collection.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Interpreter:
+    &#34;&#34;&#34;JavaScript interpreter
+
+    High-level python wrapper to duktape JavaScript interpreter.
+
+    Current implementation caches all function objects for preventing
+    garbage collection.
+
+    &#34;&#34;&#34;
+
+    def __init__(self):
+
+        @_lib.duk_fatal_function
+        def fatal_handler(udata, msg):
+            try:
+                print(f&#34;duktape fatal error: {msg.decode(&#39;utf-8&#39;)}&#34;)
+            finally:
+                sys.exit(1)
+
+        self._ctx = _lib.duk_create_heap(None, None, None, None, fatal_handler)
+        self._fns = [fatal_handler]
+
+    def __del__(self):
+        _lib.duk_destroy_heap(self._ctx)
+        self._fns = []
+
+    def eval(self, code):
+        &#34;&#34;&#34;Evaluate JS code
+
+        Args:
+            code (str): JS code
+
+        Returns:
+            Any
+
+        &#34;&#34;&#34;
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            _lib.duk_eval_string(self._ctx, code.encode(&#39;utf-8&#39;))
+            return self._peek(-1)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+    def get(self, name):
+        &#34;&#34;&#34;Get global value
+
+        Args:
+            name (str): global name
+
+        Returns:
+            Any
+
+        &#34;&#34;&#34;
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            key = name.encode(&#39;utf-8&#39;)
+            _lib.duk_get_global_string(self._ctx, key)
+            return self._peek(-1)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+    def set(self, name, value):
+        &#34;&#34;&#34;Set global value
+
+        Args:
+            name (str): global name
+            value (Any): value
+
+        &#34;&#34;&#34;
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            self._push(value)
+            key = name.encode(&#39;utf-8&#39;)
+            _lib.duk_put_global_string(self._ctx, key)
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+
+    def _peek(self, idx):
+        if _lib.duk_is_null_or_undefined(self._ctx, idx):
+            return
+        if _lib.duk_is_boolean(self._ctx, idx):
+            return self._peek_boolean(idx)
+        if _lib.duk_is_number(self._ctx, idx):
+            return self._peek_number(idx)
+        if _lib.duk_is_string(self._ctx, idx):
+            return self._peek_string(idx)
+        if _lib.duk_is_array(self._ctx, idx):
+            return self._peek_array(idx)
+        if _lib.duk_is_function(self._ctx, idx):
+            return self._peek_function(idx)
+        if _lib.duk_is_object(self._ctx, idx):
+            return self._peek_object(idx)
+        raise ValueError()
+
+    def _peek_boolean(self, idx):
+        return bool(_lib.duk_get_boolean(self._ctx, idx))
+
+    def _peek_number(self, idx):
+        return _lib.duk_get_number(self._ctx, idx)
+
+    def _peek_string(self, idx):
+        return _lib.duk_get_string(self._ctx, idx).decode(&#39;utf-8&#39;)
+
+    def _peek_array(self, idx):
+        result = []
+        top = _lib.duk_get_top(self._ctx)
+        _lib.duk_enum(self._ctx, idx, _lib.DUK_ENUM_ARRAY_INDICES_ONLY)
+        try:
+            while _lib.duk_next(self._ctx, top, 1):
+                result.append(self._peek(-1))
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+        return result
+
+    def _peek_object(self, idx):
+        result = {}
+        top = _lib.duk_get_top(self._ctx)
+        _lib.duk_enum(self._ctx, idx, _lib.DUK_ENUM_OWN_PROPERTIES_ONLY)
+        try:
+            while _lib.duk_next(self._ctx, top, 1):
+                key = self._peek(-2)
+                value = self._peek(-1)
+                result[key] = value
+        finally:
+            _lib.duk_set_top(self._ctx, top)
+        return result
+
+    def _peek_function(self, idx):
+        fn_ptr = _lib.duk_get_heapptr(self._ctx, idx)
+        self._stash(fn_ptr)
+
+        def wrapper(*args):
+            top = _lib.duk_push_heapptr(self._ctx, fn_ptr)
+            try:
+                for arg in args:
+                    self._push(arg)
+                _lib.duk_call(self._ctx, len(args))
+                return self._peek(-1)
+            finally:
+                _lib.duk_set_top(self._ctx, top)
+
+        return wrapper
+
+    def _push(self, value):
+        if value is None:
+            self._push_null()
+        elif isinstance(value, bool):
+            self._push_boolean(value)
+        elif isinstance(value, int) or isinstance(value, float):
+            self._push_number(value)
+        elif isinstance(value, str):
+            self._push_string(value)
+        elif isinstance(value, list) or isinstance(value, tuple):
+            self._push_array(value)
+        elif isinstance(value, dict):
+            self._push_object(value)
+        elif callable(value):
+            self._push_function(value)
+        else:
+            raise ValueError()
+
+    def _push_null(self):
+        _lib.duk_push_null(self._ctx)
+
+    def _push_boolean(self, value):
+        _lib.duk_push_boolean(self._ctx, value)
+
+    def _push_number(self, value):
+        _lib.duk_push_number(self._ctx, value)
+
+    def _push_string(self, value):
+        _lib.duk_push_string(self._ctx, value.encode(&#39;utf-8&#39;))
+
+    def _push_array(self, value):
+        arr_idx = _lib.duk_push_array(self._ctx)
+        try:
+            for index, element in enumerate(value):
+                self._push(element)
+                if _lib.duk_put_prop_index(self._ctx, arr_idx,
+                                           index) != 1:
+                    raise Exception(&#39;could not add element to array&#39;)
+        except Exception:
+            _lib.duk_set_top(self._ctx, arr_idx)
+            raise
+
+    def _push_object(self, value):
+        obj_idx = _lib.duk_push_object(self._ctx)
+        try:
+            for k, v in value.items():
+                self._push(v)
+                if _lib.duk_put_prop_string(self._ctx, obj_idx,
+                                            k.encode(&#39;utf-8&#39;)) != 1:
+                    raise Exception(&#39;could not add property to object&#39;)
+        except Exception:
+            _lib.duk_set_top(self._ctx, obj_idx)
+            raise
+
+    def _push_function(self, value):
+
+        @_lib.duk_c_function
+        def wrapper(ctx):
+            args = []
+            args_count = _lib.duk_get_top(self._ctx)
+            try:
+                for i in range(args_count):
+                    args.append(self._peek(i))
+                result = value(*args)
+                self._push(result)
+            except Exception:
+                return _lib.DUK_RET_ERROR
+            return 1
+
+        _lib.duk_push_c_function(self._ctx, wrapper, _lib.DUK_VARARGS)
+        self._fns.append(wrapper)
+
+    def _stash(self, ptr):
+        top = _lib.duk_get_top(self._ctx)
+        try:
+            ptr_id = int(ptr)
+            _lib.duk_push_heap_stash(self._ctx)
+            _lib.duk_push_heapptr(self._ctx, ptr)
+            if _lib.duk_put_prop_index(self._ctx, -2, ptr_id) != 1:
+                raise Exception(&#34;couldn&#39;t stash pointer&#34;)
+        finally:
+            _lib.duk_set_top(self._ctx, top)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.duktape.Interpreter.eval"><code class="name flex">
+<span>def <span class="ident">eval</span></span>(<span>self, code)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluate JS code</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>code</code></strong> :&ensp;<code>str</code></dt>
+<dd>JS code</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Any</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def eval(self, code):
+    &#34;&#34;&#34;Evaluate JS code
+
+    Args:
+        code (str): JS code
+
+    Returns:
+        Any
+
+    &#34;&#34;&#34;
+    top = _lib.duk_get_top(self._ctx)
+    try:
+        _lib.duk_eval_string(self._ctx, code.encode(&#39;utf-8&#39;))
+        return self._peek(-1)
+    finally:
+        _lib.duk_set_top(self._ctx, top)</code></pre>
+</details>
+</dd>
+<dt id="hat.duktape.Interpreter.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get global value</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>global name</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Any</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, name):
+    &#34;&#34;&#34;Get global value
+
+    Args:
+        name (str): global name
+
+    Returns:
+        Any
+
+    &#34;&#34;&#34;
+    top = _lib.duk_get_top(self._ctx)
+    try:
+        key = name.encode(&#39;utf-8&#39;)
+        _lib.duk_get_global_string(self._ctx, key)
+        return self._peek(-1)
+    finally:
+        _lib.duk_set_top(self._ctx, top)</code></pre>
+</details>
+</dd>
+<dt id="hat.duktape.Interpreter.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, name, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set global value</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>global name</dd>
+<dt><strong><code>value</code></strong> :&ensp;<code>Any</code></dt>
+<dd>value</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set(self, name, value):
+    &#34;&#34;&#34;Set global value
+
+    Args:
+        name (str): global name
+        value (Any): value
+
+    &#34;&#34;&#34;
+    top = _lib.duk_get_top(self._ctx)
+    try:
+        self._push(value)
+        key = name.encode(&#39;utf-8&#39;)
+        _lib.duk_put_global_string(self._ctx, key)
+    finally:
+        _lib.duk_set_top(self._ctx, top)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat" href="../index.html">hat</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.duktape.Interpreter" href="#hat.duktape.Interpreter">Interpreter</a></code></h4>
+<ul class="">
+<li><code><a title="hat.duktape.Interpreter.eval" href="#hat.duktape.Interpreter.eval">eval</a></code></li>
+<li><code><a title="hat.duktape.Interpreter.get" href="#hat.duktape.Interpreter.get">get</a></code></li>
+<li><code><a title="hat.duktape.Interpreter.set" href="#hat.duktape.Interpreter.set">set</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

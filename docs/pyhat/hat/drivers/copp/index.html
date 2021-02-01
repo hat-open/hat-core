@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.copp API documentation</title>
+<meta name="description" content="Connection oriented presentation protocol …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.copp</code></h1>
+</header>
+<section id="section-intro">
+<p>Connection oriented presentation protocol</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>mlog</code></strong> :&ensp;<code>logging.Logger</code></dt>
+<dd>module logger</dd>
+</dl>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Connection oriented presentation protocol
+
+Attributes:
+    mlog (logging.Logger): module logger
+
+&#34;&#34;&#34;
+
+from pathlib import Path
+import logging
+import typing
+
+from hat import aio
+from hat import asn1
+from hat import util
+from hat.drivers import cosp
+
+
+mlog = logging.getLogger(__name__)
+
+
+IdentifiedEntity = typing.Tuple[asn1.ObjectIdentifier, asn1.Entity]
+&#34;&#34;&#34;Identified entity&#34;&#34;&#34;
+
+
+Address = cosp.Address
+&#34;&#34;&#34;Address&#34;&#34;&#34;
+
+
+class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    local_psel: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
+    remote_psel: typing.Optional[int]
+
+
+ValidateResult = typing.Optional[IdentifiedEntity]
+&#34;&#34;&#34;Validate result&#34;&#34;&#34;
+
+
+ValidateCb = aio.AsyncCallable[[&#39;SyntaxNames&#39;, IdentifiedEntity],
+                               ValidateResult]
+&#34;&#34;&#34;Validate callback&#34;&#34;&#34;
+
+
+ConnectionCb = aio.AsyncCallable[[&#39;Connection&#39;], None]
+&#34;&#34;&#34;Connection callback&#34;&#34;&#34;
+
+
+_encoder = asn1.Encoder(asn1.Encoding.BER,
+                        asn1.Repository.from_json(Path(__file__).parent /
+                                                  &#39;asn1_repo.json&#39;))
+
+
+class SyntaxNames:
+    &#34;&#34;&#34;Syntax name registry
+
+    Args:
+        syntax_names: list of ASN.1 ObjectIdentifiers representing syntax names
+
+    &#34;&#34;&#34;
+
+    def __init__(self, syntax_names: typing.List[asn1.ObjectIdentifier]):
+        self._syntax_names = {(i * 2 + 1): name
+                              for i, name in enumerate(syntax_names)}
+
+    def get_name(self, syntax_id: int) -&gt; asn1.ObjectIdentifier:
+        &#34;&#34;&#34;Get syntax name associated with id&#34;&#34;&#34;
+        return self._syntax_names[syntax_id]
+
+    def get_id(self, syntax_name: asn1.ObjectIdentifier) -&gt; int:
+        &#34;&#34;&#34;Get syntax id associated with name&#34;&#34;&#34;
+        syntax_id, _ = util.first(self._syntax_names.items(),
+                                  lambda i: asn1.is_oid_eq(i[1], syntax_name))
+        return syntax_id
+
+
+async def connect(syntax_names: SyntaxNames,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -&gt; &#39;Connection&#39;:
+    &#34;&#34;&#34;Connect to COPP server&#34;&#34;&#34;
+    cp_ppdu = _cp_ppdu(syntax_names, local_psel, remote_psel, user_data)
+    cp_ppdu_data = _encode(&#39;CP-type&#39;, cp_ppdu)
+    cosp_conn = await cosp.connect(addr=addr,
+                                   local_tsel=local_tsel,
+                                   remote_tsel=remote_tsel,
+                                   local_ssel=local_ssel,
+                                   remote_ssel=remote_ssel,
+                                   user_data=cp_ppdu_data)
+    try:
+        cpa_ppdu = _decode(&#39;CPA-PPDU&#39;, cosp_conn.conn_res_user_data)
+        _validate_connect_response(cp_ppdu, cpa_ppdu)
+        calling_psel, called_psel = _get_psels(cp_ppdu)
+        return _create_connection(syntax_names, cosp_conn, cp_ppdu, cpa_ppdu,
+                                  calling_psel, called_psel)
+    except Exception:
+        await aio.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
+        raise
+
+
+async def listen(validate_cb: ValidateCb,
+                 connection_cb: ConnectionCb,
+                 addr: Address = Address(&#39;0.0.0.0&#39;, 102)
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create COPP listening server
+
+    Args:
+        validate_cb: callback function or coroutine called on new
+            incomming connection request prior to creating connection object
+        connection_cb: new connection callback
+        addr: local listening address
+
+    &#34;&#34;&#34;
+
+    async def on_validate(user_data):
+        cp_ppdu = _decode(&#39;CP-type&#39;, user_data)
+        cp_params = cp_ppdu[&#39;normal-mode-parameters&#39;]
+        called_psel_data = cp_params.get(&#39;called-presentation-selector&#39;)
+        called_psel = (int.from_bytes(called_psel_data, &#39;big&#39;)
+                       if called_psel_data else None)
+        cp_pdv_list = cp_params[&#39;user-data&#39;][1][0]
+        syntax_names = _sytax_names_from_cp_ppdu(cp_ppdu)
+        cp_user_data = (
+            syntax_names.get_name(
+                cp_pdv_list[&#39;presentation-context-identifier&#39;]),
+            cp_pdv_list[&#39;presentation-data-values&#39;][1])
+        cpa_user_data = await aio.call(
+            validate_cb, syntax_names, cp_user_data)
+        cpa_ppdu = _cpa_ppdu(syntax_names, called_psel, cpa_user_data)
+        cpa_ppdu_data = _encode(&#39;CPA-PPDU&#39;, cpa_ppdu)
+        return cpa_ppdu_data
+
+    async def on_connection(cosp_conn):
+        try:
+            cp_ppdu = _decode(&#39;CP-type&#39;, cosp_conn.conn_req_user_data)
+            cpa_ppdu = _decode(&#39;CPA-PPDU&#39;, cosp_conn.conn_res_user_data)
+            syntax_names = _sytax_names_from_cp_ppdu(cp_ppdu)
+            calling_psel, called_psel = _get_psels(cp_ppdu)
+            conn = _create_connection(syntax_names, cosp_conn,
+                                      cp_ppdu, cpa_ppdu,
+                                      called_psel, calling_psel)
+            await aio.call(connection_cb, conn)
+        except BaseException as e:
+            mlog.error(&#34;error creating new incomming connection: %s&#34;, e,
+                       exc_info=e)
+            await aio.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
+
+    async def wait_cosp_server_closed():
+        try:
+            await cosp_server.wait_closed()
+        finally:
+            async_group.close()
+
+    async_group = aio.Group()
+    cosp_server = await cosp.listen(on_validate, on_connection, addr)
+    async_group.spawn(aio.call_on_cancel, cosp_server.async_close)
+    async_group.spawn(wait_cosp_server_closed)
+
+    srv = Server()
+    srv._async_group = async_group
+    srv._cosp_server = cosp_server
+    return srv
+
+
+class Server(aio.Resource):
+    &#34;&#34;&#34;COPP listening server
+
+    For creating new server see :func:`listen`
+
+    Closing server doesn&#39;t close active incomming connections
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def addresses(self) -&gt; typing.List[Address]:
+        &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+        return self._cosp_server.addresses
+
+
+def _create_connection(syntax_names, cosp_conn, cp_ppdu, cpa_ppdu,
+                       local_psel, remote_psel):
+    cp_user_data = cp_ppdu[&#39;normal-mode-parameters&#39;][&#39;user-data&#39;]
+    cpa_user_data = cpa_ppdu[&#39;normal-mode-parameters&#39;][&#39;user-data&#39;]
+
+    conn_req_user_data = (
+        syntax_names.get_name(
+            cp_user_data[1][0][&#39;presentation-context-identifier&#39;]),
+        cp_user_data[1][0][&#39;presentation-data-values&#39;][1])
+    conn_res_user_data = (
+        syntax_names.get_name(
+            cpa_user_data[1][0][&#39;presentation-context-identifier&#39;]),
+        cpa_user_data[1][0][&#39;presentation-data-values&#39;][1])
+
+    conn = Connection()
+    conn._cosp_conn = cosp_conn
+    conn._syntax_names = syntax_names
+    conn._conn_req_user_data = conn_req_user_data
+    conn._conn_res_user_data = conn_res_user_data
+    conn._info = ConnectionInfo(local_psel=local_psel,
+                                remote_psel=remote_psel,
+                                **cosp_conn.info._asdict())
+    conn._close_ppdu = _arp_ppdu()
+    conn._read_queue = aio.Queue()
+    conn._async_group = aio.Group()
+    conn._async_group.spawn(conn._read_loop)
+    return conn
+
+
+class Connection(aio.Resource):
+    &#34;&#34;&#34;COPP connection
+
+    For creating new connection see :func:`connect`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; ConnectionInfo:
+        &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+        return self._info
+
+    @property
+    def syntax_names(self) -&gt; SyntaxNames:
+        &#34;&#34;&#34;Syntax names&#34;&#34;&#34;
+        return self._syntax_names
+
+    @property
+    def conn_req_user_data(self) -&gt; IdentifiedEntity:
+        &#34;&#34;&#34;Connect request&#39;s user data&#34;&#34;&#34;
+        return self._conn_req_user_data
+
+    @property
+    def conn_res_user_data(self) -&gt; IdentifiedEntity:
+        &#34;&#34;&#34;Connect response&#39;s user data&#34;&#34;&#34;
+        return self._conn_res_user_data
+
+    def close(self, user_data: typing.Optional[IdentifiedEntity] = None):
+        &#34;&#34;&#34;Close connection&#34;&#34;&#34;
+        self._close_ppdu = _aru_ppdu(self._syntax_names, user_data)
+        self._async_group.close()
+
+    async def async_close(self,
+                          user_data: typing.Optional[IdentifiedEntity] = None):
+        &#34;&#34;&#34;Async close&#34;&#34;&#34;
+        self.close(user_data)
+        await self.wait_closed()
+
+    async def read(self) -&gt; IdentifiedEntity:
+        &#34;&#34;&#34;Read data&#34;&#34;&#34;
+        return await self._read_queue.get()
+
+    def write(self, data: IdentifiedEntity):
+        &#34;&#34;&#34;Write data&#34;&#34;&#34;
+        ppdu_data = _encode(&#39;User-data&#39;, _user_data(self._syntax_names, data))
+        self._cosp_conn.write(ppdu_data)
+
+    async def _read_loop(self):
+        try:
+            while True:
+                cosp_data = await self._cosp_conn.read()
+                user_data = _decode(&#39;User-data&#39;, cosp_data)
+                pdv_list = user_data[1][0]
+                syntax_name = self._syntax_names.get_name(
+                    pdv_list[&#39;presentation-context-identifier&#39;])
+                data = pdv_list[&#39;presentation-data-values&#39;][1]
+                await self._read_queue.put((syntax_name, data))
+        finally:
+            self._async_group.close()
+            self._read_queue.close()
+            await aio.uncancellable(
+                _close_connection(self._cosp_conn, self._close_ppdu))
+
+
+async def _close_connection(cosp_conn, ppdu):
+    try:
+        data = _encode(&#39;Abort-type&#39;, ppdu) if ppdu else None
+    except Exception as e:
+        mlog.error(&#34;error encoding ppdu: %s&#34;, e, exc_info=e)
+        data = None
+    finally:
+        await cosp_conn.async_close(data)
+
+
+def _get_psels(cp_ppdu):
+    cp_params = cp_ppdu[&#39;normal-mode-parameters&#39;]
+    calling_psel_data = cp_params.get(&#39;calling-presentation-selector&#39;)
+    calling_psel = (int.from_bytes(calling_psel_data, &#39;big&#39;)
+                    if calling_psel_data else None)
+    called_psel_data = cp_params.get(&#39;called-presentation-selector&#39;)
+    called_psel = (int.from_bytes(called_psel_data, &#39;big&#39;)
+                   if called_psel_data else None)
+    return calling_psel, called_psel
+
+
+def _validate_connect_response(cp_ppdu, cpa_ppdu):
+    cp_params = cp_ppdu[&#39;normal-mode-parameters&#39;]
+    cpa_params = cpa_ppdu[&#39;normal-mode-parameters&#39;]
+    called_psel_data = cp_params.get(&#39;called-presentation-selector&#39;)
+    responding_psel_data = cpa_params.get(&#39;responding-presentation-selector&#39;)
+    if called_psel_data and responding_psel_data:
+        called_psel = int.from_bytes(called_psel_data, &#39;big&#39;)
+        responding_psel = int.from_bytes(responding_psel_data, &#39;big&#39;)
+        if called_psel != responding_psel:
+            raise Exception(&#39;presentation selectors not matching&#39;)
+    result_list = cpa_params[&#39;presentation-context-definition-result-list&#39;]
+    if any(i[&#39;result&#39;] != 0 for i in result_list):
+        raise Exception(&#39;presentation context not accepted&#39;)
+
+
+def _cp_ppdu(syntax_names, calling_psel, called_psel, user_data):
+    cp_params = {
+        &#39;presentation-context-definition-list&#39;: [
+            {&#39;presentation-context-identifier&#39;: i,
+             &#39;abstract-syntax-name&#39;: name,
+             &#39;transfer-syntax-name-list&#39;: [_encoder.syntax_name]}
+            for i, name in syntax_names._syntax_names.items()]}
+    if calling_psel is not None:
+        cp_params[&#39;calling-presentation-selector&#39;] = \
+            calling_psel.to_bytes(4, &#39;big&#39;)
+    if called_psel is not None:
+        cp_params[&#39;called-presentation-selector&#39;] = \
+            called_psel.to_bytes(4, &#39;big&#39;)
+    if user_data:
+        cp_params[&#39;user-data&#39;] = _user_data(syntax_names, user_data)
+    return {
+        &#39;mode-selector&#39;: {
+            &#39;mode-value&#39;: 1},
+        &#39;normal-mode-parameters&#39;: cp_params}
+
+
+def _cpa_ppdu(syntax_names, responding_psel, user_data):
+    cpa_params = {
+        &#39;presentation-context-definition-result-list&#39;: [
+            {&#39;result&#39;: 0,
+             &#39;transfer-syntax-name&#39;: _encoder.syntax_name}
+            for _ in syntax_names._syntax_names.keys()]}
+    if responding_psel is not None:
+        cpa_params[&#39;responding-presentation-selector&#39;] = \
+            responding_psel.to_bytes(4, &#39;big&#39;)
+    if user_data:
+        cpa_params[&#39;user-data&#39;] = _user_data(syntax_names, user_data)
+    return {
+        &#39;mode-selector&#39;: {
+            &#39;mode-value&#39;: 1},
+        &#39;normal-mode-parameters&#39;: cpa_params}
+
+
+def _aru_ppdu(syntax_names, user_data):
+    aru_params = {}
+    if user_data:
+        aru_params[&#39;user-data&#39;] = _user_data(syntax_names, user_data)
+    return &#39;aru-ppdu&#39;, (&#39;normal-mode-parameters&#39;, aru_params)
+
+
+def _arp_ppdu():
+    return &#39;arp-ppdu&#39;, {}
+
+
+def _user_data(syntax_names, user_data):
+    return &#39;fully-encoded-data&#39;, [{
+        &#39;presentation-context-identifier&#39;: syntax_names.get_id(user_data[0]),
+        &#39;presentation-data-values&#39;: (
+            &#39;single-ASN1-type&#39;, user_data[1])}]
+
+
+def _sytax_names_from_cp_ppdu(cp_ppdu):
+    cp_params = cp_ppdu[&#39;normal-mode-parameters&#39;]
+    syntax_names = SyntaxNames([])
+    syntax_names._syntax_names = {
+        i[&#39;presentation-context-identifier&#39;]: i[&#39;abstract-syntax-name&#39;]
+        for i in cp_params[&#39;presentation-context-definition-list&#39;]}
+    return syntax_names
+
+
+def _encode(name, value):
+    return _encoder.encode(&#39;ISO8823-PRESENTATION&#39;, name, value)
+
+
+def _decode(name, data):
+    res, _ = _encoder.decode(&#39;ISO8823-PRESENTATION&#39;, name, memoryview(data))
+    return res</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.drivers.copp.ConnectionCb"><code class="name">var <span class="ident">ConnectionCb</span></code></dt>
+<dd>
+<div class="desc"><p>Connection callback</p></div>
+</dd>
+<dt id="hat.drivers.copp.IdentifiedEntity"><code class="name">var <span class="ident">IdentifiedEntity</span></code></dt>
+<dd>
+<div class="desc"><p>Identified entity</p></div>
+</dd>
+<dt id="hat.drivers.copp.ValidateCb"><code class="name">var <span class="ident">ValidateCb</span></code></dt>
+<dd>
+<div class="desc"><p>Validate callback</p></div>
+</dd>
+<dt id="hat.drivers.copp.ValidateResult"><code class="name">var <span class="ident">ValidateResult</span></code></dt>
+<dd>
+<div class="desc"><p>Validate result</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.copp.connect"><code class="name flex">
+<span>async def <span class="ident">connect</span></span>(<span>syntax_names: <a title="hat.drivers.copp.SyntaxNames" href="#hat.drivers.copp.SyntaxNames">SyntaxNames</a>, addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, local_tsel: typing.Union[int, NoneType] = None, remote_tsel: typing.Union[int, NoneType] = None, local_ssel: typing.Union[int, NoneType] = None, remote_ssel: typing.Union[int, NoneType] = None, local_psel: typing.Union[int, NoneType] = None, remote_psel: typing.Union[int, NoneType] = None, user_data: typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType] = None) ‑> <a title="hat.drivers.copp.Connection" href="#hat.drivers.copp.Connection">Connection</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect to COPP server</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def connect(syntax_names: SyntaxNames,
+                  addr: Address,
+                  local_tsel: typing.Optional[int] = None,
+                  remote_tsel: typing.Optional[int] = None,
+                  local_ssel: typing.Optional[int] = None,
+                  remote_ssel: typing.Optional[int] = None,
+                  local_psel: typing.Optional[int] = None,
+                  remote_psel: typing.Optional[int] = None,
+                  user_data: typing.Optional[IdentifiedEntity] = None
+                  ) -&gt; &#39;Connection&#39;:
+    &#34;&#34;&#34;Connect to COPP server&#34;&#34;&#34;
+    cp_ppdu = _cp_ppdu(syntax_names, local_psel, remote_psel, user_data)
+    cp_ppdu_data = _encode(&#39;CP-type&#39;, cp_ppdu)
+    cosp_conn = await cosp.connect(addr=addr,
+                                   local_tsel=local_tsel,
+                                   remote_tsel=remote_tsel,
+                                   local_ssel=local_ssel,
+                                   remote_ssel=remote_ssel,
+                                   user_data=cp_ppdu_data)
+    try:
+        cpa_ppdu = _decode(&#39;CPA-PPDU&#39;, cosp_conn.conn_res_user_data)
+        _validate_connect_response(cp_ppdu, cpa_ppdu)
+        calling_psel, called_psel = _get_psels(cp_ppdu)
+        return _create_connection(syntax_names, cosp_conn, cp_ppdu, cpa_ppdu,
+                                  calling_psel, called_psel)
+    except Exception:
+        await aio.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
+        raise</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.listen"><code class="name flex">
+<span>async def <span class="ident">listen</span></span>(<span>validate_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.copp.SyntaxNames" href="#hat.drivers.copp.SyntaxNames">SyntaxNames</a>'), typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]], typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType, typing.Awaitable[typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType]]]], connection_cb: typing.Callable[[ForwardRef('<a title="hat.drivers.copp.Connection" href="#hat.drivers.copp.Connection">Connection</a>')], typing.Union[NoneType, typing.Awaitable[NoneType]]], addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a> = Address(host='0.0.0.0', port=102)) ‑> <a title="hat.drivers.copp.Server" href="#hat.drivers.copp.Server">Server</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create COPP listening server</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>validate_cb</code></strong></dt>
+<dd>callback function or coroutine called on new
+incomming connection request prior to creating connection object</dd>
+<dt><strong><code>connection_cb</code></strong></dt>
+<dd>new connection callback</dd>
+<dt><strong><code>addr</code></strong></dt>
+<dd>local listening address</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def listen(validate_cb: ValidateCb,
+                 connection_cb: ConnectionCb,
+                 addr: Address = Address(&#39;0.0.0.0&#39;, 102)
+                 ) -&gt; &#39;Server&#39;:
+    &#34;&#34;&#34;Create COPP listening server
+
+    Args:
+        validate_cb: callback function or coroutine called on new
+            incomming connection request prior to creating connection object
+        connection_cb: new connection callback
+        addr: local listening address
+
+    &#34;&#34;&#34;
+
+    async def on_validate(user_data):
+        cp_ppdu = _decode(&#39;CP-type&#39;, user_data)
+        cp_params = cp_ppdu[&#39;normal-mode-parameters&#39;]
+        called_psel_data = cp_params.get(&#39;called-presentation-selector&#39;)
+        called_psel = (int.from_bytes(called_psel_data, &#39;big&#39;)
+                       if called_psel_data else None)
+        cp_pdv_list = cp_params[&#39;user-data&#39;][1][0]
+        syntax_names = _sytax_names_from_cp_ppdu(cp_ppdu)
+        cp_user_data = (
+            syntax_names.get_name(
+                cp_pdv_list[&#39;presentation-context-identifier&#39;]),
+            cp_pdv_list[&#39;presentation-data-values&#39;][1])
+        cpa_user_data = await aio.call(
+            validate_cb, syntax_names, cp_user_data)
+        cpa_ppdu = _cpa_ppdu(syntax_names, called_psel, cpa_user_data)
+        cpa_ppdu_data = _encode(&#39;CPA-PPDU&#39;, cpa_ppdu)
+        return cpa_ppdu_data
+
+    async def on_connection(cosp_conn):
+        try:
+            cp_ppdu = _decode(&#39;CP-type&#39;, cosp_conn.conn_req_user_data)
+            cpa_ppdu = _decode(&#39;CPA-PPDU&#39;, cosp_conn.conn_res_user_data)
+            syntax_names = _sytax_names_from_cp_ppdu(cp_ppdu)
+            calling_psel, called_psel = _get_psels(cp_ppdu)
+            conn = _create_connection(syntax_names, cosp_conn,
+                                      cp_ppdu, cpa_ppdu,
+                                      called_psel, calling_psel)
+            await aio.call(connection_cb, conn)
+        except BaseException as e:
+            mlog.error(&#34;error creating new incomming connection: %s&#34;, e,
+                       exc_info=e)
+            await aio.uncancellable(_close_connection(cosp_conn, _arp_ppdu()))
+
+    async def wait_cosp_server_closed():
+        try:
+            await cosp_server.wait_closed()
+        finally:
+            async_group.close()
+
+    async_group = aio.Group()
+    cosp_server = await cosp.listen(on_validate, on_connection, addr)
+    async_group.spawn(aio.call_on_cancel, cosp_server.async_close)
+    async_group.spawn(wait_cosp_server_closed)
+
+    srv = Server()
+    srv._async_group = async_group
+    srv._cosp_server = cosp_server
+    return srv</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.copp.Address"><code class="flex name class">
+<span>class <span class="ident">Address</span></span>
+<span>(</span><span>host: str, port: int = 102)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Address(host, port)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Address(typing.NamedTuple):
+    host: str
+    port: int = 102</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.copp.Address.host"><code class="name">var <span class="ident">host</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.copp.Address.port"><code class="name">var <span class="ident">port</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.copp.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>COPP connection</p>
+<p>For creating new connection see :func:<code><a title="hat.drivers.copp.connect" href="#hat.drivers.copp.connect">connect()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connection(aio.Resource):
+    &#34;&#34;&#34;COPP connection
+
+    For creating new connection see :func:`connect`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def info(self) -&gt; ConnectionInfo:
+        &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+        return self._info
+
+    @property
+    def syntax_names(self) -&gt; SyntaxNames:
+        &#34;&#34;&#34;Syntax names&#34;&#34;&#34;
+        return self._syntax_names
+
+    @property
+    def conn_req_user_data(self) -&gt; IdentifiedEntity:
+        &#34;&#34;&#34;Connect request&#39;s user data&#34;&#34;&#34;
+        return self._conn_req_user_data
+
+    @property
+    def conn_res_user_data(self) -&gt; IdentifiedEntity:
+        &#34;&#34;&#34;Connect response&#39;s user data&#34;&#34;&#34;
+        return self._conn_res_user_data
+
+    def close(self, user_data: typing.Optional[IdentifiedEntity] = None):
+        &#34;&#34;&#34;Close connection&#34;&#34;&#34;
+        self._close_ppdu = _aru_ppdu(self._syntax_names, user_data)
+        self._async_group.close()
+
+    async def async_close(self,
+                          user_data: typing.Optional[IdentifiedEntity] = None):
+        &#34;&#34;&#34;Async close&#34;&#34;&#34;
+        self.close(user_data)
+        await self.wait_closed()
+
+    async def read(self) -&gt; IdentifiedEntity:
+        &#34;&#34;&#34;Read data&#34;&#34;&#34;
+        return await self._read_queue.get()
+
+    def write(self, data: IdentifiedEntity):
+        &#34;&#34;&#34;Write data&#34;&#34;&#34;
+        ppdu_data = _encode(&#39;User-data&#39;, _user_data(self._syntax_names, data))
+        self._cosp_conn.write(ppdu_data)
+
+    async def _read_loop(self):
+        try:
+            while True:
+                cosp_data = await self._cosp_conn.read()
+                user_data = _decode(&#39;User-data&#39;, cosp_data)
+                pdv_list = user_data[1][0]
+                syntax_name = self._syntax_names.get_name(
+                    pdv_list[&#39;presentation-context-identifier&#39;])
+                data = pdv_list[&#39;presentation-data-values&#39;][1]
+                await self._read_queue.put((syntax_name, data))
+        finally:
+            self._async_group.close()
+            self._read_queue.close()
+            await aio.uncancellable(
+                _close_connection(self._cosp_conn, self._close_ppdu))</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.copp.Connection.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.conn_req_user_data"><code class="name">var <span class="ident">conn_req_user_data</span> : typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]</code></dt>
+<dd>
+<div class="desc"><p>Connect request's user data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def conn_req_user_data(self) -&gt; IdentifiedEntity:
+    &#34;&#34;&#34;Connect request&#39;s user data&#34;&#34;&#34;
+    return self._conn_req_user_data</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.conn_res_user_data"><code class="name">var <span class="ident">conn_res_user_data</span> : typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]</code></dt>
+<dd>
+<div class="desc"><p>Connect response's user data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def conn_res_user_data(self) -&gt; IdentifiedEntity:
+    &#34;&#34;&#34;Connect response&#39;s user data&#34;&#34;&#34;
+    return self._conn_res_user_data</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.info"><code class="name">var <span class="ident">info</span> : <a title="hat.drivers.copp.ConnectionInfo" href="#hat.drivers.copp.ConnectionInfo">ConnectionInfo</a></code></dt>
+<dd>
+<div class="desc"><p>Connection info</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self) -&gt; ConnectionInfo:
+    &#34;&#34;&#34;Connection info&#34;&#34;&#34;
+    return self._info</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.syntax_names"><code class="name">var <span class="ident">syntax_names</span> : <a title="hat.drivers.copp.SyntaxNames" href="#hat.drivers.copp.SyntaxNames">SyntaxNames</a></code></dt>
+<dd>
+<div class="desc"><p>Syntax names</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def syntax_names(self) -&gt; SyntaxNames:
+    &#34;&#34;&#34;Syntax names&#34;&#34;&#34;
+    return self._syntax_names</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.copp.Connection.async_close"><code class="name flex">
+<span>async def <span class="ident">async_close</span></span>(<span>self, user_data: typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Async close</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def async_close(self,
+                      user_data: typing.Optional[IdentifiedEntity] = None):
+    &#34;&#34;&#34;Async close&#34;&#34;&#34;
+    self.close(user_data)
+    await self.wait_closed()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self, user_data: typing.Union[typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>], NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Close connection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self, user_data: typing.Optional[IdentifiedEntity] = None):
+    &#34;&#34;&#34;Close connection&#34;&#34;&#34;
+    self._close_ppdu = _aru_ppdu(self._syntax_names, user_data)
+    self._async_group.close()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.read"><code class="name flex">
+<span>async def <span class="ident">read</span></span>(<span>self) ‑> typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Read data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def read(self) -&gt; IdentifiedEntity:
+    &#34;&#34;&#34;Read data&#34;&#34;&#34;
+    return await self._read_queue.get()</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Connection.write"><code class="name flex">
+<span>def <span class="ident">write</span></span>(<span>self, data: typing.Tuple[typing.List[typing.Union[int, typing.Tuple[str, int]]], <a title="hat.asn1.common.Entity" href="../../asn1/common.html#hat.asn1.common.Entity">Entity</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write(self, data: IdentifiedEntity):
+    &#34;&#34;&#34;Write data&#34;&#34;&#34;
+    ppdu_data = _encode(&#39;User-data&#39;, _user_data(self._syntax_names, data))
+    self._cosp_conn.write(ppdu_data)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo"><code class="flex name class">
+<span>class <span class="ident">ConnectionInfo</span></span>
+<span>(</span><span>local_addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, local_tsel: typing.Union[int, NoneType], local_ssel: typing.Union[int, NoneType], local_psel: typing.Union[int, NoneType], remote_addr: <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>, remote_tsel: typing.Union[int, NoneType], remote_ssel: typing.Union[int, NoneType], remote_psel: typing.Union[int, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ConnectionInfo(local_addr, local_tsel, local_ssel, local_psel, remote_addr, remote_tsel, remote_ssel, remote_psel)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ConnectionInfo(typing.NamedTuple):
+    local_addr: Address
+    local_tsel: typing.Optional[int]
+    local_ssel: typing.Optional[int]
+    local_psel: typing.Optional[int]
+    remote_addr: Address
+    remote_tsel: typing.Optional[int]
+    remote_ssel: typing.Optional[int]
+    remote_psel: typing.Optional[int]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.copp.ConnectionInfo.local_addr"><code class="name">var <span class="ident">local_addr</span> : <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.local_psel"><code class="name">var <span class="ident">local_psel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.local_ssel"><code class="name">var <span class="ident">local_ssel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.local_tsel"><code class="name">var <span class="ident">local_tsel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.remote_addr"><code class="name">var <span class="ident">remote_addr</span> : <a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.remote_psel"><code class="name">var <span class="ident">remote_psel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.remote_ssel"><code class="name">var <span class="ident">remote_ssel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.copp.ConnectionInfo.remote_tsel"><code class="name">var <span class="ident">remote_tsel</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.copp.Server"><code class="flex name class">
+<span>class <span class="ident">Server</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>COPP listening server</p>
+<p>For creating new server see :func:<code><a title="hat.drivers.copp.listen" href="#hat.drivers.copp.listen">listen()</a></code></p>
+<p>Closing server doesn't close active incomming connections</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Server(aio.Resource):
+    &#34;&#34;&#34;COPP listening server
+
+    For creating new server see :func:`listen`
+
+    Closing server doesn&#39;t close active incomming connections
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def addresses(self) -&gt; typing.List[Address]:
+        &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+        return self._cosp_server.addresses</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.copp.Server.addresses"><code class="name">var <span class="ident">addresses</span> : typing.List[<a title="hat.drivers.tpkt.Address" href="../tpkt.html#hat.drivers.tpkt.Address">Address</a>]</code></dt>
+<dd>
+<div class="desc"><p>Listening addresses</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def addresses(self) -&gt; typing.List[Address]:
+    &#34;&#34;&#34;Listening addresses&#34;&#34;&#34;
+    return self._cosp_server.addresses</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.Server.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.drivers.copp.SyntaxNames"><code class="flex name class">
+<span>class <span class="ident">SyntaxNames</span></span>
+<span>(</span><span>syntax_names: typing.List[typing.List[typing.Union[int, typing.Tuple[str, int]]]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Syntax name registry</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>syntax_names</code></strong></dt>
+<dd>list of ASN.1 ObjectIdentifiers representing syntax names</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SyntaxNames:
+    &#34;&#34;&#34;Syntax name registry
+
+    Args:
+        syntax_names: list of ASN.1 ObjectIdentifiers representing syntax names
+
+    &#34;&#34;&#34;
+
+    def __init__(self, syntax_names: typing.List[asn1.ObjectIdentifier]):
+        self._syntax_names = {(i * 2 + 1): name
+                              for i, name in enumerate(syntax_names)}
+
+    def get_name(self, syntax_id: int) -&gt; asn1.ObjectIdentifier:
+        &#34;&#34;&#34;Get syntax name associated with id&#34;&#34;&#34;
+        return self._syntax_names[syntax_id]
+
+    def get_id(self, syntax_name: asn1.ObjectIdentifier) -&gt; int:
+        &#34;&#34;&#34;Get syntax id associated with name&#34;&#34;&#34;
+        syntax_id, _ = util.first(self._syntax_names.items(),
+                                  lambda i: asn1.is_oid_eq(i[1], syntax_name))
+        return syntax_id</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.drivers.copp.SyntaxNames.get_id"><code class="name flex">
+<span>def <span class="ident">get_id</span></span>(<span>self, syntax_name: typing.List[typing.Union[int, typing.Tuple[str, int]]]) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get syntax id associated with name</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_id(self, syntax_name: asn1.ObjectIdentifier) -&gt; int:
+    &#34;&#34;&#34;Get syntax id associated with name&#34;&#34;&#34;
+    syntax_id, _ = util.first(self._syntax_names.items(),
+                              lambda i: asn1.is_oid_eq(i[1], syntax_name))
+    return syntax_id</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.copp.SyntaxNames.get_name"><code class="name flex">
+<span>def <span class="ident">get_name</span></span>(<span>self, syntax_id: int) ‑> typing.List[typing.Union[int, typing.Tuple[str, int]]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get syntax name associated with id</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_name(self, syntax_id: int) -&gt; asn1.ObjectIdentifier:
+    &#34;&#34;&#34;Get syntax name associated with id&#34;&#34;&#34;
+    return self._syntax_names[syntax_id]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers" href="../index.html">hat.drivers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.copp.ConnectionCb" href="#hat.drivers.copp.ConnectionCb">ConnectionCb</a></code></li>
+<li><code><a title="hat.drivers.copp.IdentifiedEntity" href="#hat.drivers.copp.IdentifiedEntity">IdentifiedEntity</a></code></li>
+<li><code><a title="hat.drivers.copp.ValidateCb" href="#hat.drivers.copp.ValidateCb">ValidateCb</a></code></li>
+<li><code><a title="hat.drivers.copp.ValidateResult" href="#hat.drivers.copp.ValidateResult">ValidateResult</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.copp.connect" href="#hat.drivers.copp.connect">connect</a></code></li>
+<li><code><a title="hat.drivers.copp.listen" href="#hat.drivers.copp.listen">listen</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.copp.Address" href="#hat.drivers.copp.Address">Address</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.copp.Address.host" href="#hat.drivers.copp.Address.host">host</a></code></li>
+<li><code><a title="hat.drivers.copp.Address.port" href="#hat.drivers.copp.Address.port">port</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.copp.Connection" href="#hat.drivers.copp.Connection">Connection</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.copp.Connection.async_close" href="#hat.drivers.copp.Connection.async_close">async_close</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.async_group" href="#hat.drivers.copp.Connection.async_group">async_group</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.close" href="#hat.drivers.copp.Connection.close">close</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.conn_req_user_data" href="#hat.drivers.copp.Connection.conn_req_user_data">conn_req_user_data</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.conn_res_user_data" href="#hat.drivers.copp.Connection.conn_res_user_data">conn_res_user_data</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.info" href="#hat.drivers.copp.Connection.info">info</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.read" href="#hat.drivers.copp.Connection.read">read</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.syntax_names" href="#hat.drivers.copp.Connection.syntax_names">syntax_names</a></code></li>
+<li><code><a title="hat.drivers.copp.Connection.write" href="#hat.drivers.copp.Connection.write">write</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.copp.ConnectionInfo" href="#hat.drivers.copp.ConnectionInfo">ConnectionInfo</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.copp.ConnectionInfo.local_addr" href="#hat.drivers.copp.ConnectionInfo.local_addr">local_addr</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.local_psel" href="#hat.drivers.copp.ConnectionInfo.local_psel">local_psel</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.local_ssel" href="#hat.drivers.copp.ConnectionInfo.local_ssel">local_ssel</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.local_tsel" href="#hat.drivers.copp.ConnectionInfo.local_tsel">local_tsel</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.remote_addr" href="#hat.drivers.copp.ConnectionInfo.remote_addr">remote_addr</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.remote_psel" href="#hat.drivers.copp.ConnectionInfo.remote_psel">remote_psel</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.remote_ssel" href="#hat.drivers.copp.ConnectionInfo.remote_ssel">remote_ssel</a></code></li>
+<li><code><a title="hat.drivers.copp.ConnectionInfo.remote_tsel" href="#hat.drivers.copp.ConnectionInfo.remote_tsel">remote_tsel</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.copp.Server" href="#hat.drivers.copp.Server">Server</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.copp.Server.addresses" href="#hat.drivers.copp.Server.addresses">addresses</a></code></li>
+<li><code><a title="hat.drivers.copp.Server.async_group" href="#hat.drivers.copp.Server.async_group">async_group</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.copp.SyntaxNames" href="#hat.drivers.copp.SyntaxNames">SyntaxNames</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.copp.SyntaxNames.get_id" href="#hat.drivers.copp.SyntaxNames.get_id">get_id</a></code></li>
+<li><code><a title="hat.drivers.copp.SyntaxNames.get_name" href="#hat.drivers.copp.SyntaxNames.get_name">get_name</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

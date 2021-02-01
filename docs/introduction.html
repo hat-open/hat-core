@@ -1,0 +1,485 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="search" title="Search" href="search.html" /><link rel="next" title="Libraries" href="libraries/index.html" /><link rel="prev" title="Content" href="index.html" />
+
+    <meta name="generator" content="sphinx-3.4.1, furo 2020.12.30.beta24"/>
+        <title>Introduction - Hat Core documentation</title>
+      <link rel="stylesheet" href="_static/styles/furo.css?digest=33d2fc4f3f180ec1ffc6524e273e21d7d58cbe49">
+    <link rel="stylesheet" href="_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
+    
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <link rel="stylesheet" href="_static/styles/furo-extensions.css?digest=26485485040e7aaf717c13fd0188a5ad2c2deb60">
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script defer="defer" src="_static/jquery.js"></script>
+    <script defer="defer" src="_static/underscore.js"></script>
+    <script defer="defer" src="_static/doctools.js"></script>
+    <script defer src="_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Hat Core  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Hat Core  documentation</span>
+  
+</a><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="libraries/index.html">Libraries</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label for="toctree-checkbox-1"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="libraries/util/index.html">Utility functions</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label for="toctree-checkbox-2"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="libraries/util/python.html"><cite>hat.util</cite> - Python utility library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libraries/util/javascript.html"><cite>@hat-core/util</cite> - JavaScript utility library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/aio.html"><cite>hat.aio</cite> - Python asyncio utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/json.html"><cite>hat.json</cite> - Python JSON data library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/qt.html"><cite>hat.qt</cite> - Python Qt utility library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/peg.html"><cite>hat.peg</cite> - Python parsing expression grammar library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/stc/index.html"><cite>hat.stc</cite> - Python statechart library</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="libraries/sbs/index.html">Simple binary serialization</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label for="toctree-checkbox-3"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="libraries/sbs/python.html"><cite>hat.sbs</cite> - Python simple binary serialization library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libraries/sbs/c.html"><cite>hat/sbs</cite> - C simple binary serialization library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="libraries/chatter/index.html">Chatter communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label for="toctree-checkbox-4"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="libraries/chatter/python.html"><cite>hat.chatter</cite> - Python chatter library</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="libraries/juggler/index.html">Juggler communication protocol</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label for="toctree-checkbox-5"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="libraries/juggler/python.html"><cite>hat.juggler</cite> - Python juggler library</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/duktape.html"><cite>hat.duktape</cite> - Python Duktape wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/asn1.html"><cite>hat.asn1</cite> - Python Abstract Syntax Notation One library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="libraries/drivers/index.html">Communication drivers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="components/index.html">Components</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label for="toctree-checkbox-6"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="components/syslog.html">Syslog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/orchestrator.html">Orchestrator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/monitor.html">Monitor Server</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="components/event/index.html">Event Server</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label for="toctree-checkbox-7"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="components/event/modules/dummy.html">Dummy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="components/event/backends/dummy.html">Dummy backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="components/event/backends/sqlite.html">Sqlite backend</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="components/gateway/index.html">Gateway</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label for="toctree-checkbox-8"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="components/gateway/devices/dummy.html">Dummy device</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="components/gui/index.html">GUI Server</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label for="toctree-checkbox-9"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="components/gui/adapters/dummy.html">Dummy adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="components/gui/views/dummy.html">Dummy view</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="appendix/index.html">Appendix</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label for="toctree-checkbox-10"><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendix/api.html">Generated API documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix/ports.html">Default TCP ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix/events.html">Event definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix/sbs.html">SBS Schema definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appendix/json.html">JSON Schema definitions</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Hat Open is open-source framework of tools and libraries for developing
+applications used for remote monitoring, control and management of
+intelligent electronic devices such as IoT devices, PLCs, industrial
+automation or home automation systems.</p>
+<p>Hat Core is part of Hat Open providing collection of components and libraries
+on which Hat Open system is based.</p>
+<p>Development of Hat Open and associated repositories is sponsored by
+Končar - Power Plant and Electric Traction Engineering Inc.
+(Končar KET - <a class="reference external" href="https://www.koncar-ket.hr">https://www.koncar-ket.hr</a>).</p>
+<p>For more information see:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Hat Core homepage - <a class="reference external" href="https://core.hat-open.com">https://core.hat-open.com</a></p></li>
+<li><p>Hat Core documentation - <a class="reference external" href="https://core.hat-open.com/docs">https://core.hat-open.com/docs</a></p></li>
+<li><p>Hat Core git repository - <a class="reference external" href="https://github.com/hat-open/hat-core.git">https://github.com/hat-open/hat-core.git</a></p></li>
+<li><p>Hat Core issues - <a class="reference external" href="https://github.com/hat-open/hat-core/issues">https://github.com/hat-open/hat-core/issues</a></p></li>
+</ul>
+</div></blockquote>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This project is currently in state of active development. Features,
+functionality and API are unstable.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Hat Open consists of multiple interconnected parts. Each part implements a
+specific functionality. For easier reusability, provided implementation is
+split into multiple packages:</p>
+<div class="section" id="python-packages">
+<h3>Python packages<a class="headerlink" href="#python-packages" title="Permalink to this headline">¶</a></h3>
+<p>Python packages require Python 3.8 or 3.9 and can be installed with <cite>pip</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install &lt;package-name&gt;
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">package-name</span></code> is one of following:</p>
+<blockquote>
+<div><ul>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-util">hat-util</a></p>
+<blockquote>
+<div><p>Utility library</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-aio">hat-aio</a></p>
+<blockquote>
+<div><p>Async utility library</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-json">hat-json</a></p>
+<blockquote>
+<div><p>JSON library</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-qt">hat-qt</a></p>
+<blockquote>
+<div><p>Qt utility library</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-peg">hat-peg</a></p>
+<blockquote>
+<div><p>Parsing expression grammar</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-stc">hat-stc</a></p>
+<blockquote>
+<div><p>Statechart engine</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-sbs">hat-sbs</a></p>
+<blockquote>
+<div><p>Simple binary serialization</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-chatter">hat-chatter</a></p>
+<blockquote>
+<div><p>Chatter communication protocol</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-juggler">hat-juggler</a></p>
+<blockquote>
+<div><p>Juggler communication protocol</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-duktape">hat-duktape</a></p>
+<blockquote>
+<div><p>Python Duktape JS wrapper</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-sqlite3">hat-sqlite3</a></p>
+<blockquote>
+<div><p>Hat specific sqlite3 build</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-asn1">hat-asn1</a></p>
+<blockquote>
+<div><p>ASN.1 parser and encoder</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-drivers">hat-drivers</a></p>
+<blockquote>
+<div><p>Communication drivers</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-syslog">hat-syslog</a></p>
+<blockquote>
+<div><p>Syslog server and logging handler</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-orchestrator">hat-orchestrator</a></p>
+<blockquote>
+<div><p>Simple cross-platform daemon/service manager</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-monitor">hat-monitor</a></p>
+<blockquote>
+<div><p>Redundancy and service discovery server</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-event">hat-event</a></p>
+<blockquote>
+<div><p>Event pub/sub communication and storage</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-gateway">hat-gateway</a></p>
+<blockquote>
+<div><p>Remote communication device gateway</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://pypi.org/project/hat-gui">hat-gui</a></p>
+<blockquote>
+<div><p>GUI server</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="javascript-packages">
+<h3>JavaScript packages<a class="headerlink" href="#javascript-packages" title="Permalink to this headline">¶</a></h3>
+<p>JavaScript packages can be installed with <cite>npm</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ npm install &lt;package-name&gt;
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">package-name</span></code> is one of following:</p>
+<blockquote>
+<div><ul>
+<li><p><a class="reference external" href="https://www.npmjs.com/package/@hat-core/util">@hat-core/util</a></p>
+<blockquote>
+<div><p>Utility module</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://www.npmjs.com/package/@hat-core/renderer">@hat-core/renderer</a></p>
+<blockquote>
+<div><p>Virtual DOM renderer</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://www.npmjs.com/package/@hat-core/future">@hat-core/future</a></p>
+<blockquote>
+<div><p>Async Future implementation</p>
+</div></blockquote>
+</li>
+<li><p><a class="reference external" href="https://www.npmjs.com/package/@hat-core/juggler">@hat-core/juggler</a></p>
+<blockquote>
+<div><p>Juggler communication protocol client library</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="build">
+<h2>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
+<p>Build tool used for Hat is pydoit (<cite>http://pydoit.org/</cite>). It can be installed
+with <cite>pip</cite> by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install doit
+</pre></div>
+</div>
+<p>For listing available doit tasks, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ doit list
+</pre></div>
+</div>
+<p>Default task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ doit
+</pre></div>
+</div>
+<p>creates <cite>dist</cite> folder containing built packages.</p>
+<div class="section" id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h3>
+<p>Package managers used for managing dependencies:</p>
+<blockquote>
+<div><ul>
+<li><p>pacman</p>
+<blockquote>
+<div><p>Package manager of Arch linux distribution. Available on
+Windows as part of <cite>msys2</cite> (<a class="reference external" href="http://www.msys2.org/">http://www.msys2.org/</a>).</p>
+</div></blockquote>
+</li>
+<li><p>pip</p>
+<blockquote>
+<div><p>Package manager available as part of CPython installation.</p>
+</div></blockquote>
+</li>
+<li><p>yarn</p>
+<blockquote>
+<div><p>Package manager for NodeJS.</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p>List of all dependencies for building and running hat components is available
+in:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>requirements.pacman.win.txt (windows only)</p></li>
+<li><p>requirements.pacman.linux.txt (archlinux only)</p></li>
+<li><p>requirements.pip.txt</p></li>
+<li><p>package.json</p></li>
+</ul>
+</div></blockquote>
+<p>Python code targets CPython 3.8 and 3.9 only.</p>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Documentation can be built with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ doit docs
+</pre></div>
+</div>
+<p>which creates <cite>build/docs</cite> folder containing documentation.</p>
+</div>
+</div>
+
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="libraries/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Libraries</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2020 - 2021, Hat Open AUTHORS
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#python-packages">Python packages</a></li>
+<li><a class="reference internal" href="#javascript-packages">JavaScript packages</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#build">Build</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </main>
+</div>
+  </body>
+</html>

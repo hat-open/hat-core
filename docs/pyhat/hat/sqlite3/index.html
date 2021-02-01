@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.sqlite3 API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.sqlite3</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python"># pysqlite2/dbapi2.py: the DB-API 2.0 interface
+#
+# Copyright (C) 2004-2005 Gerhard Häring &lt;gh@ghaering.de&gt;
+#
+# This file is part of pysqlite.
+#
+# This software is provided &#39;as-is&#39;, without any express or implied
+# warranty.  In no event will the authors be held liable for any damages
+# arising from the use of this software.
+#
+# Permission is granted to anyone to use this software for any purpose,
+# including commercial applications, and to alter it and redistribute it
+# freely, subject to the following restrictions:
+#
+# 1. The origin of this software must not be misrepresented; you must not
+#    claim that you wrote the original software. If you use this software
+#    in a product, an acknowledgment in the product documentation would be
+#    appreciated but is not required.
+# 2. Altered source versions must be plainly marked as such, and must not be
+#    misrepresented as being the original software.
+# 3. This notice may not be removed or altered from any source distribution.
+
+import datetime
+import time
+import collections.abc
+
+# HAT modification
+from hat.sqlite3._sqlite3 import *  # NOQA
+
+paramstyle = &#34;qmark&#34;
+
+threadsafety = 1
+
+apilevel = &#34;2.0&#34;
+
+Date = datetime.date
+
+Time = datetime.time
+
+Timestamp = datetime.datetime
+
+
+def DateFromTicks(ticks):
+    return Date(*time.localtime(ticks)[:3])
+
+
+def TimeFromTicks(ticks):
+    return Time(*time.localtime(ticks)[3:6])
+
+
+def TimestampFromTicks(ticks):
+    return Timestamp(*time.localtime(ticks)[:6])
+
+
+version_info = tuple([int(x) for x in version.split(&#34;.&#34;)])  # NOQA
+sqlite_version_info = tuple([int(x) for x in sqlite_version.split(&#34;.&#34;)])  # NOQA
+
+Binary = memoryview
+collections.abc.Sequence.register(Row)  # NOQA
+
+
+def register_adapters_and_converters():
+    def adapt_date(val):
+        return val.isoformat()
+
+    def adapt_datetime(val):
+        return val.isoformat(&#34; &#34;)
+
+    def convert_date(val):
+        return datetime.date(*map(int, val.split(b&#34;-&#34;)))
+
+    # def convert_timestamp(val):
+    #     datepart, timepart = val.split(b&#34; &#34;)
+    #     year, month, day = map(int, datepart.split(b&#34;-&#34;))
+    #     timepart_full = timepart.split(b&#34;.&#34;)
+    #     hours, minutes, seconds = map(int, timepart_full[0].split(b&#34;:&#34;))
+    #     if len(timepart_full) == 2:
+    #         microseconds = int(&#39;{:0&lt;6.6}&#39;.format(timepart_full[1].decode()))
+    #     else:
+    #         microseconds = 0
+    #
+    #     val = datetime.datetime(year, month, day, hours, minutes, seconds,
+    #                             microseconds)
+    #     return val
+
+    # ###################### HAT modification start ###########################
+    def convert_timestamp(val):
+        datepart, timetzpart = val.split(b&#34; &#34;)
+        if b&#34;+&#34; in timetzpart:
+            tzsign = 1
+            timepart, tzpart = timetzpart.split(b&#34;+&#34;)
+        elif b&#34;-&#34; in timetzpart:
+            tzsign = -1
+            timepart, tzpart = timetzpart.split(b&#34;-&#34;)
+        else:
+            timepart, tzpart = timetzpart, None
+        year, month, day = map(int, datepart.split(b&#34;-&#34;))
+        timepart_full = timepart.split(b&#34;.&#34;)
+        hours, minutes, seconds = map(int, timepart_full[0].split(b&#34;:&#34;))
+        if len(timepart_full) == 2:
+            microseconds = int(&#39;{:0&lt;6.6}&#39;.format(timepart_full[1].decode()))
+        else:
+            microseconds = 0
+        if tzpart:
+            tzhours, tzminutes = map(int, tzpart.split(b&#34;:&#34;))
+            tz = datetime.timezone(
+                tzsign * datetime.timedelta(hours=tzhours, minutes=tzminutes))
+        else:
+            tz = None
+
+        val = datetime.datetime(year, month, day, hours, minutes, seconds,
+                                microseconds, tz)
+        return val
+    # ####################### HAT modification stop ###########################
+
+    register_adapter(datetime.date, adapt_date)  # NOQA
+    register_adapter(datetime.datetime, adapt_datetime)  # NOQA
+    register_converter(&#34;date&#34;, convert_date)  # NOQA
+    register_converter(&#34;timestamp&#34;, convert_timestamp)  # NOQA
+
+
+register_adapters_and_converters()
+
+# Clean up namespace
+
+del(register_adapters_and_converters)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.sqlite3.DateFromTicks"><code class="name flex">
+<span>def <span class="ident">DateFromTicks</span></span>(<span>ticks)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def DateFromTicks(ticks):
+    return Date(*time.localtime(ticks)[:3])</code></pre>
+</details>
+</dd>
+<dt id="hat.sqlite3.TimeFromTicks"><code class="name flex">
+<span>def <span class="ident">TimeFromTicks</span></span>(<span>ticks)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def TimeFromTicks(ticks):
+    return Time(*time.localtime(ticks)[3:6])</code></pre>
+</details>
+</dd>
+<dt id="hat.sqlite3.TimestampFromTicks"><code class="name flex">
+<span>def <span class="ident">TimestampFromTicks</span></span>(<span>ticks)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def TimestampFromTicks(ticks):
+    return Timestamp(*time.localtime(ticks)[:6])</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.sqlite3.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SQLite database connection object.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.sqlite3.Connection.DataError"><code class="name">var <span class="ident">DataError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.DatabaseError"><code class="name">var <span class="ident">DatabaseError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.Error"><code class="name">var <span class="ident">Error</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.IntegrityError"><code class="name">var <span class="ident">IntegrityError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.InterfaceError"><code class="name">var <span class="ident">InterfaceError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.InternalError"><code class="name">var <span class="ident">InternalError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.NotSupportedError"><code class="name">var <span class="ident">NotSupportedError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.OperationalError"><code class="name">var <span class="ident">OperationalError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.ProgrammingError"><code class="name">var <span class="ident">ProgrammingError</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.Warning"><code class="name">var <span class="ident">Warning</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.in_transaction"><code class="name">var <span class="ident">in_transaction</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.isolation_level"><code class="name">var <span class="ident">isolation_level</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.row_factory"><code class="name">var <span class="ident">row_factory</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.text_factory"><code class="name">var <span class="ident">text_factory</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.total_changes"><code class="name">var <span class="ident">total_changes</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.sqlite3.Connection.backup"><code class="name flex">
+<span>def <span class="ident">backup</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Makes a backup of the database. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Closes the connection.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.commit"><code class="name flex">
+<span>def <span class="ident">commit</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Commit the current transaction.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.create_aggregate"><code class="name flex">
+<span>def <span class="ident">create_aggregate</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a new aggregate. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.create_collation"><code class="name flex">
+<span>def <span class="ident">create_collation</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a collation function. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.create_function"><code class="name flex">
+<span>def <span class="ident">create_function</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a new function. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.cursor"><code class="name flex">
+<span>def <span class="ident">cursor</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a cursor for the connection.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.enable_load_extension"><code class="name flex">
+<span>def <span class="ident">enable_load_extension</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enable dynamic loading of SQLite extension modules. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Executes a SQL statement. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.executemany"><code class="name flex">
+<span>def <span class="ident">executemany</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Repeatedly executes a SQL statement. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.executescript"><code class="name flex">
+<span>def <span class="ident">executescript</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Executes a multiple SQL statements at once. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.interrupt"><code class="name flex">
+<span>def <span class="ident">interrupt</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Abort any pending database operation. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.iterdump"><code class="name flex">
+<span>def <span class="ident">iterdump</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns iterator to the dump of the database in an SQL text format. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.load_extension"><code class="name flex">
+<span>def <span class="ident">load_extension</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load SQLite extension module. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.rollback"><code class="name flex">
+<span>def <span class="ident">rollback</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Roll back the current transaction.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.set_authorizer"><code class="name flex">
+<span>def <span class="ident">set_authorizer</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets authorizer callback. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.set_progress_handler"><code class="name flex">
+<span>def <span class="ident">set_progress_handler</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets progress handler callback. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Connection.set_trace_callback"><code class="name flex">
+<span>def <span class="ident">set_trace_callback</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets a trace callback called for each SQL statement (passed as unicode). Non-standard.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.sqlite3.Cursor"><code class="flex name class">
+<span>class <span class="ident">Cursor</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SQLite database cursor class.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.sqlite3.Cursor.arraysize"><code class="name">var <span class="ident">arraysize</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.connection"><code class="name">var <span class="ident">connection</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.description"><code class="name">var <span class="ident">description</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.lastrowid"><code class="name">var <span class="ident">lastrowid</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.row_factory"><code class="name">var <span class="ident">row_factory</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.rowcount"><code class="name">var <span class="ident">rowcount</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.sqlite3.Cursor.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Closes the cursor.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Executes a SQL statement.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.executemany"><code class="name flex">
+<span>def <span class="ident">executemany</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Repeatedly executes a SQL statement.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.executescript"><code class="name flex">
+<span>def <span class="ident">executescript</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Executes a multiple SQL statements at once. Non-standard.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.fetchall"><code class="name flex">
+<span>def <span class="ident">fetchall</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetches all rows from the resultset.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.fetchmany"><code class="name flex">
+<span>def <span class="ident">fetchmany</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetches several rows from the resultset.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.fetchone"><code class="name flex">
+<span>def <span class="ident">fetchone</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetches one row from the resultset.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.setinputsizes"><code class="name flex">
+<span>def <span class="ident">setinputsizes</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Required by DB-API. Does nothing in pysqlite.</p></div>
+</dd>
+<dt id="hat.sqlite3.Cursor.setoutputsize"><code class="name flex">
+<span>def <span class="ident">setoutputsize</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Required by DB-API. Does nothing in pysqlite.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.sqlite3.DataError"><code class="flex name class">
+<span>class <span class="ident">DataError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.DatabaseError"><code class="flex name class">
+<span>class <span class="ident">DatabaseError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>_sqlite3.DataError</li>
+<li>_sqlite3.IntegrityError</li>
+<li>_sqlite3.InternalError</li>
+<li>_sqlite3.NotSupportedError</li>
+<li>_sqlite3.OperationalError</li>
+<li>_sqlite3.ProgrammingError</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.Error"><code class="flex name class">
+<span>class <span class="ident">Error</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.InterfaceError</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.IntegrityError"><code class="flex name class">
+<span>class <span class="ident">IntegrityError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.InterfaceError"><code class="flex name class">
+<span>class <span class="ident">InterfaceError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.InternalError"><code class="flex name class">
+<span>class <span class="ident">InternalError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.NotSupportedError"><code class="flex name class">
+<span>class <span class="ident">NotSupportedError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.OperationalError"><code class="flex name class">
+<span>class <span class="ident">OperationalError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.PrepareProtocol"><code class="flex name class">
+<span>class <span class="ident">PrepareProtocol</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.sqlite3.ProgrammingError"><code class="flex name class">
+<span>class <span class="ident">ProgrammingError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>_sqlite3.DatabaseError</li>
+<li>_sqlite3.Error</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.sqlite3.Row"><code class="flex name class">
+<span>class <span class="ident">Row</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.sqlite3.Row.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the keys of the row.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.sqlite3.Warning"><code class="flex name class">
+<span>class <span class="ident">Warning</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat" href="../index.html">hat</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.sqlite3.DateFromTicks" href="#hat.sqlite3.DateFromTicks">DateFromTicks</a></code></li>
+<li><code><a title="hat.sqlite3.TimeFromTicks" href="#hat.sqlite3.TimeFromTicks">TimeFromTicks</a></code></li>
+<li><code><a title="hat.sqlite3.TimestampFromTicks" href="#hat.sqlite3.TimestampFromTicks">TimestampFromTicks</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.sqlite3.Connection" href="#hat.sqlite3.Connection">Connection</a></code></h4>
+<ul class="">
+<li><code><a title="hat.sqlite3.Connection.DataError" href="#hat.sqlite3.Connection.DataError">DataError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.DatabaseError" href="#hat.sqlite3.Connection.DatabaseError">DatabaseError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.Error" href="#hat.sqlite3.Connection.Error">Error</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.IntegrityError" href="#hat.sqlite3.Connection.IntegrityError">IntegrityError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.InterfaceError" href="#hat.sqlite3.Connection.InterfaceError">InterfaceError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.InternalError" href="#hat.sqlite3.Connection.InternalError">InternalError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.NotSupportedError" href="#hat.sqlite3.Connection.NotSupportedError">NotSupportedError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.OperationalError" href="#hat.sqlite3.Connection.OperationalError">OperationalError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.ProgrammingError" href="#hat.sqlite3.Connection.ProgrammingError">ProgrammingError</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.Warning" href="#hat.sqlite3.Connection.Warning">Warning</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.backup" href="#hat.sqlite3.Connection.backup">backup</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.close" href="#hat.sqlite3.Connection.close">close</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.commit" href="#hat.sqlite3.Connection.commit">commit</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.create_aggregate" href="#hat.sqlite3.Connection.create_aggregate">create_aggregate</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.create_collation" href="#hat.sqlite3.Connection.create_collation">create_collation</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.create_function" href="#hat.sqlite3.Connection.create_function">create_function</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.cursor" href="#hat.sqlite3.Connection.cursor">cursor</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.enable_load_extension" href="#hat.sqlite3.Connection.enable_load_extension">enable_load_extension</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.execute" href="#hat.sqlite3.Connection.execute">execute</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.executemany" href="#hat.sqlite3.Connection.executemany">executemany</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.executescript" href="#hat.sqlite3.Connection.executescript">executescript</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.in_transaction" href="#hat.sqlite3.Connection.in_transaction">in_transaction</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.interrupt" href="#hat.sqlite3.Connection.interrupt">interrupt</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.isolation_level" href="#hat.sqlite3.Connection.isolation_level">isolation_level</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.iterdump" href="#hat.sqlite3.Connection.iterdump">iterdump</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.load_extension" href="#hat.sqlite3.Connection.load_extension">load_extension</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.rollback" href="#hat.sqlite3.Connection.rollback">rollback</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.row_factory" href="#hat.sqlite3.Connection.row_factory">row_factory</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.set_authorizer" href="#hat.sqlite3.Connection.set_authorizer">set_authorizer</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.set_progress_handler" href="#hat.sqlite3.Connection.set_progress_handler">set_progress_handler</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.set_trace_callback" href="#hat.sqlite3.Connection.set_trace_callback">set_trace_callback</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.text_factory" href="#hat.sqlite3.Connection.text_factory">text_factory</a></code></li>
+<li><code><a title="hat.sqlite3.Connection.total_changes" href="#hat.sqlite3.Connection.total_changes">total_changes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.Cursor" href="#hat.sqlite3.Cursor">Cursor</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.sqlite3.Cursor.arraysize" href="#hat.sqlite3.Cursor.arraysize">arraysize</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.close" href="#hat.sqlite3.Cursor.close">close</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.connection" href="#hat.sqlite3.Cursor.connection">connection</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.description" href="#hat.sqlite3.Cursor.description">description</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.execute" href="#hat.sqlite3.Cursor.execute">execute</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.executemany" href="#hat.sqlite3.Cursor.executemany">executemany</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.executescript" href="#hat.sqlite3.Cursor.executescript">executescript</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.fetchall" href="#hat.sqlite3.Cursor.fetchall">fetchall</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.fetchmany" href="#hat.sqlite3.Cursor.fetchmany">fetchmany</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.fetchone" href="#hat.sqlite3.Cursor.fetchone">fetchone</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.lastrowid" href="#hat.sqlite3.Cursor.lastrowid">lastrowid</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.row_factory" href="#hat.sqlite3.Cursor.row_factory">row_factory</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.rowcount" href="#hat.sqlite3.Cursor.rowcount">rowcount</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.setinputsizes" href="#hat.sqlite3.Cursor.setinputsizes">setinputsizes</a></code></li>
+<li><code><a title="hat.sqlite3.Cursor.setoutputsize" href="#hat.sqlite3.Cursor.setoutputsize">setoutputsize</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.DataError" href="#hat.sqlite3.DataError">DataError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.DatabaseError" href="#hat.sqlite3.DatabaseError">DatabaseError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.Error" href="#hat.sqlite3.Error">Error</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.IntegrityError" href="#hat.sqlite3.IntegrityError">IntegrityError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.InterfaceError" href="#hat.sqlite3.InterfaceError">InterfaceError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.InternalError" href="#hat.sqlite3.InternalError">InternalError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.NotSupportedError" href="#hat.sqlite3.NotSupportedError">NotSupportedError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.OperationalError" href="#hat.sqlite3.OperationalError">OperationalError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.PrepareProtocol" href="#hat.sqlite3.PrepareProtocol">PrepareProtocol</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.ProgrammingError" href="#hat.sqlite3.ProgrammingError">ProgrammingError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.Row" href="#hat.sqlite3.Row">Row</a></code></h4>
+<ul class="">
+<li><code><a title="hat.sqlite3.Row.keys" href="#hat.sqlite3.Row.keys">keys</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.sqlite3.Warning" href="#hat.sqlite3.Warning">Warning</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

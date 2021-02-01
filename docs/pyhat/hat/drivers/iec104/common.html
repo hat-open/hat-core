@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.iec104.common API documentation</title>
+<meta name="description" content="IEC 60870-5-104 data structures" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.iec104.common</code></h1>
+</header>
+<section id="section-intro">
+<p>IEC 60870-5-104 data structures</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;IEC 60870-5-104 data structures&#34;&#34;&#34;
+
+import datetime
+import enum
+import time
+import typing
+
+
+class Data(typing.NamedTuple):
+    value: &#39;DataValue&#39;
+    quality: &#39;Quality&#39;
+    &#34;&#34;&#34;quality (optional in case of NormalizedValue without quality and BinaryCounterValue)&#34;&#34;&#34;  # NOQA
+    time: typing.Optional[&#39;Time&#39;]
+    asdu_address: int
+    io_address: int
+    cause: &#39;Cause&#39;
+    is_test: bool
+
+
+class Command(typing.NamedTuple):
+    action: &#39;Action&#39;
+    value: &#39;CommandValue&#39;
+    asdu_address: int
+    io_address: int
+    time: typing.Optional[&#39;Time&#39;]
+    qualifier: int
+
+
+class SingleValue(enum.Enum):
+    OFF = 0
+    ON = 1
+
+
+class DoubleValue(enum.Enum):
+    &#34;&#34;&#34;DoubleDataValue
+
+    `FAULT` stands for value 3, defined in the protocol as *INDETERMINATE*.
+    This is in order to make it more distinguishable from ``INTERMEDIATE``.
+
+    &#34;&#34;&#34;
+    INTERMEDIATE = 0
+    OFF = 1
+    ON = 2
+    FAULT = 3
+
+
+class RegulatingValue(enum.Enum):
+    LOWER = 1
+    HIGHER = 2
+
+
+class StepPositionValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-64, 63]&#34;&#34;&#34;
+    transient: bool
+
+
+class BitstringValue(typing.NamedTuple):
+    value: bytes
+    &#34;&#34;&#34;bitstring encoded as 4 bytes&#34;&#34;&#34;
+
+
+class NormalizedValue(typing.NamedTuple):
+    value: float
+    &#34;&#34;&#34;value in range [-1.0, 1.0]&#34;&#34;&#34;
+
+
+class ScaledValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-2^15, 2^15-1]&#34;&#34;&#34;
+
+
+class FloatingValue(typing.NamedTuple):
+    value: float
+
+
+class BinaryCounterValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-2^31, 2^31-1]&#34;&#34;&#34;
+    sequence: int
+    overflow: bool
+    adjusted: bool
+    invalid: bool
+
+
+DataValue = typing.Union[SingleValue,
+                         DoubleValue,
+                         StepPositionValue,
+                         BitstringValue,
+                         NormalizedValue,
+                         ScaledValue,
+                         FloatingValue,
+                         BinaryCounterValue]
+
+
+CommandValue = typing.Union[SingleValue,
+                            DoubleValue,
+                            RegulatingValue,
+                            NormalizedValue,
+                            ScaledValue,
+                            FloatingValue]
+
+
+class Quality(typing.NamedTuple):
+    invalid: bool
+    not_topical: bool
+    substituted: bool
+    blocked: bool
+    overflow: bool
+    &#34;&#34;&#34;owerflow flag (for SingleValue and DoubleValue always False)&#34;&#34;&#34;
+
+
+class Time(typing.NamedTuple):
+    milliseconds: int
+    invalid: bool
+    minutes: int
+    summer_time: bool
+    hours: int
+    day_of_week: int
+    day_of_month: int
+    months: int
+    years: int
+
+
+class Cause(enum.Enum):
+    UNDEFINED = 0
+    PERIODIC = 1
+    BACKGROUND_SCAN = 2
+    SPONTANEOUS = 3
+    INITIALIZED = 4
+    REQUEST = 5
+    ACTIVATION = 6
+    ACTIVATION_CONFIRMATION = 7
+    DEACTIVATION = 8
+    DEACTIVATION_CONFIRMATION = 9
+    ACTIVATION_TERMINATION = 10
+    REMOTE_COMMAND = 11
+    LOCAL_COMMAND = 12
+    FILE_TRANSFER = 13
+    INTERROGATED_STATION = 20
+    INTERROGATED_GROUP01 = 21
+    INTERROGATED_GROUP02 = 22
+    INTERROGATED_GROUP03 = 23
+    INTERROGATED_GROUP04 = 24
+    INTERROGATED_GROUP05 = 25
+    INTERROGATED_GROUP06 = 26
+    INTERROGATED_GROUP07 = 27
+    INTERROGATED_GROUP08 = 28
+    INTERROGATED_GROUP09 = 29
+    INTERROGATED_GROUP10 = 30
+    INTERROGATED_GROUP11 = 31
+    INTERROGATED_GROUP12 = 32
+    INTERROGATED_GROUP13 = 33
+    INTERROGATED_GROUP14 = 34
+    INTERROGATED_GROUP15 = 35
+    INTERROGATED_GROUP16 = 36
+    INTERROGATED_COUNTER = 37
+    INTERROGATED_COUNTER01 = 38
+    INTERROGATED_COUNTER02 = 39
+    INTERROGATED_COUNTER03 = 40
+    INTERROGATED_COUNTER04 = 41
+    UNKNOWN_TYPE = 44
+    UNKNOWN_CAUSE = 45
+    UNKNOWN_ASDU_ADDRESS = 46
+    UNKNOWN_IO_ADDRESS = 47
+
+
+class Action(enum.Enum):
+    EXECUTE = &#39;execute&#39;
+    SELECT = &#39;select&#39;
+    CANCEL = &#39;cancel&#39;
+
+
+class FreezeCode(enum.Enum):
+    READ = 0
+    FREEZE = 1
+    FREEZE_AND_RESET = 2
+    RESET = 3
+
+
+def time_from_datetime(dt, invalid=False):
+    &#34;&#34;&#34;Create Time from datetime.datetime
+
+    Args:
+        dt (datetime.datetime): datetime
+        invalid (bool): invalid flag value
+
+    Returns:
+        Time
+
+    &#34;&#34;&#34;
+    #  rounding microseconds to the nearest millisecond
+    dt_rounded = (
+        dt.replace(microsecond=0) +
+        datetime.timedelta(milliseconds=round(dt.microsecond / 1000)))
+    local_time = time.localtime(
+        dt_rounded.replace(tzinfo=datetime.timezone.utc).timestamp())
+    return Time(
+        milliseconds=(local_time.tm_sec * 1000 +
+                      dt_rounded.microsecond // 1000),
+        invalid=invalid,
+        minutes=local_time.tm_min,
+        summer_time=bool(local_time.tm_isdst),
+        hours=local_time.tm_hour,
+        day_of_week=local_time.tm_wday + 1,
+        day_of_month=local_time.tm_mday,
+        months=local_time.tm_mon,
+        years=local_time.tm_year % 100)
+
+
+def time_to_datetime(t):
+    &#34;&#34;&#34;Convert Time to datetime.datetime
+
+    Args:
+        t (Time): time
+
+    Returns:
+        datetime.datetime
+
+    &#34;&#34;&#34;
+    local_dt = datetime.datetime(
+        year=2000 + t.years if t.years &lt; 70 else 1900 + t.years,
+        month=t.months,
+        day=t.day_of_month,
+        hour=t.hours,
+        minute=t.minutes,
+        second=int(t.milliseconds / 1000),
+        microsecond=(t.milliseconds % 1000) * 1000,
+        fold=not t.summer_time)
+    return local_dt.astimezone(tz=datetime.timezone.utc)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.drivers.iec104.common.time_from_datetime"><code class="name flex">
+<span>def <span class="ident">time_from_datetime</span></span>(<span>dt, invalid=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create Time from datetime.datetime</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dt</code></strong> :&ensp;<code>datetime.datetime</code></dt>
+<dd>datetime</dd>
+<dt><strong><code>invalid</code></strong> :&ensp;<code>bool</code></dt>
+<dd>invalid flag value</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Time</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def time_from_datetime(dt, invalid=False):
+    &#34;&#34;&#34;Create Time from datetime.datetime
+
+    Args:
+        dt (datetime.datetime): datetime
+        invalid (bool): invalid flag value
+
+    Returns:
+        Time
+
+    &#34;&#34;&#34;
+    #  rounding microseconds to the nearest millisecond
+    dt_rounded = (
+        dt.replace(microsecond=0) +
+        datetime.timedelta(milliseconds=round(dt.microsecond / 1000)))
+    local_time = time.localtime(
+        dt_rounded.replace(tzinfo=datetime.timezone.utc).timestamp())
+    return Time(
+        milliseconds=(local_time.tm_sec * 1000 +
+                      dt_rounded.microsecond // 1000),
+        invalid=invalid,
+        minutes=local_time.tm_min,
+        summer_time=bool(local_time.tm_isdst),
+        hours=local_time.tm_hour,
+        day_of_week=local_time.tm_wday + 1,
+        day_of_month=local_time.tm_mday,
+        months=local_time.tm_mon,
+        years=local_time.tm_year % 100)</code></pre>
+</details>
+</dd>
+<dt id="hat.drivers.iec104.common.time_to_datetime"><code class="name flex">
+<span>def <span class="ident">time_to_datetime</span></span>(<span>t)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert Time to datetime.datetime</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>t</code></strong> :&ensp;<code><a title="hat.drivers.iec104.common.Time" href="#hat.drivers.iec104.common.Time">Time</a></code></dt>
+<dd>time</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>datetime.datetime</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def time_to_datetime(t):
+    &#34;&#34;&#34;Convert Time to datetime.datetime
+
+    Args:
+        t (Time): time
+
+    Returns:
+        datetime.datetime
+
+    &#34;&#34;&#34;
+    local_dt = datetime.datetime(
+        year=2000 + t.years if t.years &lt; 70 else 1900 + t.years,
+        month=t.months,
+        day=t.day_of_month,
+        hour=t.hours,
+        minute=t.minutes,
+        second=int(t.milliseconds / 1000),
+        microsecond=(t.milliseconds % 1000) * 1000,
+        fold=not t.summer_time)
+    return local_dt.astimezone(tz=datetime.timezone.utc)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.iec104.common.Action"><code class="flex name class">
+<span>class <span class="ident">Action</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Action(enum.Enum):
+    EXECUTE = &#39;execute&#39;
+    SELECT = &#39;select&#39;
+    CANCEL = &#39;cancel&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.Action.CANCEL"><code class="name">var <span class="ident">CANCEL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Action.EXECUTE"><code class="name">var <span class="ident">EXECUTE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Action.SELECT"><code class="name">var <span class="ident">SELECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.BinaryCounterValue"><code class="flex name class">
+<span>class <span class="ident">BinaryCounterValue</span></span>
+<span>(</span><span>value: int, sequence: int, overflow: bool, adjusted: bool, invalid: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BinaryCounterValue(value, sequence, overflow, adjusted, invalid)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BinaryCounterValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-2^31, 2^31-1]&#34;&#34;&#34;
+    sequence: int
+    overflow: bool
+    adjusted: bool
+    invalid: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.BinaryCounterValue.adjusted"><code class="name">var <span class="ident">adjusted</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.BinaryCounterValue.invalid"><code class="name">var <span class="ident">invalid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.BinaryCounterValue.overflow"><code class="name">var <span class="ident">overflow</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.BinaryCounterValue.sequence"><code class="name">var <span class="ident">sequence</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.BinaryCounterValue.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>value in range [-2^31, 2^31-1]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.BitstringValue"><code class="flex name class">
+<span>class <span class="ident">BitstringValue</span></span>
+<span>(</span><span>value: bytes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>BitstringValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BitstringValue(typing.NamedTuple):
+    value: bytes
+    &#34;&#34;&#34;bitstring encoded as 4 bytes&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.BitstringValue.value"><code class="name">var <span class="ident">value</span> : bytes</code></dt>
+<dd>
+<div class="desc"><p>bitstring encoded as 4 bytes</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause"><code class="flex name class">
+<span>class <span class="ident">Cause</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Cause(enum.Enum):
+    UNDEFINED = 0
+    PERIODIC = 1
+    BACKGROUND_SCAN = 2
+    SPONTANEOUS = 3
+    INITIALIZED = 4
+    REQUEST = 5
+    ACTIVATION = 6
+    ACTIVATION_CONFIRMATION = 7
+    DEACTIVATION = 8
+    DEACTIVATION_CONFIRMATION = 9
+    ACTIVATION_TERMINATION = 10
+    REMOTE_COMMAND = 11
+    LOCAL_COMMAND = 12
+    FILE_TRANSFER = 13
+    INTERROGATED_STATION = 20
+    INTERROGATED_GROUP01 = 21
+    INTERROGATED_GROUP02 = 22
+    INTERROGATED_GROUP03 = 23
+    INTERROGATED_GROUP04 = 24
+    INTERROGATED_GROUP05 = 25
+    INTERROGATED_GROUP06 = 26
+    INTERROGATED_GROUP07 = 27
+    INTERROGATED_GROUP08 = 28
+    INTERROGATED_GROUP09 = 29
+    INTERROGATED_GROUP10 = 30
+    INTERROGATED_GROUP11 = 31
+    INTERROGATED_GROUP12 = 32
+    INTERROGATED_GROUP13 = 33
+    INTERROGATED_GROUP14 = 34
+    INTERROGATED_GROUP15 = 35
+    INTERROGATED_GROUP16 = 36
+    INTERROGATED_COUNTER = 37
+    INTERROGATED_COUNTER01 = 38
+    INTERROGATED_COUNTER02 = 39
+    INTERROGATED_COUNTER03 = 40
+    INTERROGATED_COUNTER04 = 41
+    UNKNOWN_TYPE = 44
+    UNKNOWN_CAUSE = 45
+    UNKNOWN_ASDU_ADDRESS = 46
+    UNKNOWN_IO_ADDRESS = 47</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.Cause.ACTIVATION"><code class="name">var <span class="ident">ACTIVATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.ACTIVATION_CONFIRMATION"><code class="name">var <span class="ident">ACTIVATION_CONFIRMATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.ACTIVATION_TERMINATION"><code class="name">var <span class="ident">ACTIVATION_TERMINATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.BACKGROUND_SCAN"><code class="name">var <span class="ident">BACKGROUND_SCAN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.DEACTIVATION"><code class="name">var <span class="ident">DEACTIVATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.DEACTIVATION_CONFIRMATION"><code class="name">var <span class="ident">DEACTIVATION_CONFIRMATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.FILE_TRANSFER"><code class="name">var <span class="ident">FILE_TRANSFER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INITIALIZED"><code class="name">var <span class="ident">INITIALIZED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER"><code class="name">var <span class="ident">INTERROGATED_COUNTER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER01"><code class="name">var <span class="ident">INTERROGATED_COUNTER01</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER02"><code class="name">var <span class="ident">INTERROGATED_COUNTER02</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER03"><code class="name">var <span class="ident">INTERROGATED_COUNTER03</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER04"><code class="name">var <span class="ident">INTERROGATED_COUNTER04</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP01"><code class="name">var <span class="ident">INTERROGATED_GROUP01</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP02"><code class="name">var <span class="ident">INTERROGATED_GROUP02</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP03"><code class="name">var <span class="ident">INTERROGATED_GROUP03</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP04"><code class="name">var <span class="ident">INTERROGATED_GROUP04</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP05"><code class="name">var <span class="ident">INTERROGATED_GROUP05</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP06"><code class="name">var <span class="ident">INTERROGATED_GROUP06</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP07"><code class="name">var <span class="ident">INTERROGATED_GROUP07</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP08"><code class="name">var <span class="ident">INTERROGATED_GROUP08</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP09"><code class="name">var <span class="ident">INTERROGATED_GROUP09</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP10"><code class="name">var <span class="ident">INTERROGATED_GROUP10</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP11"><code class="name">var <span class="ident">INTERROGATED_GROUP11</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP12"><code class="name">var <span class="ident">INTERROGATED_GROUP12</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP13"><code class="name">var <span class="ident">INTERROGATED_GROUP13</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP14"><code class="name">var <span class="ident">INTERROGATED_GROUP14</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP15"><code class="name">var <span class="ident">INTERROGATED_GROUP15</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP16"><code class="name">var <span class="ident">INTERROGATED_GROUP16</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.INTERROGATED_STATION"><code class="name">var <span class="ident">INTERROGATED_STATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.LOCAL_COMMAND"><code class="name">var <span class="ident">LOCAL_COMMAND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.PERIODIC"><code class="name">var <span class="ident">PERIODIC</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.REMOTE_COMMAND"><code class="name">var <span class="ident">REMOTE_COMMAND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.REQUEST"><code class="name">var <span class="ident">REQUEST</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.SPONTANEOUS"><code class="name">var <span class="ident">SPONTANEOUS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.UNDEFINED"><code class="name">var <span class="ident">UNDEFINED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.UNKNOWN_ASDU_ADDRESS"><code class="name">var <span class="ident">UNKNOWN_ASDU_ADDRESS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.UNKNOWN_CAUSE"><code class="name">var <span class="ident">UNKNOWN_CAUSE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.UNKNOWN_IO_ADDRESS"><code class="name">var <span class="ident">UNKNOWN_IO_ADDRESS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Cause.UNKNOWN_TYPE"><code class="name">var <span class="ident">UNKNOWN_TYPE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.Command"><code class="flex name class">
+<span>class <span class="ident">Command</span></span>
+<span>(</span><span>action: <a title="hat.drivers.iec104.common.Action" href="#hat.drivers.iec104.common.Action">Action</a>, value: CommandValue, asdu_address: int, io_address: int, time: typing.Union[ForwardRef('<a title="hat.drivers.iec104.common.Time" href="#hat.drivers.iec104.common.Time">Time</a>'), NoneType], qualifier: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Command(action, value, asdu_address, io_address, time, qualifier)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Command(typing.NamedTuple):
+    action: &#39;Action&#39;
+    value: &#39;CommandValue&#39;
+    asdu_address: int
+    io_address: int
+    time: typing.Optional[&#39;Time&#39;]
+    qualifier: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.Command.action"><code class="name">var <span class="ident">action</span> : <a title="hat.drivers.iec104.common.Action" href="#hat.drivers.iec104.common.Action">Action</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Command.asdu_address"><code class="name">var <span class="ident">asdu_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Command.io_address"><code class="name">var <span class="ident">io_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Command.qualifier"><code class="name">var <span class="ident">qualifier</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Command.time"><code class="name">var <span class="ident">time</span> : typing.Union[<a title="hat.drivers.iec104.common.Time" href="#hat.drivers.iec104.common.Time">Time</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Command.value"><code class="name">var <span class="ident">value</span> : typing.Union[<a title="hat.drivers.iec104.common.SingleValue" href="#hat.drivers.iec104.common.SingleValue">SingleValue</a>, <a title="hat.drivers.iec104.common.DoubleValue" href="#hat.drivers.iec104.common.DoubleValue">DoubleValue</a>, <a title="hat.drivers.iec104.common.RegulatingValue" href="#hat.drivers.iec104.common.RegulatingValue">RegulatingValue</a>, <a title="hat.drivers.iec104.common.NormalizedValue" href="#hat.drivers.iec104.common.NormalizedValue">NormalizedValue</a>, <a title="hat.drivers.iec104.common.ScaledValue" href="#hat.drivers.iec104.common.ScaledValue">ScaledValue</a>, <a title="hat.drivers.iec104.common.FloatingValue" href="#hat.drivers.iec104.common.FloatingValue">FloatingValue</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.Data"><code class="flex name class">
+<span>class <span class="ident">Data</span></span>
+<span>(</span><span>value: DataValue, quality: <a title="hat.drivers.iec104.common.Quality" href="#hat.drivers.iec104.common.Quality">Quality</a>, time: typing.Union[ForwardRef('<a title="hat.drivers.iec104.common.Time" href="#hat.drivers.iec104.common.Time">Time</a>'), NoneType], asdu_address: int, io_address: int, cause: <a title="hat.drivers.iec104.common.Cause" href="#hat.drivers.iec104.common.Cause">Cause</a>, is_test: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Data(value, quality, time, asdu_address, io_address, cause, is_test)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Data(typing.NamedTuple):
+    value: &#39;DataValue&#39;
+    quality: &#39;Quality&#39;
+    &#34;&#34;&#34;quality (optional in case of NormalizedValue without quality and BinaryCounterValue)&#34;&#34;&#34;  # NOQA
+    time: typing.Optional[&#39;Time&#39;]
+    asdu_address: int
+    io_address: int
+    cause: &#39;Cause&#39;
+    is_test: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.Data.asdu_address"><code class="name">var <span class="ident">asdu_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Data.cause"><code class="name">var <span class="ident">cause</span> : <a title="hat.drivers.iec104.common.Cause" href="#hat.drivers.iec104.common.Cause">Cause</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Data.io_address"><code class="name">var <span class="ident">io_address</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Data.is_test"><code class="name">var <span class="ident">is_test</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Data.quality"><code class="name">var <span class="ident">quality</span> : <a title="hat.drivers.iec104.common.Quality" href="#hat.drivers.iec104.common.Quality">Quality</a></code></dt>
+<dd>
+<div class="desc"><p>quality (optional in case of NormalizedValue without quality and BinaryCounterValue)</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Data.time"><code class="name">var <span class="ident">time</span> : typing.Union[<a title="hat.drivers.iec104.common.Time" href="#hat.drivers.iec104.common.Time">Time</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Data.value"><code class="name">var <span class="ident">value</span> : typing.Union[<a title="hat.drivers.iec104.common.SingleValue" href="#hat.drivers.iec104.common.SingleValue">SingleValue</a>, <a title="hat.drivers.iec104.common.DoubleValue" href="#hat.drivers.iec104.common.DoubleValue">DoubleValue</a>, <a title="hat.drivers.iec104.common.StepPositionValue" href="#hat.drivers.iec104.common.StepPositionValue">StepPositionValue</a>, <a title="hat.drivers.iec104.common.BitstringValue" href="#hat.drivers.iec104.common.BitstringValue">BitstringValue</a>, <a title="hat.drivers.iec104.common.NormalizedValue" href="#hat.drivers.iec104.common.NormalizedValue">NormalizedValue</a>, <a title="hat.drivers.iec104.common.ScaledValue" href="#hat.drivers.iec104.common.ScaledValue">ScaledValue</a>, <a title="hat.drivers.iec104.common.FloatingValue" href="#hat.drivers.iec104.common.FloatingValue">FloatingValue</a>, <a title="hat.drivers.iec104.common.BinaryCounterValue" href="#hat.drivers.iec104.common.BinaryCounterValue">BinaryCounterValue</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.DoubleValue"><code class="flex name class">
+<span>class <span class="ident">DoubleValue</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DoubleDataValue</p>
+<p><code>FAULT</code> stands for value 3, defined in the protocol as <em>INDETERMINATE</em>.
+This is in order to make it more distinguishable from <code>INTERMEDIATE</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DoubleValue(enum.Enum):
+    &#34;&#34;&#34;DoubleDataValue
+
+    `FAULT` stands for value 3, defined in the protocol as *INDETERMINATE*.
+    This is in order to make it more distinguishable from ``INTERMEDIATE``.
+
+    &#34;&#34;&#34;
+    INTERMEDIATE = 0
+    OFF = 1
+    ON = 2
+    FAULT = 3</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.DoubleValue.FAULT"><code class="name">var <span class="ident">FAULT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.DoubleValue.INTERMEDIATE"><code class="name">var <span class="ident">INTERMEDIATE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.DoubleValue.OFF"><code class="name">var <span class="ident">OFF</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.DoubleValue.ON"><code class="name">var <span class="ident">ON</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.FloatingValue"><code class="flex name class">
+<span>class <span class="ident">FloatingValue</span></span>
+<span>(</span><span>value: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>FloatingValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FloatingValue(typing.NamedTuple):
+    value: float</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.FloatingValue.value"><code class="name">var <span class="ident">value</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.FreezeCode"><code class="flex name class">
+<span>class <span class="ident">FreezeCode</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FreezeCode(enum.Enum):
+    READ = 0
+    FREEZE = 1
+    FREEZE_AND_RESET = 2
+    RESET = 3</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.FreezeCode.FREEZE"><code class="name">var <span class="ident">FREEZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.FreezeCode.FREEZE_AND_RESET"><code class="name">var <span class="ident">FREEZE_AND_RESET</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.FreezeCode.READ"><code class="name">var <span class="ident">READ</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.FreezeCode.RESET"><code class="name">var <span class="ident">RESET</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.NormalizedValue"><code class="flex name class">
+<span>class <span class="ident">NormalizedValue</span></span>
+<span>(</span><span>value: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>NormalizedValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NormalizedValue(typing.NamedTuple):
+    value: float
+    &#34;&#34;&#34;value in range [-1.0, 1.0]&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.NormalizedValue.value"><code class="name">var <span class="ident">value</span> : float</code></dt>
+<dd>
+<div class="desc"><p>value in range [-1.0, 1.0]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.Quality"><code class="flex name class">
+<span>class <span class="ident">Quality</span></span>
+<span>(</span><span>invalid: bool, not_topical: bool, substituted: bool, blocked: bool, overflow: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Quality(invalid, not_topical, substituted, blocked, overflow)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Quality(typing.NamedTuple):
+    invalid: bool
+    not_topical: bool
+    substituted: bool
+    blocked: bool
+    overflow: bool
+    &#34;&#34;&#34;owerflow flag (for SingleValue and DoubleValue always False)&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.Quality.blocked"><code class="name">var <span class="ident">blocked</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Quality.invalid"><code class="name">var <span class="ident">invalid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Quality.not_topical"><code class="name">var <span class="ident">not_topical</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Quality.overflow"><code class="name">var <span class="ident">overflow</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>owerflow flag (for SingleValue and DoubleValue always False)</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Quality.substituted"><code class="name">var <span class="ident">substituted</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.RegulatingValue"><code class="flex name class">
+<span>class <span class="ident">RegulatingValue</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegulatingValue(enum.Enum):
+    LOWER = 1
+    HIGHER = 2</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.RegulatingValue.HIGHER"><code class="name">var <span class="ident">HIGHER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.RegulatingValue.LOWER"><code class="name">var <span class="ident">LOWER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.ScaledValue"><code class="flex name class">
+<span>class <span class="ident">ScaledValue</span></span>
+<span>(</span><span>value: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ScaledValue(value,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ScaledValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-2^15, 2^15-1]&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.ScaledValue.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>value in range [-2^15, 2^15-1]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.SingleValue"><code class="flex name class">
+<span>class <span class="ident">SingleValue</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SingleValue(enum.Enum):
+    OFF = 0
+    ON = 1</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.SingleValue.OFF"><code class="name">var <span class="ident">OFF</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.iec104.common.SingleValue.ON"><code class="name">var <span class="ident">ON</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.StepPositionValue"><code class="flex name class">
+<span>class <span class="ident">StepPositionValue</span></span>
+<span>(</span><span>value: int, transient: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>StepPositionValue(value, transient)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StepPositionValue(typing.NamedTuple):
+    value: int
+    &#34;&#34;&#34;value in range [-64, 63]&#34;&#34;&#34;
+    transient: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.StepPositionValue.transient"><code class="name">var <span class="ident">transient</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.StepPositionValue.value"><code class="name">var <span class="ident">value</span> : int</code></dt>
+<dd>
+<div class="desc"><p>value in range [-64, 63]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.iec104.common.Time"><code class="flex name class">
+<span>class <span class="ident">Time</span></span>
+<span>(</span><span>milliseconds: int, invalid: bool, minutes: int, summer_time: bool, hours: int, day_of_week: int, day_of_month: int, months: int, years: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Time(milliseconds, invalid, minutes, summer_time, hours, day_of_week, day_of_month, months, years)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Time(typing.NamedTuple):
+    milliseconds: int
+    invalid: bool
+    minutes: int
+    summer_time: bool
+    hours: int
+    day_of_week: int
+    day_of_month: int
+    months: int
+    years: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.iec104.common.Time.day_of_month"><code class="name">var <span class="ident">day_of_month</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.day_of_week"><code class="name">var <span class="ident">day_of_week</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.hours"><code class="name">var <span class="ident">hours</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.invalid"><code class="name">var <span class="ident">invalid</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.milliseconds"><code class="name">var <span class="ident">milliseconds</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.minutes"><code class="name">var <span class="ident">minutes</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.months"><code class="name">var <span class="ident">months</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.summer_time"><code class="name">var <span class="ident">summer_time</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.iec104.common.Time.years"><code class="name">var <span class="ident">years</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 8</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers.iec104" href="index.html">hat.drivers.iec104</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.time_from_datetime" href="#hat.drivers.iec104.common.time_from_datetime">time_from_datetime</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.time_to_datetime" href="#hat.drivers.iec104.common.time_to_datetime">time_to_datetime</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.Action" href="#hat.drivers.iec104.common.Action">Action</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.Action.CANCEL" href="#hat.drivers.iec104.common.Action.CANCEL">CANCEL</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Action.EXECUTE" href="#hat.drivers.iec104.common.Action.EXECUTE">EXECUTE</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Action.SELECT" href="#hat.drivers.iec104.common.Action.SELECT">SELECT</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.BinaryCounterValue" href="#hat.drivers.iec104.common.BinaryCounterValue">BinaryCounterValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.BinaryCounterValue.adjusted" href="#hat.drivers.iec104.common.BinaryCounterValue.adjusted">adjusted</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.BinaryCounterValue.invalid" href="#hat.drivers.iec104.common.BinaryCounterValue.invalid">invalid</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.BinaryCounterValue.overflow" href="#hat.drivers.iec104.common.BinaryCounterValue.overflow">overflow</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.BinaryCounterValue.sequence" href="#hat.drivers.iec104.common.BinaryCounterValue.sequence">sequence</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.BinaryCounterValue.value" href="#hat.drivers.iec104.common.BinaryCounterValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.BitstringValue" href="#hat.drivers.iec104.common.BitstringValue">BitstringValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.BitstringValue.value" href="#hat.drivers.iec104.common.BitstringValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.Cause" href="#hat.drivers.iec104.common.Cause">Cause</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.Cause.ACTIVATION" href="#hat.drivers.iec104.common.Cause.ACTIVATION">ACTIVATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.ACTIVATION_CONFIRMATION" href="#hat.drivers.iec104.common.Cause.ACTIVATION_CONFIRMATION">ACTIVATION_CONFIRMATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.ACTIVATION_TERMINATION" href="#hat.drivers.iec104.common.Cause.ACTIVATION_TERMINATION">ACTIVATION_TERMINATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.BACKGROUND_SCAN" href="#hat.drivers.iec104.common.Cause.BACKGROUND_SCAN">BACKGROUND_SCAN</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.DEACTIVATION" href="#hat.drivers.iec104.common.Cause.DEACTIVATION">DEACTIVATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.DEACTIVATION_CONFIRMATION" href="#hat.drivers.iec104.common.Cause.DEACTIVATION_CONFIRMATION">DEACTIVATION_CONFIRMATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.FILE_TRANSFER" href="#hat.drivers.iec104.common.Cause.FILE_TRANSFER">FILE_TRANSFER</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INITIALIZED" href="#hat.drivers.iec104.common.Cause.INITIALIZED">INITIALIZED</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER" href="#hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER">INTERROGATED_COUNTER</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER01" href="#hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER01">INTERROGATED_COUNTER01</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER02" href="#hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER02">INTERROGATED_COUNTER02</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER03" href="#hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER03">INTERROGATED_COUNTER03</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER04" href="#hat.drivers.iec104.common.Cause.INTERROGATED_COUNTER04">INTERROGATED_COUNTER04</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP01" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP01">INTERROGATED_GROUP01</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP02" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP02">INTERROGATED_GROUP02</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP03" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP03">INTERROGATED_GROUP03</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP04" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP04">INTERROGATED_GROUP04</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP05" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP05">INTERROGATED_GROUP05</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP06" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP06">INTERROGATED_GROUP06</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP07" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP07">INTERROGATED_GROUP07</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP08" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP08">INTERROGATED_GROUP08</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP09" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP09">INTERROGATED_GROUP09</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP10" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP10">INTERROGATED_GROUP10</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP11" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP11">INTERROGATED_GROUP11</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP12" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP12">INTERROGATED_GROUP12</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP13" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP13">INTERROGATED_GROUP13</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP14" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP14">INTERROGATED_GROUP14</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP15" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP15">INTERROGATED_GROUP15</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_GROUP16" href="#hat.drivers.iec104.common.Cause.INTERROGATED_GROUP16">INTERROGATED_GROUP16</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.INTERROGATED_STATION" href="#hat.drivers.iec104.common.Cause.INTERROGATED_STATION">INTERROGATED_STATION</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.LOCAL_COMMAND" href="#hat.drivers.iec104.common.Cause.LOCAL_COMMAND">LOCAL_COMMAND</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.PERIODIC" href="#hat.drivers.iec104.common.Cause.PERIODIC">PERIODIC</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.REMOTE_COMMAND" href="#hat.drivers.iec104.common.Cause.REMOTE_COMMAND">REMOTE_COMMAND</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.REQUEST" href="#hat.drivers.iec104.common.Cause.REQUEST">REQUEST</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.SPONTANEOUS" href="#hat.drivers.iec104.common.Cause.SPONTANEOUS">SPONTANEOUS</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.UNDEFINED" href="#hat.drivers.iec104.common.Cause.UNDEFINED">UNDEFINED</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.UNKNOWN_ASDU_ADDRESS" href="#hat.drivers.iec104.common.Cause.UNKNOWN_ASDU_ADDRESS">UNKNOWN_ASDU_ADDRESS</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.UNKNOWN_CAUSE" href="#hat.drivers.iec104.common.Cause.UNKNOWN_CAUSE">UNKNOWN_CAUSE</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.UNKNOWN_IO_ADDRESS" href="#hat.drivers.iec104.common.Cause.UNKNOWN_IO_ADDRESS">UNKNOWN_IO_ADDRESS</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Cause.UNKNOWN_TYPE" href="#hat.drivers.iec104.common.Cause.UNKNOWN_TYPE">UNKNOWN_TYPE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.Command" href="#hat.drivers.iec104.common.Command">Command</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.common.Command.action" href="#hat.drivers.iec104.common.Command.action">action</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Command.asdu_address" href="#hat.drivers.iec104.common.Command.asdu_address">asdu_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Command.io_address" href="#hat.drivers.iec104.common.Command.io_address">io_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Command.qualifier" href="#hat.drivers.iec104.common.Command.qualifier">qualifier</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Command.time" href="#hat.drivers.iec104.common.Command.time">time</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Command.value" href="#hat.drivers.iec104.common.Command.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.Data" href="#hat.drivers.iec104.common.Data">Data</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.common.Data.asdu_address" href="#hat.drivers.iec104.common.Data.asdu_address">asdu_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Data.cause" href="#hat.drivers.iec104.common.Data.cause">cause</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Data.io_address" href="#hat.drivers.iec104.common.Data.io_address">io_address</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Data.is_test" href="#hat.drivers.iec104.common.Data.is_test">is_test</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Data.quality" href="#hat.drivers.iec104.common.Data.quality">quality</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Data.time" href="#hat.drivers.iec104.common.Data.time">time</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Data.value" href="#hat.drivers.iec104.common.Data.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.DoubleValue" href="#hat.drivers.iec104.common.DoubleValue">DoubleValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.DoubleValue.FAULT" href="#hat.drivers.iec104.common.DoubleValue.FAULT">FAULT</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.DoubleValue.INTERMEDIATE" href="#hat.drivers.iec104.common.DoubleValue.INTERMEDIATE">INTERMEDIATE</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.DoubleValue.OFF" href="#hat.drivers.iec104.common.DoubleValue.OFF">OFF</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.DoubleValue.ON" href="#hat.drivers.iec104.common.DoubleValue.ON">ON</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.FloatingValue" href="#hat.drivers.iec104.common.FloatingValue">FloatingValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.FloatingValue.value" href="#hat.drivers.iec104.common.FloatingValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.FreezeCode" href="#hat.drivers.iec104.common.FreezeCode">FreezeCode</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.FreezeCode.FREEZE" href="#hat.drivers.iec104.common.FreezeCode.FREEZE">FREEZE</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.FreezeCode.FREEZE_AND_RESET" href="#hat.drivers.iec104.common.FreezeCode.FREEZE_AND_RESET">FREEZE_AND_RESET</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.FreezeCode.READ" href="#hat.drivers.iec104.common.FreezeCode.READ">READ</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.FreezeCode.RESET" href="#hat.drivers.iec104.common.FreezeCode.RESET">RESET</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.NormalizedValue" href="#hat.drivers.iec104.common.NormalizedValue">NormalizedValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.NormalizedValue.value" href="#hat.drivers.iec104.common.NormalizedValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.Quality" href="#hat.drivers.iec104.common.Quality">Quality</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.Quality.blocked" href="#hat.drivers.iec104.common.Quality.blocked">blocked</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Quality.invalid" href="#hat.drivers.iec104.common.Quality.invalid">invalid</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Quality.not_topical" href="#hat.drivers.iec104.common.Quality.not_topical">not_topical</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Quality.overflow" href="#hat.drivers.iec104.common.Quality.overflow">overflow</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Quality.substituted" href="#hat.drivers.iec104.common.Quality.substituted">substituted</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.RegulatingValue" href="#hat.drivers.iec104.common.RegulatingValue">RegulatingValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.RegulatingValue.HIGHER" href="#hat.drivers.iec104.common.RegulatingValue.HIGHER">HIGHER</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.RegulatingValue.LOWER" href="#hat.drivers.iec104.common.RegulatingValue.LOWER">LOWER</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.ScaledValue" href="#hat.drivers.iec104.common.ScaledValue">ScaledValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.ScaledValue.value" href="#hat.drivers.iec104.common.ScaledValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.SingleValue" href="#hat.drivers.iec104.common.SingleValue">SingleValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.SingleValue.OFF" href="#hat.drivers.iec104.common.SingleValue.OFF">OFF</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.SingleValue.ON" href="#hat.drivers.iec104.common.SingleValue.ON">ON</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.StepPositionValue" href="#hat.drivers.iec104.common.StepPositionValue">StepPositionValue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.iec104.common.StepPositionValue.transient" href="#hat.drivers.iec104.common.StepPositionValue.transient">transient</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.StepPositionValue.value" href="#hat.drivers.iec104.common.StepPositionValue.value">value</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.iec104.common.Time" href="#hat.drivers.iec104.common.Time">Time</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.iec104.common.Time.day_of_month" href="#hat.drivers.iec104.common.Time.day_of_month">day_of_month</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.day_of_week" href="#hat.drivers.iec104.common.Time.day_of_week">day_of_week</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.hours" href="#hat.drivers.iec104.common.Time.hours">hours</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.invalid" href="#hat.drivers.iec104.common.Time.invalid">invalid</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.milliseconds" href="#hat.drivers.iec104.common.Time.milliseconds">milliseconds</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.minutes" href="#hat.drivers.iec104.common.Time.minutes">minutes</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.months" href="#hat.drivers.iec104.common.Time.months">months</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.summer_time" href="#hat.drivers.iec104.common.Time.summer_time">summer_time</a></code></li>
+<li><code><a title="hat.drivers.iec104.common.Time.years" href="#hat.drivers.iec104.common.Time.years">years</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

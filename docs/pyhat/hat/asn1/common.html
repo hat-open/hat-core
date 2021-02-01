@@ -1,0 +1,2836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.asn1.common API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.asn1.common</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import abc
+import enum
+import typing
+
+from hat import json
+
+
+class ClassType(enum.Enum):
+    UNIVERSAL = 0
+    APPLICATION = 1
+    CONTEXT_SPECIFIC = 2
+    PRIVATE = 3
+
+
+class TypeProperty(typing.NamedTuple):
+    name: str
+    type: &#39;Type&#39;
+    optional: bool = False
+
+
+class TypeRef(typing.NamedTuple):
+    module: str
+    name: str
+
+
+Type = typing.Union[TypeRef,
+                    &#39;BooleanType&#39;,
+                    &#39;IntegerType&#39;,
+                    &#39;BitStringType&#39;,
+                    &#39;OctetStringType&#39;,
+                    &#39;NullType&#39;,
+                    &#39;ObjectIdentifierType&#39;,
+                    &#39;StringType&#39;,
+                    &#39;ExternalType&#39;,
+                    &#39;RealType&#39;,
+                    &#39;EnumeratedType&#39;,
+                    &#39;EmbeddedPDVType&#39;,
+                    &#39;ChoiceType&#39;,
+                    &#39;SetType&#39;,
+                    &#39;SetOfType&#39;,
+                    &#39;SequenceType&#39;,
+                    &#39;SequenceOfType&#39;,
+                    &#39;EntityType&#39;,
+                    &#39;UnsupportedType&#39;,
+                    &#39;PrefixedType&#39;]
+&#34;&#34;&#34;Type&#34;&#34;&#34;
+
+
+class BooleanType(typing.NamedTuple):
+    pass
+
+
+class IntegerType(typing.NamedTuple):
+    pass
+
+
+class BitStringType(typing.NamedTuple):
+    pass
+
+
+class OctetStringType(typing.NamedTuple):
+    pass
+
+
+class NullType(typing.NamedTuple):
+    pass
+
+
+class ObjectIdentifierType(typing.NamedTuple):
+    pass
+
+
+class StringType(enum.Enum):
+    ObjectDescriptor = 7
+    UTF8String = 12
+    NumericString = 18
+    PrintableString = 19
+    T61String = 20
+    VideotexString = 21
+    IA5String = 22
+    UTCTime = 23
+    GeneralizedTime = 24
+    GraphicString = 25
+    VisibleString = 26
+    GeneralString = 27
+    UniversalString = 28
+    CHARACTER_STRING = 29
+    BMPString = 30
+
+
+class ExternalType(typing.NamedTuple):
+    pass
+
+
+class RealType(typing.NamedTuple):
+    pass
+
+
+class EnumeratedType(typing.NamedTuple):
+    pass
+
+
+class EmbeddedPDVType(typing.NamedTuple):
+    pass
+
+
+class ChoiceType(typing.NamedTuple):
+    choices: typing.List[TypeProperty]
+
+
+class SetType(typing.NamedTuple):
+    elements: typing.List[TypeProperty]
+
+
+class SetOfType(typing.NamedTuple):
+    type: Type
+    &#34;elements type definition&#34;
+
+
+class SequenceType(typing.NamedTuple):
+    elements: typing.List[TypeProperty]
+
+
+class SequenceOfType(typing.NamedTuple):
+    type: Type
+    &#34;elements type definition&#34;
+
+
+class EntityType(typing.NamedTuple):
+    pass
+
+
+class UnsupportedType(typing.NamedTuple):
+    pass
+
+
+class PrefixedType(typing.NamedTuple):
+    type: Type
+    class_type: ClassType
+    tag_number: int
+    implicit: bool
+
+
+Data = typing.Union[bytes, bytearray, memoryview]
+&#34;&#34;&#34;Data&#34;&#34;&#34;
+
+
+Value = typing.Union[&#39;Boolean&#39;,
+                     &#39;Integer&#39;,
+                     &#39;BitString&#39;,
+                     &#39;OctetString&#39;,
+                     &#39;Null&#39;,
+                     &#39;ObjectIdentifier&#39;,
+                     &#39;String&#39;,
+                     &#39;External&#39;,
+                     &#39;Real&#39;,
+                     &#39;Enumerated&#39;,
+                     &#39;EmbeddedPDV&#39;,
+                     &#39;Choice&#39;,
+                     &#39;Set&#39;,
+                     &#39;SetOf&#39;,
+                     &#39;Sequence&#39;,
+                     &#39;SequenceOf&#39;,
+                     &#39;Entity&#39;]
+&#34;&#34;&#34;Value&#34;&#34;&#34;
+
+
+Boolean = bool
+&#34;&#34;&#34;Boolean&#34;&#34;&#34;
+
+
+Integer = int
+&#34;&#34;&#34;Integer&#34;&#34;&#34;
+
+
+BitString = typing.List[bool]
+&#34;&#34;&#34;Bit string&#34;&#34;&#34;
+
+
+OctetString = bytes
+&#34;&#34;&#34;Octet string&#34;&#34;&#34;
+
+
+Null = None
+&#34;&#34;&#34;Null&#34;&#34;&#34;
+
+
+ObjectIdentifier = typing.List[typing.Union[int, typing.Tuple[str, int]]]
+&#34;&#34;&#34;Object identifier&#34;&#34;&#34;
+
+
+String = str
+&#34;&#34;&#34;String&#34;&#34;&#34;
+
+
+class External(typing.NamedTuple):
+    data: typing.Union[&#39;Entity&#39;, Data, typing.List[bool]]
+    direct_ref: typing.Optional[ObjectIdentifier]
+    indirect_ref: typing.Optional[int]
+
+
+Real = float
+&#34;&#34;&#34;Real&#34;&#34;&#34;
+
+
+Enumerated = int
+&#34;&#34;&#34;Enumerated&#34;&#34;&#34;
+
+
+# TODO: if abstract is ObjectIdentifier then transfer must be defined
+class EmbeddedPDV(typing.NamedTuple):
+    abstract: typing.Optional[typing.Union[int, ObjectIdentifier]]
+    transfer: typing.Optional[ObjectIdentifier]
+    data: Data
+
+
+Choice = typing.Tuple[str, Value]
+&#34;&#34;&#34;Choice&#34;&#34;&#34;
+
+
+Set = typing.Dict[str, Value]
+&#34;&#34;&#34;Set&#34;&#34;&#34;
+
+
+SetOf = typing.Iterable[Value]
+&#34;&#34;&#34;Set of&#34;&#34;&#34;
+
+
+Sequence = typing.Dict[str, Value]
+&#34;&#34;&#34;Sequence&#34;&#34;&#34;
+
+
+SequenceOf = typing.List[Value]
+&#34;&#34;&#34;Sequence of&#34;&#34;&#34;
+
+
+class Entity(abc.ABC):
+    &#34;&#34;&#34;Encoding independent ASN.1 Entity&#34;&#34;&#34;
+
+
+def is_oid_eq(x: ObjectIdentifier,
+              y: ObjectIdentifier
+              ) -&gt; bool:
+    &#34;&#34;&#34;Check if two ASN.1 object identifiers are equal&#34;&#34;&#34;
+    if len(x) != len(y):
+        return False
+    for i, j in zip(x, y):
+        i_id = i if isinstance(i, int) else i[1]
+        j_id = j if isinstance(j, int) else j[1]
+        if i_id != j_id:
+            return False
+    return True
+
+
+def type_to_json(t: Type) -&gt; json.Data:
+    &#34;&#34;&#34;Convert type definition to JSON data&#34;&#34;&#34;
+    if isinstance(t, TypeRef):
+        return [&#39;TypeRef&#39;, t.module, t.name]
+
+    if isinstance(t, BooleanType):
+        return [&#39;BooleanType&#39;]
+
+    if isinstance(t, IntegerType):
+        return [&#39;IntegerType&#39;]
+
+    if isinstance(t, BitStringType):
+        return [&#39;BitStringType&#39;]
+
+    if isinstance(t, OctetStringType):
+        return [&#39;OctetStringType&#39;]
+
+    if isinstance(t, ObjectIdentifierType):
+        return [&#39;ObjectIdentifierType&#39;]
+
+    if isinstance(t, NullType):
+        return [&#39;NullType&#39;]
+
+    if isinstance(t, StringType):
+        return [&#39;StringType&#39;, t.name]
+
+    if isinstance(t, ExternalType):
+        return [&#39;ExternalType&#39;]
+
+    if isinstance(t, RealType):
+        return [&#39;RealType&#39;]
+
+    if isinstance(t, EnumeratedType):
+        return [&#39;EnumeratedType&#39;]
+
+    if isinstance(t, EmbeddedPDVType):
+        return [&#39;EmbeddedPDVType&#39;]
+
+    if isinstance(t, ChoiceType):
+        return [&#39;ChoiceType&#39;, [[i.name, type_to_json(i.type)]
+                               for i in t.choices]]
+
+    if isinstance(t, SetType):
+        return [&#39;SetType&#39;, [[i.name, type_to_json(i.type), i.optional]
+                            for i in t.elements]]
+
+    if isinstance(t, SetOfType):
+        return [&#39;SetOfType&#39;, type_to_json(t.type)]
+
+    if isinstance(t, SequenceType):
+        return [&#39;SequenceType&#39;, [[i.name, type_to_json(i.type), i.optional]
+                                 for i in t.elements]]
+
+    if isinstance(t, SequenceOfType):
+        return [&#39;SequenceOfType&#39;, type_to_json(t.type)]
+
+    if isinstance(t, EntityType):
+        return [&#39;EntityType&#39;]
+
+    if isinstance(t, UnsupportedType):
+        return [&#39;UnsupportedType&#39;]
+
+    if isinstance(t, PrefixedType):
+        return [&#39;PrefixedType&#39;, type_to_json(t.type), t.class_type.name,
+                t.tag_number, t.implicit]
+
+    raise ValueError(&#39;invalid type definition&#39;)
+
+
+def type_from_json(data: json.Data) -&gt; Type:
+    &#34;&#34;&#34;Convert JSON data to type definition&#34;&#34;&#34;
+    if data[0] == &#39;TypeRef&#39;:
+        return TypeRef(module=data[1],
+                       name=data[2])
+
+    if data[0] == &#39;BooleanType&#39;:
+        return BooleanType()
+
+    if data[0] == &#39;IntegerType&#39;:
+        return IntegerType()
+
+    if data[0] == &#39;BitStringType&#39;:
+        return BitStringType()
+
+    if data[0] == &#39;OctetStringType&#39;:
+        return OctetStringType()
+
+    if data[0] == &#39;NullType&#39;:
+        return NullType()
+
+    if data[0] == &#39;ObjectIdentifierType&#39;:
+        return ObjectIdentifierType()
+
+    if data[0] == &#39;StringType&#39;:
+        return StringType[data[1]]
+
+    if data[0] == &#39;ExternalType&#39;:
+        return ExternalType()
+
+    if data[0] == &#39;RealType&#39;:
+        return RealType()
+
+    if data[0] == &#39;EnumeratedType&#39;:
+        return EnumeratedType()
+
+    if data[0] == &#39;EmbeddedPDVType&#39;:
+        return EmbeddedPDVType()
+
+    if data[0] == &#39;ChoiceType&#39;:
+        return ChoiceType([TypeProperty(name=i[0],
+                                        type=type_from_json(i[1]))
+                           for i in data[1]])
+
+    if data[0] == &#39;SetType&#39;:
+        return SetType([TypeProperty(name=i[0],
+                                     type=type_from_json(i[1]),
+                                     optional=i[2])
+                        for i in data[1]])
+
+    if data[0] == &#39;SetOfType&#39;:
+        return SetOfType(type_from_json(data[1]))
+
+    if data[0] == &#39;SequenceType&#39;:
+        return SequenceType([TypeProperty(name=i[0],
+                                          type=type_from_json(i[1]),
+                                          optional=i[2])
+                             for i in data[1]])
+
+    if data[0] == &#39;SequenceOfType&#39;:
+        return SequenceOfType(type_from_json(data[1]))
+
+    if data[0] == &#39;EntityType&#39;:
+        return EntityType()
+
+    if data[0] == &#39;UnsupportedType&#39;:
+        return UnsupportedType()
+
+    if data[0] == &#39;PrefixedType&#39;:
+        return PrefixedType(type=type_from_json(data[1]),
+                            class_type=ClassType[data[2]],
+                            tag_number=data[3],
+                            implicit=data[4])
+
+    raise ValueError(&#39;invalid data&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.asn1.common.BitString"><code class="name">var <span class="ident">BitString</span></code></dt>
+<dd>
+<div class="desc"><p>Bit string</p></div>
+</dd>
+<dt id="hat.asn1.common.Choice"><code class="name">var <span class="ident">Choice</span></code></dt>
+<dd>
+<div class="desc"><p>Choice</p></div>
+</dd>
+<dt id="hat.asn1.common.Data"><code class="name">var <span class="ident">Data</span></code></dt>
+<dd>
+<div class="desc"><p>Data</p></div>
+</dd>
+<dt id="hat.asn1.common.Null"><code class="name">var <span class="ident">Null</span></code></dt>
+<dd>
+<div class="desc"><p>Null</p></div>
+</dd>
+<dt id="hat.asn1.common.ObjectIdentifier"><code class="name">var <span class="ident">ObjectIdentifier</span></code></dt>
+<dd>
+<div class="desc"><p>Object identifier</p></div>
+</dd>
+<dt id="hat.asn1.common.Sequence"><code class="name">var <span class="ident">Sequence</span></code></dt>
+<dd>
+<div class="desc"><p>Sequence</p></div>
+</dd>
+<dt id="hat.asn1.common.SequenceOf"><code class="name">var <span class="ident">SequenceOf</span></code></dt>
+<dd>
+<div class="desc"><p>Sequence of</p></div>
+</dd>
+<dt id="hat.asn1.common.Set"><code class="name">var <span class="ident">Set</span></code></dt>
+<dd>
+<div class="desc"><p>Set</p></div>
+</dd>
+<dt id="hat.asn1.common.SetOf"><code class="name">var <span class="ident">SetOf</span></code></dt>
+<dd>
+<div class="desc"><p>Set of</p></div>
+</dd>
+<dt id="hat.asn1.common.Type"><code class="name">var <span class="ident">Type</span></code></dt>
+<dd>
+<div class="desc"><p>Type</p></div>
+</dd>
+<dt id="hat.asn1.common.Value"><code class="name">var <span class="ident">Value</span></code></dt>
+<dd>
+<div class="desc"><p>Value</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.asn1.common.is_oid_eq"><code class="name flex">
+<span>def <span class="ident">is_oid_eq</span></span>(<span>x: typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], y: typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]]) ‑> <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if two ASN.1 object identifiers are equal</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_oid_eq(x: ObjectIdentifier,
+              y: ObjectIdentifier
+              ) -&gt; bool:
+    &#34;&#34;&#34;Check if two ASN.1 object identifiers are equal&#34;&#34;&#34;
+    if len(x) != len(y):
+        return False
+    for i, j in zip(x, y):
+        i_id = i if isinstance(i, int) else i[1]
+        j_id = j if isinstance(j, int) else j[1]
+        if i_id != j_id:
+            return False
+    return True</code></pre>
+</details>
+</dd>
+<dt id="hat.asn1.common.type_from_json"><code class="name flex">
+<span>def <span class="ident">type_from_json</span></span>(<span>data: typing.Union[NoneType, <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, <a title="hat.asn1.common.float" href="#hat.asn1.common.float">float</a>, <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, typing.List[ForwardRef('<a title="hat.asn1.common.Data" href="#hat.asn1.common.Data">Data</a>')], typing.Dict[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, ForwardRef('<a title="hat.asn1.common.Data" href="#hat.asn1.common.Data">Data</a>')]]) ‑> typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, <a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>, <a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>, <a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>, <a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>, <a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>, <a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>, <a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>, <a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>, <a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>, <a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>, <a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>, <a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>, <a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>, <a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>, <a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>, <a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>, <a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>, <a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>, <a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert JSON data to type definition</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def type_from_json(data: json.Data) -&gt; Type:
+    &#34;&#34;&#34;Convert JSON data to type definition&#34;&#34;&#34;
+    if data[0] == &#39;TypeRef&#39;:
+        return TypeRef(module=data[1],
+                       name=data[2])
+
+    if data[0] == &#39;BooleanType&#39;:
+        return BooleanType()
+
+    if data[0] == &#39;IntegerType&#39;:
+        return IntegerType()
+
+    if data[0] == &#39;BitStringType&#39;:
+        return BitStringType()
+
+    if data[0] == &#39;OctetStringType&#39;:
+        return OctetStringType()
+
+    if data[0] == &#39;NullType&#39;:
+        return NullType()
+
+    if data[0] == &#39;ObjectIdentifierType&#39;:
+        return ObjectIdentifierType()
+
+    if data[0] == &#39;StringType&#39;:
+        return StringType[data[1]]
+
+    if data[0] == &#39;ExternalType&#39;:
+        return ExternalType()
+
+    if data[0] == &#39;RealType&#39;:
+        return RealType()
+
+    if data[0] == &#39;EnumeratedType&#39;:
+        return EnumeratedType()
+
+    if data[0] == &#39;EmbeddedPDVType&#39;:
+        return EmbeddedPDVType()
+
+    if data[0] == &#39;ChoiceType&#39;:
+        return ChoiceType([TypeProperty(name=i[0],
+                                        type=type_from_json(i[1]))
+                           for i in data[1]])
+
+    if data[0] == &#39;SetType&#39;:
+        return SetType([TypeProperty(name=i[0],
+                                     type=type_from_json(i[1]),
+                                     optional=i[2])
+                        for i in data[1]])
+
+    if data[0] == &#39;SetOfType&#39;:
+        return SetOfType(type_from_json(data[1]))
+
+    if data[0] == &#39;SequenceType&#39;:
+        return SequenceType([TypeProperty(name=i[0],
+                                          type=type_from_json(i[1]),
+                                          optional=i[2])
+                             for i in data[1]])
+
+    if data[0] == &#39;SequenceOfType&#39;:
+        return SequenceOfType(type_from_json(data[1]))
+
+    if data[0] == &#39;EntityType&#39;:
+        return EntityType()
+
+    if data[0] == &#39;UnsupportedType&#39;:
+        return UnsupportedType()
+
+    if data[0] == &#39;PrefixedType&#39;:
+        return PrefixedType(type=type_from_json(data[1]),
+                            class_type=ClassType[data[2]],
+                            tag_number=data[3],
+                            implicit=data[4])
+
+    raise ValueError(&#39;invalid data&#39;)</code></pre>
+</details>
+</dd>
+<dt id="hat.asn1.common.type_to_json"><code class="name flex">
+<span>def <span class="ident">type_to_json</span></span>(<span>t: typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, ForwardRef('<a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>'), ForwardRef('<a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>'), ForwardRef('<a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>'), ForwardRef('<a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>'), ForwardRef('<a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>'), ForwardRef('<a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>'), ForwardRef('<a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>'), ForwardRef('<a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>'), ForwardRef('<a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>'), ForwardRef('<a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>'), ForwardRef('<a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>'), ForwardRef('<a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>'), ForwardRef('<a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>'), ForwardRef('<a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>'), ForwardRef('<a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>'), ForwardRef('<a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>'), ForwardRef('<a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>')]) ‑> typing.Union[NoneType, <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, <a title="hat.asn1.common.float" href="#hat.asn1.common.float">float</a>, <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, typing.List[typing.Union[<a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a>, bytearray, memoryview]], typing.Dict[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, typing.Union[<a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a>, bytearray, memoryview]]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert type definition to JSON data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def type_to_json(t: Type) -&gt; json.Data:
+    &#34;&#34;&#34;Convert type definition to JSON data&#34;&#34;&#34;
+    if isinstance(t, TypeRef):
+        return [&#39;TypeRef&#39;, t.module, t.name]
+
+    if isinstance(t, BooleanType):
+        return [&#39;BooleanType&#39;]
+
+    if isinstance(t, IntegerType):
+        return [&#39;IntegerType&#39;]
+
+    if isinstance(t, BitStringType):
+        return [&#39;BitStringType&#39;]
+
+    if isinstance(t, OctetStringType):
+        return [&#39;OctetStringType&#39;]
+
+    if isinstance(t, ObjectIdentifierType):
+        return [&#39;ObjectIdentifierType&#39;]
+
+    if isinstance(t, NullType):
+        return [&#39;NullType&#39;]
+
+    if isinstance(t, StringType):
+        return [&#39;StringType&#39;, t.name]
+
+    if isinstance(t, ExternalType):
+        return [&#39;ExternalType&#39;]
+
+    if isinstance(t, RealType):
+        return [&#39;RealType&#39;]
+
+    if isinstance(t, EnumeratedType):
+        return [&#39;EnumeratedType&#39;]
+
+    if isinstance(t, EmbeddedPDVType):
+        return [&#39;EmbeddedPDVType&#39;]
+
+    if isinstance(t, ChoiceType):
+        return [&#39;ChoiceType&#39;, [[i.name, type_to_json(i.type)]
+                               for i in t.choices]]
+
+    if isinstance(t, SetType):
+        return [&#39;SetType&#39;, [[i.name, type_to_json(i.type), i.optional]
+                            for i in t.elements]]
+
+    if isinstance(t, SetOfType):
+        return [&#39;SetOfType&#39;, type_to_json(t.type)]
+
+    if isinstance(t, SequenceType):
+        return [&#39;SequenceType&#39;, [[i.name, type_to_json(i.type), i.optional]
+                                 for i in t.elements]]
+
+    if isinstance(t, SequenceOfType):
+        return [&#39;SequenceOfType&#39;, type_to_json(t.type)]
+
+    if isinstance(t, EntityType):
+        return [&#39;EntityType&#39;]
+
+    if isinstance(t, UnsupportedType):
+        return [&#39;UnsupportedType&#39;]
+
+    if isinstance(t, PrefixedType):
+        return [&#39;PrefixedType&#39;, type_to_json(t.type), t.class_type.name,
+                t.tag_number, t.implicit]
+
+    raise ValueError(&#39;invalid type definition&#39;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.asn1.common.BitStringType"><code class="flex name class">
+<span>class <span class="ident">BitStringType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>BitStringType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BitStringType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.BooleanType"><code class="flex name class">
+<span>class <span class="ident">BooleanType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>BooleanType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BooleanType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.ChoiceType"><code class="flex name class">
+<span>class <span class="ident">ChoiceType</span></span>
+<span>(</span><span>choices: typing.List[<a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ChoiceType(choices,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ChoiceType(typing.NamedTuple):
+    choices: typing.List[TypeProperty]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.ChoiceType.choices"><code class="name">var <span class="ident">choices</span> : typing.List[<a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.ClassType"><code class="flex name class">
+<span>class <span class="ident">ClassType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ClassType(enum.Enum):
+    UNIVERSAL = 0
+    APPLICATION = 1
+    CONTEXT_SPECIFIC = 2
+    PRIVATE = 3</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.asn1.common.ClassType.APPLICATION"><code class="name">var <span class="ident">APPLICATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.ClassType.CONTEXT_SPECIFIC"><code class="name">var <span class="ident">CONTEXT_SPECIFIC</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.ClassType.PRIVATE"><code class="name">var <span class="ident">PRIVATE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.ClassType.UNIVERSAL"><code class="name">var <span class="ident">UNIVERSAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.EmbeddedPDV"><code class="flex name class">
+<span>class <span class="ident">EmbeddedPDV</span></span>
+<span>(</span><span>abstract: typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], NoneType], transfer: typing.Union[typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], NoneType], data: typing.Union[<a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a>, bytearray, memoryview])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>EmbeddedPDV(abstract, transfer, data)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EmbeddedPDV(typing.NamedTuple):
+    abstract: typing.Optional[typing.Union[int, ObjectIdentifier]]
+    transfer: typing.Optional[ObjectIdentifier]
+    data: Data</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.EmbeddedPDV.abstract"><code class="name">var <span class="ident">abstract</span> : typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.asn1.common.EmbeddedPDV.data"><code class="name">var <span class="ident">data</span> : typing.Union[<a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a>, bytearray, memoryview]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.asn1.common.EmbeddedPDV.transfer"><code class="name">var <span class="ident">transfer</span> : typing.Union[typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.EmbeddedPDVType"><code class="flex name class">
+<span>class <span class="ident">EmbeddedPDVType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>EmbeddedPDVType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EmbeddedPDVType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.Entity"><code class="flex name class">
+<span>class <span class="ident">Entity</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encoding independent ASN.1 Entity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Entity(abc.ABC):
+    &#34;&#34;&#34;Encoding independent ASN.1 Entity&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.EntityType"><code class="flex name class">
+<span>class <span class="ident">EntityType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>EntityType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EntityType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.EnumeratedType"><code class="flex name class">
+<span>class <span class="ident">EnumeratedType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>EnumeratedType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EnumeratedType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.External"><code class="flex name class">
+<span>class <span class="ident">External</span></span>
+<span>(</span><span>data: typing.Union[ForwardRef('<a title="hat.asn1.common.Entity" href="#hat.asn1.common.Entity">Entity</a>'), <a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a>, bytearray, memoryview, typing.List[<a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a>]], direct_ref: typing.Union[typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], NoneType], indirect_ref: typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>External(data, direct_ref, indirect_ref)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class External(typing.NamedTuple):
+    data: typing.Union[&#39;Entity&#39;, Data, typing.List[bool]]
+    direct_ref: typing.Optional[ObjectIdentifier]
+    indirect_ref: typing.Optional[int]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.External.data"><code class="name">var <span class="ident">data</span> : typing.Union[<a title="hat.asn1.common.Entity" href="#hat.asn1.common.Entity">Entity</a>, <a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a>, bytearray, memoryview, typing.List[<a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a>]]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.asn1.common.External.direct_ref"><code class="name">var <span class="ident">direct_ref</span> : typing.Union[typing.List[typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, typing.Tuple[<a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>]]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.asn1.common.External.indirect_ref"><code class="name">var <span class="ident">indirect_ref</span> : typing.Union[<a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.ExternalType"><code class="flex name class">
+<span>class <span class="ident">ExternalType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>ExternalType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ExternalType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.IntegerType"><code class="flex name class">
+<span>class <span class="ident">IntegerType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>IntegerType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class IntegerType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.NullType"><code class="flex name class">
+<span>class <span class="ident">NullType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>NullType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NullType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.ObjectIdentifierType"><code class="flex name class">
+<span>class <span class="ident">ObjectIdentifierType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>ObjectIdentifierType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ObjectIdentifierType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.OctetStringType"><code class="flex name class">
+<span>class <span class="ident">OctetStringType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>OctetStringType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OctetStringType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.PrefixedType"><code class="flex name class">
+<span>class <span class="ident">PrefixedType</span></span>
+<span>(</span><span>type: typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, ForwardRef('<a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>'), ForwardRef('<a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>'), ForwardRef('<a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>'), ForwardRef('<a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>'), ForwardRef('<a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>'), ForwardRef('<a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>'), ForwardRef('<a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>'), ForwardRef('<a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>'), ForwardRef('<a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>'), ForwardRef('<a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>'), ForwardRef('<a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>'), ForwardRef('<a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>'), ForwardRef('<a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>'), ForwardRef('<a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>'), ForwardRef('<a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>'), ForwardRef('<a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>'), ForwardRef('<a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>')], class_type: <a title="hat.asn1.common.ClassType" href="#hat.asn1.common.ClassType">ClassType</a>, tag_number: <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a>, implicit: <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>PrefixedType(type, class_type, tag_number, implicit)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PrefixedType(typing.NamedTuple):
+    type: Type
+    class_type: ClassType
+    tag_number: int
+    implicit: bool</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.PrefixedType.class_type"><code class="name">var <span class="ident">class_type</span> : <a title="hat.asn1.common.ClassType" href="#hat.asn1.common.ClassType">ClassType</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.asn1.common.PrefixedType.implicit"><code class="name">var <span class="ident">implicit</span> : <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.asn1.common.PrefixedType.tag_number"><code class="name">var <span class="ident">tag_number</span> : <a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.asn1.common.PrefixedType.type"><code class="name">var <span class="ident">type</span> : typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, <a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>, <a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>, <a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>, <a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>, <a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>, <a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>, <a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>, <a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>, <a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>, <a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>, <a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>, <a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>, <a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>, <a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>, <a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>, <a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>, <a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>, <a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>, <a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.RealType"><code class="flex name class">
+<span>class <span class="ident">RealType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>RealType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RealType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.SequenceOfType"><code class="flex name class">
+<span>class <span class="ident">SequenceOfType</span></span>
+<span>(</span><span>type: typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, ForwardRef('<a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>'), ForwardRef('<a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>'), ForwardRef('<a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>'), ForwardRef('<a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>'), ForwardRef('<a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>'), ForwardRef('<a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>'), ForwardRef('<a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>'), ForwardRef('<a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>'), ForwardRef('<a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>'), ForwardRef('<a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>'), ForwardRef('<a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>'), ForwardRef('<a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>'), ForwardRef('<a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>'), ForwardRef('<a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>'), ForwardRef('<a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>'), ForwardRef('<a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>'), ForwardRef('<a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SequenceOfType(type,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SequenceOfType(typing.NamedTuple):
+    type: Type
+    &#34;elements type definition&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.SequenceOfType.type"><code class="name">var <span class="ident">type</span> : typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, <a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>, <a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>, <a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>, <a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>, <a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>, <a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>, <a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>, <a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>, <a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>, <a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>, <a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>, <a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>, <a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>, <a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>, <a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>, <a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>, <a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>, <a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>, <a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>]</code></dt>
+<dd>
+<div class="desc"><p>elements type definition</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.SequenceType"><code class="flex name class">
+<span>class <span class="ident">SequenceType</span></span>
+<span>(</span><span>elements: typing.List[<a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SequenceType(elements,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SequenceType(typing.NamedTuple):
+    elements: typing.List[TypeProperty]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.SequenceType.elements"><code class="name">var <span class="ident">elements</span> : typing.List[<a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.SetOfType"><code class="flex name class">
+<span>class <span class="ident">SetOfType</span></span>
+<span>(</span><span>type: typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, ForwardRef('<a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>'), ForwardRef('<a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>'), ForwardRef('<a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>'), ForwardRef('<a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>'), ForwardRef('<a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>'), ForwardRef('<a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>'), ForwardRef('<a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>'), ForwardRef('<a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>'), ForwardRef('<a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>'), ForwardRef('<a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>'), ForwardRef('<a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>'), ForwardRef('<a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>'), ForwardRef('<a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>'), ForwardRef('<a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>'), ForwardRef('<a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>'), ForwardRef('<a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>'), ForwardRef('<a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>'), ForwardRef('<a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SetOfType(type,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SetOfType(typing.NamedTuple):
+    type: Type
+    &#34;elements type definition&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.SetOfType.type"><code class="name">var <span class="ident">type</span> : typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, <a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>, <a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>, <a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>, <a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>, <a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>, <a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>, <a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>, <a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>, <a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>, <a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>, <a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>, <a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>, <a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>, <a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>, <a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>, <a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>, <a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>, <a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>, <a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>]</code></dt>
+<dd>
+<div class="desc"><p>elements type definition</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.SetType"><code class="flex name class">
+<span>class <span class="ident">SetType</span></span>
+<span>(</span><span>elements: typing.List[<a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SetType(elements,)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SetType(typing.NamedTuple):
+    elements: typing.List[TypeProperty]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.SetType.elements"><code class="name">var <span class="ident">elements</span> : typing.List[<a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.StringType"><code class="flex name class">
+<span>class <span class="ident">StringType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StringType(enum.Enum):
+    ObjectDescriptor = 7
+    UTF8String = 12
+    NumericString = 18
+    PrintableString = 19
+    T61String = 20
+    VideotexString = 21
+    IA5String = 22
+    UTCTime = 23
+    GeneralizedTime = 24
+    GraphicString = 25
+    VisibleString = 26
+    GeneralString = 27
+    UniversalString = 28
+    CHARACTER_STRING = 29
+    BMPString = 30</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.asn1.common.StringType.BMPString"><code class="name">var <span class="ident">BMPString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.CHARACTER_STRING"><code class="name">var <span class="ident">CHARACTER_STRING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.GeneralString"><code class="name">var <span class="ident">GeneralString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.GeneralizedTime"><code class="name">var <span class="ident">GeneralizedTime</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.GraphicString"><code class="name">var <span class="ident">GraphicString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.IA5String"><code class="name">var <span class="ident">IA5String</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.NumericString"><code class="name">var <span class="ident">NumericString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.ObjectDescriptor"><code class="name">var <span class="ident">ObjectDescriptor</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.PrintableString"><code class="name">var <span class="ident">PrintableString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.T61String"><code class="name">var <span class="ident">T61String</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.UTCTime"><code class="name">var <span class="ident">UTCTime</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.UTF8String"><code class="name">var <span class="ident">UTF8String</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.UniversalString"><code class="name">var <span class="ident">UniversalString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.VideotexString"><code class="name">var <span class="ident">VideotexString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.asn1.common.StringType.VisibleString"><code class="name">var <span class="ident">VisibleString</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.TypeProperty"><code class="flex name class">
+<span>class <span class="ident">TypeProperty</span></span>
+<span>(</span><span>name: <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, type: <a title="hat.asn1.common.Type" href="#hat.asn1.common.Type">Type</a>, optional: <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a> = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>TypeProperty(name, type, optional)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TypeProperty(typing.NamedTuple):
+    name: str
+    type: &#39;Type&#39;
+    optional: bool = False</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.TypeProperty.name"><code class="name">var <span class="ident">name</span> : <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.asn1.common.TypeProperty.optional"><code class="name">var <span class="ident">optional</span> : <a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.asn1.common.TypeProperty.type"><code class="name">var <span class="ident">type</span> : typing.Union[<a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a>, <a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a>, <a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a>, <a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a>, <a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a>, <a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a>, <a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a>, <a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a>, <a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a>, <a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a>, <a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a>, <a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a>, <a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a>, <a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a>, <a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a>, <a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a>, <a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a>, <a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a>, <a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a>, <a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.TypeRef"><code class="flex name class">
+<span>class <span class="ident">TypeRef</span></span>
+<span>(</span><span>module: <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>, name: <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>TypeRef(module, name)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TypeRef(typing.NamedTuple):
+    module: str
+    name: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.TypeRef.module"><code class="name">var <span class="ident">module</span> : <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.asn1.common.TypeRef.name"><code class="name">var <span class="ident">name</span> : <a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.UnsupportedType"><code class="flex name class">
+<span>class <span class="ident">UnsupportedType</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>UnsupportedType()</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UnsupportedType(typing.NamedTuple):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.bool"><code class="flex name class">
+<span>class <span class="ident">Boolean</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>bool(x) -&gt; bool</p>
+<p>Returns True when the argument x is true, False otherwise.
+The builtins True and False are the only two instances of the class bool.
+The class bool is a subclass of the class int, and cannot be subclassed.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.int</li>
+</ul>
+</dd>
+<dt id="hat.asn1.common.bytes"><code class="flex name class">
+<span>class <span class="ident">OctetString</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>bytes(iterable_of_ints) -&gt; bytes
+bytes(string, encoding[, errors]) -&gt; bytes
+bytes(bytes_or_buffer) -&gt; immutable copy of bytes_or_buffer
+bytes(int) -&gt; bytes object of size given by the parameter initialized with null bytes
+bytes() -&gt; empty bytes object</p>
+<p>Construct an immutable array of bytes from:
+- an iterable yielding integers in range(256)
+- a text string encoded using the specified encoding
+- any object implementing the buffer API.
+- an integer</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="hat.asn1.common.bytes.maketrans"><code class="name flex">
+<span>def <span class="ident">maketrans</span></span>(<span>frm, to, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a translation table useable for the bytes or bytearray translate method.</p>
+<p>The returned table will be one where each byte in frm is mapped to the byte at
+the same position in to.</p>
+<p>The bytes objects frm and to must be of the same length.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.asn1.common.bytes.capitalize"><code class="name flex">
+<span>def <span class="ident">capitalize</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.capitalize() -&gt; copy of B</p>
+<p>Return a copy of B with only its first character capitalized (ASCII)
+and the rest lower-cased.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.center"><code class="name flex">
+<span>def <span class="ident">center</span></span>(<span>self, width, fillchar=b' ', /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a centered string of length width.</p>
+<p>Padding is done using the specified fill character.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.count"><code class="name flex">
+<span>def <span class="ident">count</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.count(sub[, start[, end]]) -&gt; int</p>
+<p>Return the number of non-overlapping occurrences of subsection sub in
+bytes B[start:end].
+Optional arguments start and end are interpreted
+as in slice notation.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, /, encoding='utf-8', errors='strict')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode the bytes using the codec registered for encoding.</p>
+<p>encoding
+The encoding with which to decode the bytes.
+errors
+The error handling scheme to use for the handling of decoding errors.
+The default is 'strict' meaning that decoding errors raise a
+UnicodeDecodeError. Other possible values are 'ignore' and 'replace'
+as well as any other name registered with codecs.register_error that
+can handle UnicodeDecodeErrors.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.endswith"><code class="name flex">
+<span>def <span class="ident">endswith</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.endswith(suffix[, start[, end]]) -&gt; bool</p>
+<p>Return True if B ends with the specified suffix, False otherwise.
+With optional start, test B beginning at that position.
+With optional end, stop comparing B at that position.
+suffix can also be a tuple of bytes to try.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.expandtabs"><code class="name flex">
+<span>def <span class="ident">expandtabs</span></span>(<span>self, /, tabsize=8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy where all tab characters are expanded using spaces.</p>
+<p>If tabsize is not given, a tab size of 8 characters is assumed.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.find"><code class="name flex">
+<span>def <span class="ident">find</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.find(sub[, start[, end]]) -&gt; int</p>
+<p>Return the lowest index in B where subsection sub is found,
+such that sub is contained within B[start,end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Return -1 on failure.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.fromhex"><code class="name flex">
+<span>def <span class="ident">fromhex</span></span>(<span>string, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a bytes object from a string of hexadecimal numbers.</p>
+<p>Spaces between two numbers are accepted.
+Example: bytes.fromhex('B9 01EF') -&gt; b'\xb9\x01\xef'.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.hex"><code class="name flex">
+<span>def <span class="ident">hex</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a str of hexadecimal numbers from a bytes object.</p>
+<p>sep
+An optional single character or byte to separate hex bytes.
+bytes_per_sep
+How many bytes between separators.
+Positive values count from the
+right, negative values count from the left.</p>
+<p>Example:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; value = b'\xb9\x01\xef'
+&gt;&gt;&gt; value.hex()
+'b901ef'
+&gt;&gt;&gt; value.hex(':')
+'b9:01:ef'
+&gt;&gt;&gt; value.hex(':', 2)
+'b9:01ef'
+&gt;&gt;&gt; value.hex(':', -2)
+'b901:ef'
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.bytes.index"><code class="name flex">
+<span>def <span class="ident">index</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.index(sub[, start[, end]]) -&gt; int</p>
+<p>Return the lowest index in B where subsection sub is found,
+such that sub is contained within B[start,end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Raises ValueError when the subsection is not found.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.isalnum"><code class="name flex">
+<span>def <span class="ident">isalnum</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.isalnum() -&gt; bool</p>
+<p>Return True if all characters in B are alphanumeric
+and there is at least one character in B, False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.isalpha"><code class="name flex">
+<span>def <span class="ident">isalpha</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.isalpha() -&gt; bool</p>
+<p>Return True if all characters in B are alphabetic
+and there is at least one character in B, False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.isascii"><code class="name flex">
+<span>def <span class="ident">isascii</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.isascii() -&gt; bool</p>
+<p>Return True if B is empty or all characters in B are ASCII,
+False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.isdigit"><code class="name flex">
+<span>def <span class="ident">isdigit</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.isdigit() -&gt; bool</p>
+<p>Return True if all characters in B are digits
+and there is at least one character in B, False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.islower"><code class="name flex">
+<span>def <span class="ident">islower</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.islower() -&gt; bool</p>
+<p>Return True if all cased characters in B are lowercase and there is
+at least one cased character in B, False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.isspace"><code class="name flex">
+<span>def <span class="ident">isspace</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.isspace() -&gt; bool</p>
+<p>Return True if all characters in B are whitespace
+and there is at least one character in B, False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.istitle"><code class="name flex">
+<span>def <span class="ident">istitle</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.istitle() -&gt; bool</p>
+<p>Return True if B is a titlecased string and there is at least one
+character in B, i.e. uppercase characters may only follow uncased
+characters and lowercase characters only cased ones. Return False
+otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.isupper"><code class="name flex">
+<span>def <span class="ident">isupper</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.isupper() -&gt; bool</p>
+<p>Return True if all cased characters in B are uppercase and there is
+at least one cased character in B, False otherwise.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.join"><code class="name flex">
+<span>def <span class="ident">join</span></span>(<span>self, iterable_of_bytes, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Concatenate any number of bytes objects.</p>
+<p>The bytes whose method is called is inserted in between each pair.</p>
+<p>The result is returned as a new bytes object.</p>
+<p>Example: b'.'.join([b'ab', b'pq', b'rs']) -&gt; b'ab.pq.rs'.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.ljust"><code class="name flex">
+<span>def <span class="ident">ljust</span></span>(<span>self, width, fillchar=b' ', /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a left-justified string of length width.</p>
+<p>Padding is done using the specified fill character.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.lower"><code class="name flex">
+<span>def <span class="ident">lower</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.lower() -&gt; copy of B</p>
+<p>Return a copy of B with all ASCII characters converted to lowercase.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.lstrip"><code class="name flex">
+<span>def <span class="ident">lstrip</span></span>(<span>self, bytes=None, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Strip leading bytes contained in the argument.</p>
+<p>If the argument is omitted or None, strip leading
+ASCII whitespace.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.partition"><code class="name flex">
+<span>def <span class="ident">partition</span></span>(<span>self, sep, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Partition the bytes into three parts using the given separator.</p>
+<p>This will search for the separator sep in the bytes. If the separator is found,
+returns a 3-tuple containing the part before the separator, the separator
+itself, and the part after it.</p>
+<p>If the separator is not found, returns a 3-tuple containing the original bytes
+object and two empty bytes objects.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.replace"><code class="name flex">
+<span>def <span class="ident">replace</span></span>(<span>self, old, new, count=-1, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy with all occurrences of substring old replaced by new.</p>
+<p>count
+Maximum number of occurrences to replace.
+-1 (the default value) means replace all occurrences.</p>
+<p>If the optional argument count is given, only the first count occurrences are
+replaced.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.rfind"><code class="name flex">
+<span>def <span class="ident">rfind</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.rfind(sub[, start[, end]]) -&gt; int</p>
+<p>Return the highest index in B where subsection sub is found,
+such that sub is contained within B[start,end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Return -1 on failure.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.rindex"><code class="name flex">
+<span>def <span class="ident">rindex</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.rindex(sub[, start[, end]]) -&gt; int</p>
+<p>Return the highest index in B where subsection sub is found,
+such that sub is contained within B[start,end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Raise ValueError when the subsection is not found.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.rjust"><code class="name flex">
+<span>def <span class="ident">rjust</span></span>(<span>self, width, fillchar=b' ', /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a right-justified string of length width.</p>
+<p>Padding is done using the specified fill character.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.rpartition"><code class="name flex">
+<span>def <span class="ident">rpartition</span></span>(<span>self, sep, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Partition the bytes into three parts using the given separator.</p>
+<p>This will search for the separator sep in the bytes, starting at the end. If
+the separator is found, returns a 3-tuple containing the part before the
+separator, the separator itself, and the part after it.</p>
+<p>If the separator is not found, returns a 3-tuple containing two empty bytes
+objects and the original bytes object.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.rsplit"><code class="name flex">
+<span>def <span class="ident">rsplit</span></span>(<span>self, /, sep=None, maxsplit=-1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a list of the sections in the bytes, using sep as the delimiter.</p>
+<p>sep
+The delimiter according which to split the bytes.
+None (the default value) means split on ASCII whitespace characters
+(space, tab, return, newline, formfeed, vertical tab).
+maxsplit
+Maximum number of splits to do.
+-1 (the default value) means no limit.</p>
+<p>Splitting is done starting at the end of the bytes and working to the front.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.rstrip"><code class="name flex">
+<span>def <span class="ident">rstrip</span></span>(<span>self, bytes=None, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Strip trailing bytes contained in the argument.</p>
+<p>If the argument is omitted or None, strip trailing ASCII whitespace.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.split"><code class="name flex">
+<span>def <span class="ident">split</span></span>(<span>self, /, sep=None, maxsplit=-1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a list of the sections in the bytes, using sep as the delimiter.</p>
+<p>sep
+The delimiter according which to split the bytes.
+None (the default value) means split on ASCII whitespace characters
+(space, tab, return, newline, formfeed, vertical tab).
+maxsplit
+Maximum number of splits to do.
+-1 (the default value) means no limit.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.splitlines"><code class="name flex">
+<span>def <span class="ident">splitlines</span></span>(<span>self, /, keepends=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a list of the lines in the bytes, breaking at line boundaries.</p>
+<p>Line breaks are not included in the resulting list unless keepends is given and
+true.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.startswith"><code class="name flex">
+<span>def <span class="ident">startswith</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.startswith(prefix[, start[, end]]) -&gt; bool</p>
+<p>Return True if B starts with the specified prefix, False otherwise.
+With optional start, test B beginning at that position.
+With optional end, stop comparing B at that position.
+prefix can also be a tuple of bytes to try.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.strip"><code class="name flex">
+<span>def <span class="ident">strip</span></span>(<span>self, bytes=None, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Strip leading and trailing bytes contained in the argument.</p>
+<p>If the argument is omitted or None, strip leading and trailing ASCII whitespace.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.swapcase"><code class="name flex">
+<span>def <span class="ident">swapcase</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.swapcase() -&gt; copy of B</p>
+<p>Return a copy of B with uppercase ASCII characters converted
+to lowercase ASCII and vice versa.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.title"><code class="name flex">
+<span>def <span class="ident">title</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.title() -&gt; copy of B</p>
+<p>Return a titlecased version of B, i.e. ASCII words start with uppercase
+characters, all remaining cased characters have lowercase.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, table, /, delete=b'')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy with each character mapped by the given translation table.</p>
+<p>table
+Translation table, which must be a bytes object of length 256.</p>
+<p>All characters occurring in the optional argument delete are removed.
+The remaining characters are mapped through the given translation table.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.upper"><code class="name flex">
+<span>def <span class="ident">upper</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>B.upper() -&gt; copy of B</p>
+<p>Return a copy of B with all ASCII characters converted to uppercase.</p></div>
+</dd>
+<dt id="hat.asn1.common.bytes.zfill"><code class="name flex">
+<span>def <span class="ident">zfill</span></span>(<span>self, width, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pad a numeric string with zeros on the left, to fill a field of the given width.</p>
+<p>The original string is never truncated.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.float"><code class="flex name class">
+<span>class <span class="ident">Real</span></span>
+<span>(</span><span>x=0, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a string or number to a floating point number, if possible.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.float.imag"><code class="name">var <span class="ident">imag</span></code></dt>
+<dd>
+<div class="desc"><p>the imaginary part of a complex number</p></div>
+</dd>
+<dt id="hat.asn1.common.float.real"><code class="name">var <span class="ident">real</span></code></dt>
+<dd>
+<div class="desc"><p>the real part of a complex number</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.asn1.common.float.as_integer_ratio"><code class="name flex">
+<span>def <span class="ident">as_integer_ratio</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return integer ratio.</p>
+<p>Return a pair of integers, whose ratio is exactly equal to the original float
+and with a positive denominator.</p>
+<p>Raise OverflowError on infinities and a ValueError on NaNs.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; (10.0).as_integer_ratio()
+(10, 1)
+&gt;&gt;&gt; (0.0).as_integer_ratio()
+(0, 1)
+&gt;&gt;&gt; (-.25).as_integer_ratio()
+(-1, 4)
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.float.conjugate"><code class="name flex">
+<span>def <span class="ident">conjugate</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return self, the complex conjugate of any float.</p></div>
+</dd>
+<dt id="hat.asn1.common.float.fromhex"><code class="name flex">
+<span>def <span class="ident">fromhex</span></span>(<span>string, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a floating-point number from a hexadecimal string.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; float.fromhex('0x1.ffffp10')
+2047.984375
+&gt;&gt;&gt; float.fromhex('-0x1p-1074')
+-5e-324
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.float.hex"><code class="name flex">
+<span>def <span class="ident">hex</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a hexadecimal representation of a floating-point number.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; (-0.1).hex()
+'-0x1.999999999999ap-4'
+&gt;&gt;&gt; 3.14159.hex()
+'0x1.921f9f01b866ep+1'
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.float.is_integer"><code class="name flex">
+<span>def <span class="ident">is_integer</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the float is an integer.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.int"><code class="flex name class">
+<span>class <span class="ident">Integer</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>int([x]) -&gt; integer
+int(x, base=10) -&gt; integer</p>
+<p>Convert a number or string to an integer, or return 0 if no arguments
+are given.
+If x is a number, return x.<strong>int</strong>().
+For floating point
+numbers, this truncates towards zero.</p>
+<p>If x is not a number or if base is given, then x must be a string,
+bytes, or bytearray instance representing an integer literal in the
+given base.
+The literal can be preceded by '+' or '-' and be surrounded
+by whitespace.
+The base defaults to 10.
+Valid bases are 0 and 2-36.
+Base 0 means to interpret the base from the string as an integer literal.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; int('0b100', base=0)
+4
+</code></pre></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>attr._make._CacheHashWrapper</li>
+<li>builtins.bool</li>
+<li>enum.IntEnum</li>
+<li>enum.IntFlag</li>
+<li>sre_constants._NamedIntConstant</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.int.denominator"><code class="name">var <span class="ident">denominator</span></code></dt>
+<dd>
+<div class="desc"><p>the denominator of a rational number in lowest terms</p></div>
+</dd>
+<dt id="hat.asn1.common.int.imag"><code class="name">var <span class="ident">imag</span></code></dt>
+<dd>
+<div class="desc"><p>the imaginary part of a complex number</p></div>
+</dd>
+<dt id="hat.asn1.common.int.numerator"><code class="name">var <span class="ident">numerator</span></code></dt>
+<dd>
+<div class="desc"><p>the numerator of a rational number in lowest terms</p></div>
+</dd>
+<dt id="hat.asn1.common.int.real"><code class="name">var <span class="ident">real</span></code></dt>
+<dd>
+<div class="desc"><p>the real part of a complex number</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.asn1.common.int.as_integer_ratio"><code class="name flex">
+<span>def <span class="ident">as_integer_ratio</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return integer ratio.</p>
+<p>Return a pair of integers, whose ratio is exactly equal to the original int
+and with a positive denominator.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; (10).as_integer_ratio()
+(10, 1)
+&gt;&gt;&gt; (-10).as_integer_ratio()
+(-10, 1)
+&gt;&gt;&gt; (0).as_integer_ratio()
+(0, 1)
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.int.bit_length"><code class="name flex">
+<span>def <span class="ident">bit_length</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Number of bits necessary to represent self in binary.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; bin(37)
+'0b100101'
+&gt;&gt;&gt; (37).bit_length()
+6
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.int.conjugate"><code class="name flex">
+<span>def <span class="ident">conjugate</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns self, the complex conjugate of any int.</p></div>
+</dd>
+<dt id="hat.asn1.common.int.from_bytes"><code class="name flex">
+<span>def <span class="ident">from_bytes</span></span>(<span>bytes, byteorder, *, signed=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the integer represented by the given array of bytes.</p>
+<p>bytes
+Holds the array of bytes to convert.
+The argument must either
+support the buffer protocol or be an iterable object producing bytes.
+Bytes and bytearray are examples of built-in objects that support the
+buffer protocol.
+byteorder
+The byte order used to represent the integer.
+If byteorder is 'big',
+the most significant byte is at the beginning of the byte array.
+If
+byteorder is 'little', the most significant byte is at the end of the
+byte array.
+To request the native byte order of the host system, use
+`sys.byteorder' as the byte order value.
+signed
+Indicates whether two's complement is used to represent the integer.</p></div>
+</dd>
+<dt id="hat.asn1.common.int.to_bytes"><code class="name flex">
+<span>def <span class="ident">to_bytes</span></span>(<span>self, /, length, byteorder, *, signed=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return an array of bytes representing an integer.</p>
+<p>length
+Length of bytes object to use.
+An OverflowError is raised if the
+integer is not representable with the given number of bytes.
+byteorder
+The byte order used to represent the integer.
+If byteorder is 'big',
+the most significant byte is at the beginning of the byte array.
+If
+byteorder is 'little', the most significant byte is at the end of the
+byte array.
+To request the native byte order of the host system, use
+`sys.byteorder' as the byte order value.
+signed
+Determines whether two's complement is used to represent the integer.
+If signed is False and a negative integer is given, an OverflowError
+is raised.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.int"><code class="flex name class">
+<span>class <span class="ident">Enumerated</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>int([x]) -&gt; integer
+int(x, base=10) -&gt; integer</p>
+<p>Convert a number or string to an integer, or return 0 if no arguments
+are given.
+If x is a number, return x.<strong>int</strong>().
+For floating point
+numbers, this truncates towards zero.</p>
+<p>If x is not a number or if base is given, then x must be a string,
+bytes, or bytearray instance representing an integer literal in the
+given base.
+The literal can be preceded by '+' or '-' and be surrounded
+by whitespace.
+The base defaults to 10.
+Valid bases are 0 and 2-36.
+Base 0 means to interpret the base from the string as an integer literal.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; int('0b100', base=0)
+4
+</code></pre></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>attr._make._CacheHashWrapper</li>
+<li>builtins.bool</li>
+<li>enum.IntEnum</li>
+<li>enum.IntFlag</li>
+<li>sre_constants._NamedIntConstant</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.asn1.common.int.denominator"><code class="name">var <span class="ident">denominator</span></code></dt>
+<dd>
+<div class="desc"><p>the denominator of a rational number in lowest terms</p></div>
+</dd>
+<dt id="hat.asn1.common.int.imag"><code class="name">var <span class="ident">imag</span></code></dt>
+<dd>
+<div class="desc"><p>the imaginary part of a complex number</p></div>
+</dd>
+<dt id="hat.asn1.common.int.numerator"><code class="name">var <span class="ident">numerator</span></code></dt>
+<dd>
+<div class="desc"><p>the numerator of a rational number in lowest terms</p></div>
+</dd>
+<dt id="hat.asn1.common.int.real"><code class="name">var <span class="ident">real</span></code></dt>
+<dd>
+<div class="desc"><p>the real part of a complex number</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.asn1.common.int.as_integer_ratio"><code class="name flex">
+<span>def <span class="ident">as_integer_ratio</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return integer ratio.</p>
+<p>Return a pair of integers, whose ratio is exactly equal to the original int
+and with a positive denominator.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; (10).as_integer_ratio()
+(10, 1)
+&gt;&gt;&gt; (-10).as_integer_ratio()
+(-10, 1)
+&gt;&gt;&gt; (0).as_integer_ratio()
+(0, 1)
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.int.bit_length"><code class="name flex">
+<span>def <span class="ident">bit_length</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Number of bits necessary to represent self in binary.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; bin(37)
+'0b100101'
+&gt;&gt;&gt; (37).bit_length()
+6
+</code></pre></div>
+</dd>
+<dt id="hat.asn1.common.int.conjugate"><code class="name flex">
+<span>def <span class="ident">conjugate</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns self, the complex conjugate of any int.</p></div>
+</dd>
+<dt id="hat.asn1.common.int.from_bytes"><code class="name flex">
+<span>def <span class="ident">from_bytes</span></span>(<span>bytes, byteorder, *, signed=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the integer represented by the given array of bytes.</p>
+<p>bytes
+Holds the array of bytes to convert.
+The argument must either
+support the buffer protocol or be an iterable object producing bytes.
+Bytes and bytearray are examples of built-in objects that support the
+buffer protocol.
+byteorder
+The byte order used to represent the integer.
+If byteorder is 'big',
+the most significant byte is at the beginning of the byte array.
+If
+byteorder is 'little', the most significant byte is at the end of the
+byte array.
+To request the native byte order of the host system, use
+`sys.byteorder' as the byte order value.
+signed
+Indicates whether two's complement is used to represent the integer.</p></div>
+</dd>
+<dt id="hat.asn1.common.int.to_bytes"><code class="name flex">
+<span>def <span class="ident">to_bytes</span></span>(<span>self, /, length, byteorder, *, signed=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return an array of bytes representing an integer.</p>
+<p>length
+Length of bytes object to use.
+An OverflowError is raised if the
+integer is not representable with the given number of bytes.
+byteorder
+The byte order used to represent the integer.
+If byteorder is 'big',
+the most significant byte is at the beginning of the byte array.
+If
+byteorder is 'little', the most significant byte is at the end of the
+byte array.
+To request the native byte order of the host system, use
+`sys.byteorder' as the byte order value.
+signed
+Determines whether two's complement is used to represent the integer.
+If signed is False and a negative integer is given, an OverflowError
+is raised.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.asn1.common.str"><code class="flex name class">
+<span>class <span class="ident">String</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li>aiohttp.payload.Order</li>
+<li>docutils.nodes.Text</li>
+<li>markdown.util.AtomicString</li>
+<li>markupsafe.Markup</li>
+<li>multidict._multidict.istr</li>
+<li>pygments.lexer.include</li>
+<li>shibokensupport.signature.mapping._NotCalled</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="hat.asn1.common.str.maketrans"><code class="name flex">
+<span>def <span class="ident">maketrans</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a translation table usable for str.translate().</p>
+<p>If there is only one argument, it must be a dictionary mapping Unicode
+ordinals (integers) or characters to Unicode ordinals, strings or None.
+Character keys will be then converted to ordinals.
+If there are two arguments, they must be strings of equal length, and
+in the resulting dictionary, each character in x will be mapped to the
+character at the same position in y. If there is a third argument, it
+must be a string, whose characters will be mapped to None in the result.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.asn1.common.str.capitalize"><code class="name flex">
+<span>def <span class="ident">capitalize</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a capitalized version of the string.</p>
+<p>More specifically, make the first character have upper case and the rest lower
+case.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.casefold"><code class="name flex">
+<span>def <span class="ident">casefold</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a version of the string suitable for caseless comparisons.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.center"><code class="name flex">
+<span>def <span class="ident">center</span></span>(<span>self, width, fillchar=' ', /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a centered string of length width.</p>
+<p>Padding is done using the specified fill character (default is a space).</p></div>
+</dd>
+<dt id="hat.asn1.common.str.count"><code class="name flex">
+<span>def <span class="ident">count</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.count(sub[, start[, end]]) -&gt; int</p>
+<p>Return the number of non-overlapping occurrences of substring sub in
+string S[start:end].
+Optional arguments start and end are
+interpreted as in slice notation.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.encode"><code class="name flex">
+<span>def <span class="ident">encode</span></span>(<span>self, /, encoding='utf-8', errors='strict')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Encode the string using the codec registered for encoding.</p>
+<p>encoding
+The encoding in which to encode the string.
+errors
+The error handling scheme to use for encoding errors.
+The default is 'strict' meaning that encoding errors raise a
+UnicodeEncodeError.
+Other possible values are 'ignore', 'replace' and
+'xmlcharrefreplace' as well as any other name registered with
+codecs.register_error that can handle UnicodeEncodeErrors.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.endswith"><code class="name flex">
+<span>def <span class="ident">endswith</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.endswith(suffix[, start[, end]]) -&gt; bool</p>
+<p>Return True if S ends with the specified suffix, False otherwise.
+With optional start, test S beginning at that position.
+With optional end, stop comparing S at that position.
+suffix can also be a tuple of strings to try.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.expandtabs"><code class="name flex">
+<span>def <span class="ident">expandtabs</span></span>(<span>self, /, tabsize=8)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy where all tab characters are expanded using spaces.</p>
+<p>If tabsize is not given, a tab size of 8 characters is assumed.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.find"><code class="name flex">
+<span>def <span class="ident">find</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.find(sub[, start[, end]]) -&gt; int</p>
+<p>Return the lowest index in S where substring sub is found,
+such that sub is contained within S[start:end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Return -1 on failure.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.format"><code class="name flex">
+<span>def <span class="ident">format</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.format(<em>args, </em>*kwargs) -&gt; str</p>
+<p>Return a formatted version of S, using substitutions from args and kwargs.
+The substitutions are identified by braces ('{' and '}').</p></div>
+</dd>
+<dt id="hat.asn1.common.str.format_map"><code class="name flex">
+<span>def <span class="ident">format_map</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.format_map(mapping) -&gt; str</p>
+<p>Return a formatted version of S, using substitutions from mapping.
+The substitutions are identified by braces ('{' and '}').</p></div>
+</dd>
+<dt id="hat.asn1.common.str.index"><code class="name flex">
+<span>def <span class="ident">index</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.index(sub[, start[, end]]) -&gt; int</p>
+<p>Return the lowest index in S where substring sub is found,
+such that sub is contained within S[start:end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Raises ValueError when the substring is not found.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isalnum"><code class="name flex">
+<span>def <span class="ident">isalnum</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is an alpha-numeric string, False otherwise.</p>
+<p>A string is alpha-numeric if all characters in the string are alpha-numeric and
+there is at least one character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isalpha"><code class="name flex">
+<span>def <span class="ident">isalpha</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is an alphabetic string, False otherwise.</p>
+<p>A string is alphabetic if all characters in the string are alphabetic and there
+is at least one character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isascii"><code class="name flex">
+<span>def <span class="ident">isascii</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if all characters in the string are ASCII, False otherwise.</p>
+<p>ASCII characters have code points in the range U+0000-U+007F.
+Empty string is ASCII too.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isdecimal"><code class="name flex">
+<span>def <span class="ident">isdecimal</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a decimal string, False otherwise.</p>
+<p>A string is a decimal string if all characters in the string are decimal and
+there is at least one character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isdigit"><code class="name flex">
+<span>def <span class="ident">isdigit</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a digit string, False otherwise.</p>
+<p>A string is a digit string if all characters in the string are digits and there
+is at least one character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isidentifier"><code class="name flex">
+<span>def <span class="ident">isidentifier</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a valid Python identifier, False otherwise.</p>
+<p>Call keyword.iskeyword(s) to test whether string s is a reserved identifier,
+such as "def" or "class".</p></div>
+</dd>
+<dt id="hat.asn1.common.str.islower"><code class="name flex">
+<span>def <span class="ident">islower</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a lowercase string, False otherwise.</p>
+<p>A string is lowercase if all cased characters in the string are lowercase and
+there is at least one cased character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isnumeric"><code class="name flex">
+<span>def <span class="ident">isnumeric</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a numeric string, False otherwise.</p>
+<p>A string is numeric if all characters in the string are numeric and there is at
+least one character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isprintable"><code class="name flex">
+<span>def <span class="ident">isprintable</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is printable, False otherwise.</p>
+<p>A string is printable if all of its characters are considered printable in
+repr() or if it is empty.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isspace"><code class="name flex">
+<span>def <span class="ident">isspace</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a whitespace string, False otherwise.</p>
+<p>A string is whitespace if all characters in the string are whitespace and there
+is at least one character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.istitle"><code class="name flex">
+<span>def <span class="ident">istitle</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is a title-cased string, False otherwise.</p>
+<p>In a title-cased string, upper- and title-case characters may only
+follow uncased characters and lowercase characters only cased ones.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.isupper"><code class="name flex">
+<span>def <span class="ident">isupper</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return True if the string is an uppercase string, False otherwise.</p>
+<p>A string is uppercase if all cased characters in the string are uppercase and
+there is at least one cased character in the string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.join"><code class="name flex">
+<span>def <span class="ident">join</span></span>(<span>self, iterable, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Concatenate any number of strings.</p>
+<p>The string whose method is called is inserted in between each given string.
+The result is returned as a new string.</p>
+<p>Example: '.'.join(['ab', 'pq', 'rs']) -&gt; 'ab.pq.rs'</p></div>
+</dd>
+<dt id="hat.asn1.common.str.ljust"><code class="name flex">
+<span>def <span class="ident">ljust</span></span>(<span>self, width, fillchar=' ', /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a left-justified string of length width.</p>
+<p>Padding is done using the specified fill character (default is a space).</p></div>
+</dd>
+<dt id="hat.asn1.common.str.lower"><code class="name flex">
+<span>def <span class="ident">lower</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy of the string converted to lowercase.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.lstrip"><code class="name flex">
+<span>def <span class="ident">lstrip</span></span>(<span>self, chars=None, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy of the string with leading whitespace removed.</p>
+<p>If chars is given and not None, remove characters in chars instead.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.partition"><code class="name flex">
+<span>def <span class="ident">partition</span></span>(<span>self, sep, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Partition the string into three parts using the given separator.</p>
+<p>This will search for the separator in the string.
+If the separator is found,
+returns a 3-tuple containing the part before the separator, the separator
+itself, and the part after it.</p>
+<p>If the separator is not found, returns a 3-tuple containing the original string
+and two empty strings.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.replace"><code class="name flex">
+<span>def <span class="ident">replace</span></span>(<span>self, old, new, count=-1, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy with all occurrences of substring old replaced by new.</p>
+<p>count
+Maximum number of occurrences to replace.
+-1 (the default value) means replace all occurrences.</p>
+<p>If the optional argument count is given, only the first count occurrences are
+replaced.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.rfind"><code class="name flex">
+<span>def <span class="ident">rfind</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.rfind(sub[, start[, end]]) -&gt; int</p>
+<p>Return the highest index in S where substring sub is found,
+such that sub is contained within S[start:end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Return -1 on failure.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.rindex"><code class="name flex">
+<span>def <span class="ident">rindex</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.rindex(sub[, start[, end]]) -&gt; int</p>
+<p>Return the highest index in S where substring sub is found,
+such that sub is contained within S[start:end].
+Optional
+arguments start and end are interpreted as in slice notation.</p>
+<p>Raises ValueError when the substring is not found.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.rjust"><code class="name flex">
+<span>def <span class="ident">rjust</span></span>(<span>self, width, fillchar=' ', /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a right-justified string of length width.</p>
+<p>Padding is done using the specified fill character (default is a space).</p></div>
+</dd>
+<dt id="hat.asn1.common.str.rpartition"><code class="name flex">
+<span>def <span class="ident">rpartition</span></span>(<span>self, sep, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Partition the string into three parts using the given separator.</p>
+<p>This will search for the separator in the string, starting at the end. If
+the separator is found, returns a 3-tuple containing the part before the
+separator, the separator itself, and the part after it.</p>
+<p>If the separator is not found, returns a 3-tuple containing two empty strings
+and the original string.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.rsplit"><code class="name flex">
+<span>def <span class="ident">rsplit</span></span>(<span>self, /, sep=None, maxsplit=-1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a list of the words in the string, using sep as the delimiter string.</p>
+<p>sep
+The delimiter according which to split the string.
+None (the default value) means split according to any whitespace,
+and discard empty strings from the result.
+maxsplit
+Maximum number of splits to do.
+-1 (the default value) means no limit.</p>
+<p>Splits are done starting at the end of the string and working to the front.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.rstrip"><code class="name flex">
+<span>def <span class="ident">rstrip</span></span>(<span>self, chars=None, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy of the string with trailing whitespace removed.</p>
+<p>If chars is given and not None, remove characters in chars instead.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.split"><code class="name flex">
+<span>def <span class="ident">split</span></span>(<span>self, /, sep=None, maxsplit=-1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a list of the words in the string, using sep as the delimiter string.</p>
+<p>sep
+The delimiter according which to split the string.
+None (the default value) means split according to any whitespace,
+and discard empty strings from the result.
+maxsplit
+Maximum number of splits to do.
+-1 (the default value) means no limit.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.splitlines"><code class="name flex">
+<span>def <span class="ident">splitlines</span></span>(<span>self, /, keepends=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a list of the lines in the string, breaking at line boundaries.</p>
+<p>Line breaks are not included in the resulting list unless keepends is given and
+true.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.startswith"><code class="name flex">
+<span>def <span class="ident">startswith</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>S.startswith(prefix[, start[, end]]) -&gt; bool</p>
+<p>Return True if S starts with the specified prefix, False otherwise.
+With optional start, test S beginning at that position.
+With optional end, stop comparing S at that position.
+prefix can also be a tuple of strings to try.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.strip"><code class="name flex">
+<span>def <span class="ident">strip</span></span>(<span>self, chars=None, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy of the string with leading and trailing whitespace removed.</p>
+<p>If chars is given and not None, remove characters in chars instead.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.swapcase"><code class="name flex">
+<span>def <span class="ident">swapcase</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert uppercase characters to lowercase and lowercase characters to uppercase.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.title"><code class="name flex">
+<span>def <span class="ident">title</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a version of the string where each word is titlecased.</p>
+<p>More specifically, words start with uppercased characters and all remaining
+cased characters have lower case.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, table, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Replace each character in the string using the given translation table.</p>
+<p>table
+Translation table, which must be a mapping of Unicode ordinals to
+Unicode ordinals, strings, or None.</p>
+<p>The table must implement lookup/indexing via <strong>getitem</strong>, for instance a
+dictionary or list.
+If this operation raises LookupError, the character is
+left untouched.
+Characters mapped to None are deleted.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.upper"><code class="name flex">
+<span>def <span class="ident">upper</span></span>(<span>self, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a copy of the string converted to uppercase.</p></div>
+</dd>
+<dt id="hat.asn1.common.str.zfill"><code class="name flex">
+<span>def <span class="ident">zfill</span></span>(<span>self, width, /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pad a numeric string with zeros on the left, to fill a field of the given width.</p>
+<p>The string is never truncated.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.asn1" href="index.html">hat.asn1</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.BitString" href="#hat.asn1.common.BitString">BitString</a></code></li>
+<li><code><a title="hat.asn1.common.Choice" href="#hat.asn1.common.Choice">Choice</a></code></li>
+<li><code><a title="hat.asn1.common.Data" href="#hat.asn1.common.Data">Data</a></code></li>
+<li><code><a title="hat.asn1.common.Null" href="#hat.asn1.common.Null">Null</a></code></li>
+<li><code><a title="hat.asn1.common.ObjectIdentifier" href="#hat.asn1.common.ObjectIdentifier">ObjectIdentifier</a></code></li>
+<li><code><a title="hat.asn1.common.Sequence" href="#hat.asn1.common.Sequence">Sequence</a></code></li>
+<li><code><a title="hat.asn1.common.SequenceOf" href="#hat.asn1.common.SequenceOf">SequenceOf</a></code></li>
+<li><code><a title="hat.asn1.common.Set" href="#hat.asn1.common.Set">Set</a></code></li>
+<li><code><a title="hat.asn1.common.SetOf" href="#hat.asn1.common.SetOf">SetOf</a></code></li>
+<li><code><a title="hat.asn1.common.Type" href="#hat.asn1.common.Type">Type</a></code></li>
+<li><code><a title="hat.asn1.common.Value" href="#hat.asn1.common.Value">Value</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.asn1.common.is_oid_eq" href="#hat.asn1.common.is_oid_eq">is_oid_eq</a></code></li>
+<li><code><a title="hat.asn1.common.type_from_json" href="#hat.asn1.common.type_from_json">type_from_json</a></code></li>
+<li><code><a title="hat.asn1.common.type_to_json" href="#hat.asn1.common.type_to_json">type_to_json</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.asn1.common.BitStringType" href="#hat.asn1.common.BitStringType">BitStringType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.BooleanType" href="#hat.asn1.common.BooleanType">BooleanType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.ChoiceType" href="#hat.asn1.common.ChoiceType">ChoiceType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.ChoiceType.choices" href="#hat.asn1.common.ChoiceType.choices">choices</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.ClassType" href="#hat.asn1.common.ClassType">ClassType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.ClassType.APPLICATION" href="#hat.asn1.common.ClassType.APPLICATION">APPLICATION</a></code></li>
+<li><code><a title="hat.asn1.common.ClassType.CONTEXT_SPECIFIC" href="#hat.asn1.common.ClassType.CONTEXT_SPECIFIC">CONTEXT_SPECIFIC</a></code></li>
+<li><code><a title="hat.asn1.common.ClassType.PRIVATE" href="#hat.asn1.common.ClassType.PRIVATE">PRIVATE</a></code></li>
+<li><code><a title="hat.asn1.common.ClassType.UNIVERSAL" href="#hat.asn1.common.ClassType.UNIVERSAL">UNIVERSAL</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.EmbeddedPDV" href="#hat.asn1.common.EmbeddedPDV">EmbeddedPDV</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.EmbeddedPDV.abstract" href="#hat.asn1.common.EmbeddedPDV.abstract">abstract</a></code></li>
+<li><code><a title="hat.asn1.common.EmbeddedPDV.data" href="#hat.asn1.common.EmbeddedPDV.data">data</a></code></li>
+<li><code><a title="hat.asn1.common.EmbeddedPDV.transfer" href="#hat.asn1.common.EmbeddedPDV.transfer">transfer</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.EmbeddedPDVType" href="#hat.asn1.common.EmbeddedPDVType">EmbeddedPDVType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.Entity" href="#hat.asn1.common.Entity">Entity</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.EntityType" href="#hat.asn1.common.EntityType">EntityType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.EnumeratedType" href="#hat.asn1.common.EnumeratedType">EnumeratedType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.External" href="#hat.asn1.common.External">External</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.External.data" href="#hat.asn1.common.External.data">data</a></code></li>
+<li><code><a title="hat.asn1.common.External.direct_ref" href="#hat.asn1.common.External.direct_ref">direct_ref</a></code></li>
+<li><code><a title="hat.asn1.common.External.indirect_ref" href="#hat.asn1.common.External.indirect_ref">indirect_ref</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.ExternalType" href="#hat.asn1.common.ExternalType">ExternalType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.IntegerType" href="#hat.asn1.common.IntegerType">IntegerType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.NullType" href="#hat.asn1.common.NullType">NullType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.ObjectIdentifierType" href="#hat.asn1.common.ObjectIdentifierType">ObjectIdentifierType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.OctetStringType" href="#hat.asn1.common.OctetStringType">OctetStringType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.PrefixedType" href="#hat.asn1.common.PrefixedType">PrefixedType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.PrefixedType.class_type" href="#hat.asn1.common.PrefixedType.class_type">class_type</a></code></li>
+<li><code><a title="hat.asn1.common.PrefixedType.implicit" href="#hat.asn1.common.PrefixedType.implicit">implicit</a></code></li>
+<li><code><a title="hat.asn1.common.PrefixedType.tag_number" href="#hat.asn1.common.PrefixedType.tag_number">tag_number</a></code></li>
+<li><code><a title="hat.asn1.common.PrefixedType.type" href="#hat.asn1.common.PrefixedType.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.RealType" href="#hat.asn1.common.RealType">RealType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.SequenceOfType" href="#hat.asn1.common.SequenceOfType">SequenceOfType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.SequenceOfType.type" href="#hat.asn1.common.SequenceOfType.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.SequenceType" href="#hat.asn1.common.SequenceType">SequenceType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.SequenceType.elements" href="#hat.asn1.common.SequenceType.elements">elements</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.SetOfType" href="#hat.asn1.common.SetOfType">SetOfType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.SetOfType.type" href="#hat.asn1.common.SetOfType.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.SetType" href="#hat.asn1.common.SetType">SetType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.SetType.elements" href="#hat.asn1.common.SetType.elements">elements</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.StringType" href="#hat.asn1.common.StringType">StringType</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.StringType.BMPString" href="#hat.asn1.common.StringType.BMPString">BMPString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.CHARACTER_STRING" href="#hat.asn1.common.StringType.CHARACTER_STRING">CHARACTER_STRING</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.GeneralString" href="#hat.asn1.common.StringType.GeneralString">GeneralString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.GeneralizedTime" href="#hat.asn1.common.StringType.GeneralizedTime">GeneralizedTime</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.GraphicString" href="#hat.asn1.common.StringType.GraphicString">GraphicString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.IA5String" href="#hat.asn1.common.StringType.IA5String">IA5String</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.NumericString" href="#hat.asn1.common.StringType.NumericString">NumericString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.ObjectDescriptor" href="#hat.asn1.common.StringType.ObjectDescriptor">ObjectDescriptor</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.PrintableString" href="#hat.asn1.common.StringType.PrintableString">PrintableString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.T61String" href="#hat.asn1.common.StringType.T61String">T61String</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.UTCTime" href="#hat.asn1.common.StringType.UTCTime">UTCTime</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.UTF8String" href="#hat.asn1.common.StringType.UTF8String">UTF8String</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.UniversalString" href="#hat.asn1.common.StringType.UniversalString">UniversalString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.VideotexString" href="#hat.asn1.common.StringType.VideotexString">VideotexString</a></code></li>
+<li><code><a title="hat.asn1.common.StringType.VisibleString" href="#hat.asn1.common.StringType.VisibleString">VisibleString</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.TypeProperty" href="#hat.asn1.common.TypeProperty">TypeProperty</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.TypeProperty.name" href="#hat.asn1.common.TypeProperty.name">name</a></code></li>
+<li><code><a title="hat.asn1.common.TypeProperty.optional" href="#hat.asn1.common.TypeProperty.optional">optional</a></code></li>
+<li><code><a title="hat.asn1.common.TypeProperty.type" href="#hat.asn1.common.TypeProperty.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.TypeRef" href="#hat.asn1.common.TypeRef">TypeRef</a></code></h4>
+<ul class="">
+<li><code><a title="hat.asn1.common.TypeRef.module" href="#hat.asn1.common.TypeRef.module">module</a></code></li>
+<li><code><a title="hat.asn1.common.TypeRef.name" href="#hat.asn1.common.TypeRef.name">name</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.UnsupportedType" href="#hat.asn1.common.UnsupportedType">UnsupportedType</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.bool" href="#hat.asn1.common.bool">bool</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.bytes" href="#hat.asn1.common.bytes">bytes</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.bytes.capitalize" href="#hat.asn1.common.bytes.capitalize">capitalize</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.center" href="#hat.asn1.common.bytes.center">center</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.count" href="#hat.asn1.common.bytes.count">count</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.decode" href="#hat.asn1.common.bytes.decode">decode</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.endswith" href="#hat.asn1.common.bytes.endswith">endswith</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.expandtabs" href="#hat.asn1.common.bytes.expandtabs">expandtabs</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.find" href="#hat.asn1.common.bytes.find">find</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.fromhex" href="#hat.asn1.common.bytes.fromhex">fromhex</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.hex" href="#hat.asn1.common.bytes.hex">hex</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.index" href="#hat.asn1.common.bytes.index">index</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.isalnum" href="#hat.asn1.common.bytes.isalnum">isalnum</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.isalpha" href="#hat.asn1.common.bytes.isalpha">isalpha</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.isascii" href="#hat.asn1.common.bytes.isascii">isascii</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.isdigit" href="#hat.asn1.common.bytes.isdigit">isdigit</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.islower" href="#hat.asn1.common.bytes.islower">islower</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.isspace" href="#hat.asn1.common.bytes.isspace">isspace</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.istitle" href="#hat.asn1.common.bytes.istitle">istitle</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.isupper" href="#hat.asn1.common.bytes.isupper">isupper</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.join" href="#hat.asn1.common.bytes.join">join</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.ljust" href="#hat.asn1.common.bytes.ljust">ljust</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.lower" href="#hat.asn1.common.bytes.lower">lower</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.lstrip" href="#hat.asn1.common.bytes.lstrip">lstrip</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.maketrans" href="#hat.asn1.common.bytes.maketrans">maketrans</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.partition" href="#hat.asn1.common.bytes.partition">partition</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.replace" href="#hat.asn1.common.bytes.replace">replace</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.rfind" href="#hat.asn1.common.bytes.rfind">rfind</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.rindex" href="#hat.asn1.common.bytes.rindex">rindex</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.rjust" href="#hat.asn1.common.bytes.rjust">rjust</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.rpartition" href="#hat.asn1.common.bytes.rpartition">rpartition</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.rsplit" href="#hat.asn1.common.bytes.rsplit">rsplit</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.rstrip" href="#hat.asn1.common.bytes.rstrip">rstrip</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.split" href="#hat.asn1.common.bytes.split">split</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.splitlines" href="#hat.asn1.common.bytes.splitlines">splitlines</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.startswith" href="#hat.asn1.common.bytes.startswith">startswith</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.strip" href="#hat.asn1.common.bytes.strip">strip</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.swapcase" href="#hat.asn1.common.bytes.swapcase">swapcase</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.title" href="#hat.asn1.common.bytes.title">title</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.translate" href="#hat.asn1.common.bytes.translate">translate</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.upper" href="#hat.asn1.common.bytes.upper">upper</a></code></li>
+<li><code><a title="hat.asn1.common.bytes.zfill" href="#hat.asn1.common.bytes.zfill">zfill</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.float" href="#hat.asn1.common.float">float</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.float.as_integer_ratio" href="#hat.asn1.common.float.as_integer_ratio">as_integer_ratio</a></code></li>
+<li><code><a title="hat.asn1.common.float.conjugate" href="#hat.asn1.common.float.conjugate">conjugate</a></code></li>
+<li><code><a title="hat.asn1.common.float.fromhex" href="#hat.asn1.common.float.fromhex">fromhex</a></code></li>
+<li><code><a title="hat.asn1.common.float.hex" href="#hat.asn1.common.float.hex">hex</a></code></li>
+<li><code><a title="hat.asn1.common.float.imag" href="#hat.asn1.common.float.imag">imag</a></code></li>
+<li><code><a title="hat.asn1.common.float.is_integer" href="#hat.asn1.common.float.is_integer">is_integer</a></code></li>
+<li><code><a title="hat.asn1.common.float.real" href="#hat.asn1.common.float.real">real</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.int.as_integer_ratio" href="#hat.asn1.common.int.as_integer_ratio">as_integer_ratio</a></code></li>
+<li><code><a title="hat.asn1.common.int.bit_length" href="#hat.asn1.common.int.bit_length">bit_length</a></code></li>
+<li><code><a title="hat.asn1.common.int.conjugate" href="#hat.asn1.common.int.conjugate">conjugate</a></code></li>
+<li><code><a title="hat.asn1.common.int.denominator" href="#hat.asn1.common.int.denominator">denominator</a></code></li>
+<li><code><a title="hat.asn1.common.int.from_bytes" href="#hat.asn1.common.int.from_bytes">from_bytes</a></code></li>
+<li><code><a title="hat.asn1.common.int.imag" href="#hat.asn1.common.int.imag">imag</a></code></li>
+<li><code><a title="hat.asn1.common.int.numerator" href="#hat.asn1.common.int.numerator">numerator</a></code></li>
+<li><code><a title="hat.asn1.common.int.real" href="#hat.asn1.common.int.real">real</a></code></li>
+<li><code><a title="hat.asn1.common.int.to_bytes" href="#hat.asn1.common.int.to_bytes">to_bytes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.int" href="#hat.asn1.common.int">int</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.int.as_integer_ratio" href="#hat.asn1.common.int.as_integer_ratio">as_integer_ratio</a></code></li>
+<li><code><a title="hat.asn1.common.int.bit_length" href="#hat.asn1.common.int.bit_length">bit_length</a></code></li>
+<li><code><a title="hat.asn1.common.int.conjugate" href="#hat.asn1.common.int.conjugate">conjugate</a></code></li>
+<li><code><a title="hat.asn1.common.int.denominator" href="#hat.asn1.common.int.denominator">denominator</a></code></li>
+<li><code><a title="hat.asn1.common.int.from_bytes" href="#hat.asn1.common.int.from_bytes">from_bytes</a></code></li>
+<li><code><a title="hat.asn1.common.int.imag" href="#hat.asn1.common.int.imag">imag</a></code></li>
+<li><code><a title="hat.asn1.common.int.numerator" href="#hat.asn1.common.int.numerator">numerator</a></code></li>
+<li><code><a title="hat.asn1.common.int.real" href="#hat.asn1.common.int.real">real</a></code></li>
+<li><code><a title="hat.asn1.common.int.to_bytes" href="#hat.asn1.common.int.to_bytes">to_bytes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.asn1.common.str" href="#hat.asn1.common.str">str</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.asn1.common.str.capitalize" href="#hat.asn1.common.str.capitalize">capitalize</a></code></li>
+<li><code><a title="hat.asn1.common.str.casefold" href="#hat.asn1.common.str.casefold">casefold</a></code></li>
+<li><code><a title="hat.asn1.common.str.center" href="#hat.asn1.common.str.center">center</a></code></li>
+<li><code><a title="hat.asn1.common.str.count" href="#hat.asn1.common.str.count">count</a></code></li>
+<li><code><a title="hat.asn1.common.str.encode" href="#hat.asn1.common.str.encode">encode</a></code></li>
+<li><code><a title="hat.asn1.common.str.endswith" href="#hat.asn1.common.str.endswith">endswith</a></code></li>
+<li><code><a title="hat.asn1.common.str.expandtabs" href="#hat.asn1.common.str.expandtabs">expandtabs</a></code></li>
+<li><code><a title="hat.asn1.common.str.find" href="#hat.asn1.common.str.find">find</a></code></li>
+<li><code><a title="hat.asn1.common.str.format" href="#hat.asn1.common.str.format">format</a></code></li>
+<li><code><a title="hat.asn1.common.str.format_map" href="#hat.asn1.common.str.format_map">format_map</a></code></li>
+<li><code><a title="hat.asn1.common.str.index" href="#hat.asn1.common.str.index">index</a></code></li>
+<li><code><a title="hat.asn1.common.str.isalnum" href="#hat.asn1.common.str.isalnum">isalnum</a></code></li>
+<li><code><a title="hat.asn1.common.str.isalpha" href="#hat.asn1.common.str.isalpha">isalpha</a></code></li>
+<li><code><a title="hat.asn1.common.str.isascii" href="#hat.asn1.common.str.isascii">isascii</a></code></li>
+<li><code><a title="hat.asn1.common.str.isdecimal" href="#hat.asn1.common.str.isdecimal">isdecimal</a></code></li>
+<li><code><a title="hat.asn1.common.str.isdigit" href="#hat.asn1.common.str.isdigit">isdigit</a></code></li>
+<li><code><a title="hat.asn1.common.str.isidentifier" href="#hat.asn1.common.str.isidentifier">isidentifier</a></code></li>
+<li><code><a title="hat.asn1.common.str.islower" href="#hat.asn1.common.str.islower">islower</a></code></li>
+<li><code><a title="hat.asn1.common.str.isnumeric" href="#hat.asn1.common.str.isnumeric">isnumeric</a></code></li>
+<li><code><a title="hat.asn1.common.str.isprintable" href="#hat.asn1.common.str.isprintable">isprintable</a></code></li>
+<li><code><a title="hat.asn1.common.str.isspace" href="#hat.asn1.common.str.isspace">isspace</a></code></li>
+<li><code><a title="hat.asn1.common.str.istitle" href="#hat.asn1.common.str.istitle">istitle</a></code></li>
+<li><code><a title="hat.asn1.common.str.isupper" href="#hat.asn1.common.str.isupper">isupper</a></code></li>
+<li><code><a title="hat.asn1.common.str.join" href="#hat.asn1.common.str.join">join</a></code></li>
+<li><code><a title="hat.asn1.common.str.ljust" href="#hat.asn1.common.str.ljust">ljust</a></code></li>
+<li><code><a title="hat.asn1.common.str.lower" href="#hat.asn1.common.str.lower">lower</a></code></li>
+<li><code><a title="hat.asn1.common.str.lstrip" href="#hat.asn1.common.str.lstrip">lstrip</a></code></li>
+<li><code><a title="hat.asn1.common.str.maketrans" href="#hat.asn1.common.str.maketrans">maketrans</a></code></li>
+<li><code><a title="hat.asn1.common.str.partition" href="#hat.asn1.common.str.partition">partition</a></code></li>
+<li><code><a title="hat.asn1.common.str.replace" href="#hat.asn1.common.str.replace">replace</a></code></li>
+<li><code><a title="hat.asn1.common.str.rfind" href="#hat.asn1.common.str.rfind">rfind</a></code></li>
+<li><code><a title="hat.asn1.common.str.rindex" href="#hat.asn1.common.str.rindex">rindex</a></code></li>
+<li><code><a title="hat.asn1.common.str.rjust" href="#hat.asn1.common.str.rjust">rjust</a></code></li>
+<li><code><a title="hat.asn1.common.str.rpartition" href="#hat.asn1.common.str.rpartition">rpartition</a></code></li>
+<li><code><a title="hat.asn1.common.str.rsplit" href="#hat.asn1.common.str.rsplit">rsplit</a></code></li>
+<li><code><a title="hat.asn1.common.str.rstrip" href="#hat.asn1.common.str.rstrip">rstrip</a></code></li>
+<li><code><a title="hat.asn1.common.str.split" href="#hat.asn1.common.str.split">split</a></code></li>
+<li><code><a title="hat.asn1.common.str.splitlines" href="#hat.asn1.common.str.splitlines">splitlines</a></code></li>
+<li><code><a title="hat.asn1.common.str.startswith" href="#hat.asn1.common.str.startswith">startswith</a></code></li>
+<li><code><a title="hat.asn1.common.str.strip" href="#hat.asn1.common.str.strip">strip</a></code></li>
+<li><code><a title="hat.asn1.common.str.swapcase" href="#hat.asn1.common.str.swapcase">swapcase</a></code></li>
+<li><code><a title="hat.asn1.common.str.title" href="#hat.asn1.common.str.title">title</a></code></li>
+<li><code><a title="hat.asn1.common.str.translate" href="#hat.asn1.common.str.translate">translate</a></code></li>
+<li><code><a title="hat.asn1.common.str.upper" href="#hat.asn1.common.str.upper">upper</a></code></li>
+<li><code><a title="hat.asn1.common.str.zfill" href="#hat.asn1.common.str.zfill">zfill</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,2719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.aio API documentation</title>
+<meta name="description" content="Async utility functions" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.aio</code></h1>
+</header>
+<section id="section-intro">
+<p>Async utility functions</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Async utility functions&#34;&#34;&#34;
+
+import abc
+import asyncio
+import collections
+import collections.abc
+import concurrent.futures
+import contextlib
+import functools
+import inspect
+import logging
+import signal
+import sys
+import typing
+
+
+mlog: logging.Logger = logging.getLogger(__name__)
+&#34;&#34;&#34;Module logger&#34;&#34;&#34;
+
+T = typing.TypeVar(&#39;T&#39;)
+
+
+async def first(xs: typing.AsyncIterable[T],
+                fn: typing.Callable[[T], bool] = lambda _: True,
+                default: typing.Optional[T] = None
+                ) -&gt; typing.Optional[T]:
+    &#34;&#34;&#34;Return the first element from async iterable that satisfies
+    predicate `fn`, or `default` if no such element exists.
+
+    Args:
+        xs: async collection
+        fn: predicate
+        default: default value
+
+    Example::
+
+        async def async_range(x):
+            for i in range(x):
+                await asyncio.sleep(0)
+                yield i
+
+        assert await first(async_range(3)) == 0
+        assert await first(async_range(3), lambda x: x &gt; 1) == 2
+        assert await first(async_range(3), lambda x: x &gt; 2) is None
+        assert await first(async_range(3), lambda x: x &gt; 2, 123) == 123
+
+    &#34;&#34;&#34;
+    async for i in xs:
+        if fn(i):
+            return i
+    return default
+
+
+async def uncancellable(f: asyncio.Future,
+                        raise_cancel: bool = True
+                        ) -&gt; typing.Any:
+    &#34;&#34;&#34;Uncancellable execution of a Future.
+
+    Future is shielded and its execution cannot be interrupted.
+
+    If `raise_cancel` is `True` and the Future gets canceled,
+    `asyncio.CancelledError` is reraised after the Future finishes.
+
+    Warning:
+        If `raise_cancel` is `False`, this method suppresses
+        `asyncio.CancelledError` and stops its propagation. Use with
+        caution.
+
+    Args:
+        f: future
+        raise_cancel: raise CancelledError flag
+
+    Returns:
+        future&#39;s result
+
+    &#34;&#34;&#34;
+    exception = None
+    task = asyncio.ensure_future(f)
+    while not task.done():
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError as e:
+            if raise_cancel:
+                exception = e
+        except Exception:
+            pass
+    if exception:
+        raise exception
+    return task.result()
+
+
+# TODO: AsyncCallable rewrite needed
+class _AsyncCallableType(type(typing.Callable), _root=True):
+
+    def __init__(self):
+        if sys.version_info[:2] == (3, 8):
+            kwargs = {&#39;origin&#39;: collections.abc.Callable,
+                      &#39;params&#39;: (..., typing.Optional[typing.Awaitable]),
+                      &#39;special&#39;: True}
+        else:
+            kwargs = {&#39;origin&#39;: collections.abc.Callable,
+                      &#39;nparams&#39;: (..., typing.Optional[typing.Awaitable])}
+        super().__init__(**kwargs)
+
+    def __getitem__(self, params):
+        if len(params) == 2:
+            params = (params[0], typing.Union[params[1],
+                                              typing.Awaitable[params[1]]])
+        return super().__getitem__(params)
+
+
+AsyncCallable = _AsyncCallableType()
+&#34;&#34;&#34;Async callable&#34;&#34;&#34;
+
+
+async def call(fn: AsyncCallable, *args, **kwargs) -&gt; typing.Any:
+    &#34;&#34;&#34;Call a function or a coroutine (or other callable object).
+
+    Call the `fn` with `args` and `kwargs`. If result of this call is
+    awaitable, it is awaited and returned. Otherwise, result is immediately
+    returned.
+
+    Args:
+        fn: callable object
+        args: additional positional arguments
+        kwargs: additional keyword arguments
+
+    Returns:
+        awaited result or result
+
+    Example:
+
+        def f1(x):
+            return x
+
+        def f2(x):
+            f = asyncio.Future()
+            f.set_result(x)
+            return f
+
+        async def f3(x):
+            return x
+
+        assert &#39;f1&#39; == await hat.aio.call(f1, &#39;f1&#39;)
+        assert &#39;f2&#39; == await hat.aio.call(f2, &#39;f2&#39;)
+        assert &#39;f3&#39; == await hat.aio.call(f3, &#39;f3&#39;)
+
+    &#34;&#34;&#34;
+    result = fn(*args, **kwargs)
+    if inspect.isawaitable(result):
+        result = await result
+    return result
+
+
+async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -&gt; typing.Any:
+    &#34;&#34;&#34;Call a function or a coroutine when canceled.
+
+    When canceled, `fn` is called with `args` and `kwargs` by using
+    `call` coroutine.
+
+    Args:
+        fn: function or coroutine
+        args: additional function arguments
+        kwargs: additional function keyword arguments
+
+    Returns:
+        function result
+
+    Example::
+
+        f = asyncio.Future()
+        group = Group()
+        group.spawn(call_on_cancel, f.set_result, 123)
+        assert not f.done()
+        await group.async_close()
+        assert f.result() == 123
+
+    &#34;&#34;&#34;
+    with contextlib.suppress(asyncio.CancelledError):
+        await asyncio.Future()
+    return await call(fn, *args, *kwargs)
+
+
+async def call_on_done(f: typing.Awaitable,
+                       fn: AsyncCallable,
+                       *args, **kwargs
+                       ) -&gt; typing.Any:
+    &#34;&#34;&#34;Call a function or a coroutine when awaitable is done.
+
+    When `f` is done, `fn` is called with `args` and `kwargs` by using
+    `call` coroutine.
+
+    If this coroutine is canceled before `f` is done, `f` is canceled and `fn`
+    is not called.
+
+    If this coroutine is canceled after `f` is done, `fn` call is canceled.
+
+    Args:
+        f: awaitable future
+        fn: function or coroutine
+        args: additional function arguments
+        kwargs: additional function keyword arguments
+
+    Returns:
+        function result
+
+    Example::
+
+        f = asyncio.Future()
+        group = Group()
+        group.spawn(call_on_done, f, group.close)
+        assert group.is_open
+        f.set_result(None)
+        await group.wait_closed()
+        assert group.is_closed
+
+    &#34;&#34;&#34;
+    with contextlib.suppress(Exception):
+        await f
+    return await call(fn, *args, *kwargs)
+
+
+def create_executor(*args: typing.Any,
+                    executor_cls: typing.Type = concurrent.futures.ThreadPoolExecutor,  # NOQA
+                    loop: typing.Optional[asyncio.AbstractEventLoop] = None
+                    ) -&gt; typing.Callable[..., typing.Awaitable]:
+    &#34;&#34;&#34;Create `asyncio.loop.run_in_executor` wrapper.
+
+    Returns a coroutine that takes a function and its arguments, executes the
+    function using executor created from `executor_cls` and `args`; and
+    returns the result.
+
+    Args:
+        args: executor args
+        executor_cls: executor class
+        loop: asyncio loop
+
+    Returns:
+        executor coroutine
+
+    Example::
+
+        executor1 = create_executor()
+        executor2 = create_executor()
+        tid1 = await executor1(threading.get_ident)
+        tid2 = await executor2(threading.get_ident)
+        assert tid1 != tid2
+
+    &#34;&#34;&#34;
+    executor = executor_cls(*args)
+
+    async def executor_wrapper(func, /, *args, **kwargs):
+        _loop = loop or asyncio.get_event_loop()
+        fn = functools.partial(func, *args, **kwargs)
+        return await _loop.run_in_executor(executor, fn)
+
+    return executor_wrapper
+
+
+def init_asyncio(policy: typing.Optional[asyncio.AbstractEventLoopPolicy] = None):  # NOQA
+    &#34;&#34;&#34;Initialize asyncio.
+
+    Sets event loop policy (if ``None``, instance of
+    `asyncio.DefaultEventLoopPolicy` is used).
+
+    After policy is set, new event loop is created and associated with current
+    thread.
+
+    On Windows, `asyncio.WindowsProactorEventLoopPolicy` is used as default
+    policy.
+
+    &#34;&#34;&#34;
+
+    def get_default_policy():
+        if sys.platform == &#39;win32&#39;:
+            return asyncio.WindowsProactorEventLoopPolicy()
+
+        # TODO: evaluate usage of uvloop
+        # with contextlib.suppress(ModuleNotFoundError):
+        #     import uvloop
+        #     return uvloop.EventLoopPolicy()
+
+        return asyncio.DefaultEventLoopPolicy()
+
+    asyncio.set_event_loop_policy(policy or get_default_policy())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+
+def run_asyncio(future: typing.Awaitable, *,
+                handle_signals=True,
+                create_loop=False
+                ) -&gt; typing.Any:
+    &#34;&#34;&#34;Run asyncio loop until the `future` is completed and return the result.
+
+    If `handle_signals` is ``True``, SIGINT and SIGTERM handlers are
+    temporarily overridden. Instead of raising ``KeyboardInterrupt`` on every
+    signal reception, Future is canceled only once. Additional signals are
+    ignored. On Windows, SIGBREAK (CTRL_BREAK_EVENT) handler is also
+    overridden.
+
+    If `create_loop` is set to ``True``, new event loop is created and set
+    as thread&#39;s default event loop.
+
+    On Windows, asyncio loop gets periodically woken up (every 0.5 seconds).
+
+    Args:
+        future: future or coroutine
+        handle_signals: handle signals flag
+        create_loop: create new event loop
+
+    Returns:
+        future&#39;s result
+
+    Example::
+
+        async def run():
+            await asyncio.sleep(0)
+            return 123
+
+        result = run_asyncio(run())
+        assert result == 123
+
+    &#34;&#34;&#34;
+    if create_loop:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    else:
+        loop = asyncio.get_event_loop()
+
+    task = asyncio.ensure_future(future, loop=loop)
+
+    if sys.platform == &#39;win32&#39;:
+
+        async def task_wrapper(task):
+            try:
+                while not task.done():
+                    await asyncio.wait([task], timeout=0.5)
+            except asyncio.CancelledError:
+                task.cancel()
+            return await task
+
+        task = asyncio.ensure_future(task_wrapper(task), loop=loop)
+
+    if not handle_signals:
+        return loop.run_until_complete(task)
+
+    canceled = False
+    signalnums = [signal.SIGINT, signal.SIGTERM]
+    if sys.platform == &#39;win32&#39;:
+        signalnums += [signal.SIGBREAK]
+
+    def signal_handler(*args):
+        nonlocal canceled
+        if canceled:
+            return
+        loop.call_soon_threadsafe(task.cancel)
+        canceled = True
+
+    handlers = {signalnum: signal.getsignal(signalnum) or signal.SIG_DFL
+                for signalnum in signalnums}
+    for signalnum in signalnums:
+        signal.signal(signalnum, signal_handler)
+
+    try:
+        return loop.run_until_complete(task)
+
+    finally:
+        for signalnum, handler in handlers.items():
+            signal.signal(signalnum, handler)
+
+
+class QueueClosedError(Exception):
+    &#34;&#34;&#34;Raised when trying to use a closed queue.&#34;&#34;&#34;
+
+
+class QueueEmptyError(Exception):
+    &#34;&#34;&#34;Raised if queue is empty.&#34;&#34;&#34;
+
+
+class QueueFullError(Exception):
+    &#34;&#34;&#34;Raised if queue is full.&#34;&#34;&#34;
+
+
+class Queue:
+    &#34;&#34;&#34;Asyncio queue which implements AsyncIterable and can be closed.
+
+    Interface and implementation are based on `asyncio.Queue`.
+
+    If `maxsize` is less than or equal to zero, the queue size is infinite.
+
+    Args:
+        maxsize: maximum number of items in the queue
+
+    Example::
+
+        queue = Queue(maxsize=1)
+
+        async def producer():
+            for i in range(4):
+                await queue.put(i)
+            queue.close()
+
+        async def consumer():
+            result = 0
+            async for i in queue:
+                result += i
+            return result
+
+        asyncio.ensure_future(producer())
+        result = await consumer()
+        assert result == 6
+
+    &#34;&#34;&#34;
+
+    def __init__(self, maxsize: int = 0):
+        self._maxsize = maxsize
+        self._queue = collections.deque()
+        self._getters = collections.deque()
+        self._putters = collections.deque()
+        self._closed = asyncio.Future()
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        try:
+            return await self.get()
+        except QueueClosedError:
+            raise StopAsyncIteration
+
+    def __str__(self):
+        return (f&#39;&lt;{type(self).__name__}&#39;
+                f&#39; _closed={self._closed.done()} &#39;
+                f&#39; _queue={list(self._queue)}&gt;&#39;)
+
+    def __len__(self):
+        return len(self._queue)
+
+    @property
+    def maxsize(self) -&gt; int:
+        &#34;&#34;&#34;Maximum number of items in the queue.&#34;&#34;&#34;
+        return self._maxsize
+
+    @property
+    def is_closed(self) -&gt; bool:
+        &#34;&#34;&#34;Is queue closed.&#34;&#34;&#34;
+        return self._closed.done()
+
+    def empty(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if queue is empty, ``False`` otherwise.&#34;&#34;&#34;
+        return not self._queue
+
+    def full(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if queue is full, ``False`` otherwise.&#34;&#34;&#34;
+        return (len(self._queue) &gt;= self._maxsize if self._maxsize &gt; 0
+                else False)
+
+    def qsize(self) -&gt; int:
+        &#34;&#34;&#34;Number of items currently in the queue.&#34;&#34;&#34;
+        return len(self._queue)
+
+    def close(self):
+        &#34;&#34;&#34;Close the queue.&#34;&#34;&#34;
+        if self._closed.done():
+            return
+        self._closed.set_result(True)
+        self._wakeup_all(self._putters)
+        self._wakeup_next(self._getters)
+
+    def get_nowait(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Return an item if one is immediately available, else raise
+        `QueueEmptyError`.
+
+        Raises:
+            QueueEmptyError
+
+        &#34;&#34;&#34;
+        if self.empty():
+            raise QueueEmptyError()
+        item = self._queue.popleft()
+        self._wakeup_next(self._putters)
+        return item
+
+    def put_nowait(self, item: typing.Any):
+        &#34;&#34;&#34;Put an item into the queue without blocking.
+
+        If no free slot is immediately available, raise `QueueFullError`.
+
+        Raises:
+            QueueFullError
+
+        &#34;&#34;&#34;
+        if self._closed.done():
+            raise QueueClosedError()
+        if self.full():
+            raise QueueFullError()
+        self._queue.append(item)
+        self._wakeup_next(self._getters)
+
+    async def get(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Remove and return an item from the queue.
+
+        If queue is empty, wait until an item is available.
+
+        Raises:
+            QueueClosedError
+
+        &#34;&#34;&#34;
+        while self.empty():
+            if self._closed.done():
+                self._wakeup_all(self._getters)
+                raise QueueClosedError()
+            getter = asyncio.Future()
+            self._getters.append(getter)
+            try:
+                await getter
+            except BaseException:
+                getter.cancel()
+                with contextlib.suppress(ValueError):
+                    self._getters.remove(getter)
+                if not getter.cancelled():
+                    if not self.empty() or self._closed.done():
+                        self._wakeup_next(self._getters)
+                raise
+        return self.get_nowait()
+
+    async def put(self, item: typing.Any):
+        &#34;&#34;&#34;Put an item into the queue.
+
+        If the queue is full, wait until a free slot is available before adding
+        the item.
+
+        Raises:
+            QueueClosedError
+
+        &#34;&#34;&#34;
+        while not self._closed.done() and self.full():
+            putter = asyncio.Future()
+            self._putters.append(putter)
+            try:
+                await putter
+            except BaseException:
+                putter.cancel()
+                with contextlib.suppress(ValueError):
+                    self._putters.remove(putter)
+                if not self.full() and not putter.cancelled():
+                    self._wakeup_next(self._putters)
+                raise
+        return self.put_nowait(item)
+
+    async def get_until_empty(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Empty the queue and return the last item.
+
+        If queue is empty, wait until at least one item is available.
+
+        Raises:
+            QueueClosedError
+
+        &#34;&#34;&#34;
+        item = await self.get()
+        while not self.empty():
+            item = self.get_nowait()
+        return item
+
+    def get_nowait_until_empty(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Empty the queue and return the last item if at least one
+        item is immediately available, else raise `QueueEmptyError`.
+
+        Raises:
+            QueueEmptyError
+
+        &#34;&#34;&#34;
+        item = self.get_nowait()
+        while not self.empty():
+            item = self.get_nowait()
+        return item
+
+    def _wakeup_next(self, waiters):
+        while waiters:
+            waiter = waiters.popleft()
+            if not waiter.done():
+                waiter.set_result(None)
+                break
+
+    def _wakeup_all(self, waiters):
+        while waiters:
+            waiter = waiters.popleft()
+            if not waiter.done():
+                waiter.set_result(None)
+
+
+ExceptionCb = typing.Callable[[Exception], None]
+&#34;&#34;&#34;Exception callback&#34;&#34;&#34;
+
+
+class Group:
+    &#34;&#34;&#34;Group of asyncio Tasks.
+
+    Group enables creation and management of related asyncio Tasks. The
+    Group ensures uninterrupted execution of Tasks and Task completion upon
+    Group closing.
+
+    Group can contain subgroups, which are independent Groups managed by the
+    parent Group.
+
+    If a Task raises exception, other Tasks continue to execute.
+
+    If `exception_cb` handler is ``None``, exceptions are logged with level
+    WARNING.
+
+    &#34;&#34;&#34;
+
+    def __init__(self,
+                 exception_cb: typing.Optional[ExceptionCb] = None,
+                 *,
+                 loop: typing.Optional[asyncio.AbstractEventLoop] = None):
+        self._exception_cb = exception_cb
+        self._loop = loop or asyncio.get_event_loop()
+        self._closing = asyncio.Future()
+        self._closed = asyncio.Future()
+        self._canceled = False
+        self._tasks = set()
+        self._parent = None
+        self._children = set()
+
+    @property
+    def is_open(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if group is not closing or closed, ``False`` otherwise.&#34;&#34;&#34;
+        return not self._closing.done()
+
+    @property
+    def is_closing(self) -&gt; bool:
+        &#34;&#34;&#34;Is group closing or closed.&#34;&#34;&#34;
+        return self._closing.done()
+
+    @property
+    def is_closed(self) -&gt; bool:
+        &#34;&#34;&#34;Is group closed.&#34;&#34;&#34;
+        return self._closed.done()
+
+    async def wait_closing(self):
+        &#34;&#34;&#34;Wait until closing is ``True``.&#34;&#34;&#34;
+        await asyncio.shield(self._closing)
+
+    async def wait_closed(self):
+        &#34;&#34;&#34;Wait until closed is ``True``.&#34;&#34;&#34;
+        await asyncio.shield(self._closed)
+
+    def create_subgroup(self) -&gt; &#39;Group&#39;:
+        &#34;&#34;&#34;Create new Group as a child of this Group. Return the new Group.
+
+        When a parent Group gets closed, all of its children are closed.
+        Closing of a subgroup has no effect on the parent Group.
+
+        Subgroup inherits exception handler from its parent.
+
+        &#34;&#34;&#34;
+        if self._closing.done():
+            raise Exception(&#39;group not open&#39;)
+        child = Group(self._exception_cb, loop=self._loop)
+        child._parent = self
+        self._children.add(child)
+        return child
+
+    def wrap(self,
+             future: asyncio.Future
+             ) -&gt; asyncio.Task:
+        &#34;&#34;&#34;Wrap the Future into a Task and schedule its execution. Return the
+        Task object.
+
+        Resulting task is shielded and can be canceled only with
+        `Group.async_close`.
+
+        &#34;&#34;&#34;
+        if self._closing.done():
+            raise Exception(&#39;group not open&#39;)
+        task = asyncio.ensure_future(future, loop=self._loop)
+        self._tasks.add(task)
+        task.add_done_callback(self._on_task_done)
+        return asyncio.shield(task)
+
+    def spawn(self,
+              fn: typing.Callable[..., typing.Awaitable],
+              *args, **kwargs
+              ) -&gt; asyncio.Task:
+        &#34;&#34;&#34;Wrap the result of a `fn` into a Task and schedule its execution.
+        Return the Task object.
+
+        Function `fn` is called with provided `args` and `kwargs`.
+        Resulting Task is shielded and can be canceled only with
+        `Group.async_close`.
+
+        &#34;&#34;&#34;
+        if self._closing.done():
+            raise Exception(&#39;group not open&#39;)
+        future = fn(*args, **kwargs)
+        return self.wrap(future)
+
+    def close(self, cancel: bool = True):
+        &#34;&#34;&#34;Schedule Group closing.
+
+        Closing Future is set immediately. All subgroups are closed, and all
+        running tasks are optionally canceled. Once closing of all subgroups
+        and execution of all tasks is completed, closed Future is set.
+
+        Tasks are canceled if `cancel` is ``True``.
+
+        &#34;&#34;&#34;
+        for child in list(self._children):
+            child.close(cancel)
+        if cancel and not self._canceled:
+            self._canceled = True
+            for task in self._tasks:
+                self._loop.call_soon(task.cancel)
+        if self._closing.done():
+            return
+        self._closing.set_result(True)
+        futures = [*self._tasks,
+                   *(child._closed for child in self._children)]
+        if futures:
+            waiting_future = asyncio.ensure_future(
+                asyncio.wait(futures), loop=self._loop)
+            waiting_future.add_done_callback(lambda _: self._on_closed())
+        else:
+            self._on_closed()
+
+    async def async_close(self, cancel: bool = True):
+        &#34;&#34;&#34;Close Group and wait until closed is ``True``.&#34;&#34;&#34;
+        self.close(cancel)
+        await self.wait_closed()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.async_close()
+
+    def _on_closed(self):
+        if self._parent is not None:
+            self._parent._children.remove(self)
+            self._parent = None
+        self._closed.set_result(True)
+
+    def _on_task_done(self, task):
+        self._tasks.remove(task)
+        if task.cancelled():
+            return
+        e = task.exception()
+        if e:
+            exception_cb = self._exception_cb or self._default_exception_cb
+            exception_cb(e)
+
+    def _default_exception_cb(self, e):
+        mlog.warning(&#39;unhandled exception in async group: %s&#39;, e, exc_info=e)
+
+
+class Resource(abc.ABC):
+    &#34;&#34;&#34;Resource with lifetime control based on `Group`.&#34;&#34;&#34;
+
+    @property
+    @abc.abstractmethod
+    def async_group(self) -&gt; Group:
+        &#34;&#34;&#34;Group controlling resource&#39;s lifetime.&#34;&#34;&#34;
+
+    @property
+    def is_open(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if not closing or closed, ``False`` otherwise.&#34;&#34;&#34;
+        return self.async_group.is_open
+
+    @property
+    def is_closing(self) -&gt; bool:
+        &#34;&#34;&#34;Is resource closing or closed.&#34;&#34;&#34;
+        return self.async_group.is_closing
+
+    @property
+    def is_closed(self) -&gt; bool:
+        &#34;&#34;&#34;Is resource closed.&#34;&#34;&#34;
+        return self.async_group.is_closed
+
+    async def wait_closing(self):
+        &#34;&#34;&#34;Wait until closing is ``True``.&#34;&#34;&#34;
+        await self.async_group.wait_closing()
+
+    async def wait_closed(self):
+        &#34;&#34;&#34;Wait until closed is ``True``.&#34;&#34;&#34;
+        await self.async_group.wait_closed()
+
+    def close(self):
+        &#34;&#34;&#34;Close resource.&#34;&#34;&#34;
+        self.async_group.close()
+
+    async def async_close(self):
+        &#34;&#34;&#34;Close resource and wait until closed is ``True``.&#34;&#34;&#34;
+        await self.async_group.async_close()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.aio.AsyncCallable"><code class="name">var <span class="ident">AsyncCallable</span></code></dt>
+<dd>
+<div class="desc"><p>Async callable</p></div>
+</dd>
+<dt id="hat.aio.ExceptionCb"><code class="name">var <span class="ident">ExceptionCb</span></code></dt>
+<dd>
+<div class="desc"><p>Exception callback</p></div>
+</dd>
+<dt id="hat.aio.mlog"><code class="name">var <span class="ident">mlog</span> : logging.Logger</code></dt>
+<dd>
+<div class="desc"><p>Module logger</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.aio.call"><code class="name flex">
+<span>async def <span class="ident">call</span></span>(<span>fn: typing.Callable, *args, **kwargs) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call a function or a coroutine (or other callable object).</p>
+<p>Call the <code>fn</code> with <code>args</code> and <code>kwargs</code>. If result of this call is
+awaitable, it is awaited and returned. Otherwise, result is immediately
+returned.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>fn</code></strong></dt>
+<dd>callable object</dd>
+<dt><strong><code>args</code></strong></dt>
+<dd>additional positional arguments</dd>
+<dt><strong><code>kwargs</code></strong></dt>
+<dd>additional keyword arguments</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>awaited result or result</p>
+<h2 id="example">Example</h2>
+<p>def f1(x):
+return x</p>
+<p>def f2(x):
+f = asyncio.Future()
+f.set_result(x)
+return f</p>
+<p>async def f3(x):
+return x</p>
+<p>assert 'f1' == await hat.aio.call(f1, 'f1')
+assert 'f2' == await hat.aio.call(f2, 'f2')
+assert 'f3' == await hat.aio.call(f3, 'f3')</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def call(fn: AsyncCallable, *args, **kwargs) -&gt; typing.Any:
+    &#34;&#34;&#34;Call a function or a coroutine (or other callable object).
+
+    Call the `fn` with `args` and `kwargs`. If result of this call is
+    awaitable, it is awaited and returned. Otherwise, result is immediately
+    returned.
+
+    Args:
+        fn: callable object
+        args: additional positional arguments
+        kwargs: additional keyword arguments
+
+    Returns:
+        awaited result or result
+
+    Example:
+
+        def f1(x):
+            return x
+
+        def f2(x):
+            f = asyncio.Future()
+            f.set_result(x)
+            return f
+
+        async def f3(x):
+            return x
+
+        assert &#39;f1&#39; == await hat.aio.call(f1, &#39;f1&#39;)
+        assert &#39;f2&#39; == await hat.aio.call(f2, &#39;f2&#39;)
+        assert &#39;f3&#39; == await hat.aio.call(f3, &#39;f3&#39;)
+
+    &#34;&#34;&#34;
+    result = fn(*args, **kwargs)
+    if inspect.isawaitable(result):
+        result = await result
+    return result</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.call_on_cancel"><code class="name flex">
+<span>async def <span class="ident">call_on_cancel</span></span>(<span>fn: typing.Callable, *args, **kwargs) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call a function or a coroutine when canceled.</p>
+<p>When canceled, <code>fn</code> is called with <code>args</code> and <code>kwargs</code> by using
+<code><a title="hat.aio.call" href="#hat.aio.call">call()</a></code> coroutine.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>fn</code></strong></dt>
+<dd>function or coroutine</dd>
+<dt><strong><code>args</code></strong></dt>
+<dd>additional function arguments</dd>
+<dt><strong><code>kwargs</code></strong></dt>
+<dd>additional function keyword arguments</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>function result
+Example::</p>
+<pre><code>f = asyncio.Future()
+group = Group()
+group.spawn(call_on_cancel, f.set_result, 123)
+assert not f.done()
+await group.async_close()
+assert f.result() == 123
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def call_on_cancel(fn: AsyncCallable, *args, **kwargs) -&gt; typing.Any:
+    &#34;&#34;&#34;Call a function or a coroutine when canceled.
+
+    When canceled, `fn` is called with `args` and `kwargs` by using
+    `call` coroutine.
+
+    Args:
+        fn: function or coroutine
+        args: additional function arguments
+        kwargs: additional function keyword arguments
+
+    Returns:
+        function result
+
+    Example::
+
+        f = asyncio.Future()
+        group = Group()
+        group.spawn(call_on_cancel, f.set_result, 123)
+        assert not f.done()
+        await group.async_close()
+        assert f.result() == 123
+
+    &#34;&#34;&#34;
+    with contextlib.suppress(asyncio.CancelledError):
+        await asyncio.Future()
+    return await call(fn, *args, *kwargs)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.call_on_done"><code class="name flex">
+<span>async def <span class="ident">call_on_done</span></span>(<span>f: typing.Awaitable, fn: typing.Callable, *args, **kwargs) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Call a function or a coroutine when awaitable is done.</p>
+<p>When <code>f</code> is done, <code>fn</code> is called with <code>args</code> and <code>kwargs</code> by using
+<code><a title="hat.aio.call" href="#hat.aio.call">call()</a></code> coroutine.</p>
+<p>If this coroutine is canceled before <code>f</code> is done, <code>f</code> is canceled and <code>fn</code>
+is not called.</p>
+<p>If this coroutine is canceled after <code>f</code> is done, <code>fn</code> call is canceled.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>f</code></strong></dt>
+<dd>awaitable future</dd>
+<dt><strong><code>fn</code></strong></dt>
+<dd>function or coroutine</dd>
+<dt><strong><code>args</code></strong></dt>
+<dd>additional function arguments</dd>
+<dt><strong><code>kwargs</code></strong></dt>
+<dd>additional function keyword arguments</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>function result
+Example::</p>
+<pre><code>f = asyncio.Future()
+group = Group()
+group.spawn(call_on_done, f, group.close)
+assert group.is_open
+f.set_result(None)
+await group.wait_closed()
+assert group.is_closed
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def call_on_done(f: typing.Awaitable,
+                       fn: AsyncCallable,
+                       *args, **kwargs
+                       ) -&gt; typing.Any:
+    &#34;&#34;&#34;Call a function or a coroutine when awaitable is done.
+
+    When `f` is done, `fn` is called with `args` and `kwargs` by using
+    `call` coroutine.
+
+    If this coroutine is canceled before `f` is done, `f` is canceled and `fn`
+    is not called.
+
+    If this coroutine is canceled after `f` is done, `fn` call is canceled.
+
+    Args:
+        f: awaitable future
+        fn: function or coroutine
+        args: additional function arguments
+        kwargs: additional function keyword arguments
+
+    Returns:
+        function result
+
+    Example::
+
+        f = asyncio.Future()
+        group = Group()
+        group.spawn(call_on_done, f, group.close)
+        assert group.is_open
+        f.set_result(None)
+        await group.wait_closed()
+        assert group.is_closed
+
+    &#34;&#34;&#34;
+    with contextlib.suppress(Exception):
+        await f
+    return await call(fn, *args, *kwargs)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.create_executor"><code class="name flex">
+<span>def <span class="ident">create_executor</span></span>(<span>*args: typing.Any, executor_cls: typing.Type = concurrent.futures.thread.ThreadPoolExecutor, loop: typing.Union[asyncio.events.AbstractEventLoop, NoneType] = None) ‑> typing.Callable[..., typing.Awaitable]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create <code>asyncio.loop.run_in_executor</code> wrapper.</p>
+<p>Returns a coroutine that takes a function and its arguments, executes the
+function using executor created from <code>executor_cls</code> and <code>args</code>; and
+returns the result.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>args</code></strong></dt>
+<dd>executor args</dd>
+<dt><strong><code>executor_cls</code></strong></dt>
+<dd>executor class</dd>
+<dt><strong><code>loop</code></strong></dt>
+<dd>asyncio loop</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>executor coroutine
+Example::</p>
+<pre><code>executor1 = create_executor()
+executor2 = create_executor()
+tid1 = await executor1(threading.get_ident)
+tid2 = await executor2(threading.get_ident)
+assert tid1 != tid2
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_executor(*args: typing.Any,
+                    executor_cls: typing.Type = concurrent.futures.ThreadPoolExecutor,  # NOQA
+                    loop: typing.Optional[asyncio.AbstractEventLoop] = None
+                    ) -&gt; typing.Callable[..., typing.Awaitable]:
+    &#34;&#34;&#34;Create `asyncio.loop.run_in_executor` wrapper.
+
+    Returns a coroutine that takes a function and its arguments, executes the
+    function using executor created from `executor_cls` and `args`; and
+    returns the result.
+
+    Args:
+        args: executor args
+        executor_cls: executor class
+        loop: asyncio loop
+
+    Returns:
+        executor coroutine
+
+    Example::
+
+        executor1 = create_executor()
+        executor2 = create_executor()
+        tid1 = await executor1(threading.get_ident)
+        tid2 = await executor2(threading.get_ident)
+        assert tid1 != tid2
+
+    &#34;&#34;&#34;
+    executor = executor_cls(*args)
+
+    async def executor_wrapper(func, /, *args, **kwargs):
+        _loop = loop or asyncio.get_event_loop()
+        fn = functools.partial(func, *args, **kwargs)
+        return await _loop.run_in_executor(executor, fn)
+
+    return executor_wrapper</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.first"><code class="name flex">
+<span>async def <span class="ident">first</span></span>(<span>xs: typing.AsyncIterable[~T], fn: typing.Callable[[~T], bool] = &lt;function &lt;lambda&gt;&gt;, default: typing.Union[~T, NoneType] = None) ‑> typing.Union[~T, NoneType]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the first element from async iterable that satisfies
+predicate <code>fn</code>, or <code>default</code> if no such element exists.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>xs</code></strong></dt>
+<dd>async collection</dd>
+<dt><strong><code>fn</code></strong></dt>
+<dd>predicate</dd>
+<dt><strong><code>default</code></strong></dt>
+<dd>default value</dd>
+</dl>
+<p>Example::</p>
+<pre><code>async def async_range(x):
+    for i in range(x):
+        await asyncio.sleep(0)
+        yield i
+
+assert await first(async_range(3)) == 0
+assert await first(async_range(3), lambda x: x &gt; 1) == 2
+assert await first(async_range(3), lambda x: x &gt; 2) is None
+assert await first(async_range(3), lambda x: x &gt; 2, 123) == 123
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def first(xs: typing.AsyncIterable[T],
+                fn: typing.Callable[[T], bool] = lambda _: True,
+                default: typing.Optional[T] = None
+                ) -&gt; typing.Optional[T]:
+    &#34;&#34;&#34;Return the first element from async iterable that satisfies
+    predicate `fn`, or `default` if no such element exists.
+
+    Args:
+        xs: async collection
+        fn: predicate
+        default: default value
+
+    Example::
+
+        async def async_range(x):
+            for i in range(x):
+                await asyncio.sleep(0)
+                yield i
+
+        assert await first(async_range(3)) == 0
+        assert await first(async_range(3), lambda x: x &gt; 1) == 2
+        assert await first(async_range(3), lambda x: x &gt; 2) is None
+        assert await first(async_range(3), lambda x: x &gt; 2, 123) == 123
+
+    &#34;&#34;&#34;
+    async for i in xs:
+        if fn(i):
+            return i
+    return default</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.init_asyncio"><code class="name flex">
+<span>def <span class="ident">init_asyncio</span></span>(<span>policy: typing.Union[asyncio.events.AbstractEventLoopPolicy, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Initialize asyncio.</p>
+<p>Sets event loop policy (if <code>None</code>, instance of
+<code>asyncio.DefaultEventLoopPolicy</code> is used).</p>
+<p>After policy is set, new event loop is created and associated with current
+thread.</p>
+<p>On Windows, <code>asyncio.WindowsProactorEventLoopPolicy</code> is used as default
+policy.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_asyncio(policy: typing.Optional[asyncio.AbstractEventLoopPolicy] = None):  # NOQA
+    &#34;&#34;&#34;Initialize asyncio.
+
+    Sets event loop policy (if ``None``, instance of
+    `asyncio.DefaultEventLoopPolicy` is used).
+
+    After policy is set, new event loop is created and associated with current
+    thread.
+
+    On Windows, `asyncio.WindowsProactorEventLoopPolicy` is used as default
+    policy.
+
+    &#34;&#34;&#34;
+
+    def get_default_policy():
+        if sys.platform == &#39;win32&#39;:
+            return asyncio.WindowsProactorEventLoopPolicy()
+
+        # TODO: evaluate usage of uvloop
+        # with contextlib.suppress(ModuleNotFoundError):
+        #     import uvloop
+        #     return uvloop.EventLoopPolicy()
+
+        return asyncio.DefaultEventLoopPolicy()
+
+    asyncio.set_event_loop_policy(policy or get_default_policy())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.run_asyncio"><code class="name flex">
+<span>def <span class="ident">run_asyncio</span></span>(<span>future: typing.Awaitable, *, handle_signals=True, create_loop=False) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run asyncio loop until the <code>future</code> is completed and return the result.</p>
+<p>If <code>handle_signals</code> is <code>True</code>, SIGINT and SIGTERM handlers are
+temporarily overridden. Instead of raising <code>KeyboardInterrupt</code> on every
+signal reception, Future is canceled only once. Additional signals are
+ignored. On Windows, SIGBREAK (CTRL_BREAK_EVENT) handler is also
+overridden.</p>
+<p>If <code>create_loop</code> is set to <code>True</code>, new event loop is created and set
+as thread's default event loop.</p>
+<p>On Windows, asyncio loop gets periodically woken up (every 0.5 seconds).</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>future</code></strong></dt>
+<dd>future or coroutine</dd>
+<dt><strong><code>handle_signals</code></strong></dt>
+<dd>handle signals flag</dd>
+<dt><strong><code>create_loop</code></strong></dt>
+<dd>create new event loop</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>future's result
+Example::</p>
+<pre><code>async def run():
+    await asyncio.sleep(0)
+    return 123
+
+result = run_asyncio(run())
+assert result == 123
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_asyncio(future: typing.Awaitable, *,
+                handle_signals=True,
+                create_loop=False
+                ) -&gt; typing.Any:
+    &#34;&#34;&#34;Run asyncio loop until the `future` is completed and return the result.
+
+    If `handle_signals` is ``True``, SIGINT and SIGTERM handlers are
+    temporarily overridden. Instead of raising ``KeyboardInterrupt`` on every
+    signal reception, Future is canceled only once. Additional signals are
+    ignored. On Windows, SIGBREAK (CTRL_BREAK_EVENT) handler is also
+    overridden.
+
+    If `create_loop` is set to ``True``, new event loop is created and set
+    as thread&#39;s default event loop.
+
+    On Windows, asyncio loop gets periodically woken up (every 0.5 seconds).
+
+    Args:
+        future: future or coroutine
+        handle_signals: handle signals flag
+        create_loop: create new event loop
+
+    Returns:
+        future&#39;s result
+
+    Example::
+
+        async def run():
+            await asyncio.sleep(0)
+            return 123
+
+        result = run_asyncio(run())
+        assert result == 123
+
+    &#34;&#34;&#34;
+    if create_loop:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    else:
+        loop = asyncio.get_event_loop()
+
+    task = asyncio.ensure_future(future, loop=loop)
+
+    if sys.platform == &#39;win32&#39;:
+
+        async def task_wrapper(task):
+            try:
+                while not task.done():
+                    await asyncio.wait([task], timeout=0.5)
+            except asyncio.CancelledError:
+                task.cancel()
+            return await task
+
+        task = asyncio.ensure_future(task_wrapper(task), loop=loop)
+
+    if not handle_signals:
+        return loop.run_until_complete(task)
+
+    canceled = False
+    signalnums = [signal.SIGINT, signal.SIGTERM]
+    if sys.platform == &#39;win32&#39;:
+        signalnums += [signal.SIGBREAK]
+
+    def signal_handler(*args):
+        nonlocal canceled
+        if canceled:
+            return
+        loop.call_soon_threadsafe(task.cancel)
+        canceled = True
+
+    handlers = {signalnum: signal.getsignal(signalnum) or signal.SIG_DFL
+                for signalnum in signalnums}
+    for signalnum in signalnums:
+        signal.signal(signalnum, signal_handler)
+
+    try:
+        return loop.run_until_complete(task)
+
+    finally:
+        for signalnum, handler in handlers.items():
+            signal.signal(signalnum, handler)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.uncancellable"><code class="name flex">
+<span>async def <span class="ident">uncancellable</span></span>(<span>f: _asyncio.Future, raise_cancel: bool = True) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Uncancellable execution of a Future.</p>
+<p>Future is shielded and its execution cannot be interrupted.</p>
+<p>If <code>raise_cancel</code> is <code>True</code> and the Future gets canceled,
+<code>asyncio.CancelledError</code> is reraised after the Future finishes.</p>
+<h2 id="warning">Warning</h2>
+<p>If <code>raise_cancel</code> is <code>False</code>, this method suppresses
+<code>asyncio.CancelledError</code> and stops its propagation. Use with
+caution.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>f</code></strong></dt>
+<dd>future</dd>
+<dt><strong><code>raise_cancel</code></strong></dt>
+<dd>raise CancelledError flag</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>future's result</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def uncancellable(f: asyncio.Future,
+                        raise_cancel: bool = True
+                        ) -&gt; typing.Any:
+    &#34;&#34;&#34;Uncancellable execution of a Future.
+
+    Future is shielded and its execution cannot be interrupted.
+
+    If `raise_cancel` is `True` and the Future gets canceled,
+    `asyncio.CancelledError` is reraised after the Future finishes.
+
+    Warning:
+        If `raise_cancel` is `False`, this method suppresses
+        `asyncio.CancelledError` and stops its propagation. Use with
+        caution.
+
+    Args:
+        f: future
+        raise_cancel: raise CancelledError flag
+
+    Returns:
+        future&#39;s result
+
+    &#34;&#34;&#34;
+    exception = None
+    task = asyncio.ensure_future(f)
+    while not task.done():
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError as e:
+            if raise_cancel:
+                exception = e
+        except Exception:
+            pass
+    if exception:
+        raise exception
+    return task.result()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.aio.Group"><code class="flex name class">
+<span>class <span class="ident">Group</span></span>
+<span>(</span><span>exception_cb: typing.Union[typing.Callable[[Exception], NoneType], NoneType] = None, *, loop: typing.Union[asyncio.events.AbstractEventLoop, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Group of asyncio Tasks.</p>
+<p>Group enables creation and management of related asyncio Tasks. The
+Group ensures uninterrupted execution of Tasks and Task completion upon
+Group closing.</p>
+<p>Group can contain subgroups, which are independent Groups managed by the
+parent Group.</p>
+<p>If a Task raises exception, other Tasks continue to execute.</p>
+<p>If <code>exception_cb</code> handler is <code>None</code>, exceptions are logged with level
+WARNING.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Group:
+    &#34;&#34;&#34;Group of asyncio Tasks.
+
+    Group enables creation and management of related asyncio Tasks. The
+    Group ensures uninterrupted execution of Tasks and Task completion upon
+    Group closing.
+
+    Group can contain subgroups, which are independent Groups managed by the
+    parent Group.
+
+    If a Task raises exception, other Tasks continue to execute.
+
+    If `exception_cb` handler is ``None``, exceptions are logged with level
+    WARNING.
+
+    &#34;&#34;&#34;
+
+    def __init__(self,
+                 exception_cb: typing.Optional[ExceptionCb] = None,
+                 *,
+                 loop: typing.Optional[asyncio.AbstractEventLoop] = None):
+        self._exception_cb = exception_cb
+        self._loop = loop or asyncio.get_event_loop()
+        self._closing = asyncio.Future()
+        self._closed = asyncio.Future()
+        self._canceled = False
+        self._tasks = set()
+        self._parent = None
+        self._children = set()
+
+    @property
+    def is_open(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if group is not closing or closed, ``False`` otherwise.&#34;&#34;&#34;
+        return not self._closing.done()
+
+    @property
+    def is_closing(self) -&gt; bool:
+        &#34;&#34;&#34;Is group closing or closed.&#34;&#34;&#34;
+        return self._closing.done()
+
+    @property
+    def is_closed(self) -&gt; bool:
+        &#34;&#34;&#34;Is group closed.&#34;&#34;&#34;
+        return self._closed.done()
+
+    async def wait_closing(self):
+        &#34;&#34;&#34;Wait until closing is ``True``.&#34;&#34;&#34;
+        await asyncio.shield(self._closing)
+
+    async def wait_closed(self):
+        &#34;&#34;&#34;Wait until closed is ``True``.&#34;&#34;&#34;
+        await asyncio.shield(self._closed)
+
+    def create_subgroup(self) -&gt; &#39;Group&#39;:
+        &#34;&#34;&#34;Create new Group as a child of this Group. Return the new Group.
+
+        When a parent Group gets closed, all of its children are closed.
+        Closing of a subgroup has no effect on the parent Group.
+
+        Subgroup inherits exception handler from its parent.
+
+        &#34;&#34;&#34;
+        if self._closing.done():
+            raise Exception(&#39;group not open&#39;)
+        child = Group(self._exception_cb, loop=self._loop)
+        child._parent = self
+        self._children.add(child)
+        return child
+
+    def wrap(self,
+             future: asyncio.Future
+             ) -&gt; asyncio.Task:
+        &#34;&#34;&#34;Wrap the Future into a Task and schedule its execution. Return the
+        Task object.
+
+        Resulting task is shielded and can be canceled only with
+        `Group.async_close`.
+
+        &#34;&#34;&#34;
+        if self._closing.done():
+            raise Exception(&#39;group not open&#39;)
+        task = asyncio.ensure_future(future, loop=self._loop)
+        self._tasks.add(task)
+        task.add_done_callback(self._on_task_done)
+        return asyncio.shield(task)
+
+    def spawn(self,
+              fn: typing.Callable[..., typing.Awaitable],
+              *args, **kwargs
+              ) -&gt; asyncio.Task:
+        &#34;&#34;&#34;Wrap the result of a `fn` into a Task and schedule its execution.
+        Return the Task object.
+
+        Function `fn` is called with provided `args` and `kwargs`.
+        Resulting Task is shielded and can be canceled only with
+        `Group.async_close`.
+
+        &#34;&#34;&#34;
+        if self._closing.done():
+            raise Exception(&#39;group not open&#39;)
+        future = fn(*args, **kwargs)
+        return self.wrap(future)
+
+    def close(self, cancel: bool = True):
+        &#34;&#34;&#34;Schedule Group closing.
+
+        Closing Future is set immediately. All subgroups are closed, and all
+        running tasks are optionally canceled. Once closing of all subgroups
+        and execution of all tasks is completed, closed Future is set.
+
+        Tasks are canceled if `cancel` is ``True``.
+
+        &#34;&#34;&#34;
+        for child in list(self._children):
+            child.close(cancel)
+        if cancel and not self._canceled:
+            self._canceled = True
+            for task in self._tasks:
+                self._loop.call_soon(task.cancel)
+        if self._closing.done():
+            return
+        self._closing.set_result(True)
+        futures = [*self._tasks,
+                   *(child._closed for child in self._children)]
+        if futures:
+            waiting_future = asyncio.ensure_future(
+                asyncio.wait(futures), loop=self._loop)
+            waiting_future.add_done_callback(lambda _: self._on_closed())
+        else:
+            self._on_closed()
+
+    async def async_close(self, cancel: bool = True):
+        &#34;&#34;&#34;Close Group and wait until closed is ``True``.&#34;&#34;&#34;
+        self.close(cancel)
+        await self.wait_closed()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.async_close()
+
+    def _on_closed(self):
+        if self._parent is not None:
+            self._parent._children.remove(self)
+            self._parent = None
+        self._closed.set_result(True)
+
+    def _on_task_done(self, task):
+        self._tasks.remove(task)
+        if task.cancelled():
+            return
+        e = task.exception()
+        if e:
+            exception_cb = self._exception_cb or self._default_exception_cb
+            exception_cb(e)
+
+    def _default_exception_cb(self, e):
+        mlog.warning(&#39;unhandled exception in async group: %s&#39;, e, exc_info=e)</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.aio.Group.is_closed"><code class="name">var <span class="ident">is_closed</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Is group closed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_closed(self) -&gt; bool:
+    &#34;&#34;&#34;Is group closed.&#34;&#34;&#34;
+    return self._closed.done()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.is_closing"><code class="name">var <span class="ident">is_closing</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Is group closing or closed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_closing(self) -&gt; bool:
+    &#34;&#34;&#34;Is group closing or closed.&#34;&#34;&#34;
+    return self._closing.done()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.is_open"><code class="name">var <span class="ident">is_open</span> : bool</code></dt>
+<dd>
+<div class="desc"><p><code>True</code> if group is not closing or closed, <code>False</code> otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_open(self) -&gt; bool:
+    &#34;&#34;&#34;``True`` if group is not closing or closed, ``False`` otherwise.&#34;&#34;&#34;
+    return not self._closing.done()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.aio.Group.async_close"><code class="name flex">
+<span>async def <span class="ident">async_close</span></span>(<span>self, cancel: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Close Group and wait until closed is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def async_close(self, cancel: bool = True):
+    &#34;&#34;&#34;Close Group and wait until closed is ``True``.&#34;&#34;&#34;
+    self.close(cancel)
+    await self.wait_closed()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self, cancel: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Schedule Group closing.</p>
+<p>Closing Future is set immediately. All subgroups are closed, and all
+running tasks are optionally canceled. Once closing of all subgroups
+and execution of all tasks is completed, closed Future is set.</p>
+<p>Tasks are canceled if <code>cancel</code> is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self, cancel: bool = True):
+    &#34;&#34;&#34;Schedule Group closing.
+
+    Closing Future is set immediately. All subgroups are closed, and all
+    running tasks are optionally canceled. Once closing of all subgroups
+    and execution of all tasks is completed, closed Future is set.
+
+    Tasks are canceled if `cancel` is ``True``.
+
+    &#34;&#34;&#34;
+    for child in list(self._children):
+        child.close(cancel)
+    if cancel and not self._canceled:
+        self._canceled = True
+        for task in self._tasks:
+            self._loop.call_soon(task.cancel)
+    if self._closing.done():
+        return
+    self._closing.set_result(True)
+    futures = [*self._tasks,
+               *(child._closed for child in self._children)]
+    if futures:
+        waiting_future = asyncio.ensure_future(
+            asyncio.wait(futures), loop=self._loop)
+        waiting_future.add_done_callback(lambda _: self._on_closed())
+    else:
+        self._on_closed()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.create_subgroup"><code class="name flex">
+<span>def <span class="ident">create_subgroup</span></span>(<span>self) ‑> <a title="hat.aio.Group" href="#hat.aio.Group">Group</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new Group as a child of this Group. Return the new Group.</p>
+<p>When a parent Group gets closed, all of its children are closed.
+Closing of a subgroup has no effect on the parent Group.</p>
+<p>Subgroup inherits exception handler from its parent.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_subgroup(self) -&gt; &#39;Group&#39;:
+    &#34;&#34;&#34;Create new Group as a child of this Group. Return the new Group.
+
+    When a parent Group gets closed, all of its children are closed.
+    Closing of a subgroup has no effect on the parent Group.
+
+    Subgroup inherits exception handler from its parent.
+
+    &#34;&#34;&#34;
+    if self._closing.done():
+        raise Exception(&#39;group not open&#39;)
+    child = Group(self._exception_cb, loop=self._loop)
+    child._parent = self
+    self._children.add(child)
+    return child</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.spawn"><code class="name flex">
+<span>def <span class="ident">spawn</span></span>(<span>self, fn: typing.Callable[..., typing.Awaitable], *args, **kwargs) ‑> _asyncio.Task</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrap the result of a <code>fn</code> into a Task and schedule its execution.
+Return the Task object.</p>
+<p>Function <code>fn</code> is called with provided <code>args</code> and <code>kwargs</code>.
+Resulting Task is shielded and can be canceled only with
+<code><a title="hat.aio.Group.async_close" href="#hat.aio.Group.async_close">Group.async_close()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spawn(self,
+          fn: typing.Callable[..., typing.Awaitable],
+          *args, **kwargs
+          ) -&gt; asyncio.Task:
+    &#34;&#34;&#34;Wrap the result of a `fn` into a Task and schedule its execution.
+    Return the Task object.
+
+    Function `fn` is called with provided `args` and `kwargs`.
+    Resulting Task is shielded and can be canceled only with
+    `Group.async_close`.
+
+    &#34;&#34;&#34;
+    if self._closing.done():
+        raise Exception(&#39;group not open&#39;)
+    future = fn(*args, **kwargs)
+    return self.wrap(future)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.wait_closed"><code class="name flex">
+<span>async def <span class="ident">wait_closed</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wait until closed is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def wait_closed(self):
+    &#34;&#34;&#34;Wait until closed is ``True``.&#34;&#34;&#34;
+    await asyncio.shield(self._closed)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.wait_closing"><code class="name flex">
+<span>async def <span class="ident">wait_closing</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wait until closing is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def wait_closing(self):
+    &#34;&#34;&#34;Wait until closing is ``True``.&#34;&#34;&#34;
+    await asyncio.shield(self._closing)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Group.wrap"><code class="name flex">
+<span>def <span class="ident">wrap</span></span>(<span>self, future: _asyncio.Future) ‑> _asyncio.Task</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrap the Future into a Task and schedule its execution. Return the
+Task object.</p>
+<p>Resulting task is shielded and can be canceled only with
+<code><a title="hat.aio.Group.async_close" href="#hat.aio.Group.async_close">Group.async_close()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrap(self,
+         future: asyncio.Future
+         ) -&gt; asyncio.Task:
+    &#34;&#34;&#34;Wrap the Future into a Task and schedule its execution. Return the
+    Task object.
+
+    Resulting task is shielded and can be canceled only with
+    `Group.async_close`.
+
+    &#34;&#34;&#34;
+    if self._closing.done():
+        raise Exception(&#39;group not open&#39;)
+    task = asyncio.ensure_future(future, loop=self._loop)
+    self._tasks.add(task)
+    task.add_done_callback(self._on_task_done)
+    return asyncio.shield(task)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.aio.Queue"><code class="flex name class">
+<span>class <span class="ident">Queue</span></span>
+<span>(</span><span>maxsize: int = 0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Asyncio queue which implements AsyncIterable and can be closed.</p>
+<p>Interface and implementation are based on <code>asyncio.Queue</code>.</p>
+<p>If <code>maxsize</code> is less than or equal to zero, the queue size is infinite.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>maxsize</code></strong></dt>
+<dd>maximum number of items in the queue</dd>
+</dl>
+<p>Example::</p>
+<pre><code>queue = Queue(maxsize=1)
+
+async def producer():
+    for i in range(4):
+        await queue.put(i)
+    queue.close()
+
+async def consumer():
+    result = 0
+    async for i in queue:
+        result += i
+    return result
+
+asyncio.ensure_future(producer())
+result = await consumer()
+assert result == 6
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Queue:
+    &#34;&#34;&#34;Asyncio queue which implements AsyncIterable and can be closed.
+
+    Interface and implementation are based on `asyncio.Queue`.
+
+    If `maxsize` is less than or equal to zero, the queue size is infinite.
+
+    Args:
+        maxsize: maximum number of items in the queue
+
+    Example::
+
+        queue = Queue(maxsize=1)
+
+        async def producer():
+            for i in range(4):
+                await queue.put(i)
+            queue.close()
+
+        async def consumer():
+            result = 0
+            async for i in queue:
+                result += i
+            return result
+
+        asyncio.ensure_future(producer())
+        result = await consumer()
+        assert result == 6
+
+    &#34;&#34;&#34;
+
+    def __init__(self, maxsize: int = 0):
+        self._maxsize = maxsize
+        self._queue = collections.deque()
+        self._getters = collections.deque()
+        self._putters = collections.deque()
+        self._closed = asyncio.Future()
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        try:
+            return await self.get()
+        except QueueClosedError:
+            raise StopAsyncIteration
+
+    def __str__(self):
+        return (f&#39;&lt;{type(self).__name__}&#39;
+                f&#39; _closed={self._closed.done()} &#39;
+                f&#39; _queue={list(self._queue)}&gt;&#39;)
+
+    def __len__(self):
+        return len(self._queue)
+
+    @property
+    def maxsize(self) -&gt; int:
+        &#34;&#34;&#34;Maximum number of items in the queue.&#34;&#34;&#34;
+        return self._maxsize
+
+    @property
+    def is_closed(self) -&gt; bool:
+        &#34;&#34;&#34;Is queue closed.&#34;&#34;&#34;
+        return self._closed.done()
+
+    def empty(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if queue is empty, ``False`` otherwise.&#34;&#34;&#34;
+        return not self._queue
+
+    def full(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if queue is full, ``False`` otherwise.&#34;&#34;&#34;
+        return (len(self._queue) &gt;= self._maxsize if self._maxsize &gt; 0
+                else False)
+
+    def qsize(self) -&gt; int:
+        &#34;&#34;&#34;Number of items currently in the queue.&#34;&#34;&#34;
+        return len(self._queue)
+
+    def close(self):
+        &#34;&#34;&#34;Close the queue.&#34;&#34;&#34;
+        if self._closed.done():
+            return
+        self._closed.set_result(True)
+        self._wakeup_all(self._putters)
+        self._wakeup_next(self._getters)
+
+    def get_nowait(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Return an item if one is immediately available, else raise
+        `QueueEmptyError`.
+
+        Raises:
+            QueueEmptyError
+
+        &#34;&#34;&#34;
+        if self.empty():
+            raise QueueEmptyError()
+        item = self._queue.popleft()
+        self._wakeup_next(self._putters)
+        return item
+
+    def put_nowait(self, item: typing.Any):
+        &#34;&#34;&#34;Put an item into the queue without blocking.
+
+        If no free slot is immediately available, raise `QueueFullError`.
+
+        Raises:
+            QueueFullError
+
+        &#34;&#34;&#34;
+        if self._closed.done():
+            raise QueueClosedError()
+        if self.full():
+            raise QueueFullError()
+        self._queue.append(item)
+        self._wakeup_next(self._getters)
+
+    async def get(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Remove and return an item from the queue.
+
+        If queue is empty, wait until an item is available.
+
+        Raises:
+            QueueClosedError
+
+        &#34;&#34;&#34;
+        while self.empty():
+            if self._closed.done():
+                self._wakeup_all(self._getters)
+                raise QueueClosedError()
+            getter = asyncio.Future()
+            self._getters.append(getter)
+            try:
+                await getter
+            except BaseException:
+                getter.cancel()
+                with contextlib.suppress(ValueError):
+                    self._getters.remove(getter)
+                if not getter.cancelled():
+                    if not self.empty() or self._closed.done():
+                        self._wakeup_next(self._getters)
+                raise
+        return self.get_nowait()
+
+    async def put(self, item: typing.Any):
+        &#34;&#34;&#34;Put an item into the queue.
+
+        If the queue is full, wait until a free slot is available before adding
+        the item.
+
+        Raises:
+            QueueClosedError
+
+        &#34;&#34;&#34;
+        while not self._closed.done() and self.full():
+            putter = asyncio.Future()
+            self._putters.append(putter)
+            try:
+                await putter
+            except BaseException:
+                putter.cancel()
+                with contextlib.suppress(ValueError):
+                    self._putters.remove(putter)
+                if not self.full() and not putter.cancelled():
+                    self._wakeup_next(self._putters)
+                raise
+        return self.put_nowait(item)
+
+    async def get_until_empty(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Empty the queue and return the last item.
+
+        If queue is empty, wait until at least one item is available.
+
+        Raises:
+            QueueClosedError
+
+        &#34;&#34;&#34;
+        item = await self.get()
+        while not self.empty():
+            item = self.get_nowait()
+        return item
+
+    def get_nowait_until_empty(self) -&gt; typing.Any:
+        &#34;&#34;&#34;Empty the queue and return the last item if at least one
+        item is immediately available, else raise `QueueEmptyError`.
+
+        Raises:
+            QueueEmptyError
+
+        &#34;&#34;&#34;
+        item = self.get_nowait()
+        while not self.empty():
+            item = self.get_nowait()
+        return item
+
+    def _wakeup_next(self, waiters):
+        while waiters:
+            waiter = waiters.popleft()
+            if not waiter.done():
+                waiter.set_result(None)
+                break
+
+    def _wakeup_all(self, waiters):
+        while waiters:
+            waiter = waiters.popleft()
+            if not waiter.done():
+                waiter.set_result(None)</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.aio.Queue.is_closed"><code class="name">var <span class="ident">is_closed</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Is queue closed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_closed(self) -&gt; bool:
+    &#34;&#34;&#34;Is queue closed.&#34;&#34;&#34;
+    return self._closed.done()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.maxsize"><code class="name">var <span class="ident">maxsize</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Maximum number of items in the queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def maxsize(self) -&gt; int:
+    &#34;&#34;&#34;Maximum number of items in the queue.&#34;&#34;&#34;
+    return self._maxsize</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.aio.Queue.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Close the queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    &#34;&#34;&#34;Close the queue.&#34;&#34;&#34;
+    if self._closed.done():
+        return
+    self._closed.set_result(True)
+    self._wakeup_all(self._putters)
+    self._wakeup_next(self._getters)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.empty"><code class="name flex">
+<span>def <span class="ident">empty</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>True</code> if queue is empty, <code>False</code> otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def empty(self) -&gt; bool:
+    &#34;&#34;&#34;``True`` if queue is empty, ``False`` otherwise.&#34;&#34;&#34;
+    return not self._queue</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.full"><code class="name flex">
+<span>def <span class="ident">full</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>True</code> if queue is full, <code>False</code> otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def full(self) -&gt; bool:
+    &#34;&#34;&#34;``True`` if queue is full, ``False`` otherwise.&#34;&#34;&#34;
+    return (len(self._queue) &gt;= self._maxsize if self._maxsize &gt; 0
+            else False)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.get"><code class="name flex">
+<span>async def <span class="ident">get</span></span>(<span>self) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove and return an item from the queue.</p>
+<p>If queue is empty, wait until an item is available.</p>
+<h2 id="raises">Raises</h2>
+<p>QueueClosedError</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get(self) -&gt; typing.Any:
+    &#34;&#34;&#34;Remove and return an item from the queue.
+
+    If queue is empty, wait until an item is available.
+
+    Raises:
+        QueueClosedError
+
+    &#34;&#34;&#34;
+    while self.empty():
+        if self._closed.done():
+            self._wakeup_all(self._getters)
+            raise QueueClosedError()
+        getter = asyncio.Future()
+        self._getters.append(getter)
+        try:
+            await getter
+        except BaseException:
+            getter.cancel()
+            with contextlib.suppress(ValueError):
+                self._getters.remove(getter)
+            if not getter.cancelled():
+                if not self.empty() or self._closed.done():
+                    self._wakeup_next(self._getters)
+            raise
+    return self.get_nowait()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.get_nowait"><code class="name flex">
+<span>def <span class="ident">get_nowait</span></span>(<span>self) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return an item if one is immediately available, else raise
+<code><a title="hat.aio.QueueEmptyError" href="#hat.aio.QueueEmptyError">QueueEmptyError</a></code>.</p>
+<h2 id="raises">Raises</h2>
+<p>QueueEmptyError</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_nowait(self) -&gt; typing.Any:
+    &#34;&#34;&#34;Return an item if one is immediately available, else raise
+    `QueueEmptyError`.
+
+    Raises:
+        QueueEmptyError
+
+    &#34;&#34;&#34;
+    if self.empty():
+        raise QueueEmptyError()
+    item = self._queue.popleft()
+    self._wakeup_next(self._putters)
+    return item</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.get_nowait_until_empty"><code class="name flex">
+<span>def <span class="ident">get_nowait_until_empty</span></span>(<span>self) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Empty the queue and return the last item if at least one
+item is immediately available, else raise <code><a title="hat.aio.QueueEmptyError" href="#hat.aio.QueueEmptyError">QueueEmptyError</a></code>.</p>
+<h2 id="raises">Raises</h2>
+<p>QueueEmptyError</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_nowait_until_empty(self) -&gt; typing.Any:
+    &#34;&#34;&#34;Empty the queue and return the last item if at least one
+    item is immediately available, else raise `QueueEmptyError`.
+
+    Raises:
+        QueueEmptyError
+
+    &#34;&#34;&#34;
+    item = self.get_nowait()
+    while not self.empty():
+        item = self.get_nowait()
+    return item</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.get_until_empty"><code class="name flex">
+<span>async def <span class="ident">get_until_empty</span></span>(<span>self) ‑> typing.Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Empty the queue and return the last item.</p>
+<p>If queue is empty, wait until at least one item is available.</p>
+<h2 id="raises">Raises</h2>
+<p>QueueClosedError</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_until_empty(self) -&gt; typing.Any:
+    &#34;&#34;&#34;Empty the queue and return the last item.
+
+    If queue is empty, wait until at least one item is available.
+
+    Raises:
+        QueueClosedError
+
+    &#34;&#34;&#34;
+    item = await self.get()
+    while not self.empty():
+        item = self.get_nowait()
+    return item</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.put"><code class="name flex">
+<span>async def <span class="ident">put</span></span>(<span>self, item: typing.Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Put an item into the queue.</p>
+<p>If the queue is full, wait until a free slot is available before adding
+the item.</p>
+<h2 id="raises">Raises</h2>
+<p>QueueClosedError</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def put(self, item: typing.Any):
+    &#34;&#34;&#34;Put an item into the queue.
+
+    If the queue is full, wait until a free slot is available before adding
+    the item.
+
+    Raises:
+        QueueClosedError
+
+    &#34;&#34;&#34;
+    while not self._closed.done() and self.full():
+        putter = asyncio.Future()
+        self._putters.append(putter)
+        try:
+            await putter
+        except BaseException:
+            putter.cancel()
+            with contextlib.suppress(ValueError):
+                self._putters.remove(putter)
+            if not self.full() and not putter.cancelled():
+                self._wakeup_next(self._putters)
+            raise
+    return self.put_nowait(item)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.put_nowait"><code class="name flex">
+<span>def <span class="ident">put_nowait</span></span>(<span>self, item: typing.Any)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Put an item into the queue without blocking.</p>
+<p>If no free slot is immediately available, raise <code><a title="hat.aio.QueueFullError" href="#hat.aio.QueueFullError">QueueFullError</a></code>.</p>
+<h2 id="raises">Raises</h2>
+<p>QueueFullError</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def put_nowait(self, item: typing.Any):
+    &#34;&#34;&#34;Put an item into the queue without blocking.
+
+    If no free slot is immediately available, raise `QueueFullError`.
+
+    Raises:
+        QueueFullError
+
+    &#34;&#34;&#34;
+    if self._closed.done():
+        raise QueueClosedError()
+    if self.full():
+        raise QueueFullError()
+    self._queue.append(item)
+    self._wakeup_next(self._getters)</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Queue.qsize"><code class="name flex">
+<span>def <span class="ident">qsize</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Number of items currently in the queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def qsize(self) -&gt; int:
+    &#34;&#34;&#34;Number of items currently in the queue.&#34;&#34;&#34;
+    return len(self._queue)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.aio.QueueClosedError"><code class="flex name class">
+<span>class <span class="ident">QueueClosedError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Raised when trying to use a closed queue.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QueueClosedError(Exception):
+    &#34;&#34;&#34;Raised when trying to use a closed queue.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.aio.QueueEmptyError"><code class="flex name class">
+<span>class <span class="ident">QueueEmptyError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Raised if queue is empty.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QueueEmptyError(Exception):
+    &#34;&#34;&#34;Raised if queue is empty.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.aio.QueueFullError"><code class="flex name class">
+<span>class <span class="ident">QueueFullError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Raised if queue is full.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QueueFullError(Exception):
+    &#34;&#34;&#34;Raised if queue is full.&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="hat.aio.Resource"><code class="flex name class">
+<span>class <span class="ident">Resource</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resource with lifetime control based on <code><a title="hat.aio.Group" href="#hat.aio.Group">Group</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Resource(abc.ABC):
+    &#34;&#34;&#34;Resource with lifetime control based on `Group`.&#34;&#34;&#34;
+
+    @property
+    @abc.abstractmethod
+    def async_group(self) -&gt; Group:
+        &#34;&#34;&#34;Group controlling resource&#39;s lifetime.&#34;&#34;&#34;
+
+    @property
+    def is_open(self) -&gt; bool:
+        &#34;&#34;&#34;``True`` if not closing or closed, ``False`` otherwise.&#34;&#34;&#34;
+        return self.async_group.is_open
+
+    @property
+    def is_closing(self) -&gt; bool:
+        &#34;&#34;&#34;Is resource closing or closed.&#34;&#34;&#34;
+        return self.async_group.is_closing
+
+    @property
+    def is_closed(self) -&gt; bool:
+        &#34;&#34;&#34;Is resource closed.&#34;&#34;&#34;
+        return self.async_group.is_closed
+
+    async def wait_closing(self):
+        &#34;&#34;&#34;Wait until closing is ``True``.&#34;&#34;&#34;
+        await self.async_group.wait_closing()
+
+    async def wait_closed(self):
+        &#34;&#34;&#34;Wait until closed is ``True``.&#34;&#34;&#34;
+        await self.async_group.wait_closed()
+
+    def close(self):
+        &#34;&#34;&#34;Close resource.&#34;&#34;&#34;
+        self.async_group.close()
+
+    async def async_close(self):
+        &#34;&#34;&#34;Close resource and wait until closed is ``True``.&#34;&#34;&#34;
+        await self.async_group.async_close()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="hat.chatter.Connection" href="chatter/index.html#hat.chatter.Connection">Connection</a></li>
+<li><a title="hat.chatter.Server" href="chatter/index.html#hat.chatter.Server">Server</a></li>
+<li><a title="hat.drivers.acse.Connection" href="drivers/acse/index.html#hat.drivers.acse.Connection">Connection</a></li>
+<li><a title="hat.drivers.acse.Server" href="drivers/acse/index.html#hat.drivers.acse.Server">Server</a></li>
+<li><a title="hat.drivers.copp.Connection" href="drivers/copp/index.html#hat.drivers.copp.Connection">Connection</a></li>
+<li><a title="hat.drivers.copp.Server" href="drivers/copp/index.html#hat.drivers.copp.Server">Server</a></li>
+<li><a title="hat.drivers.cosp.Connection" href="drivers/cosp.html#hat.drivers.cosp.Connection">Connection</a></li>
+<li><a title="hat.drivers.cosp.Server" href="drivers/cosp.html#hat.drivers.cosp.Server">Server</a></li>
+<li><a title="hat.drivers.cotp.Connection" href="drivers/cotp.html#hat.drivers.cotp.Connection">Connection</a></li>
+<li><a title="hat.drivers.cotp.Server" href="drivers/cotp.html#hat.drivers.cotp.Server">Server</a></li>
+<li>hat.drivers.iec104._common.Transport</li>
+<li><a title="hat.drivers.iec104.connection.Connection" href="drivers/iec104/connection.html#hat.drivers.iec104.connection.Connection">Connection</a></li>
+<li><a title="hat.drivers.iec104.connection.Server" href="drivers/iec104/connection.html#hat.drivers.iec104.connection.Server">Server</a></li>
+<li><a title="hat.drivers.mms.connection.Connection" href="drivers/mms/connection.html#hat.drivers.mms.connection.Connection">Connection</a></li>
+<li><a title="hat.drivers.mms.connection.Server" href="drivers/mms/connection.html#hat.drivers.mms.connection.Server">Server</a></li>
+<li><a title="hat.drivers.modbus.master.Master" href="drivers/modbus/master.html#hat.drivers.modbus.master.Master">Master</a></li>
+<li><a title="hat.drivers.modbus.slave.Slave" href="drivers/modbus/slave.html#hat.drivers.modbus.slave.Slave">Slave</a></li>
+<li><a title="hat.drivers.modbus.slave.TcpServer" href="drivers/modbus/slave.html#hat.drivers.modbus.slave.TcpServer">TcpServer</a></li>
+<li><a title="hat.drivers.serial.Connection" href="drivers/serial.html#hat.drivers.serial.Connection">Connection</a></li>
+<li><a title="hat.drivers.tpkt.Connection" href="drivers/tpkt.html#hat.drivers.tpkt.Connection">Connection</a></li>
+<li><a title="hat.drivers.tpkt.Server" href="drivers/tpkt.html#hat.drivers.tpkt.Server">Server</a></li>
+<li><a title="hat.drivers.udp.Endpoint" href="drivers/udp.html#hat.drivers.udp.Endpoint">Endpoint</a></li>
+<li><a title="hat.drivers.upnp.DiscoveryServer" href="drivers/upnp.html#hat.drivers.upnp.DiscoveryServer">DiscoveryServer</a></li>
+<li><a title="hat.event.client.Client" href="event/client.html#hat.event.client.Client">Client</a></li>
+<li><a title="hat.event.server.backend_engine.BackendEngine" href="event/server/backend_engine.html#hat.event.server.backend_engine.BackendEngine">BackendEngine</a></li>
+<li><a title="hat.event.server.common.Backend" href="event/server/common.html#hat.event.server.common.Backend">Backend</a></li>
+<li><a title="hat.event.server.common.Module" href="event/server/common.html#hat.event.server.common.Module">Module</a></li>
+<li><a title="hat.event.server.common.ModuleSession" href="event/server/common.html#hat.event.server.common.ModuleSession">ModuleSession</a></li>
+<li><a title="hat.event.server.communication.Communication" href="event/server/communication.html#hat.event.server.communication.Communication">Communication</a></li>
+<li>hat.event.server.communication._Connection</li>
+<li><a title="hat.event.server.module_engine.ModuleEngine" href="event/server/module_engine.html#hat.event.server.module_engine.ModuleEngine">ModuleEngine</a></li>
+<li><a title="hat.gateway.common.Device" href="gateway/common.html#hat.gateway.common.Device">Device</a></li>
+<li><a title="hat.gateway.engine.DeviceProxy" href="gateway/engine.html#hat.gateway.engine.DeviceProxy">DeviceProxy</a></li>
+<li><a title="hat.gateway.engine.Engine" href="gateway/engine.html#hat.gateway.engine.Engine">Engine</a></li>
+<li>hat.gateway.engine._DeviceEventClient</li>
+<li><a title="hat.gui.common.Adapter" href="gui/common.html#hat.gui.common.Adapter">Adapter</a></li>
+<li><a title="hat.gui.common.AdapterSession" href="gui/common.html#hat.gui.common.AdapterSession">AdapterSession</a></li>
+<li><a title="hat.gui.main.AdapterEventClientFactory" href="gui/main.html#hat.gui.main.AdapterEventClientFactory">AdapterEventClientFactory</a></li>
+<li><a title="hat.gui.server.Server" href="gui/server.html#hat.gui.server.Server">Server</a></li>
+<li><a title="hat.gui.server.Session" href="gui/server.html#hat.gui.server.Session">Session</a></li>
+<li><a title="hat.gui.view.ViewManager" href="gui/view.html#hat.gui.view.ViewManager">ViewManager</a></li>
+<li><a title="hat.juggler.Connection" href="juggler.html#hat.juggler.Connection">Connection</a></li>
+<li><a title="hat.juggler.Server" href="juggler.html#hat.juggler.Server">Server</a></li>
+<li><a title="hat.manager.event.server.Server" href="manager/event/server.html#hat.manager.event.server.Server">Server</a></li>
+<li><a title="hat.monitor.client.Client" href="monitor/client.html#hat.monitor.client.Client">Client</a></li>
+<li><a title="hat.monitor.server.master.Master" href="monitor/server/master.html#hat.monitor.server.master.Master">Master</a></li>
+<li><a title="hat.monitor.server.server.Server" href="monitor/server/server.html#hat.monitor.server.server.Server">Server</a></li>
+<li><a title="hat.monitor.server.slave.Slave" href="monitor/server/slave.html#hat.monitor.server.slave.Slave">Slave</a></li>
+<li><a title="hat.monitor.server.ui.WebServer" href="monitor/server/ui.html#hat.monitor.server.ui.WebServer">WebServer</a></li>
+<li><a title="hat.orchestrator.component.Component" href="orchestrator/component.html#hat.orchestrator.component.Component">Component</a></li>
+<li><a title="hat.orchestrator.ui.WebServer" href="orchestrator/ui.html#hat.orchestrator.ui.WebServer">WebServer</a></li>
+<li><a title="hat.syslog.server.backend.Backend" href="syslog/server/backend.html#hat.syslog.server.backend.Backend">Backend</a></li>
+<li><a title="hat.syslog.server.database.Database" href="syslog/server/database.html#hat.syslog.server.database.Database">Database</a></li>
+<li><a title="hat.syslog.server.syslog.SysLogServer" href="syslog/server/syslog.html#hat.syslog.server.syslog.SysLogServer">SysLogServer</a></li>
+<li><a title="hat.syslog.server.ui.WebServer" href="syslog/server/ui.html#hat.syslog.server.ui.WebServer">WebServer</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.aio.Resource.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Group controlling resource's lifetime.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+@abc.abstractmethod
+def async_group(self) -&gt; Group:
+    &#34;&#34;&#34;Group controlling resource&#39;s lifetime.&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Resource.is_closed"><code class="name">var <span class="ident">is_closed</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Is resource closed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_closed(self) -&gt; bool:
+    &#34;&#34;&#34;Is resource closed.&#34;&#34;&#34;
+    return self.async_group.is_closed</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Resource.is_closing"><code class="name">var <span class="ident">is_closing</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Is resource closing or closed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_closing(self) -&gt; bool:
+    &#34;&#34;&#34;Is resource closing or closed.&#34;&#34;&#34;
+    return self.async_group.is_closing</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Resource.is_open"><code class="name">var <span class="ident">is_open</span> : bool</code></dt>
+<dd>
+<div class="desc"><p><code>True</code> if not closing or closed, <code>False</code> otherwise.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_open(self) -&gt; bool:
+    &#34;&#34;&#34;``True`` if not closing or closed, ``False`` otherwise.&#34;&#34;&#34;
+    return self.async_group.is_open</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.aio.Resource.async_close"><code class="name flex">
+<span>async def <span class="ident">async_close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Close resource and wait until closed is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def async_close(self):
+    &#34;&#34;&#34;Close resource and wait until closed is ``True``.&#34;&#34;&#34;
+    await self.async_group.async_close()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Resource.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Close resource.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    &#34;&#34;&#34;Close resource.&#34;&#34;&#34;
+    self.async_group.close()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Resource.wait_closed"><code class="name flex">
+<span>async def <span class="ident">wait_closed</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wait until closed is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def wait_closed(self):
+    &#34;&#34;&#34;Wait until closed is ``True``.&#34;&#34;&#34;
+    await self.async_group.wait_closed()</code></pre>
+</details>
+</dd>
+<dt id="hat.aio.Resource.wait_closing"><code class="name flex">
+<span>async def <span class="ident">wait_closing</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wait until closing is <code>True</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def wait_closing(self):
+    &#34;&#34;&#34;Wait until closing is ``True``.&#34;&#34;&#34;
+    await self.async_group.wait_closing()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat" href="index.html">hat</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.aio.AsyncCallable" href="#hat.aio.AsyncCallable">AsyncCallable</a></code></li>
+<li><code><a title="hat.aio.ExceptionCb" href="#hat.aio.ExceptionCb">ExceptionCb</a></code></li>
+<li><code><a title="hat.aio.mlog" href="#hat.aio.mlog">mlog</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="hat.aio.call" href="#hat.aio.call">call</a></code></li>
+<li><code><a title="hat.aio.call_on_cancel" href="#hat.aio.call_on_cancel">call_on_cancel</a></code></li>
+<li><code><a title="hat.aio.call_on_done" href="#hat.aio.call_on_done">call_on_done</a></code></li>
+<li><code><a title="hat.aio.create_executor" href="#hat.aio.create_executor">create_executor</a></code></li>
+<li><code><a title="hat.aio.first" href="#hat.aio.first">first</a></code></li>
+<li><code><a title="hat.aio.init_asyncio" href="#hat.aio.init_asyncio">init_asyncio</a></code></li>
+<li><code><a title="hat.aio.run_asyncio" href="#hat.aio.run_asyncio">run_asyncio</a></code></li>
+<li><code><a title="hat.aio.uncancellable" href="#hat.aio.uncancellable">uncancellable</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.aio.Group" href="#hat.aio.Group">Group</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.aio.Group.async_close" href="#hat.aio.Group.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Group.close" href="#hat.aio.Group.close">close</a></code></li>
+<li><code><a title="hat.aio.Group.create_subgroup" href="#hat.aio.Group.create_subgroup">create_subgroup</a></code></li>
+<li><code><a title="hat.aio.Group.is_closed" href="#hat.aio.Group.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Group.is_closing" href="#hat.aio.Group.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Group.is_open" href="#hat.aio.Group.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Group.spawn" href="#hat.aio.Group.spawn">spawn</a></code></li>
+<li><code><a title="hat.aio.Group.wait_closed" href="#hat.aio.Group.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Group.wait_closing" href="#hat.aio.Group.wait_closing">wait_closing</a></code></li>
+<li><code><a title="hat.aio.Group.wrap" href="#hat.aio.Group.wrap">wrap</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.aio.Queue" href="#hat.aio.Queue">Queue</a></code></h4>
+<ul class="">
+<li><code><a title="hat.aio.Queue.close" href="#hat.aio.Queue.close">close</a></code></li>
+<li><code><a title="hat.aio.Queue.empty" href="#hat.aio.Queue.empty">empty</a></code></li>
+<li><code><a title="hat.aio.Queue.full" href="#hat.aio.Queue.full">full</a></code></li>
+<li><code><a title="hat.aio.Queue.get" href="#hat.aio.Queue.get">get</a></code></li>
+<li><code><a title="hat.aio.Queue.get_nowait" href="#hat.aio.Queue.get_nowait">get_nowait</a></code></li>
+<li><code><a title="hat.aio.Queue.get_nowait_until_empty" href="#hat.aio.Queue.get_nowait_until_empty">get_nowait_until_empty</a></code></li>
+<li><code><a title="hat.aio.Queue.get_until_empty" href="#hat.aio.Queue.get_until_empty">get_until_empty</a></code></li>
+<li><code><a title="hat.aio.Queue.is_closed" href="#hat.aio.Queue.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Queue.maxsize" href="#hat.aio.Queue.maxsize">maxsize</a></code></li>
+<li><code><a title="hat.aio.Queue.put" href="#hat.aio.Queue.put">put</a></code></li>
+<li><code><a title="hat.aio.Queue.put_nowait" href="#hat.aio.Queue.put_nowait">put_nowait</a></code></li>
+<li><code><a title="hat.aio.Queue.qsize" href="#hat.aio.Queue.qsize">qsize</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.aio.QueueClosedError" href="#hat.aio.QueueClosedError">QueueClosedError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.aio.QueueEmptyError" href="#hat.aio.QueueEmptyError">QueueEmptyError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.aio.QueueFullError" href="#hat.aio.QueueFullError">QueueFullError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hat.aio.Resource" href="#hat.aio.Resource">Resource</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.aio.Resource.async_close" href="#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

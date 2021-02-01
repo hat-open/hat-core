@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<title>JSON data in Hat Open</title>
+<meta name="author" content="Bozo Kopic" />
+<meta name="date" content="2020-07-09" />
+<link rel="stylesheet" href="main.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="json-data-in-hat-open">
+<h1 class="title">JSON data in Hat Open</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Bozo Kopic</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2020-07-09</td></tr>
+<tr class="last-update field"><th class="docinfo-name">Last update:</th><td class="field-body">2020-10-28</td>
+</tr>
+</tbody>
+</table>
+<p>This article gives short introduction to JSON, YAML, JSON Schema, <cite>hat-core</cite>
+implementation (<cite>hat.util.json</cite>) and workflow for efficient
+utilization of these technologies.</p>
+<div class="section" id="json">
+<h1>JSON</h1>
+<p><a class="reference external" href="https://json.org">JSON</a> is modern data encoding format widely used by large
+number of applications independently of target platforms and across different
+domains. Some of the major factors responsible for it's popularity are:</p>
+<blockquote>
+<ul class="simple">
+<li>simple definition</li>
+<li>easy implementation</li>
+<li>support and integration with most of popular programming languages</li>
+<li>human readability and writability</li>
+<li>optimal coder/decoder implementations</li>
+<li>good balance between small number of data types and wide usability</li>
+<li>dynamic data structures</li>
+<li>self describable data</li>
+</ul>
+</blockquote>
+<p>Because of this characteristics, <cite>hat-core</cite> also utilizes JSON as data encoding
+in multiple scenarios. Two of the most common are web based client-server
+communication data and configuration data.</p>
+<p>Configuration data is good example of data structures where required
+characteristics meet those provided by JSON encoding (human
+readability/writability, dynamic extendable data structures). Flexible
+encoders/decoders usually support direct mapping between JSON data structures
+and data structures native to target programming language. This characteristics
+enable fast prototyping of application core functionality while marginalizing
+effort required for implementation of additional features as configuration
+parsing.</p>
+<div class="figure align-center">
+<img alt="json_value.png" src="json_value.png" />
+<p class="caption">JSON value</p>
+</div>
+<div class="figure align-center">
+<img alt="json_string.png" src="json_string.png" />
+<p class="caption">JSON string</p>
+</div>
+<div class="figure align-center">
+<img alt="json_number.png" src="json_number.png" />
+<p class="caption">JSON number</p>
+</div>
+<div class="figure align-center">
+<img alt="json_object.png" src="json_object.png" />
+<p class="caption">JSON object</p>
+</div>
+<div class="figure align-center">
+<img alt="json_array.png" src="json_array.png" />
+<p class="caption">JSON array</p>
+</div>
+<div class="figure align-center">
+<img alt="json_whitespace.png" src="json_whitespace.png" />
+<p class="caption">JSON whitespace</p>
+</div>
+</div>
+<div class="section" id="yaml">
+<h1>YAML</h1>
+<p><a class="reference external" href="https://yaml.org">YAML</a> is another data encoding format similar to JSON.
+It provides greater number of different encoding styles and advanced
+interpretation directives which can be used to further enhance human
+readability/writability provided by JSON format.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><cite>hat-core</cite> utilizes subset of YAML which provides encoding limited to JSON
+data. More <cite>advanced</cite> features, and those not consistently implemented
+between different library implementations, should be avoided.</p>
+</div>
+<p>Example of same JSON data encoding with JSON and YAML:</p>
+<blockquote>
+<ul>
+<li><p class="first">JSON:</p>
+<pre class="literal-block">
+{&quot;lorem&quot;: &quot;ipsum dolor sit amet&quot;,
+ &quot;consectetur&quot;: [&quot;adipiscing&quot;, &quot;elit&quot;],
+ &quot;sed&quot;: &quot;do eiusmod tempor incididunt ut labore et dolore magna aliqua&quot;,
+ &quot;other&quot;: [true, false, null, 42]}
+</pre>
+</li>
+<li><p class="first">YAML:</p>
+<pre class="literal-block">
+lorem: ipsum dolor sit amet
+consectetur:
+    - adipiscing
+    - elit
+sed: |
+    do eiusmod tempor incididunt ut labore et dolore magna aliqua
+other:
+    - true
+    - false
+    - null
+    - 42
+</pre>
+</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="hat-util-json">
+<h1><cite>hat.util.json</cite></h1>
+<p><cite>hat-core</cite> provides Python module <cite>hat.util.json</cite> as part of
+<a class="reference external" href="https://pypi.org/project/hat-util">hat-util package</a>. This module contains
+generic functions operating on JSON data:</p>
+<blockquote>
+<ul>
+<li><p class="first"><cite>hat.util.json.Data</cite></p>
+<blockquote>
+<p>Python data subset which can be encoded/decoded as JSON data.</p>
+</blockquote>
+</li>
+<li><p class="first"><cite>hat.util.json.encode</cite> / <cite>hat.util.json.decode</cite></p>
+<blockquote>
+<p>Encoding/decoding functions for conversion between supported JSON data
+and encoded string representation. These functions provide seamless
+encoding for both JSON and YAML formats.</p>
+</blockquote>
+</li>
+<li><p class="first"><cite>hat.util.json.encode_file</cite> / <cite>hat.util.json.decode_file</cite></p>
+<blockquote>
+<p>Functions similar to previous <cite>encode</cite> / <cite>decode</cite> functions operating
+with files. Encoding format (JSON or YAML) can be explicitly set or
+determined by file path extension.</p>
+</blockquote>
+</li>
+<li><p class="first"><cite>hat.util.json.SchemaRepository</cite></p>
+<blockquote>
+<p>JSON Schema validator (explanation in following chapters).</p>
+</blockquote>
+</li>
+<li><p class="first"><cite>hat.util.json.diff</cite> / <cite>hat.util.json.patch</cite></p>
+<blockquote>
+<p>JSON patch functions (explanation in following chapters).</p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<p>Example of encoding/decoding JSON data:</p>
+<pre class="code python literal-block">
+<span class="keyword namespace">from</span> <span class="name namespace">hat.util</span> <span class="keyword namespace">import</span> <span class="name">json</span>
+
+<span class="name">data</span> <span class="operator">=</span> <span class="punctuation">{</span><span class="literal string single">'lorem'</span><span class="punctuation">:</span> <span class="literal string single">'ipsum dolor sit amet'</span><span class="punctuation">,</span>
+        <span class="literal string single">'consectetur'</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="literal string single">'adipiscing'</span><span class="punctuation">,</span> <span class="literal string single">'elit'</span><span class="punctuation">],</span>
+        <span class="literal string single">'sed'</span><span class="punctuation">:</span> <span class="literal string single">'do eiusmod tempor incididunt ut labore et dolore magna aliqua'</span><span class="punctuation">,</span>
+        <span class="literal string single">'other'</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="keyword constant">True</span><span class="punctuation">,</span> <span class="keyword constant">False</span><span class="punctuation">,</span> <span class="keyword constant">None</span><span class="punctuation">,</span> <span class="literal number integer">42</span><span class="punctuation">]}</span>
+
+<span class="name">data_json</span> <span class="operator">=</span> <span class="literal string affix">r</span><span class="literal string double">&quot;&quot;&quot;
+    {&quot;lorem&quot;: &quot;ipsum dolor sit amet&quot;,
+     &quot;consectetur&quot;: [&quot;adipiscing&quot;, &quot;elit&quot;],
+     &quot;sed&quot;: &quot;do eiusmod tempor incididunt ut labore et dolore magna aliqua&quot;,
+     &quot;other&quot;: [true, false, null, 42]}
+&quot;&quot;&quot;</span>
+
+<span class="name">data_yaml</span> <span class="operator">=</span> <span class="literal string affix">r</span><span class="literal string double">&quot;&quot;&quot;
+    lorem: ipsum dolor sit amet
+    consectetur:
+        - adipiscing
+        - elit
+    sed: |
+        do eiusmod tempor incididunt ut labore et dolore magna aliqua
+    other:
+        - true
+        - false
+        - null
+        - 42
+&quot;&quot;&quot;</span>
+
+<span class="keyword">assert</span> <span class="name">json</span><span class="operator">.</span><span class="name">decode</span><span class="punctuation">(</span><span class="name">json</span><span class="operator">.</span><span class="name">encode</span><span class="punctuation">(</span><span class="name">data</span><span class="punctuation">))</span> <span class="operator">==</span> <span class="name">data</span>
+<span class="keyword">assert</span> <span class="name">json</span><span class="operator">.</span><span class="name">decode</span><span class="punctuation">(</span><span class="name">data_json</span><span class="punctuation">,</span> <span class="name builtin">format</span><span class="operator">=</span><span class="name">json</span><span class="operator">.</span><span class="name">Format</span><span class="operator">.</span><span class="name">JSON</span><span class="punctuation">)</span> <span class="operator">==</span> <span class="name">data</span>
+<span class="keyword">assert</span> <span class="name">json</span><span class="operator">.</span><span class="name">decode</span><span class="punctuation">(</span><span class="name">data_yaml</span><span class="punctuation">,</span> <span class="name builtin">format</span><span class="operator">=</span><span class="name">json</span><span class="operator">.</span><span class="name">Format</span><span class="operator">.</span><span class="name">YAML</span><span class="punctuation">)</span> <span class="operator">==</span> <span class="name">data</span>
+</pre>
+</div>
+<div class="section" id="json-schema">
+<h1>JSON Schema</h1>
+<p><a class="reference external" href="https://json-schema.org">JSON Schema</a> provides set of rules which can be used
+for describing and validating JSON data. JSON Schema is itself represented as
+JSON data which is easily readable by both humans and machines.</p>
+<p>By using JSON Schema for describing structure of JSON data, each application
+that interacts with instances of described data structures can automatically
+validate data and therefor decries complexity of application code by removing
+&quot;manual&quot; validation checks.</p>
+<p>Benefit of using JSON Schema is also availability of clean and precise
+documentation of data structures which becomes part of main interface between
+different system component. This strict definition enables cooperation between
+team members during development of interconnected applications and benefits
+future application maintenance.</p>
+<p>Together with definition of data structures, JSON Schema provides unique
+identification of each data structure definition which can be organized in
+arbitrarily complex structures inside single file or split into multiple
+files. By providing unique identification and possibility of referencing
+previously defined data definitions, JSON Schema enables hierarchical
+definition of complex data structures with emphasis on code re-usability.</p>
+<p>Exact definition describing JSON Schema can be obtained on
+<a class="reference external" href="https://json-schema.org/specification.html">https://json-schema.org/specification.html</a>. <cite>hat-core</cite> usually uses
+smaller basic subset of all validation rules which provides enough means for
+exactly describing data but at the same time provides clear and easily
+understood documentation. All schemas are available in repository's
+folder <cite>schemas_json</cite> and are organized in multiple files according to
+schema identifiers.</p>
+<p>Example of JSON Schema that defines structure of JSON Schema:</p>
+<pre class="literal-block">
+{
+    &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+    &quot;$id&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+    &quot;title&quot;: &quot;Core schema meta-schema&quot;,
+    &quot;definitions&quot;: {
+        &quot;schemaArray&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;minItems&quot;: 1,
+            &quot;items&quot;: { &quot;$ref&quot;: &quot;#&quot; }
+        },
+        &quot;nonNegativeInteger&quot;: {
+            &quot;type&quot;: &quot;integer&quot;,
+            &quot;minimum&quot;: 0
+        },
+        &quot;nonNegativeIntegerDefault0&quot;: {
+            &quot;allOf&quot;: [
+                { &quot;$ref&quot;: &quot;#/definitions/nonNegativeInteger&quot; },
+                { &quot;default&quot;: 0 }
+            ]
+        },
+        &quot;simpleTypes&quot;: {
+            &quot;enum&quot;: [
+                &quot;array&quot;,
+                &quot;boolean&quot;,
+                &quot;integer&quot;,
+                &quot;null&quot;,
+                &quot;number&quot;,
+                &quot;object&quot;,
+                &quot;string&quot;
+            ]
+        },
+        &quot;stringArray&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: { &quot;type&quot;: &quot;string&quot; },
+            &quot;uniqueItems&quot;: true,
+            &quot;default&quot;: []
+        }
+    },
+    &quot;type&quot;: [&quot;object&quot;, &quot;boolean&quot;],
+    &quot;properties&quot;: {
+        &quot;$id&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;format&quot;: &quot;uri-reference&quot;
+        },
+        &quot;$schema&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;format&quot;: &quot;uri&quot;
+        },
+        &quot;$ref&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;format&quot;: &quot;uri-reference&quot;
+        },
+        &quot;$comment&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;title&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;description&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+        },
+        &quot;default&quot;: true,
+        &quot;readOnly&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;,
+            &quot;default&quot;: false
+        },
+        &quot;examples&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: true
+        },
+        &quot;multipleOf&quot;: {
+            &quot;type&quot;: &quot;number&quot;,
+            &quot;exclusiveMinimum&quot;: 0
+        },
+        &quot;maximum&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;exclusiveMaximum&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;minimum&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;exclusiveMinimum&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+        },
+        &quot;maxLength&quot;: { &quot;$ref&quot;: &quot;#/definitions/nonNegativeInteger&quot; },
+        &quot;minLength&quot;: { &quot;$ref&quot;: &quot;#/definitions/nonNegativeIntegerDefault0&quot; },
+        &quot;pattern&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;format&quot;: &quot;regex&quot;
+        },
+        &quot;additionalItems&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;items&quot;: {
+            &quot;anyOf&quot;: [
+                { &quot;$ref&quot;: &quot;#&quot; },
+                { &quot;$ref&quot;: &quot;#/definitions/schemaArray&quot; }
+            ],
+            &quot;default&quot;: true
+        },
+        &quot;maxItems&quot;: { &quot;$ref&quot;: &quot;#/definitions/nonNegativeInteger&quot; },
+        &quot;minItems&quot;: { &quot;$ref&quot;: &quot;#/definitions/nonNegativeIntegerDefault0&quot; },
+        &quot;uniqueItems&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;,
+            &quot;default&quot;: false
+        },
+        &quot;contains&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;maxProperties&quot;: { &quot;$ref&quot;: &quot;#/definitions/nonNegativeInteger&quot; },
+        &quot;minProperties&quot;: { &quot;$ref&quot;: &quot;#/definitions/nonNegativeIntegerDefault0&quot; },
+        &quot;required&quot;: { &quot;$ref&quot;: &quot;#/definitions/stringArray&quot; },
+        &quot;additionalProperties&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;definitions&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;additionalProperties&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+            &quot;default&quot;: {}
+        },
+        &quot;properties&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;additionalProperties&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+            &quot;default&quot;: {}
+        },
+        &quot;patternProperties&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;additionalProperties&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+            &quot;propertyNames&quot;: { &quot;format&quot;: &quot;regex&quot; },
+            &quot;default&quot;: {}
+        },
+        &quot;dependencies&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;additionalProperties&quot;: {
+                &quot;anyOf&quot;: [
+                    { &quot;$ref&quot;: &quot;#&quot; },
+                    { &quot;$ref&quot;: &quot;#/definitions/stringArray&quot; }
+                ]
+            }
+        },
+        &quot;propertyNames&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;const&quot;: true,
+        &quot;enum&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: true,
+            &quot;minItems&quot;: 1,
+            &quot;uniqueItems&quot;: true
+        },
+        &quot;type&quot;: {
+            &quot;anyOf&quot;: [
+                { &quot;$ref&quot;: &quot;#/definitions/simpleTypes&quot; },
+                {
+                    &quot;type&quot;: &quot;array&quot;,
+                    &quot;items&quot;: { &quot;$ref&quot;: &quot;#/definitions/simpleTypes&quot; },
+                    &quot;minItems&quot;: 1,
+                    &quot;uniqueItems&quot;: true
+                }
+            ]
+        },
+        &quot;format&quot;: { &quot;type&quot;: &quot;string&quot; },
+        &quot;contentMediaType&quot;: { &quot;type&quot;: &quot;string&quot; },
+        &quot;contentEncoding&quot;: { &quot;type&quot;: &quot;string&quot; },
+        &quot;if&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;then&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;else&quot;: { &quot;$ref&quot;: &quot;#&quot; },
+        &quot;allOf&quot;: { &quot;$ref&quot;: &quot;#/definitions/schemaArray&quot; },
+        &quot;anyOf&quot;: { &quot;$ref&quot;: &quot;#/definitions/schemaArray&quot; },
+        &quot;oneOf&quot;: { &quot;$ref&quot;: &quot;#/definitions/schemaArray&quot; },
+        &quot;not&quot;: { &quot;$ref&quot;: &quot;#&quot; }
+    },
+    &quot;default&quot;: true
+}
+</pre>
+</div>
+<div class="section" id="json-schema-repository">
+<h1>JSON Schema Repository</h1>
+<p><cite>hat.util.json.SchemaRepository</cite> provides JSON Schema parser and JSON data
+validator. Implementation of this class is based on
+<a class="reference external" href="https://github.com/Julian/jsonschema">jsonschema</a> package.</p>
+<p>Instances of this class are initiated from multiple sources of JSON Schema
+data. Types of JSON Schema data sources are:</p>
+<blockquote>
+<ul>
+<li><p class="first">file path (<cite>pathlib.PurePath</cite>)</p>
+<blockquote>
+<ul>
+<li><p class="first">path to <cite>.json</cite> file</p>
+<blockquote>
+<p>JSON Schema encoded as JSON.</p>
+</blockquote>
+</li>
+<li><p class="first">path to <cite>.yaml</cite> or <cite>.yml</cite> file</p>
+<blockquote>
+<p>JSON Schema encoded as YAML.</p>
+</blockquote>
+</li>
+<li><p class="first">path to directory</p>
+<blockquote>
+<p>Referenced directory is recursively searched for all <cite>.json</cite>,
+<cite>.yaml</cite> and <cite>.yml</cite> files which are read and interpreted as JSON
+Schemas.</p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+</li>
+<li><p class="first"><cite>hat.util.json.Data</cite></p>
+<blockquote>
+<p>Python data representing JSON data which defines JSON Schema.</p>
+</blockquote>
+</li>
+<li><p class="first"><cite>hat.util.json.SchemaRepository</cite></p>
+<blockquote>
+<p>Other instances of <cite>SchemaRepository</cite> can be used as parts of
+new <cite>SchemaRepository</cite> instances.</p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<p>Additionally, each instance of <cite>SchemaRepository</cite> can be serialized as
+JSON data with method <cite>SchemaRepository.to_json</cite>. This enables efficient
+storage of whole repository content as single file which can be later used
+for reconstruction of repository with static method
+<cite>SchemaRepository.from_json</cite>.</p>
+<p>Once instance of repository is initialized, method <cite>validate</cite> can be used for
+validation of JSON data.</p>
+</div>
+<div class="section" id="using-schemarepository">
+<h1>Using <cite>SchemaRepository</cite></h1>
+<p>For conviniance and easier re-usability, most of JSON Schemas used in
+<cite>hat-core</cite> are written as YAML files hierarchically organized in single root
+directory. In <cite>hat-core</cite> repository this folder is <cite>schemas_json</cite>. This schemas
+are redistributed as part of appropriate python packages.</p>
+<p>In most projects that use installed <cite>hat-util</cite> package, <cite>SchemaRepository</cite>
+can be used as:</p>
+<pre class="code python literal-block">
+<span class="keyword namespace">from</span> <span class="name namespace">pathlib</span> <span class="keyword namespace">import</span> <span class="name">Path</span>
+<span class="keyword namespace">from</span> <span class="name namespace">hat.util</span> <span class="keyword namespace">import</span> <span class="name">json</span>
+
+<span class="name">json</span><span class="operator">.</span><span class="name">json_schema_repo</span><span class="operator">.</span><span class="name">validate</span><span class="punctuation">(</span><span class="literal string single">'hat://logging.yaml#'</span><span class="punctuation">,</span> <span class="punctuation">{</span><span class="literal string single">'version'</span><span class="punctuation">:</span> <span class="literal number integer">1</span><span class="punctuation">})</span>
+</pre>
+<p>If additional JSON Schemas, which are not part of installed <cite>hat-core</cite>
+packages, are required, new instances of <cite>SchemaRepository</cite> can be created.</p>
+<pre class="code python literal-block">
+<span class="keyword namespace">from</span> <span class="name namespace">pathlib</span> <span class="keyword namespace">import</span> <span class="name">Path</span>
+<span class="keyword namespace">from</span> <span class="name namespace">hat.util</span> <span class="keyword namespace">import</span> <span class="name">json</span>
+
+<span class="name">schema_yaml</span> <span class="operator">=</span> <span class="literal string affix">r</span><span class="literal string double">&quot;&quot;&quot;
+&quot;$schema&quot;: &quot;http://json-schema.org/schema#&quot;
+id: &quot;abc://xyz#&quot;
+type: object
+required:
+    - log
+    - value
+properties:
+    log:
+        &quot;$ref&quot;: &quot;hat://logging.yaml#&quot;
+    value:
+        type: string
+&quot;&quot;&quot;</span>
+
+<span class="name">schema</span> <span class="operator">=</span> <span class="name">json</span><span class="operator">.</span><span class="name">decode</span><span class="punctuation">(</span><span class="name">schema_yaml</span><span class="punctuation">,</span> <span class="name builtin">format</span><span class="operator">=</span><span class="name">json</span><span class="operator">.</span><span class="name">Format</span><span class="operator">.</span><span class="name">YAML</span><span class="punctuation">)</span>
+
+<span class="name">repo</span> <span class="operator">=</span> <span class="name">json</span><span class="operator">.</span><span class="name">SchemaRepository</span><span class="punctuation">(</span><span class="name">schema</span><span class="punctuation">,</span> <span class="name">json</span><span class="operator">.</span><span class="name">json_schema_repo</span><span class="punctuation">)</span>
+
+<span class="name">repo</span><span class="operator">.</span><span class="name">validate</span><span class="punctuation">(</span><span class="literal string single">'abc://xyz#'</span><span class="punctuation">,</span> <span class="punctuation">{</span><span class="literal string single">'log'</span><span class="punctuation">:</span> <span class="punctuation">{</span><span class="literal string single">'version'</span><span class="punctuation">:</span> <span class="literal number integer">1</span><span class="punctuation">},</span> <span class="literal string single">'value'</span><span class="punctuation">:</span> <span class="literal string single">'test'</span><span class="punctuation">})</span>
+</pre>
+</div>
+<div class="section" id="json-patch">
+<h1>JSON patch</h1>
+<p>todo:</p>
+<pre class="literal-block">
+...
+</pre>
+</div>
+</div>
+</body>
+</html>

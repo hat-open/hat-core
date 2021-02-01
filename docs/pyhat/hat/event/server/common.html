@@ -1,0 +1,1199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.event.server.common API documentation</title>
+<meta name="description" content="Common event server structures and functionalty" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.event.server.common</code></h1>
+</header>
+<section id="section-intro">
+<p>Common event server structures and functionalty</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Common event server structures and functionalty&#34;&#34;&#34;
+
+import abc
+import enum
+import itertools
+import typing
+
+from hat import aio
+from hat import json
+from hat.event.common import (EventId,
+                              EventType,
+                              Timestamp,
+                              EventPayload,
+                              Event,
+                              QueryData,
+                              Subscription)
+from hat.event.common import *  # NOQA
+
+
+SourceType = enum.Enum(&#39;SourceType&#39;, [
+    &#39;COMMUNICATION&#39;,
+    &#39;MODULE&#39;])
+
+
+class Source(typing.NamedTuple):
+    type: SourceType
+    name: typing.Optional[str]
+    id: int
+
+
+class ProcessEvent(typing.NamedTuple):
+    event_id: EventId
+    source: Source
+    event_type: EventType
+    source_timestamp: typing.Optional[Timestamp]
+    payload: typing.Optional[EventPayload]
+
+
+class SessionChanges(typing.NamedTuple):
+    new: typing.List[ProcessEvent]
+    &#34;&#34;&#34;new process events&#34;&#34;&#34;
+    deleted: typing.List[ProcessEvent]
+    &#34;&#34;&#34;deleted process events&#34;&#34;&#34;
+
+
+BackendConf = json.Data
+&#34;&#34;&#34;Backend configuration&#34;&#34;&#34;
+
+CreateBackend = typing.Callable[[BackendConf], typing.Awaitable[&#39;Backend&#39;]]
+&#34;&#34;&#34;Create backend callable&#34;&#34;&#34;
+
+
+class Backend(aio.Resource):
+    &#34;&#34;&#34;Backend ABC
+
+    Backend is implemented as python module which is dynamically imported.
+    It is expected that this module implements:
+
+    * json_schema_id (typing.Optional[str]): JSON schema id
+    * json_schema_repo (typing.Optional[json.SchemaRepository]):
+        JSON schema repo
+    * create (CreateBackend): create new backend instance
+
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of backend configuration
+    with JSON schema id.
+
+    &#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def get_last_event_id(self,
+                                server_id: int
+                                ) -&gt; EventId:
+        &#34;&#34;&#34;Get last registered event id associated with server id&#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def register(self,
+                       events: typing.List[Event]
+                       ) -&gt; typing.List[typing.Optional[Event]]:
+        &#34;&#34;&#34;Register events&#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def query(self,
+                    data: QueryData
+                    ) -&gt; typing.List[Event]:
+        &#34;&#34;&#34;Query events&#34;&#34;&#34;
+
+
+ModuleConf = json.Data
+
+CreateModule = typing.Callable[
+    [ModuleConf, &#39;hat.event.module_engine.ModuleEngine&#39;],  # NOQA
+    typing.Awaitable[&#39;Module&#39;]]
+
+
+class Module(aio.Resource):
+    &#34;&#34;&#34;Module ABC
+
+    Module is implemented as python module which is dynamically imported.
+    It is expected that this module implements:
+
+        * json_schema_id (typing.Optional[str]): JSON schema id
+        * json_schema_repo (typing.Optional[json.SchemaRepository]):
+            JSON schema repo
+        * create (CreateModule): create new module instance
+
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of module configuration
+    with JSON schema id.
+
+    Module&#39;s `subscription` is constant during module&#39;s lifetime.
+
+    &#34;&#34;&#34;
+
+    @property
+    @abc.abstractmethod
+    def subscription(self) -&gt; Subscription:
+        &#34;&#34;&#34;Subscribed event types filter&#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def create_session(self) -&gt; &#39;ModuleSession&#39;:
+        &#34;&#34;&#34;Create new module session&#34;&#34;&#34;
+
+
+class ModuleSession(aio.Resource):
+
+    @abc.abstractmethod
+    async def process(self,
+                      changes: SessionChanges
+                      ) -&gt; SessionChanges:
+        &#34;&#34;&#34;Process session changes
+
+        Changes include only process events which are matched by modules
+        subscription filter.
+
+        Single module session process is always called sequentially.
+
+        &#34;&#34;&#34;
+
+
+class EventTypeRegistryStorage(abc.ABC):
+    &#34;&#34;&#34;EventTypeRegistry storage ABC
+
+    This interface specifies perzistent storage used by `EventTypeRegistry`.
+
+    &#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def get_event_type_mappings(self) -&gt; typing.Dict[int, EventType]:
+        &#34;&#34;&#34;Get all event type mappings
+
+        Returned dict has event type ids as keys and associated event types as
+        values.
+
+        &#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def add_event_type_mappings(self,
+                                      mappings: typing.Dict[int, EventType]):
+        &#34;&#34;&#34;Add new event type mappings
+
+        `mappings` dict has event type ids as keys and associated event types
+        as values. New mappings are appended to allready existing mappings.
+
+        &#34;&#34;&#34;
+
+
+async def create_event_type_registry(storage: EventTypeRegistryStorage
+                                     ) -&gt; &#39;EventTypeRegistry&#39;:
+    &#34;&#34;&#34;Create EventTypeRegistry instance
+
+    This class can be used for simple mapping between event types and unique
+    numerical event type identifiers.
+
+    &#34;&#34;&#34;
+    registry = EventTypeRegistry()
+    registry._storage = storage
+    registry._mappings = await storage.get_event_type_mappings()
+    registry._last_id = max(registry._mappings.keys(), default=1)
+    registry._nodes = {}
+
+    new_mappings = {}
+    reverse_mappings = {tuple(v): k for k, v in registry._mappings.items()}
+    for event_type in list(registry._mappings.values()):
+        registry._init_node(reverse_mappings, registry._nodes, [], event_type,
+                            new_mappings)
+    if new_mappings:
+        await storage.add_event_type_mappings(new_mappings)
+
+    return registry
+
+
+class EventTypeRegistry:
+
+    def get_event_type(self, identifier: int):
+        &#34;&#34;&#34;Get event types associated with identifier&#34;&#34;&#34;
+        return self._mappings[identifier]
+
+    async def get_identifiers(self,
+                              event_types: typing.Iterable[EventType]
+                              ) -&gt; typing.List[int]:
+        &#34;&#34;&#34;Get identifiers associated with event types
+
+        If event type doesn&#39;t have previously defined identifier, new one is
+        created and stored in storage.
+
+        &#34;&#34;&#34;
+        new_mappings = {}
+        ids = [self._get_node(self._nodes, [], event_type, new_mappings).id
+               for event_type in event_types]
+        if new_mappings:
+            await self._storage.add_event_type_mappings(new_mappings)
+        return ids
+
+    def query_identifiers(self,
+                          event_types: EventType
+                          ) -&gt; typing.Set[int]:
+        &#34;&#34;&#34;Get identifiers matching event type queries&#34;&#34;&#34;
+        nodes = itertools.chain.from_iterable(
+            self._query_nodes(self._nodes, event_type)
+            for event_type in event_types)
+        return {node.id for node in nodes}
+
+    def _init_node(self, reverse_mappings, nodes, event_type_prefix,
+                   event_type_suffix, new_mappings):
+        segment = event_type_suffix[0]
+        node = nodes.get(segment)
+        next_event_type_prefix = [*event_type_prefix, segment]
+        next_event_type_suffix = event_type_suffix[1:]
+        if not node:
+            node_id = reverse_mappings.get(tuple(next_event_type_prefix))
+            if node_id is None:
+                self._last_id += 1
+                node = _EventTypeRegistryNode(id=self._last_id, nodes={})
+                nodes[segment] = node
+                self._mappings[node.id] = next_event_type_prefix
+                new_mappings[node.id] = next_event_type_prefix
+            else:
+                node = _EventTypeRegistryNode(id=node_id, nodes={})
+                nodes[segment] = node
+        if not next_event_type_suffix:
+            return node
+        return self._init_node(reverse_mappings, node.nodes,
+                               next_event_type_prefix, next_event_type_suffix,
+                               new_mappings)
+
+    def _get_node(self, nodes, event_type_prefix, event_type_suffix,
+                  new_mappings):
+        segment = event_type_suffix[0]
+        node = nodes.get(segment)
+        next_event_type_prefix = [*event_type_prefix, segment]
+        next_event_type_suffix = event_type_suffix[1:]
+        if not node:
+            self._last_id += 1
+            node = _EventTypeRegistryNode(id=self._last_id, nodes={})
+            nodes[segment] = node
+            self._mappings[node.id] = next_event_type_prefix
+            new_mappings[node.id] = next_event_type_prefix
+        if not next_event_type_suffix:
+            return node
+        return self._get_node(node.nodes, next_event_type_prefix,
+                              next_event_type_suffix, new_mappings)
+
+    def _query_nodes(self, nodes, event_type):
+        if not event_type:
+            return
+        segment, event_subtype = event_type[0], event_type[1:]
+        if not event_subtype:
+            if segment == &#39;*&#39;:
+                for subnode in nodes.values():
+                    yield subnode
+                    yield from self._query_nodes(subnode.nodes, [&#39;*&#39;])
+            elif segment == &#39;?&#39;:
+                for subnode in nodes.values():
+                    yield subnode
+            else:
+                subnode = nodes.get(segment)
+                if subnode:
+                    yield subnode
+        else:
+            if segment == &#39;?&#39;:
+                for subnode in nodes.values():
+                    if event_subtype == [&#39;*&#39;]:
+                        yield subnode
+                    yield from self._query_nodes(subnode.nodes, event_subtype)
+            else:
+                subnode = nodes.get(segment)
+                if subnode:
+                    if event_subtype == [&#39;*&#39;]:
+                        yield subnode
+                    yield from self._query_nodes(subnode.nodes, event_subtype)
+
+
+class _EventTypeRegistryNode(typing.NamedTuple):
+    id: int
+    nodes: typing.Dict[str, &#39;_EventTypeRegistryNode&#39;]</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.event.server.common.BackendConf"><code class="name">var <span class="ident">BackendConf</span></code></dt>
+<dd>
+<div class="desc"><p>Backend configuration</p></div>
+</dd>
+<dt id="hat.event.server.common.CreateBackend"><code class="name">var <span class="ident">CreateBackend</span></code></dt>
+<dd>
+<div class="desc"><p>Create backend callable</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.event.server.common.create_event_type_registry"><code class="name flex">
+<span>async def <span class="ident">create_event_type_registry</span></span>(<span>storage: <a title="hat.event.server.common.EventTypeRegistryStorage" href="#hat.event.server.common.EventTypeRegistryStorage">EventTypeRegistryStorage</a>) ‑> <a title="hat.event.server.common.EventTypeRegistry" href="#hat.event.server.common.EventTypeRegistry">EventTypeRegistry</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create EventTypeRegistry instance</p>
+<p>This class can be used for simple mapping between event types and unique
+numerical event type identifiers.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create_event_type_registry(storage: EventTypeRegistryStorage
+                                     ) -&gt; &#39;EventTypeRegistry&#39;:
+    &#34;&#34;&#34;Create EventTypeRegistry instance
+
+    This class can be used for simple mapping between event types and unique
+    numerical event type identifiers.
+
+    &#34;&#34;&#34;
+    registry = EventTypeRegistry()
+    registry._storage = storage
+    registry._mappings = await storage.get_event_type_mappings()
+    registry._last_id = max(registry._mappings.keys(), default=1)
+    registry._nodes = {}
+
+    new_mappings = {}
+    reverse_mappings = {tuple(v): k for k, v in registry._mappings.items()}
+    for event_type in list(registry._mappings.values()):
+        registry._init_node(reverse_mappings, registry._nodes, [], event_type,
+                            new_mappings)
+    if new_mappings:
+        await storage.add_event_type_mappings(new_mappings)
+
+    return registry</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.event.server.common.Backend"><code class="flex name class">
+<span>class <span class="ident">Backend</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Backend ABC</p>
+<p>Backend is implemented as python module which is dynamically imported.
+It is expected that this module implements:</p>
+<ul>
+<li>json_schema_id (typing.Optional[str]): JSON schema id</li>
+<li>json_schema_repo (typing.Optional[json.SchemaRepository]):
+JSON schema repo</li>
+<li>create (CreateBackend): create new backend instance</li>
+</ul>
+<p>If module defines JSON schema repositoy and JSON schema id, JSON schema
+repository will be used for additional validation of backend configuration
+with JSON schema id.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Backend(aio.Resource):
+    &#34;&#34;&#34;Backend ABC
+
+    Backend is implemented as python module which is dynamically imported.
+    It is expected that this module implements:
+
+    * json_schema_id (typing.Optional[str]): JSON schema id
+    * json_schema_repo (typing.Optional[json.SchemaRepository]):
+        JSON schema repo
+    * create (CreateBackend): create new backend instance
+
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of backend configuration
+    with JSON schema id.
+
+    &#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def get_last_event_id(self,
+                                server_id: int
+                                ) -&gt; EventId:
+        &#34;&#34;&#34;Get last registered event id associated with server id&#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def register(self,
+                       events: typing.List[Event]
+                       ) -&gt; typing.List[typing.Optional[Event]]:
+        &#34;&#34;&#34;Register events&#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def query(self,
+                    data: QueryData
+                    ) -&gt; typing.List[Event]:
+        &#34;&#34;&#34;Query events&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="hat.event.server.backends.dummy.DummyBackend" href="backends/dummy.html#hat.event.server.backends.dummy.DummyBackend">DummyBackend</a></li>
+<li><a title="hat.event.server.backends.memory.MemoryBackend" href="backends/memory.html#hat.event.server.backends.memory.MemoryBackend">MemoryBackend</a></li>
+<li><a title="hat.event.server.backends.sqlite.SqliteBackend" href="backends/sqlite.html#hat.event.server.backends.sqlite.SqliteBackend">SqliteBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.common.Backend.get_last_event_id"><code class="name flex">
+<span>async def <span class="ident">get_last_event_id</span></span>(<span>self, server_id: int) ‑> <a title="hat.event.common.EventId" href="../common.html#hat.event.common.EventId">EventId</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get last registered event id associated with server id</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def get_last_event_id(self,
+                            server_id: int
+                            ) -&gt; EventId:
+    &#34;&#34;&#34;Get last registered event id associated with server id&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.common.Backend.query"><code class="name flex">
+<span>async def <span class="ident">query</span></span>(<span>self, data: <a title="hat.event.common.QueryData" href="../common.html#hat.event.common.QueryData">QueryData</a>) ‑> typing.List[<a title="hat.event.common.Event" href="../common.html#hat.event.common.Event">Event</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query events</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def query(self,
+                data: QueryData
+                ) -&gt; typing.List[Event]:
+    &#34;&#34;&#34;Query events&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.common.Backend.register"><code class="name flex">
+<span>async def <span class="ident">register</span></span>(<span>self, events: typing.List[<a title="hat.event.common.Event" href="../common.html#hat.event.common.Event">Event</a>]) ‑> typing.List[typing.Union[<a title="hat.event.common.Event" href="../common.html#hat.event.common.Event">Event</a>, NoneType]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register events</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def register(self,
+                   events: typing.List[Event]
+                   ) -&gt; typing.List[typing.Optional[Event]]:
+    &#34;&#34;&#34;Register events&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.event.server.common.EventTypeRegistry"><code class="flex name class">
+<span>class <span class="ident">EventTypeRegistry</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventTypeRegistry:
+
+    def get_event_type(self, identifier: int):
+        &#34;&#34;&#34;Get event types associated with identifier&#34;&#34;&#34;
+        return self._mappings[identifier]
+
+    async def get_identifiers(self,
+                              event_types: typing.Iterable[EventType]
+                              ) -&gt; typing.List[int]:
+        &#34;&#34;&#34;Get identifiers associated with event types
+
+        If event type doesn&#39;t have previously defined identifier, new one is
+        created and stored in storage.
+
+        &#34;&#34;&#34;
+        new_mappings = {}
+        ids = [self._get_node(self._nodes, [], event_type, new_mappings).id
+               for event_type in event_types]
+        if new_mappings:
+            await self._storage.add_event_type_mappings(new_mappings)
+        return ids
+
+    def query_identifiers(self,
+                          event_types: EventType
+                          ) -&gt; typing.Set[int]:
+        &#34;&#34;&#34;Get identifiers matching event type queries&#34;&#34;&#34;
+        nodes = itertools.chain.from_iterable(
+            self._query_nodes(self._nodes, event_type)
+            for event_type in event_types)
+        return {node.id for node in nodes}
+
+    def _init_node(self, reverse_mappings, nodes, event_type_prefix,
+                   event_type_suffix, new_mappings):
+        segment = event_type_suffix[0]
+        node = nodes.get(segment)
+        next_event_type_prefix = [*event_type_prefix, segment]
+        next_event_type_suffix = event_type_suffix[1:]
+        if not node:
+            node_id = reverse_mappings.get(tuple(next_event_type_prefix))
+            if node_id is None:
+                self._last_id += 1
+                node = _EventTypeRegistryNode(id=self._last_id, nodes={})
+                nodes[segment] = node
+                self._mappings[node.id] = next_event_type_prefix
+                new_mappings[node.id] = next_event_type_prefix
+            else:
+                node = _EventTypeRegistryNode(id=node_id, nodes={})
+                nodes[segment] = node
+        if not next_event_type_suffix:
+            return node
+        return self._init_node(reverse_mappings, node.nodes,
+                               next_event_type_prefix, next_event_type_suffix,
+                               new_mappings)
+
+    def _get_node(self, nodes, event_type_prefix, event_type_suffix,
+                  new_mappings):
+        segment = event_type_suffix[0]
+        node = nodes.get(segment)
+        next_event_type_prefix = [*event_type_prefix, segment]
+        next_event_type_suffix = event_type_suffix[1:]
+        if not node:
+            self._last_id += 1
+            node = _EventTypeRegistryNode(id=self._last_id, nodes={})
+            nodes[segment] = node
+            self._mappings[node.id] = next_event_type_prefix
+            new_mappings[node.id] = next_event_type_prefix
+        if not next_event_type_suffix:
+            return node
+        return self._get_node(node.nodes, next_event_type_prefix,
+                              next_event_type_suffix, new_mappings)
+
+    def _query_nodes(self, nodes, event_type):
+        if not event_type:
+            return
+        segment, event_subtype = event_type[0], event_type[1:]
+        if not event_subtype:
+            if segment == &#39;*&#39;:
+                for subnode in nodes.values():
+                    yield subnode
+                    yield from self._query_nodes(subnode.nodes, [&#39;*&#39;])
+            elif segment == &#39;?&#39;:
+                for subnode in nodes.values():
+                    yield subnode
+            else:
+                subnode = nodes.get(segment)
+                if subnode:
+                    yield subnode
+        else:
+            if segment == &#39;?&#39;:
+                for subnode in nodes.values():
+                    if event_subtype == [&#39;*&#39;]:
+                        yield subnode
+                    yield from self._query_nodes(subnode.nodes, event_subtype)
+            else:
+                subnode = nodes.get(segment)
+                if subnode:
+                    if event_subtype == [&#39;*&#39;]:
+                        yield subnode
+                    yield from self._query_nodes(subnode.nodes, event_subtype)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.common.EventTypeRegistry.get_event_type"><code class="name flex">
+<span>def <span class="ident">get_event_type</span></span>(<span>self, identifier: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get event types associated with identifier</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_event_type(self, identifier: int):
+    &#34;&#34;&#34;Get event types associated with identifier&#34;&#34;&#34;
+    return self._mappings[identifier]</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.common.EventTypeRegistry.get_identifiers"><code class="name flex">
+<span>async def <span class="ident">get_identifiers</span></span>(<span>self, event_types: typing.Iterable[typing.List[str]]) ‑> typing.List[int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get identifiers associated with event types</p>
+<p>If event type doesn't have previously defined identifier, new one is
+created and stored in storage.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def get_identifiers(self,
+                          event_types: typing.Iterable[EventType]
+                          ) -&gt; typing.List[int]:
+    &#34;&#34;&#34;Get identifiers associated with event types
+
+    If event type doesn&#39;t have previously defined identifier, new one is
+    created and stored in storage.
+
+    &#34;&#34;&#34;
+    new_mappings = {}
+    ids = [self._get_node(self._nodes, [], event_type, new_mappings).id
+           for event_type in event_types]
+    if new_mappings:
+        await self._storage.add_event_type_mappings(new_mappings)
+    return ids</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.common.EventTypeRegistry.query_identifiers"><code class="name flex">
+<span>def <span class="ident">query_identifiers</span></span>(<span>self, event_types: typing.List[str]) ‑> typing.Set[int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get identifiers matching event type queries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def query_identifiers(self,
+                      event_types: EventType
+                      ) -&gt; typing.Set[int]:
+    &#34;&#34;&#34;Get identifiers matching event type queries&#34;&#34;&#34;
+    nodes = itertools.chain.from_iterable(
+        self._query_nodes(self._nodes, event_type)
+        for event_type in event_types)
+    return {node.id for node in nodes}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.server.common.EventTypeRegistryStorage"><code class="flex name class">
+<span>class <span class="ident">EventTypeRegistryStorage</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>EventTypeRegistry storage ABC</p>
+<p>This interface specifies perzistent storage used by <code><a title="hat.event.server.common.EventTypeRegistry" href="#hat.event.server.common.EventTypeRegistry">EventTypeRegistry</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventTypeRegistryStorage(abc.ABC):
+    &#34;&#34;&#34;EventTypeRegistry storage ABC
+
+    This interface specifies perzistent storage used by `EventTypeRegistry`.
+
+    &#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def get_event_type_mappings(self) -&gt; typing.Dict[int, EventType]:
+        &#34;&#34;&#34;Get all event type mappings
+
+        Returned dict has event type ids as keys and associated event types as
+        values.
+
+        &#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def add_event_type_mappings(self,
+                                      mappings: typing.Dict[int, EventType]):
+        &#34;&#34;&#34;Add new event type mappings
+
+        `mappings` dict has event type ids as keys and associated event types
+        as values. New mappings are appended to allready existing mappings.
+
+        &#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="hat.event.server.backends.sqlite.SqliteBackend" href="backends/sqlite.html#hat.event.server.backends.sqlite.SqliteBackend">SqliteBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.common.EventTypeRegistryStorage.add_event_type_mappings"><code class="name flex">
+<span>async def <span class="ident">add_event_type_mappings</span></span>(<span>self, mappings: typing.Dict[int, typing.List[str]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add new event type mappings</p>
+<p><code>mappings</code> dict has event type ids as keys and associated event types
+as values. New mappings are appended to allready existing mappings.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def add_event_type_mappings(self,
+                                  mappings: typing.Dict[int, EventType]):
+    &#34;&#34;&#34;Add new event type mappings
+
+    `mappings` dict has event type ids as keys and associated event types
+    as values. New mappings are appended to allready existing mappings.
+
+    &#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.common.EventTypeRegistryStorage.get_event_type_mappings"><code class="name flex">
+<span>async def <span class="ident">get_event_type_mappings</span></span>(<span>self) ‑> typing.Dict[int, typing.List[str]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get all event type mappings</p>
+<p>Returned dict has event type ids as keys and associated event types as
+values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def get_event_type_mappings(self) -&gt; typing.Dict[int, EventType]:
+    &#34;&#34;&#34;Get all event type mappings
+
+    Returned dict has event type ids as keys and associated event types as
+    values.
+
+    &#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.server.common.Module"><code class="flex name class">
+<span>class <span class="ident">Module</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Module ABC</p>
+<p>Module is implemented as python module which is dynamically imported.
+It is expected that this module implements:</p>
+<pre><code>* json_schema_id (typing.Optional[str]): JSON schema id
+* json_schema_repo (typing.Optional[json.SchemaRepository]):
+    JSON schema repo
+* create (CreateModule): create new module instance
+</code></pre>
+<p>If module defines JSON schema repositoy and JSON schema id, JSON schema
+repository will be used for additional validation of module configuration
+with JSON schema id.</p>
+<p>Module's <code>subscription</code> is constant during module's lifetime.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Module(aio.Resource):
+    &#34;&#34;&#34;Module ABC
+
+    Module is implemented as python module which is dynamically imported.
+    It is expected that this module implements:
+
+        * json_schema_id (typing.Optional[str]): JSON schema id
+        * json_schema_repo (typing.Optional[json.SchemaRepository]):
+            JSON schema repo
+        * create (CreateModule): create new module instance
+
+    If module defines JSON schema repositoy and JSON schema id, JSON schema
+    repository will be used for additional validation of module configuration
+    with JSON schema id.
+
+    Module&#39;s `subscription` is constant during module&#39;s lifetime.
+
+    &#34;&#34;&#34;
+
+    @property
+    @abc.abstractmethod
+    def subscription(self) -&gt; Subscription:
+        &#34;&#34;&#34;Subscribed event types filter&#34;&#34;&#34;
+
+    @abc.abstractmethod
+    async def create_session(self) -&gt; &#39;ModuleSession&#39;:
+        &#34;&#34;&#34;Create new module session&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.server.common.Module.subscription"><code class="name">var <span class="ident">subscription</span> : <a title="hat.event.common.Subscription" href="../common.html#hat.event.common.Subscription">Subscription</a></code></dt>
+<dd>
+<div class="desc"><p>Subscribed event types filter</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+@abc.abstractmethod
+def subscription(self) -&gt; Subscription:
+    &#34;&#34;&#34;Subscribed event types filter&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.common.Module.create_session"><code class="name flex">
+<span>async def <span class="ident">create_session</span></span>(<span>self) ‑> <a title="hat.event.server.common.ModuleSession" href="#hat.event.server.common.ModuleSession">ModuleSession</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new module session</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def create_session(self) -&gt; &#39;ModuleSession&#39;:
+    &#34;&#34;&#34;Create new module session&#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.event.server.common.ModuleSession"><code class="flex name class">
+<span>class <span class="ident">ModuleSession</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resource with lifetime control based on <code>Group</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModuleSession(aio.Resource):
+
+    @abc.abstractmethod
+    async def process(self,
+                      changes: SessionChanges
+                      ) -&gt; SessionChanges:
+        &#34;&#34;&#34;Process session changes
+
+        Changes include only process events which are matched by modules
+        subscription filter.
+
+        Single module session process is always called sequentially.
+
+        &#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.common.ModuleSession.process"><code class="name flex">
+<span>async def <span class="ident">process</span></span>(<span>self, changes: <a title="hat.event.server.common.SessionChanges" href="#hat.event.server.common.SessionChanges">SessionChanges</a>) ‑> <a title="hat.event.server.common.SessionChanges" href="#hat.event.server.common.SessionChanges">SessionChanges</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Process session changes</p>
+<p>Changes include only process events which are matched by modules
+subscription filter.</p>
+<p>Single module session process is always called sequentially.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+async def process(self,
+                  changes: SessionChanges
+                  ) -&gt; SessionChanges:
+    &#34;&#34;&#34;Process session changes
+
+    Changes include only process events which are matched by modules
+    subscription filter.
+
+    Single module session process is always called sequentially.
+
+    &#34;&#34;&#34;</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.async_group" href="../../aio.html#hat.aio.Resource.async_group">async_group</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.event.server.common.ProcessEvent"><code class="flex name class">
+<span>class <span class="ident">ProcessEvent</span></span>
+<span>(</span><span>event_id: <a title="hat.event.common.EventId" href="../common.html#hat.event.common.EventId">EventId</a>, source: <a title="hat.event.server.common.Source" href="#hat.event.server.common.Source">Source</a>, event_type: typing.List[str], source_timestamp: typing.Union[<a title="hat.event.common.Timestamp" href="../common.html#hat.event.common.Timestamp">Timestamp</a>, NoneType], payload: typing.Union[<a title="hat.event.common.EventPayload" href="../common.html#hat.event.common.EventPayload">EventPayload</a>, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>ProcessEvent(event_id, source, event_type, source_timestamp, payload)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ProcessEvent(typing.NamedTuple):
+    event_id: EventId
+    source: Source
+    event_type: EventType
+    source_timestamp: typing.Optional[Timestamp]
+    payload: typing.Optional[EventPayload]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.server.common.ProcessEvent.event_id"><code class="name">var <span class="ident">event_id</span> : <a title="hat.event.common.EventId" href="../common.html#hat.event.common.EventId">EventId</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.event.server.common.ProcessEvent.event_type"><code class="name">var <span class="ident">event_type</span> : typing.List[str]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.event.server.common.ProcessEvent.payload"><code class="name">var <span class="ident">payload</span> : typing.Union[<a title="hat.event.common.EventPayload" href="../common.html#hat.event.common.EventPayload">EventPayload</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.event.server.common.ProcessEvent.source"><code class="name">var <span class="ident">source</span> : <a title="hat.event.server.common.Source" href="#hat.event.server.common.Source">Source</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.event.server.common.ProcessEvent.source_timestamp"><code class="name">var <span class="ident">source_timestamp</span> : typing.Union[<a title="hat.event.common.Timestamp" href="../common.html#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.server.common.SessionChanges"><code class="flex name class">
+<span>class <span class="ident">SessionChanges</span></span>
+<span>(</span><span>new: typing.List[<a title="hat.event.server.common.ProcessEvent" href="#hat.event.server.common.ProcessEvent">ProcessEvent</a>], deleted: typing.List[<a title="hat.event.server.common.ProcessEvent" href="#hat.event.server.common.ProcessEvent">ProcessEvent</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SessionChanges(new, deleted)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SessionChanges(typing.NamedTuple):
+    new: typing.List[ProcessEvent]
+    &#34;&#34;&#34;new process events&#34;&#34;&#34;
+    deleted: typing.List[ProcessEvent]
+    &#34;&#34;&#34;deleted process events&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.server.common.SessionChanges.deleted"><code class="name">var <span class="ident">deleted</span> : typing.List[<a title="hat.event.server.common.ProcessEvent" href="#hat.event.server.common.ProcessEvent">ProcessEvent</a>]</code></dt>
+<dd>
+<div class="desc"><p>deleted process events</p></div>
+</dd>
+<dt id="hat.event.server.common.SessionChanges.new"><code class="name">var <span class="ident">new</span> : typing.List[<a title="hat.event.server.common.ProcessEvent" href="#hat.event.server.common.ProcessEvent">ProcessEvent</a>]</code></dt>
+<dd>
+<div class="desc"><p>new process events</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.server.common.Source"><code class="flex name class">
+<span>class <span class="ident">Source</span></span>
+<span>(</span><span>type: <a title="hat.event.server.common.SourceType" href="#hat.event.server.common.SourceType">SourceType</a>, name: typing.Union[str, NoneType], id: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Source(type, name, id)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Source(typing.NamedTuple):
+    type: SourceType
+    name: typing.Optional[str]
+    id: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.server.common.Source.id"><code class="name">var <span class="ident">id</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.event.server.common.Source.name"><code class="name">var <span class="ident">name</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.event.server.common.Source.type"><code class="name">var <span class="ident">type</span> : <a title="hat.event.server.common.SourceType" href="#hat.event.server.common.SourceType">SourceType</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.server.common.SourceType"><code class="flex name class">
+<span>class <span class="ident">SourceType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.event.server.common.SourceType.COMMUNICATION"><code class="name">var <span class="ident">COMMUNICATION</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.event.server.common.SourceType.MODULE"><code class="name">var <span class="ident">MODULE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.event.server" href="index.html">hat.event.server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.event.server.common.BackendConf" href="#hat.event.server.common.BackendConf">BackendConf</a></code></li>
+<li><code><a title="hat.event.server.common.CreateBackend" href="#hat.event.server.common.CreateBackend">CreateBackend</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.event.server.common.create_event_type_registry" href="#hat.event.server.common.create_event_type_registry">create_event_type_registry</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.event.server.common.Backend" href="#hat.event.server.common.Backend">Backend</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.Backend.get_last_event_id" href="#hat.event.server.common.Backend.get_last_event_id">get_last_event_id</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.query" href="#hat.event.server.common.Backend.query">query</a></code></li>
+<li><code><a title="hat.event.server.common.Backend.register" href="#hat.event.server.common.Backend.register">register</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.EventTypeRegistry" href="#hat.event.server.common.EventTypeRegistry">EventTypeRegistry</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.EventTypeRegistry.get_event_type" href="#hat.event.server.common.EventTypeRegistry.get_event_type">get_event_type</a></code></li>
+<li><code><a title="hat.event.server.common.EventTypeRegistry.get_identifiers" href="#hat.event.server.common.EventTypeRegistry.get_identifiers">get_identifiers</a></code></li>
+<li><code><a title="hat.event.server.common.EventTypeRegistry.query_identifiers" href="#hat.event.server.common.EventTypeRegistry.query_identifiers">query_identifiers</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.EventTypeRegistryStorage" href="#hat.event.server.common.EventTypeRegistryStorage">EventTypeRegistryStorage</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.EventTypeRegistryStorage.add_event_type_mappings" href="#hat.event.server.common.EventTypeRegistryStorage.add_event_type_mappings">add_event_type_mappings</a></code></li>
+<li><code><a title="hat.event.server.common.EventTypeRegistryStorage.get_event_type_mappings" href="#hat.event.server.common.EventTypeRegistryStorage.get_event_type_mappings">get_event_type_mappings</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.Module" href="#hat.event.server.common.Module">Module</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.Module.create_session" href="#hat.event.server.common.Module.create_session">create_session</a></code></li>
+<li><code><a title="hat.event.server.common.Module.subscription" href="#hat.event.server.common.Module.subscription">subscription</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.ModuleSession" href="#hat.event.server.common.ModuleSession">ModuleSession</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.ModuleSession.process" href="#hat.event.server.common.ModuleSession.process">process</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.ProcessEvent" href="#hat.event.server.common.ProcessEvent">ProcessEvent</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.ProcessEvent.event_id" href="#hat.event.server.common.ProcessEvent.event_id">event_id</a></code></li>
+<li><code><a title="hat.event.server.common.ProcessEvent.event_type" href="#hat.event.server.common.ProcessEvent.event_type">event_type</a></code></li>
+<li><code><a title="hat.event.server.common.ProcessEvent.payload" href="#hat.event.server.common.ProcessEvent.payload">payload</a></code></li>
+<li><code><a title="hat.event.server.common.ProcessEvent.source" href="#hat.event.server.common.ProcessEvent.source">source</a></code></li>
+<li><code><a title="hat.event.server.common.ProcessEvent.source_timestamp" href="#hat.event.server.common.ProcessEvent.source_timestamp">source_timestamp</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.SessionChanges" href="#hat.event.server.common.SessionChanges">SessionChanges</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.SessionChanges.deleted" href="#hat.event.server.common.SessionChanges.deleted">deleted</a></code></li>
+<li><code><a title="hat.event.server.common.SessionChanges.new" href="#hat.event.server.common.SessionChanges.new">new</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.Source" href="#hat.event.server.common.Source">Source</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.Source.id" href="#hat.event.server.common.Source.id">id</a></code></li>
+<li><code><a title="hat.event.server.common.Source.name" href="#hat.event.server.common.Source.name">name</a></code></li>
+<li><code><a title="hat.event.server.common.Source.type" href="#hat.event.server.common.Source.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.common.SourceType" href="#hat.event.server.common.SourceType">SourceType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.common.SourceType.COMMUNICATION" href="#hat.event.server.common.SourceType.COMMUNICATION">COMMUNICATION</a></code></li>
+<li><code><a title="hat.event.server.common.SourceType.MODULE" href="#hat.event.server.common.SourceType.MODULE">MODULE</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

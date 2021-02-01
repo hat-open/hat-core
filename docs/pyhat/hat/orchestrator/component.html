@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.orchestrator.component API documentation</title>
+<meta name="description" content="Orchestrator&#39;s controlled component" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.orchestrator.component</code></h1>
+</header>
+<section id="section-intro">
+<p>Orchestrator's controlled component</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Orchestrator&#39;s controlled component&#34;&#34;&#34;
+
+import asyncio
+import contextlib
+import datetime
+import enum
+import logging
+import signal
+import subprocess
+import sys
+import typing
+
+from hat import aio
+from hat import json
+from hat import util
+
+
+mlog: logging.Logger = logging.getLogger(__name__)
+&#34;&#34;&#34;Module logger&#34;&#34;&#34;
+
+start_delay: float = 0.5
+&#34;&#34;&#34;Process start delay in seconds&#34;&#34;&#34;
+
+create_timeout: float = 2
+&#34;&#34;&#34;Create process timeout in seconds&#34;&#34;&#34;
+
+sigint_timeout: float = 5
+&#34;&#34;&#34;SIGINT timeout in seconds&#34;&#34;&#34;
+
+sigkill_timeout: float = 2
+&#34;&#34;&#34;SIGKILL timeout in seconds&#34;&#34;&#34;
+
+
+Status = enum.Enum(&#39;Status&#39;, [
+    &#39;STOPPED&#39;,
+    &#39;DELAYED&#39;,
+    &#39;STARTING&#39;,
+    &#39;RUNNING&#39;,
+    &#39;STOPPING&#39;])
+
+
+class Component(aio.Resource):
+    &#34;&#34;&#34;Component
+
+    Args:
+        conf: configuration defined by
+            ``hat://orchestrator.yaml#/definitions/component``
+
+    &#34;&#34;&#34;
+
+    def __init__(self, conf: json.Data):
+        self._conf = conf
+        self._status = Status.DELAYED if conf[&#39;delay&#39;] else Status.STOPPED
+        self._revive = conf[&#39;revive&#39;]
+        self._change_cbs = util.CallbackRegistry(
+            exception_cb=lambda e: mlog.warning(
+                &#34;change callback exception: %s&#34;, e, exc_info=e))
+        self._started_queue = aio.Queue()
+        self._async_group = aio.Group()
+        self._async_group.spawn(self._run_loop)
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def status(self) -&gt; Status:
+        &#34;&#34;&#34;Current status&#34;&#34;&#34;
+        return self._status
+
+    @property
+    def name(self) -&gt; str:
+        &#34;&#34;&#34;Component name&#34;&#34;&#34;
+        return self._conf[&#39;name&#39;]
+
+    @property
+    def args(self) -&gt; typing.List[str]:
+        &#34;&#34;&#34;Command line arguments&#34;&#34;&#34;
+        return self._conf[&#39;args&#39;]
+
+    @property
+    def delay(self) -&gt; float:
+        &#34;&#34;&#34;Delay in seconds&#34;&#34;&#34;
+        return self._conf[&#39;delay&#39;]
+
+    @property
+    def revive(self) -&gt; bool:
+        &#34;&#34;&#34;Revive component&#34;&#34;&#34;
+        return self._revive
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        All changes to revive and/or status properties (even those occuring
+        due to call of async_close) are notified by calling registered
+        callback.
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    def set_revive(self, revive: bool):
+        &#34;&#34;&#34;Set revive flag&#34;&#34;&#34;
+        if revive == self.revive:
+            return
+        self._revive = revive
+        if revive and self._status != Status.DELAYED:
+            self.start()
+        self._change_cbs.notify()
+
+    def start(self):
+        &#34;&#34;&#34;Start component&#34;&#34;&#34;
+        self._started_queue.put_nowait(True)
+
+    def stop(self):
+        &#34;&#34;&#34;Stop component&#34;&#34;&#34;
+        self._started_queue.put_nowait(False)
+
+    async def _run_loop(self):
+        process = None
+
+        try:
+            started = True
+            if self.delay:
+                with contextlib.suppress(asyncio.TimeoutError):
+                    started = await asyncio.wait_for(
+                        self._started_queue.get_until_empty(), self.delay)
+            self._started_queue.put_nowait(started)
+
+            while True:
+                await asyncio.sleep(start_delay)
+
+                started = False
+                while not (started or self.revive):
+                    started = await self._started_queue.get_until_empty()
+                    if not started:
+                        self._set_status(Status.STOPPED)
+
+                try:
+                    self._set_status(Status.STARTING)
+                    process = await asyncio.wait_for(self._start_process(),
+                                                     create_timeout)
+                except asyncio.CancelledError:
+                    raise
+                except Exception as e:
+                    mlog.warning(&#34;error starting component %s: %s&#34;,
+                                 self.name, e, exc_info=e)
+                    self._set_status(Status.STOPPED)
+                    continue
+
+                try:
+                    self._set_status(Status.RUNNING)
+                    read_future = self._async_group.spawn(self._read_stdout,
+                                                          process)
+                    started = True
+                    while started:
+                        started_future = self._async_group.spawn(
+                            self._started_queue.get_until_empty)
+                        await asyncio.wait([started_future, read_future],
+                                           return_when=asyncio.FIRST_COMPLETED)
+                        if started_future.done():
+                            started = started_future.result()
+                        else:
+                            started_future.cancel()
+                            break
+                finally:
+                    self._set_status(Status.STOPPING)
+                    await self._stop_process(process)
+                    process = None
+                    self._set_status(Status.STOPPED)
+
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            mlog.error(&#34;component %s run loop error: %s&#34;,
+                       self.name, e, exc_info=e)
+        finally:
+            if process:
+                await aio.uncancellable(self._stop_process(process),
+                                        raise_cancel=False)
+            self._set_status(Status.STOPPED)
+            self._async_group.close()
+
+    def _set_status(self, status):
+        if status == self.status:
+            return
+        mlog.debug(&#34;component %s status change: %s -&gt; %s&#34;,
+                   self.name, self.status, status)
+        self._status = status
+        self._change_cbs.notify()
+
+    async def _start_process(self):
+        creationflags = (subprocess.CREATE_NEW_PROCESS_GROUP
+                         if sys.platform == &#39;win32&#39; else 0)
+        process = await asyncio.create_subprocess_exec(
+            *self.args, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT, creationflags=creationflags,
+            preexec_fn=_preexec_fn)
+        mlog.info(&#34;component %s (%s) started&#34;, self.name, process.pid)
+        return process
+
+    async def _stop_process(self, process):
+        if process.returncode is None:
+            with contextlib.suppress(Exception):
+                process.send_signal(signal.CTRL_BREAK_EVENT
+                                    if sys.platform == &#39;win32&#39;
+                                    else signal.SIGINT)
+            with contextlib.suppress(asyncio.TimeoutError):
+                await asyncio.wait_for(process.wait(), sigint_timeout)
+        if process.returncode is None:
+            with contextlib.suppress(Exception):
+                process.kill()
+            with contextlib.suppress(asyncio.TimeoutError):
+                await asyncio.wait_for(process.wait(), sigkill_timeout)
+        if process.returncode is None:
+            mlog.info(&#34;component %s (%s) failed to stop&#34;,
+                      self.name, process.pid)
+        else:
+            mlog.info(&#34;component %s (%s) stopped with return code %s&#34;,
+                      self.name, process.pid, process.returncode)
+
+    async def _read_stdout(self, process):
+        while True:
+            line = await process.stdout.readline()
+            if not line:
+                break
+            line = line.decode(&#39;utf-8&#39;, &#39;ignore&#39;).rstrip()
+            mlog.info(&#34;component %s (%s) stdout: %s&#34;,
+                      self.name, process.pid, line)
+            now = datetime.datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;[{now} {self.name} ({process.pid})] {line}&#34;)
+
+
+if sys.platform == &#39;linux&#39;:
+
+    def _preexec_fn():
+        import ctypes
+        libc = ctypes.cdll.LoadLibrary(&#39;libc.so.6&#39;)
+        PR_SET_PDEATHSIG = 1
+        SIGKILL = 9
+        libc.prctl(PR_SET_PDEATHSIG, SIGKILL)
+
+else:
+
+    _preexec_fn = None</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.orchestrator.component.create_timeout"><code class="name">var <span class="ident">create_timeout</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Create process timeout in seconds</p></div>
+</dd>
+<dt id="hat.orchestrator.component.mlog"><code class="name">var <span class="ident">mlog</span> : logging.Logger</code></dt>
+<dd>
+<div class="desc"><p>Module logger</p></div>
+</dd>
+<dt id="hat.orchestrator.component.sigint_timeout"><code class="name">var <span class="ident">sigint_timeout</span> : float</code></dt>
+<dd>
+<div class="desc"><p>SIGINT timeout in seconds</p></div>
+</dd>
+<dt id="hat.orchestrator.component.sigkill_timeout"><code class="name">var <span class="ident">sigkill_timeout</span> : float</code></dt>
+<dd>
+<div class="desc"><p>SIGKILL timeout in seconds</p></div>
+</dd>
+<dt id="hat.orchestrator.component.start_delay"><code class="name">var <span class="ident">start_delay</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Process start delay in seconds</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.orchestrator.component.Component"><code class="flex name class">
+<span>class <span class="ident">Component</span></span>
+<span>(</span><span>conf: typing.Union[NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Component</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>conf</code></strong></dt>
+<dd>configuration defined by
+<code>hat://orchestrator.yaml#/definitions/component</code></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Component(aio.Resource):
+    &#34;&#34;&#34;Component
+
+    Args:
+        conf: configuration defined by
+            ``hat://orchestrator.yaml#/definitions/component``
+
+    &#34;&#34;&#34;
+
+    def __init__(self, conf: json.Data):
+        self._conf = conf
+        self._status = Status.DELAYED if conf[&#39;delay&#39;] else Status.STOPPED
+        self._revive = conf[&#39;revive&#39;]
+        self._change_cbs = util.CallbackRegistry(
+            exception_cb=lambda e: mlog.warning(
+                &#34;change callback exception: %s&#34;, e, exc_info=e))
+        self._started_queue = aio.Queue()
+        self._async_group = aio.Group()
+        self._async_group.spawn(self._run_loop)
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def status(self) -&gt; Status:
+        &#34;&#34;&#34;Current status&#34;&#34;&#34;
+        return self._status
+
+    @property
+    def name(self) -&gt; str:
+        &#34;&#34;&#34;Component name&#34;&#34;&#34;
+        return self._conf[&#39;name&#39;]
+
+    @property
+    def args(self) -&gt; typing.List[str]:
+        &#34;&#34;&#34;Command line arguments&#34;&#34;&#34;
+        return self._conf[&#39;args&#39;]
+
+    @property
+    def delay(self) -&gt; float:
+        &#34;&#34;&#34;Delay in seconds&#34;&#34;&#34;
+        return self._conf[&#39;delay&#39;]
+
+    @property
+    def revive(self) -&gt; bool:
+        &#34;&#34;&#34;Revive component&#34;&#34;&#34;
+        return self._revive
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        All changes to revive and/or status properties (even those occuring
+        due to call of async_close) are notified by calling registered
+        callback.
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    def set_revive(self, revive: bool):
+        &#34;&#34;&#34;Set revive flag&#34;&#34;&#34;
+        if revive == self.revive:
+            return
+        self._revive = revive
+        if revive and self._status != Status.DELAYED:
+            self.start()
+        self._change_cbs.notify()
+
+    def start(self):
+        &#34;&#34;&#34;Start component&#34;&#34;&#34;
+        self._started_queue.put_nowait(True)
+
+    def stop(self):
+        &#34;&#34;&#34;Stop component&#34;&#34;&#34;
+        self._started_queue.put_nowait(False)
+
+    async def _run_loop(self):
+        process = None
+
+        try:
+            started = True
+            if self.delay:
+                with contextlib.suppress(asyncio.TimeoutError):
+                    started = await asyncio.wait_for(
+                        self._started_queue.get_until_empty(), self.delay)
+            self._started_queue.put_nowait(started)
+
+            while True:
+                await asyncio.sleep(start_delay)
+
+                started = False
+                while not (started or self.revive):
+                    started = await self._started_queue.get_until_empty()
+                    if not started:
+                        self._set_status(Status.STOPPED)
+
+                try:
+                    self._set_status(Status.STARTING)
+                    process = await asyncio.wait_for(self._start_process(),
+                                                     create_timeout)
+                except asyncio.CancelledError:
+                    raise
+                except Exception as e:
+                    mlog.warning(&#34;error starting component %s: %s&#34;,
+                                 self.name, e, exc_info=e)
+                    self._set_status(Status.STOPPED)
+                    continue
+
+                try:
+                    self._set_status(Status.RUNNING)
+                    read_future = self._async_group.spawn(self._read_stdout,
+                                                          process)
+                    started = True
+                    while started:
+                        started_future = self._async_group.spawn(
+                            self._started_queue.get_until_empty)
+                        await asyncio.wait([started_future, read_future],
+                                           return_when=asyncio.FIRST_COMPLETED)
+                        if started_future.done():
+                            started = started_future.result()
+                        else:
+                            started_future.cancel()
+                            break
+                finally:
+                    self._set_status(Status.STOPPING)
+                    await self._stop_process(process)
+                    process = None
+                    self._set_status(Status.STOPPED)
+
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            mlog.error(&#34;component %s run loop error: %s&#34;,
+                       self.name, e, exc_info=e)
+        finally:
+            if process:
+                await aio.uncancellable(self._stop_process(process),
+                                        raise_cancel=False)
+            self._set_status(Status.STOPPED)
+            self._async_group.close()
+
+    def _set_status(self, status):
+        if status == self.status:
+            return
+        mlog.debug(&#34;component %s status change: %s -&gt; %s&#34;,
+                   self.name, self.status, status)
+        self._status = status
+        self._change_cbs.notify()
+
+    async def _start_process(self):
+        creationflags = (subprocess.CREATE_NEW_PROCESS_GROUP
+                         if sys.platform == &#39;win32&#39; else 0)
+        process = await asyncio.create_subprocess_exec(
+            *self.args, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT, creationflags=creationflags,
+            preexec_fn=_preexec_fn)
+        mlog.info(&#34;component %s (%s) started&#34;, self.name, process.pid)
+        return process
+
+    async def _stop_process(self, process):
+        if process.returncode is None:
+            with contextlib.suppress(Exception):
+                process.send_signal(signal.CTRL_BREAK_EVENT
+                                    if sys.platform == &#39;win32&#39;
+                                    else signal.SIGINT)
+            with contextlib.suppress(asyncio.TimeoutError):
+                await asyncio.wait_for(process.wait(), sigint_timeout)
+        if process.returncode is None:
+            with contextlib.suppress(Exception):
+                process.kill()
+            with contextlib.suppress(asyncio.TimeoutError):
+                await asyncio.wait_for(process.wait(), sigkill_timeout)
+        if process.returncode is None:
+            mlog.info(&#34;component %s (%s) failed to stop&#34;,
+                      self.name, process.pid)
+        else:
+            mlog.info(&#34;component %s (%s) stopped with return code %s&#34;,
+                      self.name, process.pid, process.returncode)
+
+    async def _read_stdout(self, process):
+        while True:
+            line = await process.stdout.readline()
+            if not line:
+                break
+            line = line.decode(&#39;utf-8&#39;, &#39;ignore&#39;).rstrip()
+            mlog.info(&#34;component %s (%s) stdout: %s&#34;,
+                      self.name, process.pid, line)
+            now = datetime.datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;[{now} {self.name} ({process.pid})] {line}&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.orchestrator.component.Component.args"><code class="name">var <span class="ident">args</span> : typing.List[str]</code></dt>
+<dd>
+<div class="desc"><p>Command line arguments</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def args(self) -&gt; typing.List[str]:
+    &#34;&#34;&#34;Command line arguments&#34;&#34;&#34;
+    return self._conf[&#39;args&#39;]</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.delay"><code class="name">var <span class="ident">delay</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Delay in seconds</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def delay(self) -&gt; float:
+    &#34;&#34;&#34;Delay in seconds&#34;&#34;&#34;
+    return self._conf[&#39;delay&#39;]</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Component name</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def name(self) -&gt; str:
+    &#34;&#34;&#34;Component name&#34;&#34;&#34;
+    return self._conf[&#39;name&#39;]</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.revive"><code class="name">var <span class="ident">revive</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Revive component</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def revive(self) -&gt; bool:
+    &#34;&#34;&#34;Revive component&#34;&#34;&#34;
+    return self._revive</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.status"><code class="name">var <span class="ident">status</span> : <a title="hat.orchestrator.component.Status" href="#hat.orchestrator.component.Status">Status</a></code></dt>
+<dd>
+<div class="desc"><p>Current status</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def status(self) -&gt; Status:
+    &#34;&#34;&#34;Current status&#34;&#34;&#34;
+    return self._status</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.orchestrator.component.Component.register_change_cb"><code class="name flex">
+<span>def <span class="ident">register_change_cb</span></span>(<span>self, cb: typing.Callable[[], NoneType]) ‑> <a title="hat.util.RegisterCallbackHandle" href="../util.html#hat.util.RegisterCallbackHandle">RegisterCallbackHandle</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register change callback</p>
+<p>All changes to revive and/or status properties (even those occuring
+due to call of async_close) are notified by calling registered
+callback.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_change_cb(self,
+                       cb: typing.Callable[[], None]
+                       ) -&gt; util.RegisterCallbackHandle:
+    &#34;&#34;&#34;Register change callback
+
+    All changes to revive and/or status properties (even those occuring
+    due to call of async_close) are notified by calling registered
+    callback.
+
+    &#34;&#34;&#34;
+    return self._change_cbs.register(cb)</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.set_revive"><code class="name flex">
+<span>def <span class="ident">set_revive</span></span>(<span>self, revive: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set revive flag</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_revive(self, revive: bool):
+    &#34;&#34;&#34;Set revive flag&#34;&#34;&#34;
+    if revive == self.revive:
+        return
+    self._revive = revive
+    if revive and self._status != Status.DELAYED:
+        self.start()
+    self._change_cbs.notify()</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.start"><code class="name flex">
+<span>def <span class="ident">start</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Start component</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start(self):
+    &#34;&#34;&#34;Start component&#34;&#34;&#34;
+    self._started_queue.put_nowait(True)</code></pre>
+</details>
+</dd>
+<dt id="hat.orchestrator.component.Component.stop"><code class="name flex">
+<span>def <span class="ident">stop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stop component</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop(self):
+    &#34;&#34;&#34;Stop component&#34;&#34;&#34;
+    self._started_queue.put_nowait(False)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.orchestrator.component.Status"><code class="flex name class">
+<span>class <span class="ident">Status</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.orchestrator.component.Status.DELAYED"><code class="name">var <span class="ident">DELAYED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.orchestrator.component.Status.RUNNING"><code class="name">var <span class="ident">RUNNING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.orchestrator.component.Status.STARTING"><code class="name">var <span class="ident">STARTING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.orchestrator.component.Status.STOPPED"><code class="name">var <span class="ident">STOPPED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.orchestrator.component.Status.STOPPING"><code class="name">var <span class="ident">STOPPING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.orchestrator" href="index.html">hat.orchestrator</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.orchestrator.component.create_timeout" href="#hat.orchestrator.component.create_timeout">create_timeout</a></code></li>
+<li><code><a title="hat.orchestrator.component.mlog" href="#hat.orchestrator.component.mlog">mlog</a></code></li>
+<li><code><a title="hat.orchestrator.component.sigint_timeout" href="#hat.orchestrator.component.sigint_timeout">sigint_timeout</a></code></li>
+<li><code><a title="hat.orchestrator.component.sigkill_timeout" href="#hat.orchestrator.component.sigkill_timeout">sigkill_timeout</a></code></li>
+<li><code><a title="hat.orchestrator.component.start_delay" href="#hat.orchestrator.component.start_delay">start_delay</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.orchestrator.component.Component" href="#hat.orchestrator.component.Component">Component</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.orchestrator.component.Component.args" href="#hat.orchestrator.component.Component.args">args</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.async_group" href="#hat.orchestrator.component.Component.async_group">async_group</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.delay" href="#hat.orchestrator.component.Component.delay">delay</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.name" href="#hat.orchestrator.component.Component.name">name</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.register_change_cb" href="#hat.orchestrator.component.Component.register_change_cb">register_change_cb</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.revive" href="#hat.orchestrator.component.Component.revive">revive</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.set_revive" href="#hat.orchestrator.component.Component.set_revive">set_revive</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.start" href="#hat.orchestrator.component.Component.start">start</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.status" href="#hat.orchestrator.component.Component.status">status</a></code></li>
+<li><code><a title="hat.orchestrator.component.Component.stop" href="#hat.orchestrator.component.Component.stop">stop</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.orchestrator.component.Status" href="#hat.orchestrator.component.Status">Status</a></code></h4>
+<ul class="">
+<li><code><a title="hat.orchestrator.component.Status.DELAYED" href="#hat.orchestrator.component.Status.DELAYED">DELAYED</a></code></li>
+<li><code><a title="hat.orchestrator.component.Status.RUNNING" href="#hat.orchestrator.component.Status.RUNNING">RUNNING</a></code></li>
+<li><code><a title="hat.orchestrator.component.Status.STARTING" href="#hat.orchestrator.component.Status.STARTING">STARTING</a></code></li>
+<li><code><a title="hat.orchestrator.component.Status.STOPPED" href="#hat.orchestrator.component.Status.STOPPED">STOPPED</a></code></li>
+<li><code><a title="hat.orchestrator.component.Status.STOPPING" href="#hat.orchestrator.component.Status.STOPPING">STOPPING</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

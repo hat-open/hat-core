@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.syslog.server.backend API documentation</title>
+<meta name="description" content="Backend implementation" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.syslog.server.backend</code></h1>
+</header>
+<section id="section-intro">
+<p>Backend implementation</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Backend implementation&#34;&#34;&#34;
+
+import asyncio
+import contextlib
+import logging
+import typing
+
+from hat import aio
+from hat import util
+from hat.syslog.server import common
+from hat.syslog.server import database
+import hat.syslog.server.conf
+
+
+mlog: logging.Logger = logging.getLogger(__name__)
+&#34;&#34;&#34;Module logger&#34;&#34;&#34;
+
+register_delay: float = 0.1
+&#34;&#34;&#34;Registration delay in seconds&#34;&#34;&#34;
+
+register_queue_size: int = 50
+&#34;&#34;&#34;Registration queue size&#34;&#34;&#34;
+
+register_queue_treshold: int = 10
+&#34;&#34;&#34;Registration queue threshold&#34;&#34;&#34;
+
+
+async def create_backend(conf: hat.syslog.server.conf.BackendConf
+                         ) -&gt; &#39;Backend&#39;:
+    &#34;&#34;&#34;Create backend&#34;&#34;&#34;
+    db = await database.create_database(conf.path, conf.disable_journal)
+    try:
+        first_id = await db.get_first_id()
+        last_id = await db.get_last_id()
+    except BaseException:
+        await aio.uncancellable(db.async_close())
+        raise
+
+    backend = Backend()
+    backend._conf = conf
+    backend._db = db
+    backend._first_id = first_id
+    backend._last_id = last_id
+    backend._async_group = aio.Group()
+    backend._change_cbs = util.CallbackRegistry()
+    backend._msg_queue = aio.Queue(register_queue_size)
+    backend._executor = aio.create_executor()
+
+    backend._async_group.spawn(aio.call_on_cancel, db.async_close)
+    backend._async_group.spawn(backend._loop)
+
+    mlog.debug(&#39;created backend with database %s&#39;, conf.path)
+    return backend
+
+
+class Backend(aio.Resource):
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def first_id(self) -&gt; typing.Optional[int]:
+        &#34;&#34;&#34;First entry id&#34;&#34;&#34;
+        return self._first_id
+
+    @property
+    def last_id(self) -&gt; typing.Optional[int]:
+        &#34;&#34;&#34;Last entry id&#34;&#34;&#34;
+        return self._last_id
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[typing.List[common.Entry]],
+                                               None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        Callback is called if `first_id` changes and/or `lats_id` changes
+        and/or new entries are available (passed as argument to registered
+        callback).
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    async def register(self,
+                       timestamp: float,
+                       msg: common.Msg):
+        &#34;&#34;&#34;Register message
+
+        Registration adds msg to registration queue. If queue is full, wait
+        until message can be successfully added.
+
+        When message is added to empty queue, registration delay timer is
+        started. Once delay timer expires or if number of messages in queue
+        is greater than threshold, all messages are removed from queue and
+        inserted into sqlite database.
+
+        &#34;&#34;&#34;
+        await self._msg_queue.put((timestamp, msg))
+
+    async def query(self,
+                    filter: common.Filter
+                    ) -&gt; typing.List[common.Entry]:
+        &#34;&#34;&#34;Query entries&#34;&#34;&#34;
+        return await self._db.query(filter)
+
+    async def _loop(self):
+        try:
+            while True:
+                msgs = await self._get_msgs()
+                await self._process_msgs(msgs)
+        except Exception as e:
+            mlog.warn(&#34;backend loop error: %s&#34;, e, exc_info=e)
+        finally:
+            self._msg_queue.close()
+            self._async_group.close()
+            mlog.debug(&#39;backend loop closed&#39;)
+
+    async def _get_msgs(self):
+        loop = asyncio.get_running_loop()
+        msgs = []
+
+        msg = await self._msg_queue.get()
+        msgs.append(msg)
+
+        start = loop.time()
+        while True:
+            while not self._msg_queue.empty():
+                msgs.append(self._msg_queue.get_nowait())
+            timeout = register_delay - (loop.time() - start)
+            if timeout &lt;= 0:
+                break
+            if len(msgs) &gt;= register_queue_treshold:
+                break
+            async_group = aio.Group()
+            try:
+                f = async_group.spawn(self._msg_queue.get)
+                await asyncio.wait_for(asyncio.shield(f), timeout)
+            except asyncio.TimeoutError:
+                break
+            finally:
+                await aio.uncancellable(async_group.async_close())
+                if not f.cancelled():
+                    msgs.append(f.result())
+
+        while not self._msg_queue.empty():
+            msgs.append(self._msg_queue.get_nowait())
+        return msgs
+
+    async def _process_msgs(self, msgs):
+        mlog.debug(&#34;registering new messages (message count: %s)...&#34;,
+                   len(msgs))
+        entries = await self._db.add_msgs(msgs)
+        if not entries:
+            return
+
+        self._last_id = entries[0].id
+        if self._first_id is None:
+            self._first_id = entries[-1].id
+
+        mlog.debug(&#34;backend state changed (first_id: %s; last_id: %s)&#34;,
+                   self._first_id, self._last_id)
+        self._change_cbs.notify(entries)
+
+        if self._conf.high_size &lt;= 0:
+            return
+        if self._last_id - self._first_id + 1 &lt;= self._conf.high_size:
+            return
+
+        mlog.debug(&#34;database cleanup starting...&#34;)
+        await self._db_cleanup()
+
+    async def _db_cleanup(self):
+        first_id = self._last_id - self._conf.low_size + 1
+        if first_id &gt; self._last_id:
+            first_id = None
+        if first_id &lt;= self._first_id:
+            return
+
+        if self._conf.enable_archive:
+            mlog.debug(&#34;archiving database entries...&#34;)
+            await self._archive_db(first_id)
+
+        await self._db.delete(first_id)
+        self._first_id = first_id
+        if self._first_id is None:
+            self._last_id = None
+
+        mlog.debug(&#34;backend state changed (first_id: %s; last_id: %s)&#34;,
+                   self._first_id, self._last_id)
+        self._change_cbs.notify([])
+
+    async def _archive_db(self, first_id):
+        archive_path = await self._async_group.spawn(
+            self._executor, _ext_get_new_archive_path, self._conf.path)
+        archive = await database.create_database(
+            archive_path, self._conf.disable_journal)
+        try:
+            entries = await self._db.query(common.Filter(
+                last_id=first_id - 1 if first_id is not None else None))
+            await archive.add_entries(entries)
+        finally:
+            await aio.uncancellable(archive.async_close())
+
+
+def _ext_get_new_archive_path(db_path):
+    counter = 1
+    for i in db_path.parent.glob(db_path.name + &#39;.*&#39;):
+        with contextlib.suppress(ValueError):
+            index = int(i.name.split(&#39;.&#39;)[-1])
+            if index &gt; counter:
+                counter = index
+    return db_path.parent / f&#34;{db_path.name}.{counter}&#34;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.syslog.server.backend.mlog"><code class="name">var <span class="ident">mlog</span> : logging.Logger</code></dt>
+<dd>
+<div class="desc"><p>Module logger</p></div>
+</dd>
+<dt id="hat.syslog.server.backend.register_delay"><code class="name">var <span class="ident">register_delay</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Registration delay in seconds</p></div>
+</dd>
+<dt id="hat.syslog.server.backend.register_queue_size"><code class="name">var <span class="ident">register_queue_size</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Registration queue size</p></div>
+</dd>
+<dt id="hat.syslog.server.backend.register_queue_treshold"><code class="name">var <span class="ident">register_queue_treshold</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Registration queue threshold</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.syslog.server.backend.create_backend"><code class="name flex">
+<span>async def <span class="ident">create_backend</span></span>(<span>conf: <a title="hat.syslog.server.conf.BackendConf" href="conf.html#hat.syslog.server.conf.BackendConf">BackendConf</a>) ‑> <a title="hat.syslog.server.backend.Backend" href="#hat.syslog.server.backend.Backend">Backend</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create backend</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create_backend(conf: hat.syslog.server.conf.BackendConf
+                         ) -&gt; &#39;Backend&#39;:
+    &#34;&#34;&#34;Create backend&#34;&#34;&#34;
+    db = await database.create_database(conf.path, conf.disable_journal)
+    try:
+        first_id = await db.get_first_id()
+        last_id = await db.get_last_id()
+    except BaseException:
+        await aio.uncancellable(db.async_close())
+        raise
+
+    backend = Backend()
+    backend._conf = conf
+    backend._db = db
+    backend._first_id = first_id
+    backend._last_id = last_id
+    backend._async_group = aio.Group()
+    backend._change_cbs = util.CallbackRegistry()
+    backend._msg_queue = aio.Queue(register_queue_size)
+    backend._executor = aio.create_executor()
+
+    backend._async_group.spawn(aio.call_on_cancel, db.async_close)
+    backend._async_group.spawn(backend._loop)
+
+    mlog.debug(&#39;created backend with database %s&#39;, conf.path)
+    return backend</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.syslog.server.backend.Backend"><code class="flex name class">
+<span>class <span class="ident">Backend</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resource with lifetime control based on <code>Group</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Backend(aio.Resource):
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    @property
+    def first_id(self) -&gt; typing.Optional[int]:
+        &#34;&#34;&#34;First entry id&#34;&#34;&#34;
+        return self._first_id
+
+    @property
+    def last_id(self) -&gt; typing.Optional[int]:
+        &#34;&#34;&#34;Last entry id&#34;&#34;&#34;
+        return self._last_id
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[typing.List[common.Entry]],
+                                               None]
+                           ) -&gt; util.RegisterCallbackHandle:
+        &#34;&#34;&#34;Register change callback
+
+        Callback is called if `first_id` changes and/or `lats_id` changes
+        and/or new entries are available (passed as argument to registered
+        callback).
+
+        &#34;&#34;&#34;
+        return self._change_cbs.register(cb)
+
+    async def register(self,
+                       timestamp: float,
+                       msg: common.Msg):
+        &#34;&#34;&#34;Register message
+
+        Registration adds msg to registration queue. If queue is full, wait
+        until message can be successfully added.
+
+        When message is added to empty queue, registration delay timer is
+        started. Once delay timer expires or if number of messages in queue
+        is greater than threshold, all messages are removed from queue and
+        inserted into sqlite database.
+
+        &#34;&#34;&#34;
+        await self._msg_queue.put((timestamp, msg))
+
+    async def query(self,
+                    filter: common.Filter
+                    ) -&gt; typing.List[common.Entry]:
+        &#34;&#34;&#34;Query entries&#34;&#34;&#34;
+        return await self._db.query(filter)
+
+    async def _loop(self):
+        try:
+            while True:
+                msgs = await self._get_msgs()
+                await self._process_msgs(msgs)
+        except Exception as e:
+            mlog.warn(&#34;backend loop error: %s&#34;, e, exc_info=e)
+        finally:
+            self._msg_queue.close()
+            self._async_group.close()
+            mlog.debug(&#39;backend loop closed&#39;)
+
+    async def _get_msgs(self):
+        loop = asyncio.get_running_loop()
+        msgs = []
+
+        msg = await self._msg_queue.get()
+        msgs.append(msg)
+
+        start = loop.time()
+        while True:
+            while not self._msg_queue.empty():
+                msgs.append(self._msg_queue.get_nowait())
+            timeout = register_delay - (loop.time() - start)
+            if timeout &lt;= 0:
+                break
+            if len(msgs) &gt;= register_queue_treshold:
+                break
+            async_group = aio.Group()
+            try:
+                f = async_group.spawn(self._msg_queue.get)
+                await asyncio.wait_for(asyncio.shield(f), timeout)
+            except asyncio.TimeoutError:
+                break
+            finally:
+                await aio.uncancellable(async_group.async_close())
+                if not f.cancelled():
+                    msgs.append(f.result())
+
+        while not self._msg_queue.empty():
+            msgs.append(self._msg_queue.get_nowait())
+        return msgs
+
+    async def _process_msgs(self, msgs):
+        mlog.debug(&#34;registering new messages (message count: %s)...&#34;,
+                   len(msgs))
+        entries = await self._db.add_msgs(msgs)
+        if not entries:
+            return
+
+        self._last_id = entries[0].id
+        if self._first_id is None:
+            self._first_id = entries[-1].id
+
+        mlog.debug(&#34;backend state changed (first_id: %s; last_id: %s)&#34;,
+                   self._first_id, self._last_id)
+        self._change_cbs.notify(entries)
+
+        if self._conf.high_size &lt;= 0:
+            return
+        if self._last_id - self._first_id + 1 &lt;= self._conf.high_size:
+            return
+
+        mlog.debug(&#34;database cleanup starting...&#34;)
+        await self._db_cleanup()
+
+    async def _db_cleanup(self):
+        first_id = self._last_id - self._conf.low_size + 1
+        if first_id &gt; self._last_id:
+            first_id = None
+        if first_id &lt;= self._first_id:
+            return
+
+        if self._conf.enable_archive:
+            mlog.debug(&#34;archiving database entries...&#34;)
+            await self._archive_db(first_id)
+
+        await self._db.delete(first_id)
+        self._first_id = first_id
+        if self._first_id is None:
+            self._last_id = None
+
+        mlog.debug(&#34;backend state changed (first_id: %s; last_id: %s)&#34;,
+                   self._first_id, self._last_id)
+        self._change_cbs.notify([])
+
+    async def _archive_db(self, first_id):
+        archive_path = await self._async_group.spawn(
+            self._executor, _ext_get_new_archive_path, self._conf.path)
+        archive = await database.create_database(
+            archive_path, self._conf.disable_journal)
+        try:
+            entries = await self._db.query(common.Filter(
+                last_id=first_id - 1 if first_id is not None else None))
+            await archive.add_entries(entries)
+        finally:
+            await aio.uncancellable(archive.async_close())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.syslog.server.backend.Backend.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.server.backend.Backend.first_id"><code class="name">var <span class="ident">first_id</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>First entry id</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def first_id(self) -&gt; typing.Optional[int]:
+    &#34;&#34;&#34;First entry id&#34;&#34;&#34;
+    return self._first_id</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.server.backend.Backend.last_id"><code class="name">var <span class="ident">last_id</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Last entry id</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def last_id(self) -&gt; typing.Optional[int]:
+    &#34;&#34;&#34;Last entry id&#34;&#34;&#34;
+    return self._last_id</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.syslog.server.backend.Backend.query"><code class="name flex">
+<span>async def <span class="ident">query</span></span>(<span>self, filter: <a title="hat.syslog.server.common.Filter" href="common.html#hat.syslog.server.common.Filter">Filter</a>) ‑> typing.List[<a title="hat.syslog.server.common.Entry" href="common.html#hat.syslog.server.common.Entry">Entry</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query entries</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def query(self,
+                filter: common.Filter
+                ) -&gt; typing.List[common.Entry]:
+    &#34;&#34;&#34;Query entries&#34;&#34;&#34;
+    return await self._db.query(filter)</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.server.backend.Backend.register"><code class="name flex">
+<span>async def <span class="ident">register</span></span>(<span>self, timestamp: float, msg: <a title="hat.syslog.common.Msg" href="../common.html#hat.syslog.common.Msg">Msg</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register message</p>
+<p>Registration adds msg to registration queue. If queue is full, wait
+until message can be successfully added.</p>
+<p>When message is added to empty queue, registration delay timer is
+started. Once delay timer expires or if number of messages in queue
+is greater than threshold, all messages are removed from queue and
+inserted into sqlite database.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def register(self,
+                   timestamp: float,
+                   msg: common.Msg):
+    &#34;&#34;&#34;Register message
+
+    Registration adds msg to registration queue. If queue is full, wait
+    until message can be successfully added.
+
+    When message is added to empty queue, registration delay timer is
+    started. Once delay timer expires or if number of messages in queue
+    is greater than threshold, all messages are removed from queue and
+    inserted into sqlite database.
+
+    &#34;&#34;&#34;
+    await self._msg_queue.put((timestamp, msg))</code></pre>
+</details>
+</dd>
+<dt id="hat.syslog.server.backend.Backend.register_change_cb"><code class="name flex">
+<span>def <span class="ident">register_change_cb</span></span>(<span>self, cb: typing.Callable[[typing.List[<a title="hat.syslog.server.common.Entry" href="common.html#hat.syslog.server.common.Entry">Entry</a>]], NoneType]) ‑> <a title="hat.util.RegisterCallbackHandle" href="../../util.html#hat.util.RegisterCallbackHandle">RegisterCallbackHandle</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register change callback</p>
+<p>Callback is called if <code>first_id</code> changes and/or <code>lats_id</code> changes
+and/or new entries are available (passed as argument to registered
+callback).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_change_cb(self,
+                       cb: typing.Callable[[typing.List[common.Entry]],
+                                           None]
+                       ) -&gt; util.RegisterCallbackHandle:
+    &#34;&#34;&#34;Register change callback
+
+    Callback is called if `first_id` changes and/or `lats_id` changes
+    and/or new entries are available (passed as argument to registered
+    callback).
+
+    &#34;&#34;&#34;
+    return self._change_cbs.register(cb)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.syslog.server" href="index.html">hat.syslog.server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.syslog.server.backend.mlog" href="#hat.syslog.server.backend.mlog">mlog</a></code></li>
+<li><code><a title="hat.syslog.server.backend.register_delay" href="#hat.syslog.server.backend.register_delay">register_delay</a></code></li>
+<li><code><a title="hat.syslog.server.backend.register_queue_size" href="#hat.syslog.server.backend.register_queue_size">register_queue_size</a></code></li>
+<li><code><a title="hat.syslog.server.backend.register_queue_treshold" href="#hat.syslog.server.backend.register_queue_treshold">register_queue_treshold</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.syslog.server.backend.create_backend" href="#hat.syslog.server.backend.create_backend">create_backend</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.syslog.server.backend.Backend" href="#hat.syslog.server.backend.Backend">Backend</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.syslog.server.backend.Backend.async_group" href="#hat.syslog.server.backend.Backend.async_group">async_group</a></code></li>
+<li><code><a title="hat.syslog.server.backend.Backend.first_id" href="#hat.syslog.server.backend.Backend.first_id">first_id</a></code></li>
+<li><code><a title="hat.syslog.server.backend.Backend.last_id" href="#hat.syslog.server.backend.Backend.last_id">last_id</a></code></li>
+<li><code><a title="hat.syslog.server.backend.Backend.query" href="#hat.syslog.server.backend.Backend.query">query</a></code></li>
+<li><code><a title="hat.syslog.server.backend.Backend.register" href="#hat.syslog.server.backend.Backend.register">register</a></code></li>
+<li><code><a title="hat.syslog.server.backend.Backend.register_change_cb" href="#hat.syslog.server.backend.Backend.register_change_cb">register_change_cb</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

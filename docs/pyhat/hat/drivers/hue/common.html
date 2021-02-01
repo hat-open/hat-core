@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.drivers.hue.common API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.drivers.hue.common</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import datetime
+import enum
+import typing
+
+
+class LightAlert(enum.Enum):
+    NONE = &#39;none&#39;
+    SELECT = &#39;select&#39;
+    LSELECT = &#39;lselect&#39;
+
+
+class LightEffect(enum.Enum):
+    NONE = &#39;none&#39;
+    COLOR_LOOP = &#39;colorloop&#39;
+
+
+class DeviceType(enum.Enum):
+    LIGHT = &#39;lights&#39;
+    SENSOR = &#39;sensors&#39;
+
+
+class DeviceId(typing.NamedTuple):
+    type: DeviceType
+    label: str
+
+
+class LightState(typing.NamedTuple):
+    &#34;&#34;&#34;Light state
+
+    Attributes:
+        on: on/off state
+        bri: brightness between 1 (min) and 254 (max)
+        alert: light alert state
+        reachable: is device reachable
+        hue: hue between 0 and 65535
+        sat: saturnation between 0 (white) and 254 (colored)
+        effect: light effect
+
+    &#34;&#34;&#34;
+    on: typing.Optional[bool] = None
+    bri: typing.Optional[int] = None
+    alert: typing.Optional[LightAlert] = None
+    reachable: typing.Optional[bool] = None
+    hue: typing.Optional[int] = None
+    sat: typing.Optional[int] = None
+    effect: typing.Optional[LightEffect] = None
+
+
+class SensorState(typing.NamedTuple):
+    &#34;&#34;&#34;Sensor state
+
+    Attributes:
+        last_updated: last updated time
+
+    &#34;&#34;&#34;
+    last_updated: typing.Optional[datetime.datetime] = None
+
+
+DeviceState = typing.Union[LightState, SensorState]
+
+
+class Device(typing.NamedTuple):
+    id: DeviceId
+    subtype: str
+    name: str
+    model_id: str
+    manufacturer_name: str
+    sw_version: str
+    unique_id: typing.Optional[str]
+    state: DeviceState</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.drivers.hue.common.Device"><code class="flex name class">
+<span>class <span class="ident">Device</span></span>
+<span>(</span><span>id: <a title="hat.drivers.hue.common.DeviceId" href="#hat.drivers.hue.common.DeviceId">DeviceId</a>, subtype: str, name: str, model_id: str, manufacturer_name: str, sw_version: str, unique_id: typing.Union[str, NoneType], state: typing.Union[<a title="hat.drivers.hue.common.LightState" href="#hat.drivers.hue.common.LightState">LightState</a>, <a title="hat.drivers.hue.common.SensorState" href="#hat.drivers.hue.common.SensorState">SensorState</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Device(id, subtype, name, model_id, manufacturer_name, sw_version, unique_id, state)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Device(typing.NamedTuple):
+    id: DeviceId
+    subtype: str
+    name: str
+    model_id: str
+    manufacturer_name: str
+    sw_version: str
+    unique_id: typing.Optional[str]
+    state: DeviceState</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.Device.id"><code class="name">var <span class="ident">id</span> : <a title="hat.drivers.hue.common.DeviceId" href="#hat.drivers.hue.common.DeviceId">DeviceId</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.manufacturer_name"><code class="name">var <span class="ident">manufacturer_name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.model_id"><code class="name">var <span class="ident">model_id</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.state"><code class="name">var <span class="ident">state</span> : typing.Union[<a title="hat.drivers.hue.common.LightState" href="#hat.drivers.hue.common.LightState">LightState</a>, <a title="hat.drivers.hue.common.SensorState" href="#hat.drivers.hue.common.SensorState">SensorState</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.subtype"><code class="name">var <span class="ident">subtype</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.sw_version"><code class="name">var <span class="ident">sw_version</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.Device.unique_id"><code class="name">var <span class="ident">unique_id</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.common.DeviceId"><code class="flex name class">
+<span>class <span class="ident">DeviceId</span></span>
+<span>(</span><span>type: <a title="hat.drivers.hue.common.DeviceType" href="#hat.drivers.hue.common.DeviceType">DeviceType</a>, label: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>DeviceId(type, label)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeviceId(typing.NamedTuple):
+    type: DeviceType
+    label: str</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.DeviceId.label"><code class="name">var <span class="ident">label</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.DeviceId.type"><code class="name">var <span class="ident">type</span> : <a title="hat.drivers.hue.common.DeviceType" href="#hat.drivers.hue.common.DeviceType">DeviceType</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.common.DeviceType"><code class="flex name class">
+<span>class <span class="ident">DeviceType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeviceType(enum.Enum):
+    LIGHT = &#39;lights&#39;
+    SENSOR = &#39;sensors&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.DeviceType.LIGHT"><code class="name">var <span class="ident">LIGHT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.common.DeviceType.SENSOR"><code class="name">var <span class="ident">SENSOR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.common.LightAlert"><code class="flex name class">
+<span>class <span class="ident">LightAlert</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LightAlert(enum.Enum):
+    NONE = &#39;none&#39;
+    SELECT = &#39;select&#39;
+    LSELECT = &#39;lselect&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.LightAlert.LSELECT"><code class="name">var <span class="ident">LSELECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightAlert.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightAlert.SELECT"><code class="name">var <span class="ident">SELECT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.common.LightEffect"><code class="flex name class">
+<span>class <span class="ident">LightEffect</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LightEffect(enum.Enum):
+    NONE = &#39;none&#39;
+    COLOR_LOOP = &#39;colorloop&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.LightEffect.COLOR_LOOP"><code class="name">var <span class="ident">COLOR_LOOP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightEffect.NONE"><code class="name">var <span class="ident">NONE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.common.LightState"><code class="flex name class">
+<span>class <span class="ident">LightState</span></span>
+<span>(</span><span>on: typing.Union[bool, NoneType] = None, bri: typing.Union[int, NoneType] = None, alert: typing.Union[<a title="hat.drivers.hue.common.LightAlert" href="#hat.drivers.hue.common.LightAlert">LightAlert</a>, NoneType] = None, reachable: typing.Union[bool, NoneType] = None, hue: typing.Union[int, NoneType] = None, sat: typing.Union[int, NoneType] = None, effect: typing.Union[<a title="hat.drivers.hue.common.LightEffect" href="#hat.drivers.hue.common.LightEffect">LightEffect</a>, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Light state</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>on</code></strong></dt>
+<dd>on/off state</dd>
+<dt><strong><code>bri</code></strong></dt>
+<dd>brightness between 1 (min) and 254 (max)</dd>
+<dt><strong><code>alert</code></strong></dt>
+<dd>light alert state</dd>
+<dt><strong><code>reachable</code></strong></dt>
+<dd>is device reachable</dd>
+<dt><strong><code>hue</code></strong></dt>
+<dd>hue between 0 and 65535</dd>
+<dt><strong><code>sat</code></strong></dt>
+<dd>saturnation between 0 (white) and 254 (colored)</dd>
+<dt><strong><code>effect</code></strong></dt>
+<dd>light effect</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LightState(typing.NamedTuple):
+    &#34;&#34;&#34;Light state
+
+    Attributes:
+        on: on/off state
+        bri: brightness between 1 (min) and 254 (max)
+        alert: light alert state
+        reachable: is device reachable
+        hue: hue between 0 and 65535
+        sat: saturnation between 0 (white) and 254 (colored)
+        effect: light effect
+
+    &#34;&#34;&#34;
+    on: typing.Optional[bool] = None
+    bri: typing.Optional[int] = None
+    alert: typing.Optional[LightAlert] = None
+    reachable: typing.Optional[bool] = None
+    hue: typing.Optional[int] = None
+    sat: typing.Optional[int] = None
+    effect: typing.Optional[LightEffect] = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.LightState.alert"><code class="name">var <span class="ident">alert</span> : typing.Union[<a title="hat.drivers.hue.common.LightAlert" href="#hat.drivers.hue.common.LightAlert">LightAlert</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightState.bri"><code class="name">var <span class="ident">bri</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightState.effect"><code class="name">var <span class="ident">effect</span> : typing.Union[<a title="hat.drivers.hue.common.LightEffect" href="#hat.drivers.hue.common.LightEffect">LightEffect</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightState.hue"><code class="name">var <span class="ident">hue</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightState.on"><code class="name">var <span class="ident">on</span> : typing.Union[bool, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightState.reachable"><code class="name">var <span class="ident">reachable</span> : typing.Union[bool, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.drivers.hue.common.LightState.sat"><code class="name">var <span class="ident">sat</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.drivers.hue.common.SensorState"><code class="flex name class">
+<span>class <span class="ident">SensorState</span></span>
+<span>(</span><span>last_updated: typing.Union[datetime.datetime, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sensor state</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>last_updated</code></strong></dt>
+<dd>last updated time</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SensorState(typing.NamedTuple):
+    &#34;&#34;&#34;Sensor state
+
+    Attributes:
+        last_updated: last updated time
+
+    &#34;&#34;&#34;
+    last_updated: typing.Optional[datetime.datetime] = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.drivers.hue.common.SensorState.last_updated"><code class="name">var <span class="ident">last_updated</span> : typing.Union[datetime.datetime, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.drivers.hue" href="index.html">hat.drivers.hue</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.drivers.hue.common.Device" href="#hat.drivers.hue.common.Device">Device</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.hue.common.Device.id" href="#hat.drivers.hue.common.Device.id">id</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.manufacturer_name" href="#hat.drivers.hue.common.Device.manufacturer_name">manufacturer_name</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.model_id" href="#hat.drivers.hue.common.Device.model_id">model_id</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.name" href="#hat.drivers.hue.common.Device.name">name</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.state" href="#hat.drivers.hue.common.Device.state">state</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.subtype" href="#hat.drivers.hue.common.Device.subtype">subtype</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.sw_version" href="#hat.drivers.hue.common.Device.sw_version">sw_version</a></code></li>
+<li><code><a title="hat.drivers.hue.common.Device.unique_id" href="#hat.drivers.hue.common.Device.unique_id">unique_id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.common.DeviceId" href="#hat.drivers.hue.common.DeviceId">DeviceId</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.common.DeviceId.label" href="#hat.drivers.hue.common.DeviceId.label">label</a></code></li>
+<li><code><a title="hat.drivers.hue.common.DeviceId.type" href="#hat.drivers.hue.common.DeviceId.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.common.DeviceType" href="#hat.drivers.hue.common.DeviceType">DeviceType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.common.DeviceType.LIGHT" href="#hat.drivers.hue.common.DeviceType.LIGHT">LIGHT</a></code></li>
+<li><code><a title="hat.drivers.hue.common.DeviceType.SENSOR" href="#hat.drivers.hue.common.DeviceType.SENSOR">SENSOR</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.common.LightAlert" href="#hat.drivers.hue.common.LightAlert">LightAlert</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.common.LightAlert.LSELECT" href="#hat.drivers.hue.common.LightAlert.LSELECT">LSELECT</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightAlert.NONE" href="#hat.drivers.hue.common.LightAlert.NONE">NONE</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightAlert.SELECT" href="#hat.drivers.hue.common.LightAlert.SELECT">SELECT</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.common.LightEffect" href="#hat.drivers.hue.common.LightEffect">LightEffect</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.common.LightEffect.COLOR_LOOP" href="#hat.drivers.hue.common.LightEffect.COLOR_LOOP">COLOR_LOOP</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightEffect.NONE" href="#hat.drivers.hue.common.LightEffect.NONE">NONE</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.common.LightState" href="#hat.drivers.hue.common.LightState">LightState</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.drivers.hue.common.LightState.alert" href="#hat.drivers.hue.common.LightState.alert">alert</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightState.bri" href="#hat.drivers.hue.common.LightState.bri">bri</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightState.effect" href="#hat.drivers.hue.common.LightState.effect">effect</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightState.hue" href="#hat.drivers.hue.common.LightState.hue">hue</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightState.on" href="#hat.drivers.hue.common.LightState.on">on</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightState.reachable" href="#hat.drivers.hue.common.LightState.reachable">reachable</a></code></li>
+<li><code><a title="hat.drivers.hue.common.LightState.sat" href="#hat.drivers.hue.common.LightState.sat">sat</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.drivers.hue.common.SensorState" href="#hat.drivers.hue.common.SensorState">SensorState</a></code></h4>
+<ul class="">
+<li><code><a title="hat.drivers.hue.common.SensorState.last_updated" href="#hat.drivers.hue.common.SensorState.last_updated">last_updated</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1647 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.event.common API documentation</title>
+<meta name="description" content="Common functionality shared between clients and event server" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.event.common</code></h1>
+</header>
+<section id="section-intro">
+<p>Common functionality shared between clients and event server</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Common functionality shared between clients and event server&#34;&#34;&#34;
+
+from pathlib import Path
+import datetime
+import enum
+import struct
+import typing
+
+from hat import chatter
+from hat import json
+from hat import sbs
+import hat.monitor.common
+
+
+package_path: Path = Path(__file__).parent
+&#34;&#34;&#34;Python package path&#34;&#34;&#34;
+
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
+    json.json_schema_repo,
+    hat.monitor.common.json_schema_repo,
+    json.SchemaRepository.from_json(package_path / &#39;json_schema_repo.json&#39;))
+&#34;&#34;&#34;JSON schema repository&#34;&#34;&#34;
+
+sbs_repo = sbs.Repository(
+    chatter.sbs_repo,
+    sbs.Repository.from_json(package_path / &#39;sbs_repo.json&#39;))
+&#34;&#34;&#34;SBS schema repository&#34;&#34;&#34;
+
+EventType: typing.Type = typing.List[str]
+&#34;&#34;&#34;Event type&#34;&#34;&#34;
+
+
+Order = enum.Enum(&#39;Order&#39;, [
+    &#39;DESCENDING&#39;,
+    &#39;ASCENDING&#39;])
+
+
+OrderBy = enum.Enum(&#39;OrderBy&#39;, [
+    &#39;TIMESTAMP&#39;,
+    &#39;SOURCE_TIMESTAMP&#39;])
+
+
+EventPayloadType = enum.Enum(&#39;EventPayloadType&#39;, [
+    &#39;BINARY&#39;,
+    &#39;JSON&#39;,
+    &#39;SBS&#39;])
+
+
+class EventId(typing.NamedTuple):
+    server: int
+    &#34;&#34;&#34;server identifier&#34;&#34;&#34;
+    instance: int
+    &#34;&#34;&#34;event instance identifier&#34;&#34;&#34;
+
+
+class EventPayload(typing.NamedTuple):
+    type: EventPayloadType
+    data: typing.Union[bytes, json.Data, &#39;SbsData&#39;]
+
+
+class SbsData(typing.NamedTuple):
+    module: typing.Optional[str]
+    &#34;&#34;&#34;SBS module name&#34;&#34;&#34;
+    type: str
+    &#34;&#34;&#34;SBS type name&#34;&#34;&#34;
+    data: bytes
+
+
+class Event(typing.NamedTuple):
+    event_id: EventId
+    event_type: EventType
+    timestamp: &#39;Timestamp&#39;
+    source_timestamp: typing.Optional[&#39;Timestamp&#39;]
+    payload: typing.Optional[EventPayload]
+
+
+class RegisterEvent(typing.NamedTuple):
+    event_type: EventType
+    source_timestamp: typing.Optional[&#39;Timestamp&#39;]
+    payload: typing.Optional[EventPayload]
+
+
+class QueryData(typing.NamedTuple):
+    event_ids: typing.Optional[typing.List[EventId]] = None
+    event_types: typing.Optional[typing.List[EventType]] = None
+    t_from: typing.Optional[&#39;Timestamp&#39;] = None
+    t_to: typing.Optional[&#39;Timestamp&#39;] = None
+    source_t_from: typing.Optional[&#39;Timestamp&#39;] = None
+    source_t_to: typing.Optional[&#39;Timestamp&#39;] = None
+    payload: typing.Optional[EventPayload] = None
+    order: Order = Order.DESCENDING
+    order_by: OrderBy = OrderBy.TIMESTAMP
+    unique_type: bool = False
+    max_results: typing.Optional[int] = None
+
+
+def matches_query_type(event_type: EventType,
+                       query_type: EventType
+                       ) -&gt; bool:
+    &#34;&#34;&#34;Determine if event type matches query type
+
+    Event type is tested if it matches query type according to the following
+    rules:
+
+        * Matching is performed on subtypes in increasing order.
+        * Event type is a match only if all its subtypes are matched by
+          corresponding query subtypes.
+        * Matching is finished when all query subtypes are exhausted.
+        * Query subtype &#39;?&#39; matches exactly one event subtype of any value.
+          The subtype must exist.
+        * Query subtype &#39;*&#39; matches 0 or more event subtypes of any value. It
+          must be the last query subtype.
+        * All other values of query subtype match exactly one event subtype
+          of the same value.
+        * Query type without subtypes is matched only by event type with no
+          subtypes.
+
+    As a consequence of aforementioned matching rules, event subtypes &#39;*&#39; and
+    &#39;?&#39; cannot be directly matched and it is advisable not to use them in event
+    types.
+
+    &#34;&#34;&#34;
+    is_variable = bool(query_type and query_type[-1] == &#39;*&#39;)
+    if is_variable:
+        query_type = query_type[:-1]
+
+    if len(event_type) &lt; len(query_type):
+        return False
+
+    if len(event_type) &gt; len(query_type) and not is_variable:
+        return False
+
+    for i, j in zip(event_type, query_type):
+        if j != &#39;?&#39; and i != j:
+            return False
+
+    return True
+
+
+class Subscription:
+    &#34;&#34;&#34;Subscription defined by query event types&#34;&#34;&#34;
+
+    _Node = typing.Tuple[bool,                  # is_leaf
+                         typing.Dict[str,       # subtype
+                                     &#39;_Node&#39;]]  # child
+
+    def __init__(self, query_types: typing.Iterable[EventType]):
+        self._root = False, {}
+        for query_type in query_types:
+            self._root = self._add_query_type(self._root, query_type)
+
+    def get_query_types(self) -&gt; typing.Iterable[EventType]:
+        &#34;&#34;&#34;Calculate sanitized query event types&#34;&#34;&#34;
+        yield from self._get_query_types(self._root)
+
+    def matches(self, event_type: EventType) -&gt; bool:
+        &#34;&#34;&#34;Does `event_type` match subscription&#34;&#34;&#34;
+        return self._matches(self._root, event_type)
+
+    def _add_query_type(self, node, query_type):
+        is_leaf, children = node
+
+        if &#39;*&#39; in children:
+            return node
+
+        if not query_type:
+            return True, children
+
+        head, rest = query_type[0], query_type[1:]
+
+        if head == &#39;*&#39;:
+            if rest:
+                raise ValueError(&#39;invalid query event type&#39;)
+            children.clear()
+            children[&#39;*&#39;] = True, {}
+
+        else:
+            child = children.get(head, (False, {}))
+            child = self._add_query_type(child, rest)
+            children[head] = child
+
+        return node
+
+    def _get_query_types(self, node):
+        is_leaf, children = node
+
+        if is_leaf and &#39;*&#39; not in children:
+            yield []
+
+        for head, child in children.items():
+            for rest in self._get_query_types(child):
+                yield [head, *rest]
+
+    def _matches(self, node, event_type):
+        is_leaf, children = node
+
+        if &#39;*&#39; in children:
+            return True
+
+        if not event_type:
+            return is_leaf
+
+        head, rest = event_type[0], event_type[1:]
+
+        for i in (head, &#39;?&#39;):
+            child = children.get(i)
+            if not child:
+                continue
+            if self._matches(child, rest):
+                return True
+
+        return False
+
+
+class Timestamp(typing.NamedTuple):
+    s: int
+    &#34;&#34;&#34;seconds since 1970-01-01 (can be negative)&#34;&#34;&#34;
+    us: int
+    &#34;&#34;&#34;microseconds added to timestamp seconds in range (-1e6, 1e6)&#34;&#34;&#34;
+
+    def __lt__(self, other):
+        if not isinstance(other, Timestamp):
+            return NotImplemented
+        return self.s * 1000000 + self.us &lt; other.s * 1000000 + other.us
+
+    def __gt__(self, other):
+        if not isinstance(other, Timestamp):
+            return NotImplemented
+        return self.s * 1000000 + self.us &gt; other.s * 1000000 + other.us
+
+    def __eq__(self, other):
+        if not isinstance(other, Timestamp):
+            return NotImplemented
+        return self.s * 1000000 + self.us == other.s * 1000000 + other.us
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __le__(self, other):
+        return self &lt; other or self == other
+
+    def __ge__(self, other):
+        return self &gt; other or self == other
+
+    def __hash__(self):
+        return self.s * 1000000 + self.us
+
+
+def timestamp_to_bytes(t: Timestamp) -&gt; bytes:
+    &#34;&#34;&#34;Convert timestamp to 12 byte representation
+
+    Bytes [0, 8] are big endian two&#39;s complement encoded `Timestamp.s` and
+    bytes [9, 12] are big endian two&#39;s complement encoded `Timestamp.us`.
+
+    &#34;&#34;&#34;
+    return struct.pack(&#34;&gt;qi&#34;, t.s, t.us)
+
+
+def timestamp_from_bytes(data: bytes) -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp from 12 byte representation
+
+    Bytes representation is same as defined for `timestamp_to_bytes` function.
+
+    &#34;&#34;&#34;
+    s, us = struct.unpack(&#34;&gt;qi&#34;, data)
+    return Timestamp(s, us)
+
+
+def timestamp_to_float(t: Timestamp) -&gt; float:
+    &#34;&#34;&#34;Convert timestamp to floating number of seconds since 1970-01-01 UTC
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    return t.s + t.us * 1E-6
+
+
+def timestamp_from_float(ts: float) -&gt; Timestamp:
+    &#34;&#34;&#34;Create timestamp from floating number of seconds since 1970-01-01 UTC
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    s = int(ts)
+    if ts &lt; 0:
+        s = s - 1
+    us = round((ts - s) * 1E6)
+    if us == 1000000:
+        return Timestamp(s + 1, 0)
+    else:
+        return Timestamp(s, us)
+
+
+def timestamp_to_datetime(t: Timestamp) -&gt; datetime.datetime:
+    &#34;&#34;&#34;Convert timestamp to datetime (representing utc time)
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    try:
+        dt_from_s = datetime.datetime.fromtimestamp(t.s, datetime.timezone.utc)
+    except OSError:
+        dt_from_s = (
+            datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) +
+            datetime.timedelta(seconds=t.s))
+    return datetime.datetime(
+        year=dt_from_s.year,
+        month=dt_from_s.month,
+        day=dt_from_s.day,
+        hour=dt_from_s.hour,
+        minute=dt_from_s.minute,
+        second=dt_from_s.second,
+        microsecond=t.us,
+        tzinfo=datetime.timezone.utc)
+
+
+def timestamp_from_datetime(dt: datetime.datetime) -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp from datetime
+
+    If `tzinfo` is not set, it is assumed that provided datetime represents
+    utc time.
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    if not dt.tzinfo:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    s = int(dt.timestamp())
+    if dt.timestamp() &lt; 0:
+        s = s - 1
+    return Timestamp(s=s, us=dt.microsecond)
+
+
+def timestamp_to_sbs(t: Timestamp) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert timestamp to SBS data&#34;&#34;&#34;
+    return {&#39;s&#39;: t.s, &#39;us&#39;: t.us}
+
+
+def timestamp_from_sbs(data: sbs.Data) -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp from SBS data&#34;&#34;&#34;
+    return Timestamp(s=data[&#39;s&#39;], us=data[&#39;us&#39;])
+
+
+def now() -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp representing current time&#34;&#34;&#34;
+    return timestamp_from_datetime(
+        datetime.datetime.now(datetime.timezone.utc))
+
+
+def event_to_sbs(event: Event) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert Event to SBS data&#34;&#34;&#34;
+    return {
+        &#39;id&#39;: _event_id_to_sbs(event.event_id),
+        &#39;type&#39;: event.event_type,
+        &#39;timestamp&#39;: timestamp_to_sbs(event.timestamp),
+        &#39;sourceTimestamp&#39;: _optional_to_sbs(event.source_timestamp,
+                                            timestamp_to_sbs),
+        &#39;payload&#39;: _optional_to_sbs(event.payload, event_payload_to_sbs)}
+
+
+def event_from_sbs(data: sbs.Data) -&gt; Event:
+    &#34;&#34;&#34;Create new Event based on SBS data&#34;&#34;&#34;
+    return Event(
+        event_id=_event_id_from_sbs(data[&#39;id&#39;]),
+        event_type=data[&#39;type&#39;],
+        timestamp=timestamp_from_sbs(data[&#39;timestamp&#39;]),
+        source_timestamp=_optional_from_sbs(data[&#39;sourceTimestamp&#39;],
+                                            timestamp_from_sbs),
+        payload=_optional_from_sbs(data[&#39;payload&#39;], event_payload_from_sbs))
+
+
+def register_event_to_sbs(event: RegisterEvent) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert RegisterEvent to SBS data&#34;&#34;&#34;
+    return {
+        &#39;type&#39;: event.event_type,
+        &#39;sourceTimestamp&#39;: _optional_to_sbs(event.source_timestamp,
+                                            timestamp_to_sbs),
+        &#39;payload&#39;: _optional_to_sbs(event.payload, event_payload_to_sbs)}
+
+
+def register_event_from_sbs(data: sbs.Data) -&gt; RegisterEvent:
+    &#34;&#34;&#34;Create new RegisterEvent based on SBS data&#34;&#34;&#34;
+    return RegisterEvent(
+        event_type=data[&#39;type&#39;],
+        source_timestamp=_optional_from_sbs(data[&#39;sourceTimestamp&#39;],
+                                            timestamp_from_sbs),
+        payload=_optional_from_sbs(data[&#39;payload&#39;], event_payload_from_sbs))
+
+
+def query_to_sbs(query: QueryData) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert QueryData to SBS data&#34;&#34;&#34;
+    return {
+        &#39;ids&#39;: _optional_to_sbs(query.event_ids, lambda ids: [
+            _event_id_to_sbs(i) for i in ids]),
+        &#39;types&#39;: _optional_to_sbs(query.event_types),
+        &#39;tFrom&#39;: _optional_to_sbs(query.t_from, timestamp_to_sbs),
+        &#39;tTo&#39;: _optional_to_sbs(query.t_to, timestamp_to_sbs),
+        &#39;sourceTFrom&#39;: _optional_to_sbs(query.source_t_from, timestamp_to_sbs),
+        &#39;sourceTTo&#39;: _optional_to_sbs(query.source_t_to, timestamp_to_sbs),
+        &#39;payload&#39;: _optional_to_sbs(query.payload, event_payload_to_sbs),
+        &#39;order&#39;: {Order.DESCENDING: (&#39;descending&#39;, None),
+                  Order.ASCENDING: (&#39;ascending&#39;, None)}[query.order],
+        &#39;orderBy&#39;: {OrderBy.TIMESTAMP: (&#39;timestamp&#39;, None),
+                    OrderBy.SOURCE_TIMESTAMP: (&#39;sourceTimestamp&#39;, None)
+                    }[query.order_by],
+        &#39;uniqueType&#39;: query.unique_type,
+        &#39;maxResults&#39;: _optional_to_sbs(query.max_results)}
+
+
+def query_from_sbs(data: sbs.Data) -&gt; QueryData:
+    &#34;&#34;&#34;Create new QueryData based on SBS data&#34;&#34;&#34;
+    return QueryData(
+        event_ids=_optional_from_sbs(data[&#39;ids&#39;], lambda ids: [
+            _event_id_from_sbs(i) for i in ids]),
+        event_types=_optional_from_sbs(data[&#39;types&#39;]),
+        t_from=_optional_from_sbs(data[&#39;tFrom&#39;], timestamp_from_sbs),
+        t_to=_optional_from_sbs(data[&#39;tTo&#39;], timestamp_from_sbs),
+        source_t_from=_optional_from_sbs(data[&#39;sourceTFrom&#39;],
+                                         timestamp_from_sbs),
+        source_t_to=_optional_from_sbs(data[&#39;sourceTTo&#39;], timestamp_from_sbs),
+        payload=_optional_from_sbs(data[&#39;payload&#39;], event_payload_from_sbs),
+        order={&#39;descending&#39;: Order.DESCENDING,
+               &#39;ascending&#39;: Order.ASCENDING}[data[&#39;order&#39;][0]],
+        order_by={&#39;timestamp&#39;: OrderBy.TIMESTAMP,
+                  &#39;sourceTimestamp&#39;: OrderBy.SOURCE_TIMESTAMP
+                  }[data[&#39;orderBy&#39;][0]],
+        unique_type=data[&#39;uniqueType&#39;],
+        max_results=_optional_from_sbs(data[&#39;maxResults&#39;]))
+
+
+def event_payload_to_sbs(payload: EventPayload) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert EventPayload to SBS data&#34;&#34;&#34;
+    if payload.type == EventPayloadType.BINARY:
+        return &#39;binary&#39;, payload.data
+
+    if payload.type == EventPayloadType.JSON:
+        return &#39;json&#39;, json.encode(payload.data)
+
+    if payload.type == EventPayloadType.SBS:
+        return &#39;sbs&#39;, _sbs_data_to_sbs(payload.data)
+
+    raise ValueError(&#39;unsupported payload type&#39;)
+
+
+def event_payload_from_sbs(data: sbs.Data) -&gt; EventPayload:
+    &#34;&#34;&#34;Create new EventPayload based on SBS data&#34;&#34;&#34;
+    data_type, data_data = data
+
+    if data_type == &#39;binary&#39;:
+        return EventPayload(type=EventPayloadType.BINARY,
+                            data=data_data)
+
+    if data_type == &#39;json&#39;:
+        return EventPayload(type=EventPayloadType.JSON,
+                            data=json.decode(data_data))
+
+    if data_type == &#39;sbs&#39;:
+        return EventPayload(type=EventPayloadType.SBS,
+                            data=_sbs_data_from_sbs(data_data))
+
+    raise ValueError(&#39;unsupported payload type&#39;)
+
+
+def _event_id_to_sbs(event_id):
+    return {&#39;server&#39;: event_id.server,
+            &#39;instance&#39;: event_id.instance}
+
+
+def _event_id_from_sbs(data):
+    return EventId(server=data[&#39;server&#39;],
+                   instance=data[&#39;instance&#39;])
+
+
+def _sbs_data_to_sbs(data):
+    return {&#39;module&#39;: _optional_to_sbs(data.module),
+            &#39;type&#39;: data.type,
+            &#39;data&#39;: data.data}
+
+
+def _sbs_data_from_sbs(data):
+    return SbsData(module=_optional_from_sbs(data[&#39;module&#39;]),
+                   type=data[&#39;type&#39;],
+                   data=data[&#39;data&#39;])
+
+
+def _optional_to_sbs(value, fn=lambda i: i):
+    return (&#39;Just&#39;, fn(value)) if value is not None else (&#39;Nothing&#39;, None)
+
+
+def _optional_from_sbs(data, fn=lambda i: i):
+    return fn(data[1]) if data[0] == &#39;Just&#39; else None</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="hat.event.common.EventType"><code class="name">var <span class="ident">EventType</span> : typing.Type</code></dt>
+<dd>
+<div class="desc"><p>Event type</p></div>
+</dd>
+<dt id="hat.event.common.json_schema_repo"><code class="name">var <span class="ident">json_schema_repo</span> : <a title="hat.json.SchemaRepository" href="../json/index.html#hat.json.SchemaRepository">SchemaRepository</a></code></dt>
+<dd>
+<div class="desc"><p>JSON schema repository</p></div>
+</dd>
+<dt id="hat.event.common.package_path"><code class="name">var <span class="ident">package_path</span> : pathlib.Path</code></dt>
+<dd>
+<div class="desc"><p>Python package path</p></div>
+</dd>
+<dt id="hat.event.common.sbs_repo"><code class="name">var <span class="ident">sbs_repo</span></code></dt>
+<dd>
+<div class="desc"><p>SBS schema repository</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.event.common.event_from_sbs"><code class="name flex">
+<span>def <span class="ident">event_from_sbs</span></span>(<span>data: typing.Union[bool, int, float, str, bytes, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')], typing.Tuple[str, ForwardRef('Data')]]) ‑> <a title="hat.event.common.Event" href="#hat.event.common.Event">Event</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new Event based on SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event_from_sbs(data: sbs.Data) -&gt; Event:
+    &#34;&#34;&#34;Create new Event based on SBS data&#34;&#34;&#34;
+    return Event(
+        event_id=_event_id_from_sbs(data[&#39;id&#39;]),
+        event_type=data[&#39;type&#39;],
+        timestamp=timestamp_from_sbs(data[&#39;timestamp&#39;]),
+        source_timestamp=_optional_from_sbs(data[&#39;sourceTimestamp&#39;],
+                                            timestamp_from_sbs),
+        payload=_optional_from_sbs(data[&#39;payload&#39;], event_payload_from_sbs))</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.event_payload_from_sbs"><code class="name flex">
+<span>def <span class="ident">event_payload_from_sbs</span></span>(<span>data: typing.Union[bool, int, float, str, bytes, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')], typing.Tuple[str, ForwardRef('Data')]]) ‑> <a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new EventPayload based on SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event_payload_from_sbs(data: sbs.Data) -&gt; EventPayload:
+    &#34;&#34;&#34;Create new EventPayload based on SBS data&#34;&#34;&#34;
+    data_type, data_data = data
+
+    if data_type == &#39;binary&#39;:
+        return EventPayload(type=EventPayloadType.BINARY,
+                            data=data_data)
+
+    if data_type == &#39;json&#39;:
+        return EventPayload(type=EventPayloadType.JSON,
+                            data=json.decode(data_data))
+
+    if data_type == &#39;sbs&#39;:
+        return EventPayload(type=EventPayloadType.SBS,
+                            data=_sbs_data_from_sbs(data_data))
+
+    raise ValueError(&#39;unsupported payload type&#39;)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.event_payload_to_sbs"><code class="name flex">
+<span>def <span class="ident">event_payload_to_sbs</span></span>(<span>payload: <a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>) ‑> typing.Union[bool, int, float, str, bytes, typing.List[abc.Data], typing.Dict[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>], typing.Tuple[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert EventPayload to SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event_payload_to_sbs(payload: EventPayload) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert EventPayload to SBS data&#34;&#34;&#34;
+    if payload.type == EventPayloadType.BINARY:
+        return &#39;binary&#39;, payload.data
+
+    if payload.type == EventPayloadType.JSON:
+        return &#39;json&#39;, json.encode(payload.data)
+
+    if payload.type == EventPayloadType.SBS:
+        return &#39;sbs&#39;, _sbs_data_to_sbs(payload.data)
+
+    raise ValueError(&#39;unsupported payload type&#39;)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.event_to_sbs"><code class="name flex">
+<span>def <span class="ident">event_to_sbs</span></span>(<span>event: <a title="hat.event.common.Event" href="#hat.event.common.Event">Event</a>) ‑> typing.Union[bool, int, float, str, bytes, typing.List[abc.Data], typing.Dict[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>], typing.Tuple[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert Event to SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event_to_sbs(event: Event) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert Event to SBS data&#34;&#34;&#34;
+    return {
+        &#39;id&#39;: _event_id_to_sbs(event.event_id),
+        &#39;type&#39;: event.event_type,
+        &#39;timestamp&#39;: timestamp_to_sbs(event.timestamp),
+        &#39;sourceTimestamp&#39;: _optional_to_sbs(event.source_timestamp,
+                                            timestamp_to_sbs),
+        &#39;payload&#39;: _optional_to_sbs(event.payload, event_payload_to_sbs)}</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.matches_query_type"><code class="name flex">
+<span>def <span class="ident">matches_query_type</span></span>(<span>event_type: typing.List[str], query_type: typing.List[str]) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Determine if event type matches query type</p>
+<p>Event type is tested if it matches query type according to the following
+rules:</p>
+<pre><code>* Matching is performed on subtypes in increasing order.
+* Event type is a match only if all its subtypes are matched by
+  corresponding query subtypes.
+* Matching is finished when all query subtypes are exhausted.
+* Query subtype '?' matches exactly one event subtype of any value.
+  The subtype must exist.
+* Query subtype '*' matches 0 or more event subtypes of any value. It
+  must be the last query subtype.
+* All other values of query subtype match exactly one event subtype
+  of the same value.
+* Query type without subtypes is matched only by event type with no
+  subtypes.
+</code></pre>
+<p>As a consequence of aforementioned matching rules, event subtypes '*' and
+'?' cannot be directly matched and it is advisable not to use them in event
+types.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matches_query_type(event_type: EventType,
+                       query_type: EventType
+                       ) -&gt; bool:
+    &#34;&#34;&#34;Determine if event type matches query type
+
+    Event type is tested if it matches query type according to the following
+    rules:
+
+        * Matching is performed on subtypes in increasing order.
+        * Event type is a match only if all its subtypes are matched by
+          corresponding query subtypes.
+        * Matching is finished when all query subtypes are exhausted.
+        * Query subtype &#39;?&#39; matches exactly one event subtype of any value.
+          The subtype must exist.
+        * Query subtype &#39;*&#39; matches 0 or more event subtypes of any value. It
+          must be the last query subtype.
+        * All other values of query subtype match exactly one event subtype
+          of the same value.
+        * Query type without subtypes is matched only by event type with no
+          subtypes.
+
+    As a consequence of aforementioned matching rules, event subtypes &#39;*&#39; and
+    &#39;?&#39; cannot be directly matched and it is advisable not to use them in event
+    types.
+
+    &#34;&#34;&#34;
+    is_variable = bool(query_type and query_type[-1] == &#39;*&#39;)
+    if is_variable:
+        query_type = query_type[:-1]
+
+    if len(event_type) &lt; len(query_type):
+        return False
+
+    if len(event_type) &gt; len(query_type) and not is_variable:
+        return False
+
+    for i, j in zip(event_type, query_type):
+        if j != &#39;?&#39; and i != j:
+            return False
+
+    return True</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.now"><code class="name flex">
+<span>def <span class="ident">now</span></span>(<span>) ‑> <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new timestamp representing current time</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def now() -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp representing current time&#34;&#34;&#34;
+    return timestamp_from_datetime(
+        datetime.datetime.now(datetime.timezone.utc))</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.query_from_sbs"><code class="name flex">
+<span>def <span class="ident">query_from_sbs</span></span>(<span>data: typing.Union[bool, int, float, str, bytes, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')], typing.Tuple[str, ForwardRef('Data')]]) ‑> <a title="hat.event.common.QueryData" href="#hat.event.common.QueryData">QueryData</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new QueryData based on SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def query_from_sbs(data: sbs.Data) -&gt; QueryData:
+    &#34;&#34;&#34;Create new QueryData based on SBS data&#34;&#34;&#34;
+    return QueryData(
+        event_ids=_optional_from_sbs(data[&#39;ids&#39;], lambda ids: [
+            _event_id_from_sbs(i) for i in ids]),
+        event_types=_optional_from_sbs(data[&#39;types&#39;]),
+        t_from=_optional_from_sbs(data[&#39;tFrom&#39;], timestamp_from_sbs),
+        t_to=_optional_from_sbs(data[&#39;tTo&#39;], timestamp_from_sbs),
+        source_t_from=_optional_from_sbs(data[&#39;sourceTFrom&#39;],
+                                         timestamp_from_sbs),
+        source_t_to=_optional_from_sbs(data[&#39;sourceTTo&#39;], timestamp_from_sbs),
+        payload=_optional_from_sbs(data[&#39;payload&#39;], event_payload_from_sbs),
+        order={&#39;descending&#39;: Order.DESCENDING,
+               &#39;ascending&#39;: Order.ASCENDING}[data[&#39;order&#39;][0]],
+        order_by={&#39;timestamp&#39;: OrderBy.TIMESTAMP,
+                  &#39;sourceTimestamp&#39;: OrderBy.SOURCE_TIMESTAMP
+                  }[data[&#39;orderBy&#39;][0]],
+        unique_type=data[&#39;uniqueType&#39;],
+        max_results=_optional_from_sbs(data[&#39;maxResults&#39;]))</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.query_to_sbs"><code class="name flex">
+<span>def <span class="ident">query_to_sbs</span></span>(<span>query: <a title="hat.event.common.QueryData" href="#hat.event.common.QueryData">QueryData</a>) ‑> typing.Union[bool, int, float, str, bytes, typing.List[abc.Data], typing.Dict[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>], typing.Tuple[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert QueryData to SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def query_to_sbs(query: QueryData) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert QueryData to SBS data&#34;&#34;&#34;
+    return {
+        &#39;ids&#39;: _optional_to_sbs(query.event_ids, lambda ids: [
+            _event_id_to_sbs(i) for i in ids]),
+        &#39;types&#39;: _optional_to_sbs(query.event_types),
+        &#39;tFrom&#39;: _optional_to_sbs(query.t_from, timestamp_to_sbs),
+        &#39;tTo&#39;: _optional_to_sbs(query.t_to, timestamp_to_sbs),
+        &#39;sourceTFrom&#39;: _optional_to_sbs(query.source_t_from, timestamp_to_sbs),
+        &#39;sourceTTo&#39;: _optional_to_sbs(query.source_t_to, timestamp_to_sbs),
+        &#39;payload&#39;: _optional_to_sbs(query.payload, event_payload_to_sbs),
+        &#39;order&#39;: {Order.DESCENDING: (&#39;descending&#39;, None),
+                  Order.ASCENDING: (&#39;ascending&#39;, None)}[query.order],
+        &#39;orderBy&#39;: {OrderBy.TIMESTAMP: (&#39;timestamp&#39;, None),
+                    OrderBy.SOURCE_TIMESTAMP: (&#39;sourceTimestamp&#39;, None)
+                    }[query.order_by],
+        &#39;uniqueType&#39;: query.unique_type,
+        &#39;maxResults&#39;: _optional_to_sbs(query.max_results)}</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.register_event_from_sbs"><code class="name flex">
+<span>def <span class="ident">register_event_from_sbs</span></span>(<span>data: typing.Union[bool, int, float, str, bytes, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')], typing.Tuple[str, ForwardRef('Data')]]) ‑> <a title="hat.event.common.RegisterEvent" href="#hat.event.common.RegisterEvent">RegisterEvent</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new RegisterEvent based on SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_event_from_sbs(data: sbs.Data) -&gt; RegisterEvent:
+    &#34;&#34;&#34;Create new RegisterEvent based on SBS data&#34;&#34;&#34;
+    return RegisterEvent(
+        event_type=data[&#39;type&#39;],
+        source_timestamp=_optional_from_sbs(data[&#39;sourceTimestamp&#39;],
+                                            timestamp_from_sbs),
+        payload=_optional_from_sbs(data[&#39;payload&#39;], event_payload_from_sbs))</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.register_event_to_sbs"><code class="name flex">
+<span>def <span class="ident">register_event_to_sbs</span></span>(<span>event: <a title="hat.event.common.RegisterEvent" href="#hat.event.common.RegisterEvent">RegisterEvent</a>) ‑> typing.Union[bool, int, float, str, bytes, typing.List[abc.Data], typing.Dict[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>], typing.Tuple[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert RegisterEvent to SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_event_to_sbs(event: RegisterEvent) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert RegisterEvent to SBS data&#34;&#34;&#34;
+    return {
+        &#39;type&#39;: event.event_type,
+        &#39;sourceTimestamp&#39;: _optional_to_sbs(event.source_timestamp,
+                                            timestamp_to_sbs),
+        &#39;payload&#39;: _optional_to_sbs(event.payload, event_payload_to_sbs)}</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_from_bytes"><code class="name flex">
+<span>def <span class="ident">timestamp_from_bytes</span></span>(<span>data: bytes) ‑> <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new timestamp from 12 byte representation</p>
+<p>Bytes representation is same as defined for <code><a title="hat.event.common.timestamp_to_bytes" href="#hat.event.common.timestamp_to_bytes">timestamp_to_bytes()</a></code> function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_from_bytes(data: bytes) -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp from 12 byte representation
+
+    Bytes representation is same as defined for `timestamp_to_bytes` function.
+
+    &#34;&#34;&#34;
+    s, us = struct.unpack(&#34;&gt;qi&#34;, data)
+    return Timestamp(s, us)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_from_datetime"><code class="name flex">
+<span>def <span class="ident">timestamp_from_datetime</span></span>(<span>dt: datetime.datetime) ‑> <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new timestamp from datetime</p>
+<p>If <code>tzinfo</code> is not set, it is assumed that provided datetime represents
+utc time.</p>
+<p>For precise serialization see <code><a title="hat.event.common.timestamp_to_bytes" href="#hat.event.common.timestamp_to_bytes">timestamp_to_bytes()</a></code>/<code><a title="hat.event.common.timestamp_from_bytes" href="#hat.event.common.timestamp_from_bytes">timestamp_from_bytes()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_from_datetime(dt: datetime.datetime) -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp from datetime
+
+    If `tzinfo` is not set, it is assumed that provided datetime represents
+    utc time.
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    if not dt.tzinfo:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    s = int(dt.timestamp())
+    if dt.timestamp() &lt; 0:
+        s = s - 1
+    return Timestamp(s=s, us=dt.microsecond)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_from_float"><code class="name flex">
+<span>def <span class="ident">timestamp_from_float</span></span>(<span>ts: float) ‑> <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create timestamp from floating number of seconds since 1970-01-01 UTC</p>
+<p>For precise serialization see <code><a title="hat.event.common.timestamp_to_bytes" href="#hat.event.common.timestamp_to_bytes">timestamp_to_bytes()</a></code>/<code><a title="hat.event.common.timestamp_from_bytes" href="#hat.event.common.timestamp_from_bytes">timestamp_from_bytes()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_from_float(ts: float) -&gt; Timestamp:
+    &#34;&#34;&#34;Create timestamp from floating number of seconds since 1970-01-01 UTC
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    s = int(ts)
+    if ts &lt; 0:
+        s = s - 1
+    us = round((ts - s) * 1E6)
+    if us == 1000000:
+        return Timestamp(s + 1, 0)
+    else:
+        return Timestamp(s, us)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_from_sbs"><code class="name flex">
+<span>def <span class="ident">timestamp_from_sbs</span></span>(<span>data: typing.Union[bool, int, float, str, bytes, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')], typing.Tuple[str, ForwardRef('Data')]]) ‑> <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create new timestamp from SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_from_sbs(data: sbs.Data) -&gt; Timestamp:
+    &#34;&#34;&#34;Create new timestamp from SBS data&#34;&#34;&#34;
+    return Timestamp(s=data[&#39;s&#39;], us=data[&#39;us&#39;])</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_to_bytes"><code class="name flex">
+<span>def <span class="ident">timestamp_to_bytes</span></span>(<span>t: <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>) ‑> bytes</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert timestamp to 12 byte representation</p>
+<p>Bytes [0, 8] are big endian two's complement encoded <code><a title="hat.event.common.Timestamp.s" href="#hat.event.common.Timestamp.s">Timestamp.s</a></code> and
+bytes [9, 12] are big endian two's complement encoded <code><a title="hat.event.common.Timestamp.us" href="#hat.event.common.Timestamp.us">Timestamp.us</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_to_bytes(t: Timestamp) -&gt; bytes:
+    &#34;&#34;&#34;Convert timestamp to 12 byte representation
+
+    Bytes [0, 8] are big endian two&#39;s complement encoded `Timestamp.s` and
+    bytes [9, 12] are big endian two&#39;s complement encoded `Timestamp.us`.
+
+    &#34;&#34;&#34;
+    return struct.pack(&#34;&gt;qi&#34;, t.s, t.us)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_to_datetime"><code class="name flex">
+<span>def <span class="ident">timestamp_to_datetime</span></span>(<span>t: <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>) ‑> datetime.datetime</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert timestamp to datetime (representing utc time)</p>
+<p>For precise serialization see <code><a title="hat.event.common.timestamp_to_bytes" href="#hat.event.common.timestamp_to_bytes">timestamp_to_bytes()</a></code>/<code><a title="hat.event.common.timestamp_from_bytes" href="#hat.event.common.timestamp_from_bytes">timestamp_from_bytes()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_to_datetime(t: Timestamp) -&gt; datetime.datetime:
+    &#34;&#34;&#34;Convert timestamp to datetime (representing utc time)
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    try:
+        dt_from_s = datetime.datetime.fromtimestamp(t.s, datetime.timezone.utc)
+    except OSError:
+        dt_from_s = (
+            datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) +
+            datetime.timedelta(seconds=t.s))
+    return datetime.datetime(
+        year=dt_from_s.year,
+        month=dt_from_s.month,
+        day=dt_from_s.day,
+        hour=dt_from_s.hour,
+        minute=dt_from_s.minute,
+        second=dt_from_s.second,
+        microsecond=t.us,
+        tzinfo=datetime.timezone.utc)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_to_float"><code class="name flex">
+<span>def <span class="ident">timestamp_to_float</span></span>(<span>t: <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert timestamp to floating number of seconds since 1970-01-01 UTC</p>
+<p>For precise serialization see <code><a title="hat.event.common.timestamp_to_bytes" href="#hat.event.common.timestamp_to_bytes">timestamp_to_bytes()</a></code>/<code><a title="hat.event.common.timestamp_from_bytes" href="#hat.event.common.timestamp_from_bytes">timestamp_from_bytes()</a></code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_to_float(t: Timestamp) -&gt; float:
+    &#34;&#34;&#34;Convert timestamp to floating number of seconds since 1970-01-01 UTC
+
+    For precise serialization see `timestamp_to_bytes`/`timestamp_from_bytes`.
+
+    &#34;&#34;&#34;
+    return t.s + t.us * 1E-6</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.timestamp_to_sbs"><code class="name flex">
+<span>def <span class="ident">timestamp_to_sbs</span></span>(<span>t: <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>) ‑> typing.Union[bool, int, float, str, bytes, typing.List[abc.Data], typing.Dict[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>], typing.Tuple[str, <a title="hat.chatter.Data" href="../chatter/index.html#hat.chatter.Data">Data</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert timestamp to SBS data</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def timestamp_to_sbs(t: Timestamp) -&gt; sbs.Data:
+    &#34;&#34;&#34;Convert timestamp to SBS data&#34;&#34;&#34;
+    return {&#39;s&#39;: t.s, &#39;us&#39;: t.us}</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.event.common.Event"><code class="flex name class">
+<span>class <span class="ident">Event</span></span>
+<span>(</span><span>event_id: <a title="hat.event.common.EventId" href="#hat.event.common.EventId">EventId</a>, event_type: typing.List[str], timestamp: <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, source_timestamp: typing.Union[ForwardRef('<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>'), NoneType], payload: typing.Union[<a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Event(event_id, event_type, timestamp, source_timestamp, payload)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Event(typing.NamedTuple):
+    event_id: EventId
+    event_type: EventType
+    timestamp: &#39;Timestamp&#39;
+    source_timestamp: typing.Optional[&#39;Timestamp&#39;]
+    payload: typing.Optional[EventPayload]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.Event.event_id"><code class="name">var <span class="ident">event_id</span> : <a title="hat.event.common.EventId" href="#hat.event.common.EventId">EventId</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.event.common.Event.event_type"><code class="name">var <span class="ident">event_type</span> : typing.List[str]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.event.common.Event.payload"><code class="name">var <span class="ident">payload</span> : typing.Union[<a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.event.common.Event.source_timestamp"><code class="name">var <span class="ident">source_timestamp</span> : typing.Union[<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.event.common.Event.timestamp"><code class="name">var <span class="ident">timestamp</span> : <a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.EventId"><code class="flex name class">
+<span>class <span class="ident">EventId</span></span>
+<span>(</span><span>server: int, instance: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>EventId(server, instance)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventId(typing.NamedTuple):
+    server: int
+    &#34;&#34;&#34;server identifier&#34;&#34;&#34;
+    instance: int
+    &#34;&#34;&#34;event instance identifier&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.EventId.instance"><code class="name">var <span class="ident">instance</span> : int</code></dt>
+<dd>
+<div class="desc"><p>event instance identifier</p></div>
+</dd>
+<dt id="hat.event.common.EventId.server"><code class="name">var <span class="ident">server</span> : int</code></dt>
+<dd>
+<div class="desc"><p>server identifier</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.EventPayload"><code class="flex name class">
+<span>class <span class="ident">EventPayload</span></span>
+<span>(</span><span>type: <a title="hat.event.common.EventPayloadType" href="#hat.event.common.EventPayloadType">EventPayloadType</a>, data: typing.Union[bytes, NoneType, bool, int, float, str, typing.List[ForwardRef('Data')], typing.Dict[str, ForwardRef('Data')], ForwardRef('<a title="hat.event.common.SbsData" href="#hat.event.common.SbsData">SbsData</a>')])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>EventPayload(type, data)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventPayload(typing.NamedTuple):
+    type: EventPayloadType
+    data: typing.Union[bytes, json.Data, &#39;SbsData&#39;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.EventPayload.data"><code class="name">var <span class="ident">data</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.event.common.EventPayload.type"><code class="name">var <span class="ident">type</span></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.EventPayloadType"><code class="flex name class">
+<span>class <span class="ident">EventPayloadType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.event.common.EventPayloadType.BINARY"><code class="name">var <span class="ident">BINARY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.event.common.EventPayloadType.JSON"><code class="name">var <span class="ident">JSON</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.event.common.EventPayloadType.SBS"><code class="name">var <span class="ident">SBS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.Order"><code class="flex name class">
+<span>class <span class="ident">Order</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.event.common.Order.ASCENDING"><code class="name">var <span class="ident">ASCENDING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.event.common.Order.DESCENDING"><code class="name">var <span class="ident">DESCENDING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.OrderBy"><code class="flex name class">
+<span>class <span class="ident">OrderBy</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="hat.event.common.OrderBy.SOURCE_TIMESTAMP"><code class="name">var <span class="ident">SOURCE_TIMESTAMP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="hat.event.common.OrderBy.TIMESTAMP"><code class="name">var <span class="ident">TIMESTAMP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.QueryData"><code class="flex name class">
+<span>class <span class="ident">QueryData</span></span>
+<span>(</span><span>event_ids: typing.Union[typing.List[<a title="hat.event.common.EventId" href="#hat.event.common.EventId">EventId</a>], NoneType] = None, event_types: typing.Union[typing.List[typing.List[str]], NoneType] = None, t_from: typing.Union[ForwardRef('<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>'), NoneType] = None, t_to: typing.Union[ForwardRef('<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>'), NoneType] = None, source_t_from: typing.Union[ForwardRef('<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>'), NoneType] = None, source_t_to: typing.Union[ForwardRef('<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>'), NoneType] = None, payload: typing.Union[<a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>, NoneType] = None, order: <a title="hat.event.common.Order" href="#hat.event.common.Order">Order</a> = Order.DESCENDING, order_by: <a title="hat.event.common.OrderBy" href="#hat.event.common.OrderBy">OrderBy</a> = OrderBy.TIMESTAMP, unique_type: bool = False, max_results: typing.Union[int, NoneType] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>QueryData(event_ids, event_types, t_from, t_to, source_t_from, source_t_to, payload, order, order_by, unique_type, max_results)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QueryData(typing.NamedTuple):
+    event_ids: typing.Optional[typing.List[EventId]] = None
+    event_types: typing.Optional[typing.List[EventType]] = None
+    t_from: typing.Optional[&#39;Timestamp&#39;] = None
+    t_to: typing.Optional[&#39;Timestamp&#39;] = None
+    source_t_from: typing.Optional[&#39;Timestamp&#39;] = None
+    source_t_to: typing.Optional[&#39;Timestamp&#39;] = None
+    payload: typing.Optional[EventPayload] = None
+    order: Order = Order.DESCENDING
+    order_by: OrderBy = OrderBy.TIMESTAMP
+    unique_type: bool = False
+    max_results: typing.Optional[int] = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.QueryData.event_ids"><code class="name">var <span class="ident">event_ids</span> : typing.Union[typing.List[<a title="hat.event.common.EventId" href="#hat.event.common.EventId">EventId</a>], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.event_types"><code class="name">var <span class="ident">event_types</span> : typing.Union[typing.List[typing.List[str]], NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.max_results"><code class="name">var <span class="ident">max_results</span> : typing.Union[int, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 10</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.order"><code class="name">var <span class="ident">order</span> : <a title="hat.event.common.Order" href="#hat.event.common.Order">Order</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 7</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.order_by"><code class="name">var <span class="ident">order_by</span> : <a title="hat.event.common.OrderBy" href="#hat.event.common.OrderBy">OrderBy</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 8</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.payload"><code class="name">var <span class="ident">payload</span> : typing.Union[<a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 6</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.source_t_from"><code class="name">var <span class="ident">source_t_from</span> : typing.Union[<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.source_t_to"><code class="name">var <span class="ident">source_t_to</span> : typing.Union[<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.t_from"><code class="name">var <span class="ident">t_from</span> : typing.Union[<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.t_to"><code class="name">var <span class="ident">t_to</span> : typing.Union[<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="hat.event.common.QueryData.unique_type"><code class="name">var <span class="ident">unique_type</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 9</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.RegisterEvent"><code class="flex name class">
+<span>class <span class="ident">RegisterEvent</span></span>
+<span>(</span><span>event_type: typing.List[str], source_timestamp: typing.Union[ForwardRef('<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>'), NoneType], payload: typing.Union[<a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>, NoneType])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>RegisterEvent(event_type, source_timestamp, payload)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RegisterEvent(typing.NamedTuple):
+    event_type: EventType
+    source_timestamp: typing.Optional[&#39;Timestamp&#39;]
+    payload: typing.Optional[EventPayload]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.RegisterEvent.event_type"><code class="name">var <span class="ident">event_type</span> : typing.List[str]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="hat.event.common.RegisterEvent.payload"><code class="name">var <span class="ident">payload</span> : typing.Union[<a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.event.common.RegisterEvent.source_timestamp"><code class="name">var <span class="ident">source_timestamp</span> : typing.Union[<a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a>, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.SbsData"><code class="flex name class">
+<span>class <span class="ident">SbsData</span></span>
+<span>(</span><span>module: typing.Union[str, NoneType], type: str, data: bytes)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>SbsData(module, type, data)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SbsData(typing.NamedTuple):
+    module: typing.Optional[str]
+    &#34;&#34;&#34;SBS module name&#34;&#34;&#34;
+    type: str
+    &#34;&#34;&#34;SBS type name&#34;&#34;&#34;
+    data: bytes</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.SbsData.data"><code class="name">var <span class="ident">data</span> : bytes</code></dt>
+<dd>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+<dt id="hat.event.common.SbsData.module"><code class="name">var <span class="ident">module</span> : typing.Union[str, NoneType]</code></dt>
+<dd>
+<div class="desc"><p>SBS module name</p></div>
+</dd>
+<dt id="hat.event.common.SbsData.type"><code class="name">var <span class="ident">type</span> : str</code></dt>
+<dd>
+<div class="desc"><p>SBS type name</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.Subscription"><code class="flex name class">
+<span>class <span class="ident">Subscription</span></span>
+<span>(</span><span>query_types: typing.Iterable[typing.List[str]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Subscription defined by query event types</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Subscription:
+    &#34;&#34;&#34;Subscription defined by query event types&#34;&#34;&#34;
+
+    _Node = typing.Tuple[bool,                  # is_leaf
+                         typing.Dict[str,       # subtype
+                                     &#39;_Node&#39;]]  # child
+
+    def __init__(self, query_types: typing.Iterable[EventType]):
+        self._root = False, {}
+        for query_type in query_types:
+            self._root = self._add_query_type(self._root, query_type)
+
+    def get_query_types(self) -&gt; typing.Iterable[EventType]:
+        &#34;&#34;&#34;Calculate sanitized query event types&#34;&#34;&#34;
+        yield from self._get_query_types(self._root)
+
+    def matches(self, event_type: EventType) -&gt; bool:
+        &#34;&#34;&#34;Does `event_type` match subscription&#34;&#34;&#34;
+        return self._matches(self._root, event_type)
+
+    def _add_query_type(self, node, query_type):
+        is_leaf, children = node
+
+        if &#39;*&#39; in children:
+            return node
+
+        if not query_type:
+            return True, children
+
+        head, rest = query_type[0], query_type[1:]
+
+        if head == &#39;*&#39;:
+            if rest:
+                raise ValueError(&#39;invalid query event type&#39;)
+            children.clear()
+            children[&#39;*&#39;] = True, {}
+
+        else:
+            child = children.get(head, (False, {}))
+            child = self._add_query_type(child, rest)
+            children[head] = child
+
+        return node
+
+    def _get_query_types(self, node):
+        is_leaf, children = node
+
+        if is_leaf and &#39;*&#39; not in children:
+            yield []
+
+        for head, child in children.items():
+            for rest in self._get_query_types(child):
+                yield [head, *rest]
+
+    def _matches(self, node, event_type):
+        is_leaf, children = node
+
+        if &#39;*&#39; in children:
+            return True
+
+        if not event_type:
+            return is_leaf
+
+        head, rest = event_type[0], event_type[1:]
+
+        for i in (head, &#39;?&#39;):
+            child = children.get(i)
+            if not child:
+                continue
+            if self._matches(child, rest):
+                return True
+
+        return False</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.common.Subscription.get_query_types"><code class="name flex">
+<span>def <span class="ident">get_query_types</span></span>(<span>self) ‑> typing.Iterable[typing.List[str]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate sanitized query event types</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_query_types(self) -&gt; typing.Iterable[EventType]:
+    &#34;&#34;&#34;Calculate sanitized query event types&#34;&#34;&#34;
+    yield from self._get_query_types(self._root)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.common.Subscription.matches"><code class="name flex">
+<span>def <span class="ident">matches</span></span>(<span>self, event_type: typing.List[str]) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Does <code>event_type</code> match subscription</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matches(self, event_type: EventType) -&gt; bool:
+    &#34;&#34;&#34;Does `event_type` match subscription&#34;&#34;&#34;
+    return self._matches(self._root, event_type)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="hat.event.common.Timestamp"><code class="flex name class">
+<span>class <span class="ident">Timestamp</span></span>
+<span>(</span><span>s: int, us: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Timestamp(s, us)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Timestamp(typing.NamedTuple):
+    s: int
+    &#34;&#34;&#34;seconds since 1970-01-01 (can be negative)&#34;&#34;&#34;
+    us: int
+    &#34;&#34;&#34;microseconds added to timestamp seconds in range (-1e6, 1e6)&#34;&#34;&#34;
+
+    def __lt__(self, other):
+        if not isinstance(other, Timestamp):
+            return NotImplemented
+        return self.s * 1000000 + self.us &lt; other.s * 1000000 + other.us
+
+    def __gt__(self, other):
+        if not isinstance(other, Timestamp):
+            return NotImplemented
+        return self.s * 1000000 + self.us &gt; other.s * 1000000 + other.us
+
+    def __eq__(self, other):
+        if not isinstance(other, Timestamp):
+            return NotImplemented
+        return self.s * 1000000 + self.us == other.s * 1000000 + other.us
+
+    def __ne__(self, other):
+        return not self == other
+
+    def __le__(self, other):
+        return self &lt; other or self == other
+
+    def __ge__(self, other):
+        return self &gt; other or self == other
+
+    def __hash__(self):
+        return self.s * 1000000 + self.us</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.common.Timestamp.s"><code class="name">var <span class="ident">s</span> : int</code></dt>
+<dd>
+<div class="desc"><p>seconds since 1970-01-01 (can be negative)</p></div>
+</dd>
+<dt id="hat.event.common.Timestamp.us"><code class="name">var <span class="ident">us</span> : int</code></dt>
+<dd>
+<div class="desc"><p>microseconds added to timestamp seconds in range (-1e6, 1e6)</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.event" href="index.html">hat.event</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="hat.event.common.EventType" href="#hat.event.common.EventType">EventType</a></code></li>
+<li><code><a title="hat.event.common.json_schema_repo" href="#hat.event.common.json_schema_repo">json_schema_repo</a></code></li>
+<li><code><a title="hat.event.common.package_path" href="#hat.event.common.package_path">package_path</a></code></li>
+<li><code><a title="hat.event.common.sbs_repo" href="#hat.event.common.sbs_repo">sbs_repo</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.event.common.event_from_sbs" href="#hat.event.common.event_from_sbs">event_from_sbs</a></code></li>
+<li><code><a title="hat.event.common.event_payload_from_sbs" href="#hat.event.common.event_payload_from_sbs">event_payload_from_sbs</a></code></li>
+<li><code><a title="hat.event.common.event_payload_to_sbs" href="#hat.event.common.event_payload_to_sbs">event_payload_to_sbs</a></code></li>
+<li><code><a title="hat.event.common.event_to_sbs" href="#hat.event.common.event_to_sbs">event_to_sbs</a></code></li>
+<li><code><a title="hat.event.common.matches_query_type" href="#hat.event.common.matches_query_type">matches_query_type</a></code></li>
+<li><code><a title="hat.event.common.now" href="#hat.event.common.now">now</a></code></li>
+<li><code><a title="hat.event.common.query_from_sbs" href="#hat.event.common.query_from_sbs">query_from_sbs</a></code></li>
+<li><code><a title="hat.event.common.query_to_sbs" href="#hat.event.common.query_to_sbs">query_to_sbs</a></code></li>
+<li><code><a title="hat.event.common.register_event_from_sbs" href="#hat.event.common.register_event_from_sbs">register_event_from_sbs</a></code></li>
+<li><code><a title="hat.event.common.register_event_to_sbs" href="#hat.event.common.register_event_to_sbs">register_event_to_sbs</a></code></li>
+<li><code><a title="hat.event.common.timestamp_from_bytes" href="#hat.event.common.timestamp_from_bytes">timestamp_from_bytes</a></code></li>
+<li><code><a title="hat.event.common.timestamp_from_datetime" href="#hat.event.common.timestamp_from_datetime">timestamp_from_datetime</a></code></li>
+<li><code><a title="hat.event.common.timestamp_from_float" href="#hat.event.common.timestamp_from_float">timestamp_from_float</a></code></li>
+<li><code><a title="hat.event.common.timestamp_from_sbs" href="#hat.event.common.timestamp_from_sbs">timestamp_from_sbs</a></code></li>
+<li><code><a title="hat.event.common.timestamp_to_bytes" href="#hat.event.common.timestamp_to_bytes">timestamp_to_bytes</a></code></li>
+<li><code><a title="hat.event.common.timestamp_to_datetime" href="#hat.event.common.timestamp_to_datetime">timestamp_to_datetime</a></code></li>
+<li><code><a title="hat.event.common.timestamp_to_float" href="#hat.event.common.timestamp_to_float">timestamp_to_float</a></code></li>
+<li><code><a title="hat.event.common.timestamp_to_sbs" href="#hat.event.common.timestamp_to_sbs">timestamp_to_sbs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.event.common.Event" href="#hat.event.common.Event">Event</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.Event.event_id" href="#hat.event.common.Event.event_id">event_id</a></code></li>
+<li><code><a title="hat.event.common.Event.event_type" href="#hat.event.common.Event.event_type">event_type</a></code></li>
+<li><code><a title="hat.event.common.Event.payload" href="#hat.event.common.Event.payload">payload</a></code></li>
+<li><code><a title="hat.event.common.Event.source_timestamp" href="#hat.event.common.Event.source_timestamp">source_timestamp</a></code></li>
+<li><code><a title="hat.event.common.Event.timestamp" href="#hat.event.common.Event.timestamp">timestamp</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.EventId" href="#hat.event.common.EventId">EventId</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.EventId.instance" href="#hat.event.common.EventId.instance">instance</a></code></li>
+<li><code><a title="hat.event.common.EventId.server" href="#hat.event.common.EventId.server">server</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.EventPayload" href="#hat.event.common.EventPayload">EventPayload</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.EventPayload.data" href="#hat.event.common.EventPayload.data">data</a></code></li>
+<li><code><a title="hat.event.common.EventPayload.type" href="#hat.event.common.EventPayload.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.EventPayloadType" href="#hat.event.common.EventPayloadType">EventPayloadType</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.EventPayloadType.BINARY" href="#hat.event.common.EventPayloadType.BINARY">BINARY</a></code></li>
+<li><code><a title="hat.event.common.EventPayloadType.JSON" href="#hat.event.common.EventPayloadType.JSON">JSON</a></code></li>
+<li><code><a title="hat.event.common.EventPayloadType.SBS" href="#hat.event.common.EventPayloadType.SBS">SBS</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.Order" href="#hat.event.common.Order">Order</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.Order.ASCENDING" href="#hat.event.common.Order.ASCENDING">ASCENDING</a></code></li>
+<li><code><a title="hat.event.common.Order.DESCENDING" href="#hat.event.common.Order.DESCENDING">DESCENDING</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.OrderBy" href="#hat.event.common.OrderBy">OrderBy</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.OrderBy.SOURCE_TIMESTAMP" href="#hat.event.common.OrderBy.SOURCE_TIMESTAMP">SOURCE_TIMESTAMP</a></code></li>
+<li><code><a title="hat.event.common.OrderBy.TIMESTAMP" href="#hat.event.common.OrderBy.TIMESTAMP">TIMESTAMP</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.QueryData" href="#hat.event.common.QueryData">QueryData</a></code></h4>
+<ul class="two-column">
+<li><code><a title="hat.event.common.QueryData.event_ids" href="#hat.event.common.QueryData.event_ids">event_ids</a></code></li>
+<li><code><a title="hat.event.common.QueryData.event_types" href="#hat.event.common.QueryData.event_types">event_types</a></code></li>
+<li><code><a title="hat.event.common.QueryData.max_results" href="#hat.event.common.QueryData.max_results">max_results</a></code></li>
+<li><code><a title="hat.event.common.QueryData.order" href="#hat.event.common.QueryData.order">order</a></code></li>
+<li><code><a title="hat.event.common.QueryData.order_by" href="#hat.event.common.QueryData.order_by">order_by</a></code></li>
+<li><code><a title="hat.event.common.QueryData.payload" href="#hat.event.common.QueryData.payload">payload</a></code></li>
+<li><code><a title="hat.event.common.QueryData.source_t_from" href="#hat.event.common.QueryData.source_t_from">source_t_from</a></code></li>
+<li><code><a title="hat.event.common.QueryData.source_t_to" href="#hat.event.common.QueryData.source_t_to">source_t_to</a></code></li>
+<li><code><a title="hat.event.common.QueryData.t_from" href="#hat.event.common.QueryData.t_from">t_from</a></code></li>
+<li><code><a title="hat.event.common.QueryData.t_to" href="#hat.event.common.QueryData.t_to">t_to</a></code></li>
+<li><code><a title="hat.event.common.QueryData.unique_type" href="#hat.event.common.QueryData.unique_type">unique_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.RegisterEvent" href="#hat.event.common.RegisterEvent">RegisterEvent</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.RegisterEvent.event_type" href="#hat.event.common.RegisterEvent.event_type">event_type</a></code></li>
+<li><code><a title="hat.event.common.RegisterEvent.payload" href="#hat.event.common.RegisterEvent.payload">payload</a></code></li>
+<li><code><a title="hat.event.common.RegisterEvent.source_timestamp" href="#hat.event.common.RegisterEvent.source_timestamp">source_timestamp</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.SbsData" href="#hat.event.common.SbsData">SbsData</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.SbsData.data" href="#hat.event.common.SbsData.data">data</a></code></li>
+<li><code><a title="hat.event.common.SbsData.module" href="#hat.event.common.SbsData.module">module</a></code></li>
+<li><code><a title="hat.event.common.SbsData.type" href="#hat.event.common.SbsData.type">type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.Subscription" href="#hat.event.common.Subscription">Subscription</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.Subscription.get_query_types" href="#hat.event.common.Subscription.get_query_types">get_query_types</a></code></li>
+<li><code><a title="hat.event.common.Subscription.matches" href="#hat.event.common.Subscription.matches">matches</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.common.Timestamp" href="#hat.event.common.Timestamp">Timestamp</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.common.Timestamp.s" href="#hat.event.common.Timestamp.s">s</a></code></li>
+<li><code><a title="hat.event.common.Timestamp.us" href="#hat.event.common.Timestamp.us">us</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

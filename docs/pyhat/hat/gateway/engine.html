@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.gateway.engine API documentation</title>
+<meta name="description" content="Gateway engine …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.gateway.engine</code></h1>
+</header>
+<section id="section-intro">
+<p>Gateway engine</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>mlog</code></strong> :&ensp;<code>logging.Logger</code></dt>
+<dd>module logger</dd>
+</dl>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Gateway engine
+
+Attributes:
+    mlog (logging.Logger): module logger
+
+&#34;&#34;&#34;
+
+import asyncio
+import importlib
+import logging
+
+from hat import aio
+from hat import util
+import hat.event.common
+import hat.gateway.common
+
+
+mlog = logging.getLogger(__name__)
+
+
+async def create_engine(conf, client):
+    &#34;&#34;&#34;Create engine
+
+    Args:
+        conf (hat.json.Data): configuration defined by
+            ``hat://gateway/main.yaml#``
+        client (hat.event.client.Client): event client
+
+    Returns:
+        Engine
+
+    &#34;&#34;&#34;
+
+    engine = Engine()
+
+    devices = conf[&#39;devices&#39;]
+    if len(set([d[&#39;name&#39;] for d in devices])) != len(devices):
+        raise Exception(&#34;gateway configured with duplicate device names&#34;)
+
+    engine._async_group = aio.Group()
+    create_proxy_tasks = {
+        device_conf[&#39;name&#39;]: engine._async_group.spawn(
+            create_device_proxy, device_conf, client, conf[&#39;gateway_name&#39;])
+        for device_conf in devices}
+
+    try:
+        if create_proxy_tasks:
+            await asyncio.wait(create_proxy_tasks.values())
+        engine._device_proxies = {}
+        for name, task in create_proxy_tasks.items():
+            proxy = task.result()
+            engine._device_proxies[name] = proxy
+            engine._async_group.spawn(engine._wait_closed_proxy, proxy)
+            engine._async_group.spawn(aio.call_on_cancel, proxy.async_close)
+    except BaseException:
+        for task in create_proxy_tasks.values():
+            if task.done() and not task.exception():
+                engine._async_group.spawn(task.result().asnyc_close)
+        await aio.uncancellable(engine._async_group.async_close(cancel=False))
+        raise
+
+    engine._async_group.spawn(engine._receive_loop, client)
+    return engine
+
+
+class Engine(aio.Resource):
+    &#34;&#34;&#34;Engine
+
+    For creating new instance of this class see :func:`create_engine`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    async def _receive_loop(self, client):
+        try:
+            while True:
+                events = await client.receive()
+                for device_name, proxy in self._device_proxies.items():
+                    proxy_events = [ev for ev in events
+                                    if ev.event_type[3] == device_name]
+                    if proxy_events:
+                        proxy.add_events(proxy_events)
+        except ConnectionError:
+            mlog.info(&#39;connection to event server closed&#39;)
+        except asyncio.CancelledError:
+            mlog.debug(&#39;engine receive loop cancelled&#39;)
+        finally:
+            self._async_group.close()
+
+    async def _wait_closed_proxy(self, proxy):
+        try:
+            await proxy.wait_closed()
+        finally:
+            self._async_group.close()
+
+    def _on_exception(self, e):
+        mlog.error(&#39;uncaught exception in Engine group: %s&#39;, e, exc_info=e)
+
+
+async def create_device_proxy(conf, client, gateway_name):
+    &#34;&#34;&#34;Create device proxy
+
+    Args:
+        conf (hat.json.Data): configuration defined by
+            ``hat://gateway/main.yaml#/definitions/device``
+        client (hat.event.client.Client): event client
+        gateway_name (str): gateway name
+
+    Returns:
+        DeviceProxy
+
+    &#34;&#34;&#34;
+    proxy = DeviceProxy()
+    device_module = importlib.import_module(conf[&#39;module&#39;])
+
+    proxy._event_queue = aio.Queue()
+    proxy._async_group = aio.Group(proxy._on_exception)
+    proxy._client = client
+    proxy._device_identifier_prefix = [&#39;gateway&#39;, gateway_name,
+                                       device_module.device_type, conf[&#39;name&#39;]]
+
+    enable_event_type = [*proxy._device_identifier_prefix, &#39;system&#39;, &#39;enable&#39;]
+    enable_query = hat.event.common.QueryData(event_types=[enable_event_type],
+                                              unique_type=True)
+    enable_events = await client.query(enable_query)
+
+    enable_event = util.first(
+        enable_events, lambda ev: _check_bool_event(ev, enable_event_type))
+    enabled = enable_event.payload.data if enable_event is not None else False
+
+    proxy._register_device_running_event(False)
+    if enabled:
+        await proxy._create_device(conf, device_module)
+    else:
+        proxy._device = None
+        proxy._device_event_client = None
+
+    proxy._async_group.spawn(proxy._idle_loop, conf, device_module, enabled)
+    proxy._async_group.spawn(aio.call_on_cancel, proxy._cleanup)
+
+    return proxy
+
+
+class DeviceProxy(aio.Resource):
+    &#34;&#34;&#34;Device proxy
+
+    For creating new instance of this class see :func:`create_device_proxy`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    def add_events(self, events):
+        &#34;&#34;&#34;Add newly received events
+
+        Args:
+            events (List[hat.event.common.Event]): events
+
+        &#34;&#34;&#34;
+        self._event_queue.put_nowait(events)
+
+    async def _create_device(self, conf, device_module):
+        self._device_event_client = _DeviceEventClient(
+            self._client, self._async_group.create_subgroup())
+        self._device = await device_module.create(
+            conf, self._device_event_client, self._device_identifier_prefix)
+        self._register_device_running_event(True)
+
+    async def _destroy_device(self):
+        await self._device_event_client.async_close()
+        await self._device.async_close()
+        self._device = None
+        self._device_event_client = None
+        try:
+            self._register_device_running_event(False)
+        except ConnectionError:
+            mlog.warning(&#39;device was destroyed but running event registration &#39;
+                         &#39;failed&#39;)
+
+    async def _idle_loop(self, conf, device_module, enabled):
+        try:
+            while True:
+                async with self._async_group.create_subgroup() as async_group:
+                    new_events_future = async_group.spawn(
+                        self._event_queue.get)
+                    device_closed_future = (
+                        async_group.spawn(self._device.wait_closed)
+                        if self._device is not None
+                        else asyncio.Future())
+                    await asyncio.wait([new_events_future,
+                                        device_closed_future],
+                                       return_when=asyncio.FIRST_COMPLETED)
+                    if self._device and self._device.is_closed:
+                        return
+                    events = new_events_future.result()
+
+                enable_event_type = [*self._device_identifier_prefix, &#39;system&#39;,
+                                     &#39;enable&#39;]
+                enable_events = [ev for ev in events
+                                 if _check_bool_event(ev, enable_event_type)]
+                device_events = [ev for ev in events
+                                 if ev.event_type != enable_event_type]
+
+                if len(set([ev.payload.data for ev in enable_events])) &gt; 1:
+                    mlog.warning(
+                        &#39;multiple distinct enable values set for device %s, &#39;
+                        &#39;retaining previous enable value (%s)&#39;,
+                        conf[&#39;name&#39;],
+                        enabled)
+                else:
+                    enable_event = util.first(enable_events)
+                    enabled = (enable_event.payload.data
+                               if enable_event else enabled)
+
+                if enabled and self._device is None:
+                    await self._create_device(conf, device_module)
+                elif not enabled and self._device is not None:
+                    await self._destroy_device()
+                elif enabled and self._device is not None:
+                    self._device_event_client.add_events(device_events)
+        except asyncio.CancelledError:
+            mlog.debug(&#39;device idle loop cancelled&#39;)
+        finally:
+            self._async_group.close()
+
+    async def _cleanup(self):
+        if self._device is not None:
+            await self._destroy_device()
+        self._event_queue.close()
+
+    def _register_device_running_event(self, is_running):
+        self._client.register([hat.event.common.RegisterEvent(
+            event_type=[*self._device_identifier_prefix, &#39;gateway&#39;, &#39;running&#39;],
+            source_timestamp=hat.event.common.now(),
+            payload=hat.event.common.EventPayload(
+                type=hat.event.common.EventPayloadType.JSON,
+                data=is_running))])
+
+    def _on_exception(self, e):
+        mlog.error(&#39;device proxy uncaught error: %s&#39;, e, exc_info=e)
+
+
+class _DeviceEventClient(hat.gateway.common.DeviceEventClient, aio.Resource):
+
+    def __init__(self, client, group):
+        self._queue = aio.Queue()
+        self._client = client
+        self._async_group = group
+        self._async_group.spawn(aio.call_on_cancel, self._queue.close)
+
+    @property
+    def async_group(self):
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    def add_events(self, events):
+        &#34;&#34;&#34;Add newly received events
+
+        Args:
+            events (List[hat.event.common.Event]): events
+
+        &#34;&#34;&#34;
+        self._queue.put_nowait(events)
+
+    async def receive(self):
+        &#34;&#34;&#34;See :meth:`hat.gateway.common.DeviceEventClient.receive`&#34;&#34;&#34;
+
+        return await self._queue.get()
+
+    def register(self, events):
+        &#34;&#34;&#34;See :meth:`hat.gateway.common.DeviceEventClient.register`&#34;&#34;&#34;
+
+        self._client.register(events)
+
+    async def register_with_response(self, events):
+        &#34;&#34;&#34;See
+        :meth:`hat.gateway.common.DeviceEventClient.register_with_response`&#34;&#34;&#34;
+
+        return await self._client.register_with_response(events)
+
+    async def query(self, data):
+        &#34;&#34;&#34;See :meth:`hat.gateway.common.DeviceEventClient.query`&#34;&#34;&#34;
+
+        return await self._client.query(data)
+
+    def _exception_cb(self, e):
+        mlog.error(&#39;uncaught exception in device event client: %s&#39;, e,
+                   exc_info=e)
+
+
+def _check_bool_event(event, event_type):
+    if (event.event_type == event_type
+            and event.payload is not None
+            and isinstance(event.payload.data, bool)):
+        return True
+    return False</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.gateway.engine.create_device_proxy"><code class="name flex">
+<span>async def <span class="ident">create_device_proxy</span></span>(<span>conf, client, gateway_name)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create device proxy</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>conf</code></strong> :&ensp;<code><a title="hat.json.Data" href="../json/index.html#hat.json.Data">Data</a></code></dt>
+<dd>configuration defined by
+<code>hat://gateway/main.yaml#/definitions/device</code></dd>
+<dt><strong><code>client</code></strong> :&ensp;<code><a title="hat.event.client.Client" href="../event/client.html#hat.event.client.Client">Client</a></code></dt>
+<dd>event client</dd>
+<dt><strong><code>gateway_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>gateway name</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>DeviceProxy</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create_device_proxy(conf, client, gateway_name):
+    &#34;&#34;&#34;Create device proxy
+
+    Args:
+        conf (hat.json.Data): configuration defined by
+            ``hat://gateway/main.yaml#/definitions/device``
+        client (hat.event.client.Client): event client
+        gateway_name (str): gateway name
+
+    Returns:
+        DeviceProxy
+
+    &#34;&#34;&#34;
+    proxy = DeviceProxy()
+    device_module = importlib.import_module(conf[&#39;module&#39;])
+
+    proxy._event_queue = aio.Queue()
+    proxy._async_group = aio.Group(proxy._on_exception)
+    proxy._client = client
+    proxy._device_identifier_prefix = [&#39;gateway&#39;, gateway_name,
+                                       device_module.device_type, conf[&#39;name&#39;]]
+
+    enable_event_type = [*proxy._device_identifier_prefix, &#39;system&#39;, &#39;enable&#39;]
+    enable_query = hat.event.common.QueryData(event_types=[enable_event_type],
+                                              unique_type=True)
+    enable_events = await client.query(enable_query)
+
+    enable_event = util.first(
+        enable_events, lambda ev: _check_bool_event(ev, enable_event_type))
+    enabled = enable_event.payload.data if enable_event is not None else False
+
+    proxy._register_device_running_event(False)
+    if enabled:
+        await proxy._create_device(conf, device_module)
+    else:
+        proxy._device = None
+        proxy._device_event_client = None
+
+    proxy._async_group.spawn(proxy._idle_loop, conf, device_module, enabled)
+    proxy._async_group.spawn(aio.call_on_cancel, proxy._cleanup)
+
+    return proxy</code></pre>
+</details>
+</dd>
+<dt id="hat.gateway.engine.create_engine"><code class="name flex">
+<span>async def <span class="ident">create_engine</span></span>(<span>conf, client)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create engine</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>conf</code></strong> :&ensp;<code><a title="hat.json.Data" href="../json/index.html#hat.json.Data">Data</a></code></dt>
+<dd>configuration defined by
+<code>hat://gateway/main.yaml#</code></dd>
+<dt><strong><code>client</code></strong> :&ensp;<code><a title="hat.event.client.Client" href="../event/client.html#hat.event.client.Client">Client</a></code></dt>
+<dd>event client</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Engine</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create_engine(conf, client):
+    &#34;&#34;&#34;Create engine
+
+    Args:
+        conf (hat.json.Data): configuration defined by
+            ``hat://gateway/main.yaml#``
+        client (hat.event.client.Client): event client
+
+    Returns:
+        Engine
+
+    &#34;&#34;&#34;
+
+    engine = Engine()
+
+    devices = conf[&#39;devices&#39;]
+    if len(set([d[&#39;name&#39;] for d in devices])) != len(devices):
+        raise Exception(&#34;gateway configured with duplicate device names&#34;)
+
+    engine._async_group = aio.Group()
+    create_proxy_tasks = {
+        device_conf[&#39;name&#39;]: engine._async_group.spawn(
+            create_device_proxy, device_conf, client, conf[&#39;gateway_name&#39;])
+        for device_conf in devices}
+
+    try:
+        if create_proxy_tasks:
+            await asyncio.wait(create_proxy_tasks.values())
+        engine._device_proxies = {}
+        for name, task in create_proxy_tasks.items():
+            proxy = task.result()
+            engine._device_proxies[name] = proxy
+            engine._async_group.spawn(engine._wait_closed_proxy, proxy)
+            engine._async_group.spawn(aio.call_on_cancel, proxy.async_close)
+    except BaseException:
+        for task in create_proxy_tasks.values():
+            if task.done() and not task.exception():
+                engine._async_group.spawn(task.result().asnyc_close)
+        await aio.uncancellable(engine._async_group.async_close(cancel=False))
+        raise
+
+    engine._async_group.spawn(engine._receive_loop, client)
+    return engine</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.gateway.engine.DeviceProxy"><code class="flex name class">
+<span>class <span class="ident">DeviceProxy</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Device proxy</p>
+<p>For creating new instance of this class see :func:<code><a title="hat.gateway.engine.create_device_proxy" href="#hat.gateway.engine.create_device_proxy">create_device_proxy()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeviceProxy(aio.Resource):
+    &#34;&#34;&#34;Device proxy
+
+    For creating new instance of this class see :func:`create_device_proxy`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    def add_events(self, events):
+        &#34;&#34;&#34;Add newly received events
+
+        Args:
+            events (List[hat.event.common.Event]): events
+
+        &#34;&#34;&#34;
+        self._event_queue.put_nowait(events)
+
+    async def _create_device(self, conf, device_module):
+        self._device_event_client = _DeviceEventClient(
+            self._client, self._async_group.create_subgroup())
+        self._device = await device_module.create(
+            conf, self._device_event_client, self._device_identifier_prefix)
+        self._register_device_running_event(True)
+
+    async def _destroy_device(self):
+        await self._device_event_client.async_close()
+        await self._device.async_close()
+        self._device = None
+        self._device_event_client = None
+        try:
+            self._register_device_running_event(False)
+        except ConnectionError:
+            mlog.warning(&#39;device was destroyed but running event registration &#39;
+                         &#39;failed&#39;)
+
+    async def _idle_loop(self, conf, device_module, enabled):
+        try:
+            while True:
+                async with self._async_group.create_subgroup() as async_group:
+                    new_events_future = async_group.spawn(
+                        self._event_queue.get)
+                    device_closed_future = (
+                        async_group.spawn(self._device.wait_closed)
+                        if self._device is not None
+                        else asyncio.Future())
+                    await asyncio.wait([new_events_future,
+                                        device_closed_future],
+                                       return_when=asyncio.FIRST_COMPLETED)
+                    if self._device and self._device.is_closed:
+                        return
+                    events = new_events_future.result()
+
+                enable_event_type = [*self._device_identifier_prefix, &#39;system&#39;,
+                                     &#39;enable&#39;]
+                enable_events = [ev for ev in events
+                                 if _check_bool_event(ev, enable_event_type)]
+                device_events = [ev for ev in events
+                                 if ev.event_type != enable_event_type]
+
+                if len(set([ev.payload.data for ev in enable_events])) &gt; 1:
+                    mlog.warning(
+                        &#39;multiple distinct enable values set for device %s, &#39;
+                        &#39;retaining previous enable value (%s)&#39;,
+                        conf[&#39;name&#39;],
+                        enabled)
+                else:
+                    enable_event = util.first(enable_events)
+                    enabled = (enable_event.payload.data
+                               if enable_event else enabled)
+
+                if enabled and self._device is None:
+                    await self._create_device(conf, device_module)
+                elif not enabled and self._device is not None:
+                    await self._destroy_device()
+                elif enabled and self._device is not None:
+                    self._device_event_client.add_events(device_events)
+        except asyncio.CancelledError:
+            mlog.debug(&#39;device idle loop cancelled&#39;)
+        finally:
+            self._async_group.close()
+
+    async def _cleanup(self):
+        if self._device is not None:
+            await self._destroy_device()
+        self._event_queue.close()
+
+    def _register_device_running_event(self, is_running):
+        self._client.register([hat.event.common.RegisterEvent(
+            event_type=[*self._device_identifier_prefix, &#39;gateway&#39;, &#39;running&#39;],
+            source_timestamp=hat.event.common.now(),
+            payload=hat.event.common.EventPayload(
+                type=hat.event.common.EventPayloadType.JSON,
+                data=is_running))])
+
+    def _on_exception(self, e):
+        mlog.error(&#39;device proxy uncaught error: %s&#39;, e, exc_info=e)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.gateway.engine.DeviceProxy.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.gateway.engine.DeviceProxy.add_events"><code class="name flex">
+<span>def <span class="ident">add_events</span></span>(<span>self, events)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add newly received events</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>events</code></strong> :&ensp;<code>List[<a title="hat.event.common.Event" href="../event/common.html#hat.event.common.Event">Event</a>]</code></dt>
+<dd>events</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_events(self, events):
+    &#34;&#34;&#34;Add newly received events
+
+    Args:
+        events (List[hat.event.common.Event]): events
+
+    &#34;&#34;&#34;
+    self._event_queue.put_nowait(events)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.gateway.engine.Engine"><code class="flex name class">
+<span>class <span class="ident">Engine</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Engine</p>
+<p>For creating new instance of this class see :func:<code><a title="hat.gateway.engine.create_engine" href="#hat.gateway.engine.create_engine">create_engine()</a></code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Engine(aio.Resource):
+    &#34;&#34;&#34;Engine
+
+    For creating new instance of this class see :func:`create_engine`
+
+    &#34;&#34;&#34;
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    async def _receive_loop(self, client):
+        try:
+            while True:
+                events = await client.receive()
+                for device_name, proxy in self._device_proxies.items():
+                    proxy_events = [ev for ev in events
+                                    if ev.event_type[3] == device_name]
+                    if proxy_events:
+                        proxy.add_events(proxy_events)
+        except ConnectionError:
+            mlog.info(&#39;connection to event server closed&#39;)
+        except asyncio.CancelledError:
+            mlog.debug(&#39;engine receive loop cancelled&#39;)
+        finally:
+            self._async_group.close()
+
+    async def _wait_closed_proxy(self, proxy):
+        try:
+            await proxy.wait_closed()
+        finally:
+            self._async_group.close()
+
+    def _on_exception(self, e):
+        mlog.error(&#39;uncaught exception in Engine group: %s&#39;, e, exc_info=e)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.gateway.engine.Engine.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.gateway" href="index.html">hat.gateway</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.gateway.engine.create_device_proxy" href="#hat.gateway.engine.create_device_proxy">create_device_proxy</a></code></li>
+<li><code><a title="hat.gateway.engine.create_engine" href="#hat.gateway.engine.create_engine">create_engine</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.gateway.engine.DeviceProxy" href="#hat.gateway.engine.DeviceProxy">DeviceProxy</a></code></h4>
+<ul class="">
+<li><code><a title="hat.gateway.engine.DeviceProxy.add_events" href="#hat.gateway.engine.DeviceProxy.add_events">add_events</a></code></li>
+<li><code><a title="hat.gateway.engine.DeviceProxy.async_group" href="#hat.gateway.engine.DeviceProxy.async_group">async_group</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.gateway.engine.Engine" href="#hat.gateway.engine.Engine">Engine</a></code></h4>
+<ul class="">
+<li><code><a title="hat.gateway.engine.Engine.async_group" href="#hat.gateway.engine.Engine.async_group">async_group</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>hat.event.server.module_engine API documentation</title>
+<meta name="description" content="Module engine" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hat.event.server.module_engine</code></h1>
+</header>
+<section id="section-intro">
+<p>Module engine</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Module engine&#34;&#34;&#34;
+
+import asyncio
+import importlib
+import logging
+
+from hat import aio
+from hat import util
+from hat.event.server import common
+
+
+mlog = logging.getLogger(__name__)
+
+
+class ModuleEngineClosedError(Exception):
+    &#34;&#34;&#34;Error signaling closed module engine&#34;&#34;&#34;
+
+
+async def create(conf, backend_engine):
+    &#34;&#34;&#34;Create module engine
+
+    Args:
+        conf (hat.json.Data): configuration defined by
+            ``hat://event/main.yaml#/definitions/module_engine``
+        backend_engine (hat.event.backend_engine.BackendEngine): backend engine
+
+    Returns:
+        ModuleEngine
+
+    &#34;&#34;&#34;
+    engine = ModuleEngine()
+    engine._backend = backend_engine
+    engine._async_group = aio.Group()
+    engine._register_queue = aio.Queue()
+    engine._register_cbs = util.CallbackRegistry()
+
+    last_event_id = await engine._backend.get_last_event_id()
+    engine._server_id = last_event_id.server
+    engine._last_instance_id = last_event_id.instance
+
+    engine._modules = []
+    for module_conf in conf[&#39;modules&#39;]:
+        py_module = importlib.import_module(module_conf[&#39;module&#39;])
+        module = await py_module.create(module_conf, engine)
+        engine._async_group.spawn(aio.call_on_cancel,
+                                  module.async_close)
+        engine._modules.append(module)
+    engine._async_group.spawn(engine._register_loop)
+
+    return engine
+
+
+class ModuleEngine(aio.Resource):
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    def register_events_cb(self, cb):
+        &#34;&#34;&#34;Register events callback
+
+        Args:
+            cb (Callable[[List[common.Event]],None]): change callback
+
+        Returns:
+            util.RegisterCallbackHandle
+
+        &#34;&#34;&#34;
+        return self._register_cbs.register(cb)
+
+    def create_process_event(self, source, event):
+        &#34;&#34;&#34;Create process event
+
+        Args:
+            source (common.Source): event source
+            event (common.RegisterEvent): register event
+
+        Returns:
+            common.ProcessEvent
+
+        &#34;&#34;&#34;
+        self._last_instance_id += 1
+        return common.ProcessEvent(
+            event_id=common.EventId(
+                server=self._server_id,
+                instance=self._last_instance_id),
+            source=source,
+            event_type=event.event_type,
+            source_timestamp=event.source_timestamp,
+            payload=event.payload)
+
+    async def register(self, source, events):
+        &#34;&#34;&#34;Register events
+
+        Args:
+            source (common.Source): event source
+            events (List[common.RegisterEvent]): register events
+
+        Returns:
+            List[Optional[common.Event]]
+
+        Raises:
+            ModuleEngineClosedError
+            Exception
+
+        &#34;&#34;&#34;
+        if self.is_closed:
+            raise ModuleEngineClosedError()
+        if not events:
+            return []
+        future = asyncio.Future()
+        self._register_queue.put_nowait((future, source, events))
+        return await future
+
+    async def query(self, data):
+        &#34;&#34;&#34;Query events
+
+        Args:
+            data (common.QueryData): query data
+
+        Returns:
+            List[common.Event]
+
+        Raises:
+            ModuleEngineClosedError
+            Exception
+
+        &#34;&#34;&#34;
+        if self.is_closed:
+            raise ModuleEngineClosedError()
+        return await self._backend.query(data)
+
+    async def _register_loop(self):
+        future = None
+        try:
+            while True:
+                future, source, register_events = \
+                    await self._register_queue.get()
+
+                process_events = [self.create_process_event(source, i)
+                                  for i in register_events]
+
+                global_changes = common.SessionChanges(
+                    new=list(process_events), deleted=[])
+                module_sessions = [await _create_module_session(i)
+                                   for i in self._modules]
+                for i in module_sessions:
+                    await i.add_changes(global_changes)
+
+                while True:
+                    try:
+                        futures = (i.process() for i in module_sessions)
+                        session_changes = await asyncio.gather(*futures)
+                    except Exception as e:
+                        for f in futures:
+                            f.cancel()
+                        mlog.error(&#39;session process error %s&#39;,
+                                   e, exc_info=e)
+                        raise
+
+                    for i, changes in enumerate(session_changes):
+                        if not changes:
+                            continue
+                        global_changes.new.extend(changes.new)
+                        global_changes.deleted.extend(changes.deleted)
+
+                        for j, session in enumerate(module_sessions):
+                            if i != j:
+                                await session.add_changes(changes)
+
+                    if not any(i.has_pending_changes for i in module_sessions):
+                        break
+
+                deleted_ids = {i.event_id for i in global_changes.deleted}
+                all_process_events = [i for i in global_changes.new
+                                      if i.event_id not in deleted_ids]
+
+                events = await self._backend.register(all_process_events)
+
+                for session in module_sessions:
+                    await session.async_close(events)
+
+                event_ids = {event.event_id: event
+                             for event in events
+                             if event}
+                result = [event_ids[i.event_id] for i in process_events
+                          if i.event_id in event_ids]
+                future.set_result(result)
+                self._register_cbs.notify(events)
+        except BaseException as e:
+            if future and not future.done():
+                future.set_exception(e)
+            while not self._register_queue.empty():
+                future, _, __ = self._register_queue.get_nowait()
+                future.set_exception(e)
+        finally:
+            self._register_queue.close()
+            self._async_group.close()
+
+
+async def _create_module_session(module):
+    session = _ModuleSession()
+    session._module = module
+    session._session = await module.create_session()
+    session._pending_changes = common.SessionChanges(new=[], deleted=[])
+    return session
+
+
+class _ModuleSession():
+
+    async def async_close(self, events):
+        await self._session.async_close()
+
+    @property
+    def has_pending_changes(self):
+        return self._pending_changes.new or self._pending_changes.deleted
+
+    async def process(self):
+        if self._pending_changes != common.SessionChanges(new=[], deleted=[]):
+            changes = await self._session.process(self._pending_changes)
+            self._pending_changes = common.SessionChanges(new=[], deleted=[])
+        else:
+            changes = common.SessionChanges(new=[], deleted=[])
+        return changes
+
+    async def add_changes(self, changes):
+        for name in [&#39;new&#39;, &#39;deleted&#39;]:
+            for event in getattr(changes, name):
+                if not self._module.subscription.matches(event.event_type):
+                    continue
+                getattr(self._pending_changes, name).append(event)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hat.event.server.module_engine.create"><code class="name flex">
+<span>async def <span class="ident">create</span></span>(<span>conf, backend_engine)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create module engine</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>conf</code></strong> :&ensp;<code><a title="hat.json.Data" href="../../json/index.html#hat.json.Data">Data</a></code></dt>
+<dd>configuration defined by
+<code>hat://event/main.yaml#/definitions/module_engine</code></dd>
+<dt><strong><code>backend_engine</code></strong> :&ensp;<code>hat.event.backend_engine.BackendEngine</code></dt>
+<dd>backend engine</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>ModuleEngine</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def create(conf, backend_engine):
+    &#34;&#34;&#34;Create module engine
+
+    Args:
+        conf (hat.json.Data): configuration defined by
+            ``hat://event/main.yaml#/definitions/module_engine``
+        backend_engine (hat.event.backend_engine.BackendEngine): backend engine
+
+    Returns:
+        ModuleEngine
+
+    &#34;&#34;&#34;
+    engine = ModuleEngine()
+    engine._backend = backend_engine
+    engine._async_group = aio.Group()
+    engine._register_queue = aio.Queue()
+    engine._register_cbs = util.CallbackRegistry()
+
+    last_event_id = await engine._backend.get_last_event_id()
+    engine._server_id = last_event_id.server
+    engine._last_instance_id = last_event_id.instance
+
+    engine._modules = []
+    for module_conf in conf[&#39;modules&#39;]:
+        py_module = importlib.import_module(module_conf[&#39;module&#39;])
+        module = await py_module.create(module_conf, engine)
+        engine._async_group.spawn(aio.call_on_cancel,
+                                  module.async_close)
+        engine._modules.append(module)
+    engine._async_group.spawn(engine._register_loop)
+
+    return engine</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hat.event.server.module_engine.ModuleEngine"><code class="flex name class">
+<span>class <span class="ident">ModuleEngine</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resource with lifetime control based on <code>Group</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModuleEngine(aio.Resource):
+
+    @property
+    def async_group(self) -&gt; aio.Group:
+        &#34;&#34;&#34;Async group&#34;&#34;&#34;
+        return self._async_group
+
+    def register_events_cb(self, cb):
+        &#34;&#34;&#34;Register events callback
+
+        Args:
+            cb (Callable[[List[common.Event]],None]): change callback
+
+        Returns:
+            util.RegisterCallbackHandle
+
+        &#34;&#34;&#34;
+        return self._register_cbs.register(cb)
+
+    def create_process_event(self, source, event):
+        &#34;&#34;&#34;Create process event
+
+        Args:
+            source (common.Source): event source
+            event (common.RegisterEvent): register event
+
+        Returns:
+            common.ProcessEvent
+
+        &#34;&#34;&#34;
+        self._last_instance_id += 1
+        return common.ProcessEvent(
+            event_id=common.EventId(
+                server=self._server_id,
+                instance=self._last_instance_id),
+            source=source,
+            event_type=event.event_type,
+            source_timestamp=event.source_timestamp,
+            payload=event.payload)
+
+    async def register(self, source, events):
+        &#34;&#34;&#34;Register events
+
+        Args:
+            source (common.Source): event source
+            events (List[common.RegisterEvent]): register events
+
+        Returns:
+            List[Optional[common.Event]]
+
+        Raises:
+            ModuleEngineClosedError
+            Exception
+
+        &#34;&#34;&#34;
+        if self.is_closed:
+            raise ModuleEngineClosedError()
+        if not events:
+            return []
+        future = asyncio.Future()
+        self._register_queue.put_nowait((future, source, events))
+        return await future
+
+    async def query(self, data):
+        &#34;&#34;&#34;Query events
+
+        Args:
+            data (common.QueryData): query data
+
+        Returns:
+            List[common.Event]
+
+        Raises:
+            ModuleEngineClosedError
+            Exception
+
+        &#34;&#34;&#34;
+        if self.is_closed:
+            raise ModuleEngineClosedError()
+        return await self._backend.query(data)
+
+    async def _register_loop(self):
+        future = None
+        try:
+            while True:
+                future, source, register_events = \
+                    await self._register_queue.get()
+
+                process_events = [self.create_process_event(source, i)
+                                  for i in register_events]
+
+                global_changes = common.SessionChanges(
+                    new=list(process_events), deleted=[])
+                module_sessions = [await _create_module_session(i)
+                                   for i in self._modules]
+                for i in module_sessions:
+                    await i.add_changes(global_changes)
+
+                while True:
+                    try:
+                        futures = (i.process() for i in module_sessions)
+                        session_changes = await asyncio.gather(*futures)
+                    except Exception as e:
+                        for f in futures:
+                            f.cancel()
+                        mlog.error(&#39;session process error %s&#39;,
+                                   e, exc_info=e)
+                        raise
+
+                    for i, changes in enumerate(session_changes):
+                        if not changes:
+                            continue
+                        global_changes.new.extend(changes.new)
+                        global_changes.deleted.extend(changes.deleted)
+
+                        for j, session in enumerate(module_sessions):
+                            if i != j:
+                                await session.add_changes(changes)
+
+                    if not any(i.has_pending_changes for i in module_sessions):
+                        break
+
+                deleted_ids = {i.event_id for i in global_changes.deleted}
+                all_process_events = [i for i in global_changes.new
+                                      if i.event_id not in deleted_ids]
+
+                events = await self._backend.register(all_process_events)
+
+                for session in module_sessions:
+                    await session.async_close(events)
+
+                event_ids = {event.event_id: event
+                             for event in events
+                             if event}
+                result = [event_ids[i.event_id] for i in process_events
+                          if i.event_id in event_ids]
+                future.set_result(result)
+                self._register_cbs.notify(events)
+        except BaseException as e:
+            if future and not future.done():
+                future.set_exception(e)
+            while not self._register_queue.empty():
+                future, _, __ = self._register_queue.get_nowait()
+                future.set_exception(e)
+        finally:
+            self._register_queue.close()
+            self._async_group.close()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="hat.event.server.module_engine.ModuleEngine.async_group"><code class="name">var <span class="ident">async_group</span> : <a title="hat.aio.Group" href="../../aio.html#hat.aio.Group">Group</a></code></dt>
+<dd>
+<div class="desc"><p>Async group</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def async_group(self) -&gt; aio.Group:
+    &#34;&#34;&#34;Async group&#34;&#34;&#34;
+    return self._async_group</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="hat.event.server.module_engine.ModuleEngine.create_process_event"><code class="name flex">
+<span>def <span class="ident">create_process_event</span></span>(<span>self, source, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create process event</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong> :&ensp;<code>common.Source</code></dt>
+<dd>event source</dd>
+<dt><strong><code>event</code></strong> :&ensp;<code>common.RegisterEvent</code></dt>
+<dd>register event</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>common.ProcessEvent</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_process_event(self, source, event):
+    &#34;&#34;&#34;Create process event
+
+    Args:
+        source (common.Source): event source
+        event (common.RegisterEvent): register event
+
+    Returns:
+        common.ProcessEvent
+
+    &#34;&#34;&#34;
+    self._last_instance_id += 1
+    return common.ProcessEvent(
+        event_id=common.EventId(
+            server=self._server_id,
+            instance=self._last_instance_id),
+        source=source,
+        event_type=event.event_type,
+        source_timestamp=event.source_timestamp,
+        payload=event.payload)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.module_engine.ModuleEngine.query"><code class="name flex">
+<span>async def <span class="ident">query</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Query events</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>common.QueryData</code></dt>
+<dd>query data</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>List[common.Event]</p>
+<h2 id="raises">Raises</h2>
+<p>ModuleEngineClosedError
+Exception</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def query(self, data):
+    &#34;&#34;&#34;Query events
+
+    Args:
+        data (common.QueryData): query data
+
+    Returns:
+        List[common.Event]
+
+    Raises:
+        ModuleEngineClosedError
+        Exception
+
+    &#34;&#34;&#34;
+    if self.is_closed:
+        raise ModuleEngineClosedError()
+    return await self._backend.query(data)</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.module_engine.ModuleEngine.register"><code class="name flex">
+<span>async def <span class="ident">register</span></span>(<span>self, source, events)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register events</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>source</code></strong> :&ensp;<code>common.Source</code></dt>
+<dd>event source</dd>
+<dt><strong><code>events</code></strong> :&ensp;<code>List[common.RegisterEvent]</code></dt>
+<dd>register events</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>List[Optional[common.Event]]</p>
+<h2 id="raises">Raises</h2>
+<p>ModuleEngineClosedError
+Exception</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def register(self, source, events):
+    &#34;&#34;&#34;Register events
+
+    Args:
+        source (common.Source): event source
+        events (List[common.RegisterEvent]): register events
+
+    Returns:
+        List[Optional[common.Event]]
+
+    Raises:
+        ModuleEngineClosedError
+        Exception
+
+    &#34;&#34;&#34;
+    if self.is_closed:
+        raise ModuleEngineClosedError()
+    if not events:
+        return []
+    future = asyncio.Future()
+    self._register_queue.put_nowait((future, source, events))
+    return await future</code></pre>
+</details>
+</dd>
+<dt id="hat.event.server.module_engine.ModuleEngine.register_events_cb"><code class="name flex">
+<span>def <span class="ident">register_events_cb</span></span>(<span>self, cb)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Register events callback</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cb</code></strong> :&ensp;<code>Callable[[List[common.Event]],None]</code></dt>
+<dd>change callback</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>util.RegisterCallbackHandle</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_events_cb(self, cb):
+    &#34;&#34;&#34;Register events callback
+
+    Args:
+        cb (Callable[[List[common.Event]],None]): change callback
+
+    Returns:
+        util.RegisterCallbackHandle
+
+    &#34;&#34;&#34;
+    return self._register_cbs.register(cb)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="hat.aio.Resource" href="../../aio.html#hat.aio.Resource">Resource</a></b></code>:
+<ul class="hlist">
+<li><code><a title="hat.aio.Resource.async_close" href="../../aio.html#hat.aio.Resource.async_close">async_close</a></code></li>
+<li><code><a title="hat.aio.Resource.close" href="../../aio.html#hat.aio.Resource.close">close</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closed" href="../../aio.html#hat.aio.Resource.is_closed">is_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.is_closing" href="../../aio.html#hat.aio.Resource.is_closing">is_closing</a></code></li>
+<li><code><a title="hat.aio.Resource.is_open" href="../../aio.html#hat.aio.Resource.is_open">is_open</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closed" href="../../aio.html#hat.aio.Resource.wait_closed">wait_closed</a></code></li>
+<li><code><a title="hat.aio.Resource.wait_closing" href="../../aio.html#hat.aio.Resource.wait_closing">wait_closing</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="hat.event.server.module_engine.ModuleEngineClosedError"><code class="flex name class">
+<span>class <span class="ident">ModuleEngineClosedError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Error signaling closed module engine</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModuleEngineClosedError(Exception):
+    &#34;&#34;&#34;Error signaling closed module engine&#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hat.event.server" href="index.html">hat.event.server</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hat.event.server.module_engine.create" href="#hat.event.server.module_engine.create">create</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hat.event.server.module_engine.ModuleEngine" href="#hat.event.server.module_engine.ModuleEngine">ModuleEngine</a></code></h4>
+<ul class="">
+<li><code><a title="hat.event.server.module_engine.ModuleEngine.async_group" href="#hat.event.server.module_engine.ModuleEngine.async_group">async_group</a></code></li>
+<li><code><a title="hat.event.server.module_engine.ModuleEngine.create_process_event" href="#hat.event.server.module_engine.ModuleEngine.create_process_event">create_process_event</a></code></li>
+<li><code><a title="hat.event.server.module_engine.ModuleEngine.query" href="#hat.event.server.module_engine.ModuleEngine.query">query</a></code></li>
+<li><code><a title="hat.event.server.module_engine.ModuleEngine.register" href="#hat.event.server.module_engine.ModuleEngine.register">register</a></code></li>
+<li><code><a title="hat.event.server.module_engine.ModuleEngine.register_events_cb" href="#hat.event.server.module_engine.ModuleEngine.register_events_cb">register_events_cb</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="hat.event.server.module_engine.ModuleEngineClosedError" href="#hat.event.server.module_engine.ModuleEngineClosedError">ModuleEngineClosedError</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
