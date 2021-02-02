@@ -31,7 +31,7 @@ class CopierModule(hat.event.server.common.Module):
 
     async def create_session(self):
         session = CopierModuleSession()
-        session._async_group = aio.Group()
+        session._async_group = self._async_group.create_subgroup()
         session._module = self
         return session
 
@@ -42,9 +42,11 @@ class CopierModuleSession(hat.event.server.common.ModuleSession):
     def async_group(self):
         return self._async_group
 
-    async def process(self, changes):
+    async def process(self, events):
         new = []
-        for proc_event in changes.new:
+        for proc_event in events:
+            if proc_event.source == self._module._source:
+                continue
             new_proc_event = self._module._engine.create_process_event(
                 self._module._source,
                 hat.event.common.RegisterEvent(
@@ -52,6 +54,4 @@ class CopierModuleSession(hat.event.server.common.ModuleSession):
                     source_timestamp=hat.event.common.now(),
                     payload=proc_event.payload))
             new.append(new_proc_event)
-        changes_res = hat.event.server.common.SessionChanges(new=new,
-                                                             deleted=[])
-        return changes_res
+        return new

@@ -61,10 +61,10 @@ class RemoteModuleSession(hat.event.server.common.ModuleSession):
     def async_group(self):
         return self._async_group
 
-    async def process(self, changes):
+    async def process(self, events):
         self._module._send('Process', None)
         await asyncio.sleep(0)
-        return hat.event.server.common.SessionChanges([], [])
+        return []
 
 
 async def create_server(address):

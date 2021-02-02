@@ -13,6 +13,7 @@ from hat import aio
 from hat import json
 from hat import sqlite3
 from hat.event.server import common
+from hat.event.server import registry
 
 
 json_schema_id = "hat://event/backends/sqlite.yaml#"
@@ -63,7 +64,7 @@ async def create(conf):
     await backend._conn.execute_script(_db_structure)
     backend._query_pool = await _create_connection_pool(
         db_path, conf['query_pool_size'])
-    backend._event_type_registry = await common.create_event_type_registry(
+    backend._event_type_registry = await registry.create_event_type_registry(
         backend)
     backend._async_group.spawn(aio.call_on_cancel,
                                backend._query_pool.async_close)
@@ -72,7 +73,7 @@ async def create(conf):
     return backend
 
 
-class SqliteBackend(common.Backend, common.EventTypeRegistryStorage):
+class SqliteBackend(common.Backend, registry.EventTypeRegistryStorage):
 
     @property
     def async_group(self):

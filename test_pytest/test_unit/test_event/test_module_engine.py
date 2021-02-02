@@ -1,70 +1,33 @@
-import pytest
 import asyncio
 import functools
 import itertools
-import contextlib
 import sys
 import types
 
+import pytest
+
 from hat import aio
-from hat import util
-import hat.event.common
-import hat.event.server.common
+from hat.event.server import common
+import hat.event.client
 import hat.event.server.module_engine
 
-from test_unit.test_event import common
-import test_unit.test_event.modules.module1
-import test_unit.test_event.modules.module2
-import test_unit.test_event.modules.transparent
-import test_unit.test_event.modules.event_killer
 
-
-@pytest.fixture
-def module_engine_conf():
-    return {'modules': []}
-
-
-@pytest.fixture
-def source_comm():
-    return hat.event.server.common.Source(
-        type=hat.event.server.common.SourceType.COMMUNICATION,
-        name=None,
-        id=0)
-
-
-@pytest.fixture
-def register_events():
-    event_types = [['a'],
-                   ['a'],
-                   ['b'],
-                   ['a', 'b'],
-                   ['a', 'b', 'c'],
-                   []]
-    return [hat.event.common.RegisterEvent(event_type=et,
-                                           source_timestamp=None,
-                                           payload=None)
-            for et in event_types]
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
 def create_module():
+    module_names = []
 
-    @contextlib.contextmanager
-    def create_module(name, subscriptions=[['*']], process_cb=None):
+    def create_module(process_cb):
 
-        if not process_cb:
-            empty_changes = hat.event.server.common.SessionChanges([], [])
-            process_cb = lambda _: empty_changes  # NOQA
+        async def create(conf, engine):
+            module = Module()
+            module._async_group = aio.Group()
+            module._subscription = common.Subscription([['*']])
+            return module
 
-        async def create(conf, module_engine):
-            return Module()
-
-        class Module(hat.event.server.common.Module):
-
-            def __init__(self):
-                self._subscription = hat.event.server.common.Subscription(
-                    subscriptions)
-                self._async_group = aio.Group()
+        class Module(common.Module):
 
             @property
             def async_group(self):
@@ -75,402 +38,188 @@ def create_module():
                 return self._subscription
 
             async def create_session(self):
-                return Session()
+                session = Session()
+                session._async_group = self._async_group.create_subgroup()
+                return session
 
-        class Session(hat.event.server.common.ModuleSession):
-
-            def __init__(self):
-                self._async_group = aio.Group()
+        class Session(common.ModuleSession):
 
             @property
             def async_group(self):
                 return self._async_group
 
-            async def process(self, changes):
-                return await aio.call(process_cb, changes)
+            async def process(self, events):
+                return process_cb(events)
 
-        module = types.ModuleType(name)
+        for i in itertools.count(1):
+            module_name = f'mock_module_{i}'
+            if module_name not in sys.modules:
+                break
+
+        module = types.ModuleType(module_name)
         module.json_schema_id = None
         module.json_schema_repo = None
         module.create = create
-        sys.modules[name] = module
-        try:
-            yield
-        finally:
-            del sys.modules[name]
+        sys.modules[module_name] = module
 
-    return create_module
+        module_names.append(module_name)
+        return module_name
 
-
-def assert_notified_changes(sessions, registered_events):
-    for session in sessions:
-        subscriptions = list(session._module.subscription.get_query_types())
-        changes_notified_new_exp = filter_events_by_subscriptions(
-            registered_events +
-            [i for ss in sessions for i in ss.changes_result_new
-             if ss is not session],
-            subscriptions)
-        changes_notified_deleted_exp = filter_events_by_subscriptions(
-            [i for ss in sessions for i in ss.changes_result_deleted
-             if ss is not session],
-            subscriptions)
-        assert (sorted(session.changes_notified_new,
-                       key=lambda i: i.event_id) ==
-                sorted(changes_notified_new_exp, key=lambda i: i.event_id))
-        assert (sorted(session.changes_notified_deleted,
-                       key=lambda i: i.event_id) ==
-                sorted(changes_notified_deleted_exp, key=lambda i: i.event_id))
+    try:
+        yield create_module
+    finally:
+        for module_name in module_names:
+            del sys.modules[module_name]
 
 
-def assert_events_vs_changes_result(sessions, registered_events, events):
-    events_exp = list(registered_events)
-    for session in sessions:
-        events_exp += session.changes_result_new
-    for session in sessions:
-        for e in session.changes_result_deleted:
-            if e not in events_exp:
+class BackendEngine(aio.Resource):
+
+    def __init__(self, register_cb=None, query_cb=None, server_id=0):
+        self._register_cb = register_cb
+        self._query_cb = query_cb
+        self._server_id = server_id
+        self._async_group = aio.Group()
+
+    @property
+    def async_group(self):
+        return self._async_group
+
+    async def get_last_event_id(self):
+        return common.EventId(self._server_id, 0)
+
+    async def register(self, process_events):
+        if not self._register_cb:
+            return [None for _ in process_events]
+        return self._register_cb(process_events)
+
+    async def query(self, data):
+        if not self._query_cb:
+            return []
+        return self._query_cb(data)
+
+
+async def test_create_empty():
+    conf = {'modules': []}
+    backend = BackendEngine()
+
+    engine = await hat.event.server.module_engine.create(conf, backend)
+    assert engine.is_open
+
+    await engine.async_close()
+    assert engine.is_closed
+
+    await backend.async_close()
+
+
+async def test_create_process_event():
+    server_id = 123
+    source = common.Source(common.SourceType.MODULE, None, 321)
+    register_events = [common.RegisterEvent(event_type=[str(i)],
+                                            source_timestamp=common.now(),
+                                            payload=None)
+                       for i in range(10)]
+
+    conf = {'modules': []}
+    backend = BackendEngine(server_id=server_id)
+    engine = await hat.event.server.module_engine.create(conf, backend)
+
+    event_ids = set()
+    for register_event in register_events:
+        process_event = engine.create_process_event(source, register_event)
+        assert process_event.event_type == register_event.event_type
+        assert (process_event.source_timestamp ==
+                register_event.source_timestamp)
+        assert process_event.payload == register_event.payload
+        assert process_event.source == source
+        assert process_event.event_id.server == 123
+        assert process_event.event_id not in event_ids
+        event_ids.add(process_event.event_id)
+
+    await engine.async_close()
+    await backend.async_close()
+
+
+@pytest.mark.parametrize("module_count", [0, 1, 2, 5])
+@pytest.mark.parametrize("value", [0, 1, 2, 5])
+async def test_register(create_module, module_count, value):
+
+    backend_events = asyncio.Future()
+    engine_events = asyncio.Future()
+
+    def on_backend_events(events):
+        backend_events.set_result(events)
+        return events
+
+    def on_engine_events(events):
+        engine_events.set_result(events)
+
+    def process(source, events):
+        for event in events:
+            if event.source.type == common.SourceType.MODULE:
+                if event.source != source:
+                    continue
+            if not event.payload.data:
                 continue
-            events_exp.remove(e)
-    assert len(events) == len(events_exp)
-    event_ids_exp = {e.event_id: e for e in events_exp}
-    assert all(e.event_id in event_ids_exp for e in events)
-    assert all(common.compare_proces_event_vs_event(event_ids_exp[e.event_id],
-                                                    e)
-               for e in events)
+            yield engine.create_process_event(source, common.RegisterEvent(
+                event_type=event.event_type,
+                source_timestamp=None,
+                payload=event.payload._replace(data=event.payload.data - 1)))
 
+    def get_values(events):
+        return [event.payload.data for event in events]
 
-async def assert_closure(backend_engine, module_engine, modules):
-    await backend_engine.async_close()
-    await module_engine.async_close()
-    assert module_engine.is_closed
-    await asyncio.gather(*(module.wait_closed() for module in modules))
-    assert all(module.session_queue.empty() for module in modules)
+    sources = [common.Source(common.SourceType.MODULE, None, i)
+               for i in range(module_count)]
+    module_names = [create_module(functools.partial(process, source))
+                    for source in sources]
 
+    conf = {'modules': [{'module': module_name}
+                        for module_name in module_names]}
+    backend = BackendEngine(register_cb=on_backend_events)
 
-def filter_events_by_subscriptions(events, subscriptions):
-    ret = []
-    for event in events:
-        if util.first(subscriptions,
-                      lambda q_type: hat.event.common.matches_query_type(
-                          event.event_type, q_type)) is not None:
-            ret.append(event)
-    return ret
+    engine = await hat.event.server.module_engine.create(conf, backend)
+    engine.register_events_cb(on_engine_events)
 
-
-@pytest.mark.asyncio
-async def test_create_process_event(module_engine_conf, register_events,
-                                    source_comm):
-    backend_engine = common.create_backend_engine()
-    module_engine = await hat.event.server.module_engine.create(
-        module_engine_conf, backend_engine)
-
-    process_events = [module_engine.create_process_event(source_comm, e)
-                      for e in register_events]
-    assert all(type(e) == hat.event.server.common.ProcessEvent
-               for e in process_events)
-    assert all(common.compare_register_event_vs_event(e1, e2)
-               for e1, e2 in zip(register_events, process_events))
-    assert all(e.source == source_comm for e in process_events)
-    unique_ids = set(e.event_id for e in process_events)
-    assert len(process_events) == len(unique_ids)
-    assert all(e.event_id.server == backend_engine._server_id
-               for e in process_events)
-    # repeating with same register events results with new process events
-    process_events2 = [module_engine.create_process_event(source_comm, e)
-                       for e in register_events]
-    unique_ids = set(e.event_id for e in itertools.chain(process_events,
-                                                         process_events2))
-    assert (len(process_events + process_events2) == len(unique_ids))
-
-    await backend_engine.async_close()
-    await module_engine.async_close()
-
-
-@pytest.mark.asyncio
-async def test_register(module_engine_conf, register_events, source_comm):
-
-    def register_cb(events):
-        return [common.process_event_to_event(i) for i in events]
-
-    event_queue = aio.Queue()
-    backend_engine = common.create_backend_engine(register_cb=register_cb)
-    module_engine = await hat.event.server.module_engine.create(
-        module_engine_conf, backend_engine)
-    module_engine.register_events_cb(
-        lambda events: event_queue.put_nowait(events))
-
-    events = await module_engine.register(source_comm, register_events)
-    events_notified = await event_queue.get()
-
-    assert len(events) == len(register_events)
-    assert all(common.compare_register_event_vs_event(e1, e2)
-               for e1, e2 in zip(register_events, events))
-    for event in events:
-        assert event in events_notified
-
-    await backend_engine.async_close()
-    await module_engine.async_close()
-    assert module_engine.is_closed
-    assert event_queue.empty()
-
-
-@pytest.mark.asyncio
-async def test_query(module_engine_conf, register_events):
-
-    def query_cb(events):
-        return mock_result
-
-    mock_query = hat.event.common.QueryData()
-    mock_result = [hat.event.common.Event(
-        event_id=hat.event.common.EventId(server=0, instance=0),
-        event_type=['mock'],
-        timestamp=hat.event.common.Timestamp(s=0, us=0),
+    source = common.Source(common.SourceType.COMMUNICATION, None, 0)
+    result = await engine.register(source, [common.RegisterEvent(
+        event_type=[],
         source_timestamp=None,
-        payload=None)]
+        payload=common.EventPayload(common.EventPayloadType.JSON,  value))])
+    backend_events = backend_events.result()
+    engine_events = engine_events.result()
 
-    backend_engine = common.create_backend_engine(query_cb=query_cb)
-    module_engine = await hat.event.server.module_engine.create(
-        module_engine_conf, backend_engine)
+    values = [value]
+    if module_count:
+        while (last := values[-1]):
+            values.extend([last - 1] * module_count)
 
-    query_resp = await module_engine.query(mock_query)
+    assert get_values(result) == [value]
+    assert get_values(backend_events) == values
+    assert get_values(engine_events) == values
 
-    assert query_resp == mock_result
-
-    await backend_engine.async_close()
-    await module_engine.async_close()
-    assert module_engine.is_closed
-
-
-@pytest.mark.asyncio
-async def test_register_query_on_close(module_engine_conf, register_events,
-                                       source_comm):
-    comm_register = asyncio.Event()
-
-    async def unresponsive_cb(async_event, _):
-        async_event.set()
-        while True:
-            await asyncio.sleep(1)
-
-    backend_engine = common.create_backend_engine(
-        register_cb=functools.partial(unresponsive_cb, comm_register))
-    module_engine = await hat.event.server.module_engine.create(
-        module_engine_conf, backend_engine)
-    assert not module_engine.is_closed
-
-    async with aio.Group() as group:
-        register_future = group.spawn(module_engine.register, source_comm,
-                                      register_events)
-
-        await comm_register.wait()
-
-        await backend_engine.async_close()
-        await module_engine.async_close()
-        assert module_engine.is_closed
-
-        with pytest.raises(asyncio.CancelledError):
-            await register_future
-
-    with pytest.raises(hat.event.server.module_engine.ModuleEngineClosedError):
-        await module_engine.register(source_comm, register_events)
-    with pytest.raises(hat.event.server.module_engine.ModuleEngineClosedError):
-        await module_engine.query(hat.event.common.QueryData())
+    await engine.async_close()
+    await backend.async_close()
 
 
-@pytest.mark.skip("old version - needs rewrite")
-@pytest.mark.asyncio
-async def test_module1(module_engine_conf, register_events, source_comm,
-                       monkeypatch):
+async def test_query():
+    query_data = common.QueryData()
+    events = [common.Event(event_id=common.EventId(1, i),
+                           event_type=[],
+                           timestamp=common.now(),
+                           source_timestamp=None,
+                           payload=None)
+              for i in range(10)]
 
-    def register_cb(events):
-        return [common.process_event_to_event(i) for i in events]
+    def on_query(data):
+        assert data == query_data
+        return events
 
-    backend_engine = common.create_backend_engine(register_cb=register_cb)
-    module_engine_conf['modules'] = [{
-        'module': 'test_unit.test_event.modules.module1'}]
-    with common.get_return_values(
-            test_unit.test_event.modules.module1.create) as modules:
-        module_engine = await hat.event.server.module_engine.create(
-            module_engine_conf, backend_engine)
-    module = modules[0]
+    conf = {'modules': []}
+    backend = BackendEngine(query_cb=on_query)
+    engine = await hat.event.server.module_engine.create(conf, backend)
 
-    assert len(modules) == 1
-    assert not module.is_closed
+    result = await engine.query(query_data)
+    assert result == events
 
-    event_queue = aio.Queue()
-    module_engine.register_events_cb(
-        lambda events: event_queue.put_nowait(events))
-    process_events = [module_engine.create_process_event(source_comm, i)
-                      for i in register_events]
-    events_on_register = await module_engine.register(process_events)
-    session = await module.session_queue.get()
-    await session.wait_closed()
-    filtered_events = filter_events_by_subscriptions(
-        process_events, list(module.subscription.get_query_types()))
-    assert session.changes_notified_new == filtered_events
-
-    events = await event_queue.get()
-
-    assert events == events_on_register
-    assert_events_vs_changes_result([session], process_events, events)
-    assert len(events) == len(process_events)
-
-    await assert_closure(backend_engine, module_engine, modules)
-
-
-@pytest.mark.skip("old version - needs rewrite")
-@pytest.mark.asyncio
-async def test_modules(module_engine_conf, register_events, source_comm):
-
-    def register_cb(events):
-        return [common.process_event_to_event(i) for i in events]
-
-    backend_engine = common.create_backend_engine(register_cb=register_cb)
-    module_engine_conf['modules'] = [
-        {'module': 'test_unit.test_event.modules.module2'},
-        {'module': 'test_unit.test_event.modules.module1'},
-        {'module': 'test_unit.test_event.modules.transparent'}]
-    with contextlib.ExitStack() as stack:
-        modules = [stack.enter_context(common.get_return_values(m))
-                   for m in [
-                       test_unit.test_event.modules.module1.create,
-                       test_unit.test_event.modules.module2.create,
-                       test_unit.test_event.modules.transparent.create]]
-        module_engine = await hat.event.server.module_engine.create(
-            module_engine_conf, backend_engine)
-
-    modules = [m for ms in modules for m in ms]
-
-    assert len(modules) == 3
-    assert all(not module.is_closed for module in modules)
-
-    event_queue = aio.Queue()
-    module_engine.register_events_cb(
-        lambda events: event_queue.put_nowait(events))
-
-    process_events = [module_engine.create_process_event(source_comm, i)
-                      for i in register_events]
-    events_on_register = await module_engine.register(process_events)
-    sessions = [await module.session_queue.get() for module in modules]
-    await asyncio.gather(*(session.wait_closed() for session in sessions))
-
-    assert_notified_changes(sessions, process_events)
-
-    events = await event_queue.get()
-
-    assert events == events_on_register
-    assert_events_vs_changes_result(sessions, process_events, events)
-
-    await assert_closure(backend_engine, module_engine, modules)
-
-
-@pytest.mark.skip("old version - needs rewrite")
-@pytest.mark.asyncio
-async def test_module_event_killer(module_engine_conf, register_events,
-                                   source_comm):
-
-    def register_cb(events):
-        return [common.process_event_to_event(i) for i in events]
-
-    backend_engine = common.create_backend_engine(register_cb=register_cb)
-    module_engine_conf['modules'] = [
-        {'module': 'test_unit.test_event.modules.module1'},
-        {'module': 'test_unit.test_event.modules.module2'},
-        {'module': 'test_unit.test_event.modules.event_killer'}]
-    with contextlib.ExitStack() as stack:
-        modules = [stack.enter_context(common.get_return_values(m))
-                   for m in [
-                       test_unit.test_event.modules.module1.create,
-                       test_unit.test_event.modules.module2.create,
-                       test_unit.test_event.modules.event_killer.create]]
-        module_engine = await hat.event.server.module_engine.create(
-            module_engine_conf, backend_engine)
-    modules = [m for ms in modules for m in ms]
-
-    process_events = [module_engine.create_process_event(source_comm, i)
-                      for i in register_events]
-    events = await module_engine.register(process_events)
-    sessions = [await module.session_queue.get() for module in modules]
-
-    assert not events
-    assert_events_vs_changes_result(sessions, process_events, events)
-
-    await assert_closure(backend_engine, module_engine, modules)
-
-
-@pytest.mark.asyncio
-async def test_sessions(module_engine_conf, register_events, source_comm):
-
-    def register_cb(events):
-        return [common.process_event_to_event(
-            i,
-            hat.event.common.now()) for i in events]
-
-    backend_engine = common.create_backend_engine(register_cb=register_cb)
-    module_engine_conf['modules'] = [
-        {'module': 'test_unit.test_event.modules.module2'},
-        {'module': 'test_unit.test_event.modules.module1'}]
-    with contextlib.ExitStack() as stack:
-        modules = [stack.enter_context(common.get_return_values(m))
-                   for m in [
-                       test_unit.test_event.modules.module1.create,
-                       test_unit.test_event.modules.module2.create]]
-        module_engine = await hat.event.server.module_engine.create(
-            module_engine_conf, backend_engine)
-
-    modules = [m for ms in modules for m in ms]
-
-    await module_engine.register(source_comm, register_events)
-    sessions1 = [await module.session_queue.get() for module in modules]
-    await asyncio.gather(*(session.wait_closed() for session in sessions1))
-    assert all(module.session_queue.empty() for module in modules)
-
-    await module_engine.register(source_comm, register_events)
-    sessions2 = [await module.session_queue.get() for module in modules]
-    await asyncio.gather(*(session.wait_closed() for session in sessions2))
-    assert all(module.session_queue.empty() for module in modules)
-
-    assert all(s not in sessions1 for s in sessions2)
-
-    await assert_closure(backend_engine, module_engine, modules)
-
-
-@pytest.mark.asyncio
-async def test_empty_changes(create_module):
-    module_name = 'TestEmptyChanges'
-    source = hat.event.server.common.Source(
-        type=hat.event.server.common.SourceType.COMMUNICATION,
-        name=None,
-        id=1)
-    changes = []
-
-    def process(c):
-        changes.append(c)
-        return hat.event.server.common.SessionChanges([], [])
-
-    with create_module(module_name,
-                       subscriptions=[['a', '*']],
-                       process_cb=process):
-        module_engine_conf = {'modules': [{'module': module_name}]}
-        backend_engine = common.create_backend_engine()
-        module_engine = await hat.event.server.module_engine.create(
-                module_engine_conf, backend_engine)
-
-        assert changes == []
-
-        await module_engine.register(source, [])
-        assert changes == []
-
-        await module_engine.register(
-            source, [hat.event.common.RegisterEvent(event_type=['b', 'c'],
-                                                    source_timestamp=None,
-                                                    payload=None)])
-        assert changes == []
-
-        await module_engine.register(
-            source, [hat.event.common.RegisterEvent(event_type=['a', 'c'],
-                                                    source_timestamp=None,
-                                                    payload=None)])
-        assert len(changes) == 1
-
-        await module_engine.async_close()
-        await backend_engine.async_close()
+    await engine.async_close()
+    await backend.async_close()

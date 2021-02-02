@@ -1,31 +1,31 @@
 """Module engine"""
 
 import asyncio
+import collections
 import importlib
 import logging
+import typing
 
 from hat import aio
+from hat import json
 from hat import util
 from hat.event.server import common
+import hat.event.server.backend_engine
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
-class ModuleEngineClosedError(Exception):
-    """Error signaling closed module engine"""
-
-
-async def create(conf, backend_engine):
+async def create(conf: json.Data,
+                 backend_engine: hat.event.server.backend_engine.BackendEngine
+                 ) -> 'ModuleEngine':
     """Create module engine
 
     Args:
-        conf (hat.json.Data): configuration defined by
+        conf: configuration defined by
             ``hat://event/main.yaml#/definitions/module_engine``
-        backend_engine (hat.event.backend_engine.BackendEngine): backend engine
-
-    Returns:
-        ModuleEngine
+        backend_engine: backend engine
 
     """
     engine = ModuleEngine()
@@ -45,7 +45,12 @@ async def create(conf, backend_engine):
         engine._async_group.spawn(aio.call_on_cancel,
                                   module.async_close)
         engine._modules.append(module)
+
     engine._async_group.spawn(engine._register_loop)
+
+    for module in engine._modules:
+        engine._async_group.spawn(aio.call_on_done, module.wait_closing(),
+                                  engine.close)
 
     return engine
 
@@ -57,29 +62,18 @@ class ModuleEngine(aio.Resource):
         """Async group"""
         return self._async_group
 
-    def register_events_cb(self, cb):
-        """Register events callback
-
-        Args:
-            cb (Callable[[List[common.Event]],None]): change callback
-
-        Returns:
-            util.RegisterCallbackHandle
-
-        """
+    def register_events_cb(self,
+                           cb: typing.Callable[[typing.List[common.Event]],
+                                               None]
+                           ) -> util.RegisterCallbackHandle:
+        """Register events callback"""
         return self._register_cbs.register(cb)
 
-    def create_process_event(self, source, event):
-        """Create process event
-
-        Args:
-            source (common.Source): event source
-            event (common.RegisterEvent): register event
-
-        Returns:
-            common.ProcessEvent
-
-        """
+    def create_process_event(self,
+                             source: common.Source,
+                             event: common.RegisterEvent
+                             ) -> common.ProcessEvent:
+        """Create process event"""
         self._last_instance_id += 1
         return common.ProcessEvent(
             event_id=common.EventId(
@@ -90,143 +84,91 @@ class ModuleEngine(aio.Resource):
             source_timestamp=event.source_timestamp,
             payload=event.payload)
 
-    async def register(self, source, events):
-        """Register events
-
-        Args:
-            source (common.Source): event source
-            events (List[common.RegisterEvent]): register events
-
-        Returns:
-            List[Optional[common.Event]]
-
-        Raises:
-            ModuleEngineClosedError
-            Exception
-
-        """
-        if self.is_closed:
-            raise ModuleEngineClosedError()
+    async def register(self,
+                       source: common.Source,
+                       events: typing.List[common.RegisterEvent]
+                       ) -> typing.List[typing.Optional[common.Event]]:
+        """Register events"""
         if not events:
             return []
         future = asyncio.Future()
         self._register_queue.put_nowait((future, source, events))
         return await future
 
-    async def query(self, data):
-        """Query events
-
-        Args:
-            data (common.QueryData): query data
-
-        Returns:
-            List[common.Event]
-
-        Raises:
-            ModuleEngineClosedError
-            Exception
-
-        """
-        if self.is_closed:
-            raise ModuleEngineClosedError()
+    async def query(self,
+                    data: common.QueryData
+                    ) -> typing.List[common.Event]:
+        """Query events"""
         return await self._backend.query(data)
 
     async def _register_loop(self):
         future = None
+        mlog.debug("starting register loop")
         try:
             while True:
+                mlog.debug("waiting for register requests")
                 future, source, register_events = \
                     await self._register_queue.get()
 
-                process_events = [self.create_process_event(source, i)
+                mlog.debug("processing register requests")
+                initial_events = [self.create_process_event(source, i)
                                   for i in register_events]
 
-                global_changes = common.SessionChanges(
-                    new=list(process_events), deleted=[])
-                module_sessions = [await _create_module_session(i)
-                                   for i in self._modules]
-                for i in module_sessions:
-                    await i.add_changes(global_changes)
+                process_events = await self._process_sessions(initial_events)
 
-                while True:
-                    try:
-                        futures = (i.process() for i in module_sessions)
-                        session_changes = await asyncio.gather(*futures)
-                    except Exception as e:
-                        for f in futures:
-                            f.cancel()
-                        mlog.error('session process error %s',
-                                   e, exc_info=e)
-                        raise
+                events = await self._backend.register(process_events)
 
-                    for i, changes in enumerate(session_changes):
-                        if not changes:
-                            continue
-                        global_changes.new.extend(changes.new)
-                        global_changes.deleted.extend(changes.deleted)
-
-                        for j, session in enumerate(module_sessions):
-                            if i != j:
-                                await session.add_changes(changes)
-
-                    if not any(i.has_pending_changes for i in module_sessions):
-                        break
-
-                deleted_ids = {i.event_id for i in global_changes.deleted}
-                all_process_events = [i for i in global_changes.new
-                                      if i.event_id not in deleted_ids]
-
-                events = await self._backend.register(all_process_events)
-
-                for session in module_sessions:
-                    await session.async_close(events)
-
-                event_ids = {event.event_id: event
-                             for event in events
-                             if event}
-                result = [event_ids[i.event_id] for i in process_events
-                          if i.event_id in event_ids]
+                result = events[:len(initial_events)]
                 future.set_result(result)
-                self._register_cbs.notify(events)
-        except BaseException as e:
+
+                events = [event for event in events if event]
+                if events:
+
+                    self._register_cbs.notify(events)
+
+        except Exception as e:
+            mlog.error("register loop error: %s", e, exc_info=e)
+
+        finally:
+            mlog.debug("register loop closed")
+            self._async_group.close()
+            self._register_queue.close()
+
             if future and not future.done():
-                future.set_exception(e)
+                future.set_exception(Exception('module engine closed'))
+
             while not self._register_queue.empty():
                 future, _, __ = self._register_queue.get_nowait()
-                future.set_exception(e)
-        finally:
-            self._register_queue.close()
-            self._async_group.close()
+                future.set_exception(Exception('module engine closed'))
 
+    async def _process_sessions(self, events):
+        all_events = collections.deque()
 
-async def _create_module_session(module):
-    session = _ModuleSession()
-    session._module = module
-    session._session = await module.create_session()
-    session._pending_changes = common.SessionChanges(new=[], deleted=[])
-    return session
+        async with self._async_group.create_subgroup() as subgroup:
+            module_sessions = collections.deque()
+            for module in self._modules:
+                session = await subgroup.spawn(module.create_session)
+                module_sessions.append((module, session))
 
+                subgroup.spawn(aio.call_on_cancel, session.async_close)
+                subgroup.spawn(aio.call_on_done, session.wait_closing(),
+                               subgroup.close)
 
-class _ModuleSession():
+            while events:
+                all_events.extend(events)
+                new_events = collections.deque()
 
-    async def async_close(self, events):
-        await self._session.async_close()
+                for module, session in module_sessions:
+                    filtered_events = [
+                        event for event in events
+                        if module.subscription.matches(event.event_type)]
+                    if not filtered_events:
+                        continue
 
-    @property
-    def has_pending_changes(self):
-        return self._pending_changes.new or self._pending_changes.deleted
+                    result = await subgroup.spawn(session.process,
+                                                  filtered_events)
+                    new_events.extend(result)
 
-    async def process(self):
-        if self._pending_changes != common.SessionChanges(new=[], deleted=[]):
-            changes = await self._session.process(self._pending_changes)
-            self._pending_changes = common.SessionChanges(new=[], deleted=[])
-        else:
-            changes = common.SessionChanges(new=[], deleted=[])
-        return changes
+                events = new_events
 
-    async def add_changes(self, changes):
-        for name in ['new', 'deleted']:
-            for event in getattr(changes, name):
-                if not self._module.subscription.matches(event.event_type):
-                    continue
-                getattr(self._pending_changes, name).append(event)
+        return list(all_events)
