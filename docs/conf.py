@@ -15,7 +15,7 @@ extensions = ['sphinx.ext.graphviz',
 with open(root_path / 'VERSION', encoding='utf-8') as f:
     version = f.read().strip()
 project = 'Hat Core'
-copyright = '2020 - 2021, Hat Open AUTHORS'
+copyright = '2020-2021, Hat Open AUTHORS'
 master_doc = 'index'
 
 html_theme = 'furo'
