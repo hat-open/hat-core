@@ -542,7 +542,7 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                 f"      zip_safe=False,\n"
                 f"      classifiers=[\n"
                 f"          'Programming Language :: Python :: 3',\n"
-                f"          'License :: OSI Approved :: Apache License 2.0',\n"
+                f"          'License :: OSI Approved :: Apache Software License',\n"  # NOQA
                 f"      ],\n"
                 f"      options={{\n"
                 f"          'bdist_wheel': {{\n"
