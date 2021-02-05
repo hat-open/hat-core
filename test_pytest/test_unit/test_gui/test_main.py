@@ -30,7 +30,9 @@ async def event_server(event_server_port):
         'communication': {
             'address': f'tcp+sbs://127.0.0.1:{event_server_port}'}}
     async with aio.Group() as group:
-        group.spawn(hat.event.server.main.run, conf, None)
+        backend_engine = await hat.event.server.backend_engine.create(
+            conf['backend_engine'])
+        group.spawn(hat.event.server.main.run, conf, backend_engine)
         await asyncio.sleep(0.01)  # Wait for event server to start
         yield
 
