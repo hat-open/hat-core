@@ -307,6 +307,7 @@ def task_pyhat_orchestrator():
         description='Hat Orchestrator',
         readme_path=Path('README.hat-orchestrator.rst'),
         dependencies=['appdirs',
+                      'click',
                       'hat-util',
                       'hat-aio',
                       'hat-json',

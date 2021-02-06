@@ -6,6 +6,7 @@ import contextlib
 import importlib
 import logging.config
 import sys
+import typing
 
 import appdirs
 import click
@@ -26,18 +27,20 @@ mlog: logging.Logger = logging.getLogger('hat.event.server.main')
 user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
 """User configuration directory path"""
 
-default_conf_path: Path = user_conf_dir / 'event.yaml'
-"""Default configuration file path"""
-
 
 @click.command()
-@click.option('--conf', default=default_conf_path, metavar='PATH', type=Path,
+@click.option('--conf', default=None, metavar='PATH', type=Path,
               help="configuration defined by hat://event/main.yaml# "
-                   "(default $XDG_CONFIG_HOME/hat/event.yaml)")
-def main(conf: Path):
+                   "(default $XDG_CONFIG_HOME/hat/event.{yaml|yml|json})")
+def main(conf: typing.Optional[Path]):
     """Main entry point"""
     aio.init_asyncio()
 
+    if not conf:
+        for suffix in ('.yaml', '.yml', '.json'):
+            conf = (user_conf_dir / 'event').with_suffix(suffix)
+            if conf.exists():
+                break
     conf = json.decode_file(conf)
     common.json_schema_repo.validate('hat://event/main.yaml#', conf)
 
