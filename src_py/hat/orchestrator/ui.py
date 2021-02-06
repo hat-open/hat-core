@@ -55,7 +55,7 @@ async def create(conf: json.Data,
 class WebServer(aio.Resource):
     """WebServer
 
-    For creating new instance of this class see :func:`create`
+    For creating new instance of this class see `create` coroutine.
 
     """
 
