@@ -5,6 +5,7 @@ import asyncio
 import contextlib
 import logging.config
 import sys
+import typing
 
 import appdirs
 import click
@@ -30,21 +31,23 @@ user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
 default_ui_path: Path = package_path / 'ui'
 """Default web ui directory path"""
 
-default_conf_path: Path = user_conf_dir / 'monitor.yaml'
-"""Default configuration file path"""
-
 
 @click.command()
-@click.option('--conf', default=default_conf_path, metavar='PATH', type=Path,
+@click.option('--conf', default=None, metavar='PATH', type=Path,
               help="configuration defined by hat://monitor/main.yaml# "
-                   "(default $XDG_CONFIG_HOME/hat/monitor.yaml)")
+                   "(default $XDG_CONFIG_HOME/hat/monitor.{yaml|yml|json})")
 @click.option('--ui-path', default=default_ui_path, metavar='PATH', type=Path,
               help="Override web ui directory path (development argument)")
-def main(conf: Path,
+def main(conf: typing.Optional[Path],
          ui_path: Path):
     """Main entry point"""
     aio.init_asyncio()
 
+    if not conf:
+        for suffix in ('.yaml', '.yml', '.json'):
+            conf = (user_conf_dir / 'monitor').with_suffix(suffix)
+            if conf.exists():
+                break
     conf = json.decode_file(conf)
     common.json_schema_repo.validate('hat://monitor/main.yaml#', conf)
 
