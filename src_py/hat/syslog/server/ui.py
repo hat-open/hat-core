@@ -1,14 +1,15 @@
 """Web server implementation"""
 
+from pathlib import Path
 import functools
 import logging
+import typing
 import urllib
 
 from hat import aio
 from hat import juggler
 from hat.syslog.server import common
 import hat.syslog.server.backend
-import hat.syslog.server.conf
 
 
 mlog: logging.Logger = logging.getLogger(__name__)
@@ -21,24 +22,22 @@ autoflush_delay: float = 0.2
 """Juggler autoflush delay"""
 
 
-async def create_web_server(conf: hat.syslog.server.conf.WebServerConf,
+async def create_web_server(addr: str,
+                            pem: typing.Optional[Path],
+                            path: Path,
                             backend: hat.syslog.server.backend.Backend
                             ) -> 'WebServer':
     """Create web server"""
-    addr = urllib.parse.urlparse(conf.addr)
-
-    def on_connection(conn):
-        async_group.spawn(_run_client, async_group, backend, conn)
-
-    async_group = aio.Group()
-    srv = await juggler.listen(addr.hostname, addr.port, on_connection,
-                               static_dir=conf.path,
-                               pem_file=conf.pem,
-                               autoflush_delay=autoflush_delay)
-    async_group.spawn(aio.call_on_cancel, srv.async_close)
+    addr = urllib.parse.urlparse(addr)
+    host = addr.hostname
+    port = addr.port
 
     server = WebServer()
-    server._async_group = async_group
+    server._backend = backend
+    server._srv = await juggler.listen(host, port, server._on_connection,
+                                       static_dir=path,
+                                       pem_file=pem,
+                                       autoflush_delay=autoflush_delay)
     return server
 
 
@@ -47,24 +46,26 @@ class WebServer(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
+
+    def _on_connection(self, conn):
+        self.async_group.spawn(self._connection_loop, conn)
+
+    async def _connection_loop(self, conn):
+        change_queue = aio.Queue()
+        conn.async_group.spawn(_change_loop, self._backend, conn, change_queue)
+
+        try:
+            with self._backend.register_change_cb(change_queue.put_nowait):
+                with conn.register_change_cb(
+                        functools.partial(change_queue.put_nowait, [])):
+                    await conn.wait_closing()
+
+        finally:
+            conn.close()
 
 
-async def _run_client(async_group, backend, conn):
-    change_queue = aio.Queue()
-    async_group = async_group.create_subgroup()
-    async_group.spawn(aio.call_on_cancel, conn.async_close)
-    async_group.spawn(_change_loop, async_group, backend, conn, change_queue)
-    try:
-        with backend.register_change_cb(change_queue.put_nowait):
-            with conn.register_change_cb(
-                    functools.partial(change_queue.put_nowait, [])):
-                await conn.wait_closed()
-    finally:
-        async_group.close()
-
-
-async def _change_loop(async_group, backend, conn, change_queue):
+async def _change_loop(backend, conn, change_queue):
     try:
         filter_json = _sanitize_filter(conn.remote_data)
         first_id = backend.first_id
@@ -101,8 +102,9 @@ async def _change_loop(async_group, backend, conn, change_queue):
             new_filter_json = _sanitize_filter(conn.remote_data)
             filter_changed = new_filter_json != filter_json
             filter_json = new_filter_json
+
     finally:
-        async_group.close()
+        conn.close()
 
 
 def _sanitize_filter(filter_json):

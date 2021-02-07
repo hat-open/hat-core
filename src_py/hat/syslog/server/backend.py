@@ -1,5 +1,6 @@
 """Backend implementation"""
 
+from pathlib import Path
 import asyncio
 import contextlib
 import logging
@@ -9,7 +10,6 @@ from hat import aio
 from hat import util
 from hat.syslog.server import common
 from hat.syslog.server import database
-import hat.syslog.server.conf
 
 
 mlog: logging.Logger = logging.getLogger(__name__)
@@ -25,10 +25,14 @@ register_queue_treshold: int = 10
 """Registration queue threshold"""
 
 
-async def create_backend(conf: hat.syslog.server.conf.BackendConf
+async def create_backend(path: Path,
+                         low_size: int,
+                         high_size: int,
+                         enable_archive: bool,
+                         disable_journal: bool
                          ) -> 'Backend':
     """Create backend"""
-    db = await database.create_database(conf.path, conf.disable_journal)
+    db = await database.create_database(path, disable_journal)
     try:
         first_id = await db.get_first_id()
         last_id = await db.get_last_id()
@@ -37,7 +41,11 @@ async def create_backend(conf: hat.syslog.server.conf.BackendConf
         raise
 
     backend = Backend()
-    backend._conf = conf
+    backend._path = path
+    backend._low_size = low_size
+    backend._high_size = high_size
+    backend._enable_archive = enable_archive
+    backend._disable_journal = disable_journal
     backend._db = db
     backend._first_id = first_id
     backend._last_id = last_id
@@ -49,7 +57,7 @@ async def create_backend(conf: hat.syslog.server.conf.BackendConf
     backend._async_group.spawn(aio.call_on_cancel, db.async_close)
     backend._async_group.spawn(backend._loop)
 
-    mlog.debug('created backend with database %s', conf.path)
+    mlog.debug('created backend with database %s', path)
     return backend
 
 
@@ -154,6 +162,7 @@ class Backend(aio.Resource):
         entries = await self._db.add_msgs(msgs)
         if not entries:
             return
+        entries = list(reversed(entries))
 
         self._last_id = entries[0].id
         if self._first_id is None:
@@ -163,22 +172,22 @@ class Backend(aio.Resource):
                    self._first_id, self._last_id)
         self._change_cbs.notify(entries)
 
-        if self._conf.high_size <= 0:
+        if self._high_size <= 0:
             return
-        if self._last_id - self._first_id + 1 <= self._conf.high_size:
+        if self._last_id - self._first_id + 1 <= self._high_size:
             return
 
         mlog.debug("database cleanup starting...")
         await self._db_cleanup()
 
     async def _db_cleanup(self):
-        first_id = self._last_id - self._conf.low_size + 1
+        first_id = self._last_id - self._low_size + 1
         if first_id > self._last_id:
             first_id = None
         if first_id <= self._first_id:
             return
 
-        if self._conf.enable_archive:
+        if self._enable_archive:
             mlog.debug("archiving database entries...")
             await self._archive_db(first_id)
 
@@ -193,9 +202,9 @@ class Backend(aio.Resource):
 
     async def _archive_db(self, first_id):
         archive_path = await self._async_group.spawn(
-            self._executor, _ext_get_new_archive_path, self._conf.path)
+            self._executor, _ext_get_new_archive_path, self._path)
         archive = await database.create_database(
-            archive_path, self._conf.disable_journal)
+            archive_path, self._disable_journal)
         try:
             entries = await self._db.query(common.Filter(
                 last_id=first_id - 1 if first_id is not None else None))

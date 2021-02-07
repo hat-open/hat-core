@@ -68,11 +68,11 @@ class Database(aio.Resource):
         entry_ids = await self._async_group.spawn(
             self._executor, _ext_insert, self._conn, columns, values)
 
-        entries = list(reversed([
+        entries = [
             common.Entry(id=entry_id,
                          timestamp=entry_timestamp,
                          msg=msg)
-            for entry_id, (entry_timestamp, msg) in zip(entry_ids, msgs)]))
+            for entry_id, (entry_timestamp, msg) in zip(entry_ids, msgs)]
 
         mlog.debug("messages added to database (message count: %s)",
                    len(entries))

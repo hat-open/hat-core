@@ -6,24 +6,27 @@ import logging.config
 import os
 import socket
 import threading
-import traceback
 import time
+import traceback
 
 import pytest
 
+from hat import aio
 from hat import json
-
+from hat import util
+from hat.syslog.server import common
 import hat.syslog.handler
-import hat.syslog.server.conf
 import hat.syslog.server.syslog
 
-from test_unit.test_syslog.test_server import common
 import pem
 
 
+pytestmark = pytest.mark.asyncio
+
+
 @pytest.fixture
-def syslog_port(unused_tcp_port_factory):
-    return unused_tcp_port_factory()
+def syslog_port():
+    return util.get_unused_tcp_port()
 
 
 @pytest.fixture(params=['tcp', 'ssl'])
@@ -33,7 +36,7 @@ def comm_type(request):
 
 @pytest.fixture
 def syslog_address(syslog_port, comm_type):
-    return f"{comm_type}://0.0.0.0:{syslog_port}"
+    return f"{comm_type}://127.0.0.1:{syslog_port}"
 
 
 @pytest.fixture
@@ -49,20 +52,23 @@ def pem_path(tmp_path_factory):
 
 
 @pytest.fixture
-def conf_syslog(syslog_address, pem_path):
-    return hat.syslog.server.conf.SysLogServerConf(addr=syslog_address,
-                                                   pem=pem_path)
+def create_syslog_server(syslog_address, pem_path):
+
+    async def create_syslog_server(backend):
+        return await hat.syslog.server.syslog.create_syslog_server(
+            syslog_address, pem_path, backend)
+
+    return create_syslog_server
 
 
 @pytest.fixture
-async def message_queue(conf_syslog, pem_path):
-    backend = common.create_backend('test_syslog.syslog')
-    server = await hat.syslog.server.syslog.create_syslog_server(conf_syslog,
-                                                                 backend)
-    yield backend._msg_queue
-
-    await server.async_close()
-    assert server.is_closed
+async def message_queue(create_syslog_server):
+    backend = create_backend('test_syslog.syslog')
+    server = await create_syslog_server(backend)
+    try:
+        yield backend._msg_queue
+    finally:
+        await server.async_close()
 
 
 @pytest.fixture
@@ -82,7 +88,47 @@ def logger(syslog_port, comm_type):
     time.sleep(0.01)
 
 
-@pytest.mark.asyncio
+def create_backend(msgid):
+    backend = MockBackend()
+    backend._msgid = msgid
+    backend._first_id = 0
+    backend._last_id = 0
+    backend._async_group = aio.Group()
+    backend._change_cbs = util.CallbackRegistry()
+    backend._msg_queue = aio.Queue()
+    return backend
+
+
+class MockBackend:
+
+    @property
+    def first_id(self):
+        return self._first_id
+
+    @property
+    def last_id(self):
+        return self._last_id
+
+    def register_change_cb(self, cb):
+        return self._change_cbs.register(cb)
+
+    @property
+    def closed(self):
+        return self._async_group.closed
+
+    async def async_close(self):
+        await self._async_group.async_close()
+
+    async def register(self, timestamp, msg):
+        if (not msg.msgid.startswith('test_syslog') and
+                msg.msgid != 'hat.syslog.handler'):
+            return
+        await self._msg_queue.put((timestamp, msg))
+
+    async def query(self, filter):
+        pass
+
+
 async def test_msg(message_queue, logger):
     ts_before = datetime.datetime.now(tz=datetime.timezone.utc).timestamp()
     logger.info('for your information')
@@ -91,8 +137,8 @@ async def test_msg(message_queue, logger):
     ts_after = datetime.datetime.now(tz=datetime.timezone.utc).timestamp()
 
     assert ts_before < ts < ts_after
-    assert msg.facility == hat.syslog.common.Facility.USER
-    assert msg.severity == hat.syslog.common.Severity.INFORMATIONAL
+    assert msg.facility == common.Facility.USER
+    assert msg.severity == common.Severity.INFORMATIONAL
     assert msg.version == 1
     assert ts_before < msg.timestamp < ts
     assert msg.hostname == socket.gethostname()
@@ -112,19 +158,18 @@ async def test_msg(message_queue, logger):
     assert not msg_data['hat@1']['exc_info']
 
 
-@pytest.mark.asyncio
-async def test_dropped(logger, conf_syslog, short_reconnect_delay):
+async def test_dropped(logger, create_syslog_server, short_reconnect_delay):
     for i in range(20):
         logger.info('%s', i)
-    backend = common.create_backend(logger.name)
-    server = await hat.syslog.server.syslog.create_syslog_server(conf_syslog,
-                                                                 backend)
+    backend = create_backend(logger.name)
+    server = await create_syslog_server(backend)
+
     message_queue = backend._msg_queue
     assert message_queue.empty()
     _, msg_drop = await message_queue.get()
 
     assert msg_drop.msg == 'dropped 10 log messages'
-    assert msg_drop.severity == hat.syslog.common.Severity.ERROR
+    assert msg_drop.severity == common.Severity.ERROR
     for i in range(10, 20):
         _, msg = await message_queue.get()
         assert int(msg.msg) == i
@@ -161,7 +206,6 @@ async def test_level(message_queue, logger, root_level, levels_exp):
     assert levels_res == levels_exp
 
 
-@pytest.mark.asyncio
 async def test_exc_info(message_queue, logger):
     try:
         raise Exception('Exception!')
