@@ -1,4 +1,4 @@
-"""Transport protocol on top of TCP
+"""Transport Service on top of TCP
 
 Attributes:
     mlog (logging.Logger): module logger

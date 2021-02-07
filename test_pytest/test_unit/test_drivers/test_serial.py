@@ -1,15 +1,17 @@
-import pytest
-import subprocess
-import atexit
-import time
 import asyncio
+import atexit
+import subprocess
 import sys
+import time
+
+import pytest
 
 import hat.drivers.serial
 
 
-pytestmark = pytest.mark.skipif(sys.platform == 'win32',
-                                reason="can't simulate serial")
+pytestmark = [pytest.mark.asyncio,
+              pytest.mark.skipif(sys.platform == 'win32',
+                                 reason="can't simulate serial")]
 
 
 @pytest.fixture
@@ -31,7 +33,6 @@ def nullmodem(request, tmp_path):
     return path1, path2, p
 
 
-@pytest.mark.asyncio
 async def test_create(nullmodem):
     conn = await hat.drivers.serial.create(port=str(nullmodem[0]),
                                            rtscts=True,
@@ -41,7 +42,6 @@ async def test_create(nullmodem):
     assert conn.is_closed
 
 
-@pytest.mark.asyncio
 async def test_read_write(nullmodem):
     conn1 = await hat.drivers.serial.create(port=str(nullmodem[0]),
                                             rtscts=True,
@@ -68,7 +68,6 @@ async def test_read_write(nullmodem):
         await conn2.write(b'')
 
 
-@pytest.mark.asyncio
 async def test_close_while_reading(nullmodem):
     conn = await hat.drivers.serial.create(port=str(nullmodem[0]),
                                            rtscts=True,
@@ -82,7 +81,6 @@ async def test_close_while_reading(nullmodem):
         read_future.result()
 
 
-@pytest.mark.asyncio
 async def test_close_nullmodem(nullmodem):
     conn = await hat.drivers.serial.create(port=str(nullmodem[0]),
                                            rtscts=True,

@@ -1,0 +1,11 @@
+.. _hat-drivers-iec104:
+
+`hat.drivers.iec104` - IEC 60870-5-104
+======================================
+
+API
+---
+
+API reference is available as part of generated documentation:
+
+    * `Python hat.drivers.iec104 module <../../pyhat/hat/drivers/iec104/index.html>`_

@@ -1,3 +1,5 @@
+"""Manufacturing Message Specification"""
+
 from hat.drivers.mms.connection import (
     Address,
     ConnectionInfo,

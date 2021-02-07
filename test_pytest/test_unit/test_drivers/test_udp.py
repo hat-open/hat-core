@@ -1,14 +1,20 @@
-import pytest
 import asyncio
 
+import pytest
+
+from hat import util
 from hat.drivers import udp
 
 
-@pytest.mark.asyncio
-async def test_create(unused_udp_port):
+pytestmark = pytest.mark.asyncio
 
-    addr = ('127.0.0.1', unused_udp_port)
 
+@pytest.fixture
+def addr():
+    return udp.Address('127.0.0.1', util.get_unused_udp_port())
+
+
+async def test_create(addr):
     ep1 = await udp.create(local_addr=addr)
     ep2 = await udp.create(remote_addr=addr)
 
@@ -21,11 +27,7 @@ async def test_create(unused_udp_port):
     assert ep2.is_closed
 
 
-@pytest.mark.asyncio
-async def test_send_receive(unused_udp_port):
-
-    addr = ('127.0.0.1', unused_udp_port)
-
+async def test_send_receive(addr):
     ep1 = await udp.create(local_addr=addr)
     ep2 = await udp.create(remote_addr=addr)
 
@@ -50,4 +52,5 @@ async def test_send_receive(unused_udp_port):
     assert ep1.empty
     assert ep2.empty
 
-    await asyncio.gather(ep1.async_close(), ep2.async_close())
+    await ep1.async_close()
+    await ep2.async_close()

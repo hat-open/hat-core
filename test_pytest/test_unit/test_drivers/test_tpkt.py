@@ -1,18 +1,22 @@
-import pytest
 import asyncio
 
+import pytest
+
+from hat import util
 from hat.drivers import tpkt
 
 
+pytestmark = pytest.mark.asyncio
+
+
 @pytest.fixture
-def addr(unused_tcp_port):
-    return tpkt.Address('127.0.0.1', unused_tcp_port)
+def addr():
+    return tpkt.Address('127.0.0.1', util.get_unused_tcp_port())
 
 
-@pytest.mark.asyncio
 async def test_connect_listen(addr):
     conn1_future = asyncio.Future()
-    srv = await tpkt.listen(lambda conn: conn1_future.set_result(conn), addr)
+    srv = await tpkt.listen(conn1_future.set_result, addr)
     assert srv.addresses == [addr]
 
     conn2 = await tpkt.connect(addr)
@@ -34,10 +38,9 @@ async def test_connect_listen(addr):
     assert conn2.is_closed
 
 
-@pytest.mark.asyncio
 async def test_read_write(addr):
     conn1_future = asyncio.Future()
-    srv = await tpkt.listen(lambda conn: conn1_future.set_result(conn), addr)
+    srv = await tpkt.listen(conn1_future.set_result, addr)
     conn2 = await tpkt.connect(addr)
     conn1 = await conn1_future
 
@@ -53,7 +56,6 @@ async def test_read_write(addr):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_invalid_connection_cb(addr):
     srv = await tpkt.listen(None, addr)
     conn = await tpkt.connect(addr)
@@ -61,10 +63,9 @@ async def test_invalid_connection_cb(addr):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_invalid_data(addr):
     conn_future = asyncio.Future()
-    srv = await tpkt.listen(lambda conn: conn_future.set_result(conn), addr)
+    srv = await tpkt.listen(conn_future.set_result, addr)
     reader, writer = await asyncio.open_connection(addr.host, addr.port)
     conn = await conn_future
 
@@ -85,7 +86,6 @@ async def test_invalid_data(addr):
     await srv.async_close()
 
 
-@pytest.mark.asyncio
 async def test_invalid_connect_cleanup(addr, monkeypatch):
 
     class ConnectionMock:
