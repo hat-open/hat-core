@@ -20,3 +20,24 @@ For more information see:
 
     This project is currently in state of active development. Features,
     functionality and API are unstable.
+
+
+About
+-----
+
+`hat-syslog` package contains:
+
+    * Syslog Server
+
+        Centralized syslog message aggregating server with sqlite backend and
+        real-time monitoring web based UI.
+
+    * Syslog Handler
+
+        Implementation of python's `logging.Handler` with background thread
+        responsible for sending syslog messages.
+
+    * Syslog Generator
+
+        Simple testing tool used for generating syslog messages and sending
+        them to Syslog Server.

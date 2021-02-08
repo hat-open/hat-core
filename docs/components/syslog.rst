@@ -28,14 +28,14 @@ SysLogHandler provides implementation of Python's standard library
 `logging.Handler` interface. This implementation is part of `hat-syslog`
 python package.
 
-Each instance of :class:`hat.syslog.handler.SysLogHandler` starts new
+Each instance of `hat.syslog.handler.SysLogHandler` starts new
 background thread responsible for sending syslog messages over TCP, UDP or
 TCP+SSL socket. If connection with remote syslog server could not be
 established or current connection is closed, new connect is called after 5
 second timeout.
 
 All log messages provided to SysLogHandler by
-:meth:`hat.syslog.handler.SysLogHandler.emit` are queued in queue with
+`hat.syslog.handler.SysLogHandler.emit` are queued in queue with
 maximum size limited by configuration parameter. During new log message
 registration, if queue is full, oldest messages are discarded and counter
 of discarded messages is incremented. Once new log messages can be sent
@@ -137,11 +137,11 @@ This application is part of `hat-syslog` python package.
 Configuration
 '''''''''''''
 
-Syslog Server configuration written in form of single YAML file with structure
-defined by JSON Schema ``hat://syslog/server.yaml#``. Path to configuration
-file is provided as command line argument during process startup. Additionally,
-configuration parameters provided in configuration file can be overridden
-by command line arguments. If configuration file could not be found,
+Syslog Server configuration written in form of single YAML or JSON file with
+structure defined by JSON Schema ``hat://syslog/server.yaml#``. Path to
+configuration file is provided as command line argument during process startup.
+Additionally, configuration parameters provided in configuration file can be
+overridden by command line arguments. If configuration file could not be found,
 default values of configuration parameters are used.
 
 Example of configuration::
@@ -151,7 +151,7 @@ Example of configuration::
         version: 1
     syslog_addr: 'tcp://0.0.0.0:6514'
     ui_addr: 'http://0.0.0.0:23020'
-    dp_path: '$HATPATH/syslog.db'
+    dp_path: 'syslog.db'
     db_low_size: 1_000_000
     db_high_size: 10_000_000
     db_enable_archive: false

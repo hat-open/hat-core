@@ -1,6 +1,6 @@
 """Syslog hadler
 
-Implementation of :class:`logging.Handler` for syslog logging protocol.
+Implementation of `logging.Handler` for syslog logging protocol.
 
 """
 
@@ -28,7 +28,6 @@ reconnect_delay: float = 5
 
 class CommType(enum.Enum):
     """Syslog communication type"""
-
     UDP = 0
     TCP = 1
     SSL = 2
@@ -61,7 +60,7 @@ class SysLogHandler(logging.Handler):
         self.__thread.start()
 
     def close(self):
-        """"See :meth:`logging.Handler.close`"""
+        """"See `logging.Handler.close`"""
         state = self.__state
         with state.cv:
             if state.closed.is_set():
@@ -72,7 +71,7 @@ class SysLogHandler(logging.Handler):
                 state.cv.notify_all()
 
     def emit(self, record):
-        """"See :meth:`logging.Handler.emit`"""
+        """"See `logging.Handler.emit`"""
         msg = _record_to_msg(record)
         state = self.__state
         with state.cv:
@@ -88,27 +87,23 @@ class SysLogHandler(logging.Handler):
 
 
 class _ThreadState(typing.NamedTuple):
-    """Handler thread state
-
-    Attributes:
-        host: hostname
-        port: TCP port
-        comm_type: communication type
-        queue: message queue
-        queue_size: message queue size
-        cv: conditionaln variable
-        closed: closed flag
-        dropped: dropped message counter
-
-    """
+    """Handler thread state"""
     host: str
+    """Hostname"""
     port: int
+    """TCP port"""
     comm_type: typing.Union[CommType, str]
+    """Communication type"""
     queue: collections.deque
+    """Message queue"""
     queue_size: int
+    """Message queue size"""
     cv: threading.Condition
+    """Conditional variable"""
     closed: threading.Event
+    """Closed flag"""
     dropped: typing.List[int]
+    """Dropped message counter"""
 
 
 def _logging_handler_thread(state):
@@ -195,12 +190,12 @@ def _create_dropped_msg(dropped, func_name, lineno):
         hostname=socket.gethostname(),
         app_name=sys.argv[0],  # record.processName
         procid=str(os.getpid()),
-        msgid='hat.syslog.handler',
+        msgid=__name__,
         data=json.encode({
             'hat@1': {
-                'name': 'hat.syslog.handler',
+                'name': __name__,
                 'thread': str(threading.get_ident()),
                 'funcName': str(func_name),
                 'lineno': str(lineno),
                 'exc_info': ''}}),
-        msg='dropped {} log messages'.format(dropped))
+        msg=f'dropped {dropped} log messages')

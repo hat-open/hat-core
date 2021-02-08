@@ -20,3 +20,22 @@ For more information see:
 
     This project is currently in state of active development. Features,
     functionality and API are unstable.
+
+
+About
+-----
+
+Supported communication drivers:
+
+    * `hat.drivers.serial` - Serial communication
+    * `hat.drivers.udp` - User Datagram Protocol
+    * `hat.drivers.tpkt` - Transport Service on top of TCP
+    * `hat.drivers.cotp` - Connection oriented transport protocol
+    * `hat.drivers.cosp` - Connection oriented session protocol
+    * `hat.drivers.copp` - Connection oriented presentation protocol
+    * `hat.drivers.acse` - Association Controll Service Element
+    * `hat.drivers.mms` - Manufacturing Message Specification
+    * `hat.drivers.iec104` - IEC 60870-5-104
+    * `hat.drivers.modbus` - Modbus
+    * `hat.drivers.hue` - Philips Hue bridge
+    * `hat.drivers.upnp` - Universal Plug and Play
