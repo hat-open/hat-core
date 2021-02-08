@@ -592,22 +592,28 @@ export const filter = curry((fn, arr) => arr.filter(fn));
 export const append = curry((val, arr) => arr.concat([val]));
 
 /**
- * Reduce array values by appling function
+ * Reduce array or object by appling function
  * (curried function)
  *
- * For each array element, provided function is called with accumulator,
- * current value, current index and source array.
- *
- * TODO: support objects
+ * For each element, provided function is called with accumulator,
+ * elements value, element index/key and original container.
  *
  * @function
  * @sig ((b, a, Number, [a]) -> b) -> b -> [a] -> b
+ * @sig ((b, a, String, {String: a}) -> b) -> b -> {String: a} -> b
  * @param {Function} fn
  * @param {*} val initial accumulator value
- * @param {Array} arr
+ * @param {Array|Object} x
  * @return {*} reduced value
  */
-export const reduce = curry((fn, val, arr) => arr.reduce(fn, val));
+export const reduce = curry((fn, val, x) => {
+    if (isArray(x))
+        return x.reduce(fn, val);
+    let acc = val;
+    for (let k in x)
+        acc = fn(acc, x[k], k, x);
+    return acc;
+});
 
 /**
  * Merge two objects
