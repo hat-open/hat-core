@@ -6,7 +6,7 @@ from pathlib import Path
 num_process = os.environ.get('DOIT_NUM_PROCESS')
 if num_process:
     num_process = int(num_process)
-elif sys.platform == 'darwin':
+elif sys.platform in ('darwin', 'win32'):
     num_process = 0
 else:
     num_process = multiprocessing.cpu_count()

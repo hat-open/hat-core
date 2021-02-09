@@ -56,8 +56,9 @@ def task_docs_pyhat():
 
 def task_docs_jshat():
     """Docs - build jshat documentation"""
+    js_doc_path = Path('node_modules/.bin/jsdoc')
     return {'actions': [(common.mkdir_p, [jshat_dst_dir.parent]),
-                        'node_modules/.bin/jsdoc -c jsdoc.json'],
+                        f'{js_doc_path} -c jsdoc.json'],
             'task_dep': ['jshat_deps']}
 
 
