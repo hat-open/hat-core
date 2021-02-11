@@ -5,33 +5,32 @@ import math
 import pytest
 
 from hat import aio
+from hat import util
 from hat.drivers import iec104
 
 
 pytestmark = pytest.mark.asyncio
 
 
-async def test_server_without_connections(unused_tcp_port):
+@pytest.fixture
+def addr():
+    return iec104.Address('127.0.0.1', util.get_unused_tcp_port())
+
+
+async def test_server_without_connections(addr):
     srv = await iec104.listen(connection_cb=lambda _: None,
-                              host='127.0.0.1',
-                              port=unused_tcp_port)
+                              addr=addr)
     assert not srv.is_closed
-    assert len(srv.addresses) == 1
-    addr = srv.addresses[0]
-    assert addr.host == '127.0.0.1'
-    assert addr.port == unused_tcp_port
+    assert srv.addresses == [addr]
 
     await srv.async_close()
     assert srv.is_closed
 
 
-async def test_connect(unused_tcp_port):
+async def test_connect(addr):
     conn_queue = aio.Queue()
-    srv = await iec104.listen(connection_cb=conn_queue.put_nowait,
-                              host='127.0.0.1',
-                              port=unused_tcp_port)
-    conn = await iec104.connect(host='127.0.0.1',
-                                port=unused_tcp_port)
+    srv = await iec104.listen(conn_queue.put_nowait, addr)
+    conn = await iec104.connect(addr)
 
     srv_conn = await asyncio.wait_for(conn_queue.get(), 0.1)
 
@@ -50,16 +49,13 @@ async def test_connect(unused_tcp_port):
 
 
 @pytest.mark.parametrize("conn_count", [1, 2, 10])
-async def test_multiple_connections(unused_tcp_port, conn_count):
+async def test_multiple_connections(addr, conn_count):
     conn_queue = aio.Queue()
-    srv = await iec104.listen(connection_cb=conn_queue.put_nowait,
-                              host='127.0.0.1',
-                              port=unused_tcp_port)
+    srv = await iec104.listen(conn_queue.put_nowait, addr)
 
     conns = []
     for _ in range(conn_count):
-        conn = await iec104.connect(host='127.0.0.1',
-                                    port=unused_tcp_port)
+        conn = await iec104.connect(addr)
         conns.append(conn)
 
     srv_conns = []
@@ -74,7 +70,7 @@ async def test_multiple_connections(unused_tcp_port, conn_count):
     await srv.async_close()
 
 
-async def test_interogate(unused_tcp_port):
+async def test_interogate(addr):
     conn_queue = aio.Queue()
     interrogate_queue = aio.Queue()
 
@@ -84,12 +80,9 @@ async def test_interogate(unused_tcp_port):
         result = await f
         return result
 
-    srv = await iec104.listen(connection_cb=conn_queue.put_nowait,
-                              host='127.0.0.1',
-                              port=unused_tcp_port,
+    srv = await iec104.listen(conn_queue.put_nowait, addr,
                               interrogate_cb=on_interrogate)
-    conn = await iec104.connect(host='127.0.0.1',
-                                port=unused_tcp_port)
+    conn = await iec104.connect(addr)
     srv_conn = await conn_queue.get()
 
     conn_f = asyncio.ensure_future(conn.interrogate(123))
@@ -117,7 +110,7 @@ async def test_interogate(unused_tcp_port):
     await srv_conn.async_close()
 
 
-async def test_counter_interogate(unused_tcp_port):
+async def test_counter_interogate(addr):
     conn_queue = aio.Queue()
     counter_interrogate_queue = aio.Queue()
 
@@ -127,12 +120,9 @@ async def test_counter_interogate(unused_tcp_port):
         result = await f
         return result
 
-    srv = await iec104.listen(connection_cb=conn_queue.put_nowait,
-                              host='127.0.0.1',
-                              port=unused_tcp_port,
+    srv = await iec104.listen(conn_queue.put_nowait, addr,
                               counter_interrogate_cb=on_counter_interrogate)
-    conn = await iec104.connect(host='127.0.0.1',
-                                port=unused_tcp_port)
+    conn = await iec104.connect(addr)
     srv_conn = await conn_queue.get()
 
     conn_f = asyncio.ensure_future(conn.counter_interrogate(123))
@@ -209,7 +199,11 @@ async def test_counter_interogate(unused_tcp_port):
                 cause=iec104.Cause.SPONTANEOUS,
                 is_test=False),
     iec104.Data(value=iec104.NormalizedValue(value=0.123),
-                quality=None,
+                quality=iec104.Quality(invalid=False,
+                                       not_topical=False,
+                                       substituted=False,
+                                       blocked=False,
+                                       overflow=False),
                 time=None,
                 asdu_address=1,
                 io_address=2,
@@ -238,13 +232,10 @@ async def test_counter_interogate(unused_tcp_port):
                 cause=iec104.Cause.SPONTANEOUS,
                 is_test=False)
 ])
-async def test_receive(unused_tcp_port, data):
+async def test_receive(addr, data):
     conn_queue = aio.Queue()
-    srv = await iec104.listen(connection_cb=conn_queue.put_nowait,
-                              host='127.0.0.1',
-                              port=unused_tcp_port)
-    conn = await iec104.connect(host='127.0.0.1',
-                                port=unused_tcp_port)
+    srv = await iec104.listen(conn_queue.put_nowait, addr)
+    conn = await iec104.connect(addr)
     srv_conn = await conn_queue.get()
 
     srv_conn.notify_data_change([data])
@@ -302,7 +293,7 @@ async def test_receive(unused_tcp_port, data):
                    qualifier=6)
 ])
 @pytest.mark.parametrize("success", [True, False])
-async def test_send_command(unused_tcp_port, command, success):
+async def test_send_command(addr, command, success):
     conn_queue = aio.Queue()
 
     async def on_command(conn, commands):
@@ -317,12 +308,9 @@ async def test_send_command(unused_tcp_port, command, success):
         assert commands == [command]
         return success
 
-    srv = await iec104.listen(connection_cb=conn_queue.put_nowait,
-                              host='127.0.0.1',
-                              port=unused_tcp_port,
+    srv = await iec104.listen(conn_queue.put_nowait, addr,
                               command_cb=on_command)
-    conn = await iec104.connect(host='127.0.0.1',
-                                port=unused_tcp_port)
+    conn = await iec104.connect(addr)
     srv_conn = await conn_queue.get()
 
     result = await conn.send_command(command)

@@ -22,6 +22,7 @@ from hat.drivers.iec104.common import (time_from_datetime,
                                        Time)
 from hat.drivers.iec104.connection import (connect,
                                            listen,
+                                           Address,
                                            Connection,
                                            Server)
 
@@ -30,6 +31,7 @@ __all__ = ['connect',
            'listen',
            'time_from_datetime',
            'time_to_datetime',
+           'Address',
            'Action',
            'BinaryCounterValue',
            'BitstringValue',

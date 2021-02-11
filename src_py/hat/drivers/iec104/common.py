@@ -6,10 +6,11 @@ import time
 import typing
 
 
+# TODO: support NormalizedValue without quality (M_ME_ND)
 class Data(typing.NamedTuple):
     value: 'DataValue'
-    quality: 'Quality'
-    """quality (optional in case of NormalizedValue without quality and BinaryCounterValue)"""  # NOQA
+    quality: typing.Optional['Quality']
+    """Quality is ``None`` only in case of `BinaryCounterValue`"""
     time: typing.Optional['Time']
     asdu_address: int
     io_address: int
@@ -106,8 +107,9 @@ class Quality(typing.NamedTuple):
     not_topical: bool
     substituted: bool
     blocked: bool
-    overflow: bool
-    """owerflow flag (for SingleValue and DoubleValue always False)"""
+    overflow: typing.Optional[bool]
+    """Overflow is ``None`` in case of `SingleValue` and `DoubleValue`
+    (otherwise can not be ``None``)"""
 
 
 class Time(typing.NamedTuple):
@@ -178,17 +180,10 @@ class FreezeCode(enum.Enum):
     RESET = 3
 
 
-def time_from_datetime(dt, invalid=False):
-    """Create Time from datetime.datetime
-
-    Args:
-        dt (datetime.datetime): datetime
-        invalid (bool): invalid flag value
-
-    Returns:
-        Time
-
-    """
+def time_from_datetime(dt: datetime.datetime,
+                       invalid: bool = False
+                       ) -> Time:
+    """Create Time from datetime.datetime"""
     #  rounding microseconds to the nearest millisecond
     dt_rounded = (
         dt.replace(microsecond=0) +
@@ -208,16 +203,9 @@ def time_from_datetime(dt, invalid=False):
         years=local_time.tm_year % 100)
 
 
-def time_to_datetime(t):
-    """Convert Time to datetime.datetime
-
-    Args:
-        t (Time): time
-
-    Returns:
-        datetime.datetime
-
-    """
+def time_to_datetime(t: Time
+                     ) -> datetime.datetime:
+    """Convert Time to datetime.datetime"""
     local_dt = datetime.datetime(
         year=2000 + t.years if t.years < 70 else 1900 + t.years,
         month=t.months,

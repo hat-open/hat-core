@@ -182,7 +182,7 @@ class Connection(aio.Resource):
 async def _asyncio_async_close(x, flush=False):
     if flush:
         with contextlib.suppress(Exception):
-            await x.flush()
+            await x.drain()
     with contextlib.suppress(Exception):
         x.close()
     with contextlib.suppress(ConnectionError):
