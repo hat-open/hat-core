@@ -146,13 +146,43 @@ where ``package-name`` is one of following:
         Juggler communication protocol client library
 
 
+Development
+-----------
+
+Platforms supported as development environment include Linux (possibly other
+POSIX systems) and Windows (with MSYS2 and CPython).
+
+
+Platform specific prerequisites
+'''''''''''''''''''''''''''''''
+
+* Archlinux::
+
+    $ pacman -S $(< requirements.archlinux.txt)
+
+* Ubuntu::
+
+    $ apt install $(< requirements.ubuntu.txt)
+
+* Windows::
+
+    $ pacman -S $(< requirements.msys2.txt)
+
+
+Python prerequisites
+''''''''''''''''''''
+
+::
+
+    $ pip install -r requirements.pip.txt
+
+
 Build
------
+'''''
 
-Build tool used for Hat is pydoit (`http://pydoit.org/`). It can be installed
-with `pip` by running::
-
-    $ pip install doit
+Build tool used for Hat is pydoit (`http://pydoit.org/`). It is included
+as one of python prerequisites and should be available after `pip`
+requirements installation.
 
 For listing available doit tasks, use::
 
@@ -165,43 +195,32 @@ Default task::
 creates `dist` folder containing built packages.
 
 
-Dependencies
-''''''''''''
-
-Package managers used for managing dependencies:
-
-    * pacman
-
-        Package manager of Arch linux distribution. Available on
-        Windows as part of `msys2` (`<http://www.msys2.org/>`_).
-
-    * pip
-
-        Package manager available as part of CPython installation.
-
-    * yarn
-
-        Package manager for NodeJS.
-
-List of all dependencies for building and running hat components is available
-in:
-
-    * requirements.pacman.win.txt (windows only)
-    * requirements.pacman.linux.txt (archlinux only)
-    * requirements.pip.txt
-    * package.json
-
-Python code targets CPython 3.8 and 3.9 only.
-
-
 Documentation
--------------
+'''''''''''''
 
 Documentation can be built with::
 
     $ doit docs
 
 which creates `build/docs` folder containing documentation.
+
+
+Tests
+'''''
+
+Tests can be run with `doit` task ``test``.
+
+* Unit tests::
+
+    $ doit test test_unit
+
+* System tests::
+
+    $ doit test test_sys
+
+* Performance tests::
+
+    $ doit test test_perf
 
 
 License
