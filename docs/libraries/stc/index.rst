@@ -180,7 +180,7 @@ Example
 
 ::
 
-        states = stc.parse_scxml(io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
+    states = stc.parse_scxml(io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
         <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="on" version="1.0">
             <state id="on" initial="operand1">
                 <onentry>clear</onentry>
