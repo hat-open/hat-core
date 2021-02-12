@@ -425,9 +425,9 @@ class Connection(aio.Resource):
             self._async_group.close()
 
             self._data_queue.close()
-            if self._interrogate_queue:
+            if self._interrogate_queue is not None:
                 self._interrogate_queue.close()
-            if self._counter_interrogate_queue:
+            if self._counter_interrogate_queue is not None:
                 self._counter_interrogate_queue.close()
 
             for future in self._command_futures.values():
@@ -533,11 +533,13 @@ class Connection(aio.Resource):
         data = _asdu_to_data(asdu)
 
         if asdu.cause in _interrogate_causes:
-            if not self._interrogate_queue.is_closed:
+            if (self._interrogate_queue is not None and
+                    not self._interrogate_queue.is_closed):
                 self._interrogate_queue.put_nowait(data)
 
         elif asdu.cause in _counter_interrogate_causes:
-            if not self._counter_interrogate_queue.is_closed:
+            if (self._counter_interrogate_queue is not None and
+                    not self._counter_interrogate_queue.is_closed):
                 self._counter_interrogate_queue.put_nowait(data)
 
         else:
