@@ -321,6 +321,21 @@ async def test_send_command(addr, command, success):
     await srv_conn.async_close()
 
 
+async def test_interrogate_negative_response(addr):
+    conn_queue = aio.Queue()
+    srv = await iec104.listen(conn_queue.put_nowait, addr,
+                              interrogate_cb=lambda _: None)
+    conn = await iec104.connect(addr)
+    srv_conn = await conn_queue.get()
+
+    result = await conn.interrogate(123)
+    assert result == []
+
+    await conn.async_close()
+    await srv_conn.async_close()
+    await srv.async_close()
+
+
 async def test_example_docs():
     addr = iec104.Address('127.0.0.1', util.get_unused_tcp_port())
     conn2_future = asyncio.Future()

@@ -398,7 +398,8 @@ async def test_queue_put_cancel():
     await f2
 
 
-async def test_queue_async_iterable():
+@pytest.mark.parametrize('item_count', [0, 1, 2, 10])
+async def test_queue_async_iterable(item_count):
     queue = aio.Queue()
     data = collections.deque()
 
@@ -406,7 +407,7 @@ async def test_queue_async_iterable():
         queue.put_nowait(i)
         data.append(i)
 
-    queue.close()
+    asyncio.get_running_loop().call_later(0.001, queue.close)
 
     async for i in queue:
         assert i == data.popleft()

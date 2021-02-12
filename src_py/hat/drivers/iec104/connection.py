@@ -519,14 +519,14 @@ class Connection(aio.Resource):
         queue = (self._counter_interrogate_queue
                  if asdu.type == _iec104.AsduType.C_CI_NA
                  else self._interrogate_queue)
-        if queue:
+        if queue is not None:
             queue.close()
 
     async def _process_interrogate_activation_termination(self, asdu):
         queue = (self._counter_interrogate_queue
                  if asdu.type == _iec104.AsduType.C_CI_NA
                  else self._interrogate_queue)
-        if queue:
+        if queue is not None:
             queue.close()
 
     async def _process_data(self, asdu):
