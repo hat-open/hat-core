@@ -8,6 +8,7 @@ are used for communication with external devices and other systems.
     :maxdepth: 1
 
     serial
+    tcp
     udp
     tpkt
     cotp

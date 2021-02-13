@@ -28,6 +28,7 @@ About
 Supported communication drivers:
 
     * `hat.drivers.serial` - Serial communication
+    * `hat.drivers.tcp` - Transmission Control Protocol
     * `hat.drivers.udp` - User Datagram Protocol
     * `hat.drivers.tpkt` - Transport Service on top of TCP
     * `hat.drivers.cotp` - Connection oriented transport protocol
