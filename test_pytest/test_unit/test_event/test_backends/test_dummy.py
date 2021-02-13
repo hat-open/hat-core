@@ -34,7 +34,7 @@ async def test_register(event_count):
     events = [
         hat.event.common.Event(
             event_id=hat.event.common.EventId(server=0, instance=i),
-            event_type=[],
+            event_type=(),
             timestamp=common.now(),
             source_timestamp=None,
             payload=None)

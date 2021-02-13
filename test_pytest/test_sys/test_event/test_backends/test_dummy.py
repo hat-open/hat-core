@@ -22,12 +22,12 @@ async def client(server):
 
 @pytest.mark.asyncio
 async def test_dummy(client):
-    result = await client.query(common.QueryData(event_types=[['*']]))
+    result = await client.query(common.QueryData(event_types=[('*',)]))
     assert result == []
 
     resp = await client.register_with_response(
-        [common.RegisterEvent(['a'], None, None)])
+        [common.RegisterEvent(('a',), None, None)])
     assert len(resp) == 1
 
-    result = await client.query(common.QueryData(event_types=[['*']]))
+    result = await client.query(common.QueryData(event_types=[('*',)]))
     assert result == []

@@ -120,10 +120,10 @@ async def create_device_proxy(conf, client, gateway_name):
     proxy._event_queue = aio.Queue()
     proxy._async_group = aio.Group(proxy._on_exception)
     proxy._client = client
-    proxy._device_identifier_prefix = ['gateway', gateway_name,
-                                       device_module.device_type, conf['name']]
+    proxy._device_identifier_prefix = ('gateway', gateway_name,
+                                       device_module.device_type, conf['name'])
 
-    enable_event_type = [*proxy._device_identifier_prefix, 'system', 'enable']
+    enable_event_type = (*proxy._device_identifier_prefix, 'system', 'enable')
     enable_query = hat.event.common.QueryData(event_types=[enable_event_type],
                                               unique_type=True)
     enable_events = await client.query(enable_query)
@@ -201,8 +201,8 @@ class DeviceProxy(aio.Resource):
                         return
                     events = new_events_future.result()
 
-                enable_event_type = [*self._device_identifier_prefix, 'system',
-                                     'enable']
+                enable_event_type = (*self._device_identifier_prefix, 'system',
+                                     'enable')
                 enable_events = [ev for ev in events
                                  if _check_bool_event(ev, enable_event_type)]
                 device_events = [ev for ev in events
@@ -237,7 +237,7 @@ class DeviceProxy(aio.Resource):
 
     def _register_device_running_event(self, is_running):
         self._client.register([hat.event.common.RegisterEvent(
-            event_type=[*self._device_identifier_prefix, 'gateway', 'running'],
+            event_type=(*self._device_identifier_prefix, 'gateway', 'running'),
             source_timestamp=hat.event.common.now(),
             payload=hat.event.common.EventPayload(
                 type=hat.event.common.EventPayloadType.JSON,

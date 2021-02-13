@@ -26,7 +26,7 @@ sbs_repo = sbs.Repository(
     sbs.Repository.from_json(package_path / 'sbs_repo.json'))
 """SBS schema repository"""
 
-EventType: typing.Type = typing.List[str]
+EventType: typing.Type = typing.Tuple[str, ...]
 """Event type"""
 
 
@@ -185,11 +185,11 @@ class Subscription:
         is_leaf, children = node
 
         if is_leaf and '*' not in children:
-            yield []
+            yield ()
 
         for head, child in children.items():
             for rest in self._get_query_types(child):
-                yield [head, *rest]
+                yield (head, *rest)
 
     def _matches(self, node, event_type):
         is_leaf, children = node
@@ -351,7 +351,7 @@ def event_to_sbs(event: Event) -> sbs.Data:
     """Convert Event to SBS data"""
     return {
         'id': _event_id_to_sbs(event.event_id),
-        'type': event.event_type,
+        'type': list(event.event_type),
         'timestamp': timestamp_to_sbs(event.timestamp),
         'sourceTimestamp': _optional_to_sbs(event.source_timestamp,
                                             timestamp_to_sbs),
@@ -362,7 +362,7 @@ def event_from_sbs(data: sbs.Data) -> Event:
     """Create new Event based on SBS data"""
     return Event(
         event_id=_event_id_from_sbs(data['id']),
-        event_type=data['type'],
+        event_type=tuple(data['type']),
         timestamp=timestamp_from_sbs(data['timestamp']),
         source_timestamp=_optional_from_sbs(data['sourceTimestamp'],
                                             timestamp_from_sbs),
@@ -372,7 +372,7 @@ def event_from_sbs(data: sbs.Data) -> Event:
 def register_event_to_sbs(event: RegisterEvent) -> sbs.Data:
     """Convert RegisterEvent to SBS data"""
     return {
-        'type': event.event_type,
+        'type': list(event.event_type),
         'sourceTimestamp': _optional_to_sbs(event.source_timestamp,
                                             timestamp_to_sbs),
         'payload': _optional_to_sbs(event.payload, event_payload_to_sbs)}
@@ -381,7 +381,7 @@ def register_event_to_sbs(event: RegisterEvent) -> sbs.Data:
 def register_event_from_sbs(data: sbs.Data) -> RegisterEvent:
     """Create new RegisterEvent based on SBS data"""
     return RegisterEvent(
-        event_type=data['type'],
+        event_type=tuple(data['type']),
         source_timestamp=_optional_from_sbs(data['sourceTimestamp'],
                                             timestamp_from_sbs),
         payload=_optional_from_sbs(data['payload'], event_payload_from_sbs))
@@ -392,7 +392,8 @@ def query_to_sbs(query: QueryData) -> sbs.Data:
     return {
         'ids': _optional_to_sbs(query.event_ids, lambda ids: [
             _event_id_to_sbs(i) for i in ids]),
-        'types': _optional_to_sbs(query.event_types),
+        'types': _optional_to_sbs(query.event_types, lambda ets: [
+            list(et) for et in ets]),
         'tFrom': _optional_to_sbs(query.t_from, timestamp_to_sbs),
         'tTo': _optional_to_sbs(query.t_to, timestamp_to_sbs),
         'sourceTFrom': _optional_to_sbs(query.source_t_from, timestamp_to_sbs),
@@ -412,7 +413,8 @@ def query_from_sbs(data: sbs.Data) -> QueryData:
     return QueryData(
         event_ids=_optional_from_sbs(data['ids'], lambda ids: [
             _event_id_from_sbs(i) for i in ids]),
-        event_types=_optional_from_sbs(data['types']),
+        event_types=_optional_from_sbs(data['types'], lambda ets: [
+            tuple(et) for et in ets]),
         t_from=_optional_from_sbs(data['tFrom'], timestamp_from_sbs),
         t_to=_optional_from_sbs(data['tTo'], timestamp_from_sbs),
         source_t_from=_optional_from_sbs(data['sourceTFrom'],

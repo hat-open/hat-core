@@ -50,7 +50,7 @@ class CopierModuleSession(hat.event.server.common.ModuleSession):
             new_proc_event = self._module._engine.create_process_event(
                 self._module._source,
                 hat.event.common.RegisterEvent(
-                    event_type=proc_event.event_type + ['copy'],
+                    event_type=(*proc_event.event_type, 'copy'),
                     source_timestamp=hat.event.common.now(),
                     payload=proc_event.payload))
             new.append(new_proc_event)

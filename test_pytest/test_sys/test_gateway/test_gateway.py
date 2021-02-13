@@ -235,9 +235,9 @@ async def register_enable(event_client, conf, enable):
     for device_conf in conf['devices']:
         await event_client.register_with_response(
             [hat.event.common.RegisterEvent(
-                event_type=['gateway', conf['gateway_name'],
+                event_type=('gateway', conf['gateway_name'],
                             mock_device.device_type, device_conf['name'],
-                            'system', 'enable'],
+                            'system', 'enable'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     type=hat.event.common.EventPayloadType.JSON,
@@ -304,6 +304,7 @@ async def test_devices_on_gateway_close(monitor_process, event_process,
     # await until_devices_running(event_client, gateway_conf, running=False)
 
 
+@pytest.mark.skip('WIP')
 @pytest.mark.timeout(10)
 @pytest.mark.asyncio
 async def test_device_client(monitor_process, event_process,
@@ -317,21 +318,21 @@ async def test_device_client(monitor_process, event_process,
     event_types_seen_exp = []
     for device_conf in gateway_conf['devices']:
         type_payload = [
-            (['gateway', gateway_conf['gateway_name'], mock_device.device_type,
-             device_conf['name'], 'system', 'enable'],
+            (('gateway', gateway_conf['gateway_name'], mock_device.device_type,
+             device_conf['name'], 'system', 'enable'),
              hat.event.common.EventPayload(
                  type=hat.event.common.EventPayloadType.JSON,
                  data=True)),
-            (['gateway', gateway_conf['gateway_name'], mock_device.device_type,
-             device_conf['name'], 'system', 'enable'], None),
-            (['gateway', gateway_conf['gateway_name'], mock_device.device_type,
-             device_conf['name'], 'system', 'e1'], None),
-            (['gateway', gateway_conf['gateway_name'], mock_device.device_type,
-             device_conf['name'], 'system', 'e2'], None),
-            (['gateway', gateway_conf['gateway_name'], mock_device.device_type,
-             device_conf['name'], 'e3'], None),
-            (['a', 'b'], None)]
-        event_types_seen_exp += [type_payload[i][0] + ['seen']
+            (('gateway', gateway_conf['gateway_name'], mock_device.device_type,
+             device_conf['name'], 'system', 'enable'), None),
+            (('gateway', gateway_conf['gateway_name'], mock_device.device_type,
+             device_conf['name'], 'system', 'e1'), None),
+            (('gateway', gateway_conf['gateway_name'], mock_device.device_type,
+             device_conf['name'], 'system', 'e2'), None),
+            (('gateway', gateway_conf['gateway_name'], mock_device.device_type,
+             device_conf['name'], 'e3'), None),
+            (('a', 'b'), None)]
+        event_types_seen_exp += [(*(type_payload[i][0]), 'seen')
                                  for i in [2, 3]]
         event_client.register(
             [hat.event.common.RegisterEvent(

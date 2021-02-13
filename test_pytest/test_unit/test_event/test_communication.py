@@ -98,36 +98,36 @@ async def test_client_connect_disconnect(comm_address, comm_conf,
 
 
 @pytest.mark.parametrize("subscriptions", [
-    [[]],
-    [['*']],
-    [['?']],
-    [['?', '*']],
-    [['?', '?']],
-    [['?', '?', '*']],
-    [['?', '?', '?']],
-    [['?', '?', '?', '*']],
-    [['a']],
-    [['a', '*']],
-    [['a', '?']],
-    [['a', '?', '*']],
-    [['a', '?', '?']],
-    [['a', 'b']],
-    [['a', 'b', '*']],
-    [['a', 'b', '?']],
-    [['?', 'b']],
-    [['?', 'b', '?']],
-    [['?', 'b', '*']],
-    [['a', 'b', 'c']],
-    [['a'], []],
-    [['a'], ['*']],
-    [['a'], ['?']],
-    [['a'], ['b']],
-    [['a'], ['a', 'a']],
-    [['a'], ['a', 'b']],
-    [['b'], ['a', 'b']],
-    [['a'], ['a', 'b'], ['a', 'b', 'c']],
-    [['', '', '']],
-    [['x', 'y', 'z']]
+    [()],
+    [('*',)],
+    [('?',)],
+    [('?', '*')],
+    [('?', '?')],
+    [('?', '?', '*')],
+    [('?', '?', '?')],
+    [('?', '?', '?', '*')],
+    [('a',)],
+    [('a', '*')],
+    [('a', '?')],
+    [('a', '?', '*')],
+    [('a', '?', '?')],
+    [('a', 'b')],
+    [('a', 'b', '*')],
+    [('a', 'b', '?')],
+    [('?', 'b')],
+    [('?', 'b', '?')],
+    [('?', 'b', '*')],
+    [('a', 'b', 'c')],
+    [('a',), ()],
+    [('a',), ('*',)],
+    [('a',), ('?',)],
+    [('a',), ('b',)],
+    [('a',), ('a', 'a')],
+    [('a',), ('a', 'b')],
+    [('b',), ('a', 'b')],
+    [('a',), ('a', 'b'), ('a', 'b', 'c')],
+    [('', '', '')],
+    [('x', 'y', 'z')]
 ])
 async def test_subscribe(comm_address, comm_conf, subscriptions):
     subscription = common.Subscription(subscriptions)
@@ -166,13 +166,13 @@ async def test_subscribe(comm_address, comm_conf, subscriptions):
 
 
 async def test_without_subscribe(comm_address, comm_conf):
-    event_types = [[],
-                   ['a'],
-                   ['b'],
-                   ['a', 'a'],
-                   ['a', 'b'],
-                   ['a', 'b', 'c'],
-                   ['', '', '']]
+    event_types = [(),
+                   ('a',),
+                   ('b',),
+                   ('a', 'a'),
+                   ('a', 'b'),
+                   ('a', 'b', 'c'),
+                   ('', '', '')]
     events = [
         hat.event.common.Event(
             event_id=hat.event.common.EventId(server=0, instance=i),
@@ -217,7 +217,7 @@ async def test_communication_events(comm_address, comm_conf, client_count):
         source, events = await register_queue.get()
 
         assert len(events) == 1
-        assert events[0].event_type == ['event', 'communication', 'connected']
+        assert events[0].event_type == ('event', 'communication', 'connected')
         assert source not in [i for i, _ in source_clients]
 
         source_clients.append((source, client))
@@ -230,8 +230,8 @@ async def test_communication_events(comm_address, comm_conf, client_count):
 
         register_source, events = await register_queue.get()
         assert len(events) == 1
-        assert events[0].event_type == ['event', 'communication',
-                                        'disconnected']
+        assert events[0].event_type == ('event', 'communication',
+                                        'disconnected')
         assert register_source == source
 
     await comm.async_close()
@@ -241,23 +241,23 @@ async def test_communication_events(comm_address, comm_conf, client_count):
 async def test_register(comm_address, comm_conf):
     register_events = [
         hat.event.common.RegisterEvent(
-            event_type=['test', 'a'],
+            event_type=('test', 'a'),
             source_timestamp=None,
             payload=None),
         hat.event.common.RegisterEvent(
-            event_type=['test', 'a'],
+            event_type=('test', 'a'),
             source_timestamp=hat.event.common.Timestamp(s=0, us=0),
             payload=hat.event.common.EventPayload(
                 type=hat.event.common.EventPayloadType.JSON,
                 data={'a': True, 'b': [0, 1, None, 'c']})),
         hat.event.common.RegisterEvent(
-            event_type=['test', 'b'],
+            event_type=('test', 'b'),
             source_timestamp=None,
             payload=hat.event.common.EventPayload(
                 type=hat.event.common.EventPayloadType.BINARY,
                 data=b'Test')),
         hat.event.common.RegisterEvent(
-            event_type=['test'],
+            event_type=('test',),
             source_timestamp=None,
             payload=hat.event.common.EventPayload(
                 type=hat.event.common.EventPayloadType.SBS,
@@ -276,7 +276,7 @@ async def test_register(comm_address, comm_conf):
 
     events = await register_queue.get()
     assert len(events) == 1
-    assert events[0].event_type == ['event', 'communication', 'connected']
+    assert events[0].event_type == ('event', 'communication', 'connected')
 
     client.register(register_events)
 
@@ -287,20 +287,20 @@ async def test_register(comm_address, comm_conf):
 
     events = await register_queue.get()
     assert len(events) == 1
-    assert events[0].event_type == ['event', 'communication', 'disconnected']
+    assert events[0].event_type == ('event', 'communication', 'disconnected')
 
     await comm.async_close()
     await engine.async_close()
 
 
 async def test_register_with_response(comm_address, comm_conf):
-    event_types = [[],
-                   ['a'],
-                   ['b'],
-                   ['a', 'a'],
-                   ['a', 'b'],
-                   ['a', 'b', 'c'],
-                   ['', '', '']]
+    event_types = [(),
+                   ('a',),
+                   ('b',),
+                   ('a', 'a'),
+                   ('a', 'b'),
+                   ('a', 'b', 'c'),
+                   ('', '', '')]
     register_events = [
         hat.event.common.RegisterEvent(
             event_type=event_type,
@@ -327,7 +327,7 @@ async def test_register_with_response(comm_address, comm_conf):
 
     events = await register_queue.get()
     assert len(events) == 1
-    assert events[0].event_type == ['event', 'communication', 'connected']
+    assert events[0].event_type == ('event', 'communication', 'connected')
 
     events = await client.register_with_response(register_events)
 
@@ -340,20 +340,20 @@ async def test_register_with_response(comm_address, comm_conf):
 
     events = await register_queue.get()
     assert len(events) == 1
-    assert events[0].event_type == ['event', 'communication', 'disconnected']
+    assert events[0].event_type == ('event', 'communication', 'disconnected')
 
     await comm.async_close()
     await engine.async_close()
 
 
 async def test_register_with_response_failure(comm_address, comm_conf):
-    event_types = [[],
-                   ['a'],
-                   ['b'],
-                   ['a', 'a'],
-                   ['a', 'b'],
-                   ['a', 'b', 'c'],
-                   ['', '', '']]
+    event_types = [(),
+                   ('a',),
+                   ('b',),
+                   ('a', 'a'),
+                   ('a', 'b'),
+                   ('a', 'b', 'c'),
+                   ('', '', '')]
     register_events = [
         hat.event.common.RegisterEvent(
             event_type=event_type,
@@ -373,7 +373,7 @@ async def test_register_with_response_failure(comm_address, comm_conf):
 
     events = await register_queue.get()
     assert len(events) == 1
-    assert events[0].event_type == ['event', 'communication', 'connected']
+    assert events[0].event_type == ('event', 'communication', 'connected')
 
     events = await client.register_with_response(register_events)
 
@@ -386,20 +386,20 @@ async def test_register_with_response_failure(comm_address, comm_conf):
 
     events = await register_queue.get()
     assert len(events) == 1
-    assert events[0].event_type == ['event', 'communication', 'disconnected']
+    assert events[0].event_type == ('event', 'communication', 'disconnected')
 
     await comm.async_close()
     await engine.async_close()
 
 
 async def test_query(comm_address, comm_conf):
-    event_types = [[],
-                   ['a'],
-                   ['b'],
-                   ['a', 'a'],
-                   ['a', 'b'],
-                   ['a', 'b', 'c'],
-                   ['', '', '']]
+    event_types = [(),
+                   ('a',),
+                   ('b',),
+                   ('a', 'a'),
+                   ('a', 'b'),
+                   ('a', 'b', 'c'),
+                   ('', '', '')]
     events = [
         hat.event.common.Event(
             event_id=hat.event.common.EventId(server=0, instance=i),

@@ -77,12 +77,11 @@ async def run_with_monitor(conf, ui_path, monitor):
     for adapter_conf in conf['adapters']:
         module = importlib.import_module(adapter_conf['module'])
         if module.event_type_prefix is not None:
-            subscriptions.add(tuple(module.event_type_prefix + ['*']))
-    subscriptions = [list(i) for i in subscriptions]
+            subscriptions.add((*module.event_type_prefix, '*'))
 
     run_cb = functools.partial(run_with_event, conf, ui_path)
     await hat.event.client.run_client(
-        monitor, conf['event_server_group'], run_cb, subscriptions)
+        monitor, conf['event_server_group'], run_cb, list(subscriptions))
 
 
 async def run_with_event(conf, ui_path, client):

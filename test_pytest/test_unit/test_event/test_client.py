@@ -136,15 +136,16 @@ async def test_client_subscriptions(server_address):
     await client.async_close()
     await conn.wait_closed()
 
-    subscriptions = [['a'],
-                     ['b', '*']]
+    subscriptions = [('a',),
+                     ('b', '*')]
     client = await hat.event.client.connect(server_address, subscriptions)
     conn = await server.get_connection()
 
     msg = await conn.receive()
     assert msg.first is True
     assert msg.last is True
-    assert msg.data == chatter.Data('HatEvent', 'MsgSubscribe', subscriptions)
+    assert msg.data == chatter.Data('HatEvent', 'MsgSubscribe',
+                                    [list(i) for i in subscriptions])
 
     await conn.async_close()
     await client.async_close()
@@ -156,7 +157,7 @@ async def test_client_receive(server_address):
     events = [
         common.Event(
             event_id=common.EventId(1, 2),
-            event_type=['a', 'b', 'c'],
+            event_type=('a', 'b', 'c'),
             timestamp=common.now(),
             source_timestamp=None,
             payload=common.EventPayload(common.EventPayloadType.JSON, i))
@@ -185,7 +186,7 @@ async def test_client_receive(server_address):
 async def test_client_register(server_address):
     register_events = [
         common.RegisterEvent(
-            event_type=['a', 'b', 'c'],
+            event_type=('a', 'b', 'c'),
             source_timestamp=common.now(),
             payload=common.EventPayload(common.EventPayloadType.JSON, i))
         for i in range(10)]
@@ -219,7 +220,7 @@ async def test_client_register(server_address):
 async def test_client_register_with_response(server_address):
     register_events = [
         common.RegisterEvent(
-            event_type=['a', 'b', 'c'],
+            event_type=('a', 'b', 'c'),
             source_timestamp=common.now(),
             payload=common.EventPayload(common.EventPayloadType.JSON, i))
         for i in range(10)]
@@ -275,7 +276,7 @@ async def test_client_query(server_address):
     events = [
         common.Event(
             event_id=common.EventId(1, 2),
-            event_type=['a', 'b', 'c'],
+            event_type=('a', 'b', 'c'),
             timestamp=common.now(),
             source_timestamp=None,
             payload=common.EventPayload(common.EventPayloadType.JSON, i))

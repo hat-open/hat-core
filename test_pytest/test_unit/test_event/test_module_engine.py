@@ -114,7 +114,7 @@ async def test_create_empty():
 async def test_create_process_event():
     server_id = 123
     source = common.Source(common.SourceType.MODULE, None, 321)
-    register_events = [common.RegisterEvent(event_type=[str(i)],
+    register_events = [common.RegisterEvent(event_type=(str(i),),
                                             source_timestamp=common.now(),
                                             payload=None)
                        for i in range(10)]
@@ -182,7 +182,7 @@ async def test_register(create_module, module_count, value):
 
     source = common.Source(common.SourceType.COMMUNICATION, None, 0)
     result = await engine.register(source, [common.RegisterEvent(
-        event_type=[],
+        event_type=(),
         source_timestamp=None,
         payload=common.EventPayload(common.EventPayloadType.JSON,  value))])
     backend_events = backend_events.result()
@@ -204,7 +204,7 @@ async def test_register(create_module, module_count, value):
 async def test_query():
     query_data = common.QueryData()
     events = [common.Event(event_id=common.EventId(1, i),
-                           event_type=[],
+                           event_type=(),
                            timestamp=common.now(),
                            source_timestamp=None,
                            payload=None)

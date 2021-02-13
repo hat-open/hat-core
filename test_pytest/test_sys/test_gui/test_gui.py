@@ -172,7 +172,7 @@ class Client(aio.Resource):
 async def event_client(event_address):
     client = await hat.event.client.connect(
         event_address,
-        subscriptions=[['*']])
+        subscriptions=[('*')])
 
     yield client
 
@@ -475,7 +475,7 @@ async def test_adapter_msg(run_gui, gui_conf, tmp_path,
     await client.receive()
 
     # no data before login
-    await register_event(event_client, ['a1', 'data'], {'abc': 1})
+    await register_event(event_client, ('a1', 'data'), {'abc': 1})
     with pytest.raises(asyncio.exceptions.TimeoutError):
         await asyncio.wait_for(client.receive(), client_receive_timeout)
 
@@ -483,12 +483,12 @@ async def test_adapter_msg(run_gui, gui_conf, tmp_path,
     await client.receive()
 
     # event server to client
-    await register_event(event_client, ['a1', 'data'], {'abc': 1})
+    await register_event(event_client, ('a1', 'data'), {'abc': 1})
     assert await client.receive() == {'type': 'adapter',
                                       'name': 'adapter1',
                                       'data': {'abc': 1}}
     # MockAdapter not expected to get this event
-    await register_event(event_client, ['a2', 'data'], {'def': 2})
+    await register_event(event_client, ('a2', 'data'), {'def': 2})
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(client.receive(), client_receive_timeout)
 
@@ -497,7 +497,7 @@ async def test_adapter_msg(run_gui, gui_conf, tmp_path,
                        'name': 'adapter1',
                        'data': {'xyz': 2}})
     event = await get_first_event(event_client,
-                                  lambda e: e.event_type == ['a1', 'action'])
+                                  lambda e: e.event_type == ('a1', 'action'))
     assert event.payload.data == {'xyz': 2}
     # message sent to wrong adapter -> no new events
     await client.send({'type': 'adapter',
@@ -525,20 +525,20 @@ async def test_adapter_state(run_gui, gui_conf, tmp_path,
     await client.receive()
 
     # event server to client
-    await register_event(event_client, ['a1', 'data'], {'abc': 1})
+    await register_event(event_client, ('a1', 'data'), {'abc': 1})
     await aio.first(client_change_queue, lambda _: client.server_state)
     assert client.server_state == {'adapter1': [{'abc': 1}]}
 
     # client to event server
     client.set_local_data({'adapter1': ['a', 'b', 'c']})
     event = await get_first_event(event_client,
-                                  lambda e: e.event_type == ['a1', 'action'])
+                                  lambda e: e.event_type == ('a1', 'action'))
     assert event.payload.data == ['a', 'b', 'c']
 
     # data with wrong adapter name
     client.set_local_data({'adapter2': ['a', 'b', 'c']})
     event = await get_first_event(event_client,
-                                  lambda e: e.event_type == ['a1', 'action'])
+                                  lambda e: e.event_type == ('a1', 'action'))
     assert event.payload.data is None
 
     await client.async_close()
@@ -561,7 +561,7 @@ async def test_event_to_adapters(run_gui, gui_conf, tmp_path,
     await client.receive()
     await client.login()
     await client.receive()
-    await register_event(event_client, ['a1', 'data'], {'abc': 1})
+    await register_event(event_client, ('a1', 'data'), {'abc': 1})
 
     for adapter in adapters:
         assert await client.receive() == {'type': 'adapter',
@@ -632,7 +632,7 @@ async def test_users_roles(tmp_path, run_gui, gui_conf,
         assert msg['view'] == {f"{role_conf['view']}.txt":
                                f"this is {role_conf['view']}"}
     # event gets to all clients for each adapter
-    await register_event(event_client, ['a1', 'data'], {'abc': 1})
+    await register_event(event_client, ('a1', 'data'), {'abc': 1})
     for client in clients:
         client_adapters = set()
         for role in client._user_conf['roles']:
@@ -755,7 +755,7 @@ async def test_adapter_close(run_gui, gui_conf, tmp_path,
     await client.receive()
 
     # this event results with MockAdapter closing
-    await register_event(event_client, ['a1', 'kill'], None)
+    await register_event(event_client, ('a1', 'kill'), None)
 
     # after adapter is closed, gui is expected to close
     gui_process.wait_until_closed()

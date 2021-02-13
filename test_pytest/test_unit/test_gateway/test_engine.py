@@ -47,7 +47,7 @@ async def engine_factory(event_server, event_server_port):
                 'devices': devices}
         client = await hat.event.client.connect(
             event_server_address, subscriptions=[
-                ['gateway', gateway_name, '?', '?', 'system', '*']])
+                ('gateway', gateway_name, '?', '?', 'system', '*')])
         engine = await hat.gateway.engine.create_engine(conf, client)
         yield engine
         await engine.async_close()
@@ -72,8 +72,8 @@ def device_queue(monkeypatch):
 
 async def set_enable(client, gateway_name, device_type, device_name, enable):
     await client.register_with_response([hat.event.common.RegisterEvent(
-        event_type=['gateway', gateway_name, device_type, device_name,
-                    'system', 'enable'],
+        event_type=('gateway', gateway_name, device_type, device_name,
+                    'system', 'enable'),
         source_timestamp=None,
         payload=hat.event.common.EventPayload(
             type=hat.event.common.EventPayloadType.JSON,
@@ -184,7 +184,7 @@ async def test_device_client(event_server, event_server_port,
         for i in device_confs:
             await set_enable(client, 'gateway 0', device_type, i['name'], True)
             device = await device_queue.get()
-            assert device.event_type_prefix == [*prefix, i['name']]
+            assert device.event_type_prefix == (*prefix, i['name'])
             devices[i['name']] = device
 
         # Test receive
@@ -192,7 +192,7 @@ async def test_device_client(event_server, event_server_port,
         # Seed chosen by fair dice roll
         shuffled_names = random.Random(4).sample(list(devices), k=len(devices))
         reg_events = [hat.event.common.RegisterEvent(
-            event_type=[*prefix, name, 'system', 'test'],
+            event_type=(*prefix, name, 'system', 'test'),
             source_timestamp=None,
             payload=None
         ) for name in shuffled_names]
@@ -205,15 +205,15 @@ async def test_device_client(event_server, event_server_port,
         # Test query
         for device in devices.values():
             result = await device.client.query(hat.event.common.QueryData(
-                event_types=[[*prefix, '?', 'system', 'test']]))
-            assert ({tuple(i.event_type): i for i in events} ==
-                    {tuple(i.event_type): i for i in result})
+                event_types=[(*prefix, '?', 'system', 'test')]))
+            assert ({i.event_type: i for i in events} ==
+                    {i.event_type: i for i in result})
 
         # Test register with response
         for name, device in devices.items():
             event = await device.client.register_with_response([
                 hat.event.common.RegisterEvent(
-                    event_type=[*prefix, name, 'gateway', 'test'],
+                    event_type=(*prefix, name, 'gateway', 'test'),
                     source_timestamp=hat.event.common.now(),
                     payload=hat.event.common.EventPayload(
                         type=hat.event.common.EventPayloadType.JSON,
@@ -223,7 +223,7 @@ async def test_device_client(event_server, event_server_port,
         # Test register
         for name, device in devices.items():
             reg_event = hat.event.common.RegisterEvent(
-                event_type=[*prefix, name, 'gateway', 'test'],
+                event_type=(*prefix, name, 'gateway', 'test'),
                 source_timestamp=None,
                 payload=None)
             device.client.register([reg_event])
@@ -262,62 +262,62 @@ async def test_device_close(event_server, event_server_port,
 
 @pytest.mark.parametrize("register_event", [
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock', 'mock 0', 'system',
-                    'enable'],
+        event_type=('gateway', 'gateway 0', 'mock', 'mock 0', 'system',
+                    'enable'),
         source_timestamp=None,
         payload=None),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock', 'mock 0', 'system',
-                    'enable'],
+        event_type=('gateway', 'gateway 0', 'mock', 'mock 0', 'system',
+                    'enable'),
         source_timestamp=None,
         payload=hat.event.common.EventPayload(
             type=hat.event.common.EventPayloadType.BINARY,
             data=b'test')),
     hat.event.common.RegisterEvent(
-        event_type=['gateway'],
+        event_type=('gateway',),
         source_timestamp=None,
         payload=None),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0'],
+        event_type=('gateway', 'gateway 0'),
         source_timestamp=None,
         payload=None),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock'],
+        event_type=('gateway', 'gateway 0', 'mock'),
         source_timestamp=None,
         payload=None),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock', 'mock 0'],
+        event_type=('gateway', 'gateway 0', 'mock', 'mock 0'),
         source_timestamp=None,
         payload=None),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock', 'mock 0', 'system',
-                    'enable', 'too long'],
+        event_type=('gateway', 'gateway 0', 'mock', 'mock 0', 'system',
+                    'enable', 'too long'),
         source_timestamp=None,
         payload=hat.event.common.EventPayload(
             type=hat.event.common.EventPayloadType.JSON,
             data=False)),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'spock', 'mock 0', 'system',
-                    'enable'],
+        event_type=('gateway', 'gateway 0', 'spock', 'mock 0', 'system',
+                    'enable'),
         source_timestamp=None,
         payload=hat.event.common.EventPayload(
             type=hat.event.common.EventPayloadType.JSON,
             data=False)),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock', 'spock 0', 'system',
-                    'enable'],
+        event_type=('gateway', 'gateway 0', 'mock', 'spock 0', 'system',
+                    'enable'),
         source_timestamp=None,
         payload=hat.event.common.EventPayload(
             type=hat.event.common.EventPayloadType.JSON,
             data=False)),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'spock', 'mock 0', 'system',
-                    'test'],
+        event_type=('gateway', 'gateway 0', 'spock', 'mock 0', 'system',
+                    'test'),
         source_timestamp=None,
         payload=None),
     hat.event.common.RegisterEvent(
-        event_type=['gateway', 'gateway 0', 'mock', 'spock 0', 'system',
-                    'test'],
+        event_type=('gateway', 'gateway 0', 'mock', 'spock 0', 'system',
+                    'test'),
         source_timestamp=None,
         payload=None)])
 @pytest.mark.asyncio

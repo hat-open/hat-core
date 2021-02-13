@@ -77,7 +77,7 @@ async def run_with_monitor(conf, monitor):
     run_cb = functools.partial(run_with_event, conf)
     await hat.event.client.run_client(
         monitor, conf['event_server_group'], run_cb,
-        [['gateway', conf['gateway_name'], '?', '?', 'system', '*']])
+        [('gateway', conf['gateway_name'], '?', '?', 'system', '*')])
 
 
 async def run_with_event(conf, client):

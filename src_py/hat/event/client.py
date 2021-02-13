@@ -120,7 +120,7 @@ async def connect(address: str,
     if subscriptions:
         client._conn.send(chatter.Data(module='HatEvent',
                                        type='MsgSubscribe',
-                                       data=subscriptions))
+                                       data=[list(i) for i in subscriptions]))
 
     client._async_group.spawn(client._receive_loop)
     return client

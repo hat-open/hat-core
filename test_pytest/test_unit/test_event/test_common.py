@@ -11,124 +11,124 @@ pytestmark = pytest.mark.asyncio
 
 
 @pytest.mark.parametrize("event_type, query_type, is_match", [
-    ([],
-     [],
+    ((),
+     (),
      True),
 
-    ([],
-     ['*'],
+    ((),
+     ('*',),
      True),
 
-    ([],
-     ['?'],
+    ((),
+     ('?',),
      False),
 
-    (['a'],
-     [],
+    (('a',),
+     (),
      False),
 
-    (['a'],
-     ['*'],
+    (('a',),
+     ('*',),
      True),
 
-    (['a'],
-     ['?'],
+    (('a',),
+     ('?',),
      True),
 
-    (['a'],
-     ['?', '*'],
+    (('a',),
+     ('?', '*'),
      True),
 
-    (['a'],
-     ['?', '?'],
+    (('a',),
+     ('?', '?'),
      False),
 
-    (['a'],
-     ['a'],
+    (('a',),
+     ('a',),
      True),
 
-    (['a'],
-     ['a', '*'],
+    (('a',),
+     ('a', '*'),
      True),
 
-    (['a'],
-     ['a', '?'],
+    (('a'),
+     ('a', '?'),
      False),
 
-    (['a'],
-     ['b'],
+    (('a',),
+     ('b',),
      False),
 
-    (['a'],
-     ['a', 'b'],
+    (('a',),
+     ('a', 'b'),
      False),
 
-    (['a', 'b'],
-     [],
+    (('a', 'b'),
+     (),
      False),
 
-    (['a', 'b'],
-     ['*'],
+    (('a', 'b'),
+     ('*',),
      True),
 
-    (['a', 'b'],
-     ['?'],
+    (('a', 'b'),
+     ('?',),
      False),
 
-    (['a', 'b'],
-     ['?', '*'],
+    (('a', 'b'),
+     ('?', '*'),
      True),
 
-    (['a', 'b'],
-     ['?', '?'],
+    (('a', 'b'),
+     ('?', '?'),
      True),
 
-    (['a', 'b'],
-     ['?', '?', '*'],
+    (('a', 'b'),
+     ('?', '?', '*'),
      True),
 
-    (['a', 'b'],
-     ['?', '?', '?'],
+    (('a', 'b'),
+     ('?', '?', '?'),
      False),
 
-    (['a', 'b'],
-     ['a'],
+    (('a', 'b'),
+     ('a',),
      False),
 
-    (['a', 'b'],
-     ['a', '*'],
+    (('a', 'b'),
+     ('a', '*'),
      True),
 
-    (['a', 'b'],
-     ['a', '?'],
+    (('a', 'b'),
+     ('a', '?'),
      True),
 
-    (['a', 'b'],
-     ['a', '?', '*'],
+    (('a', 'b'),
+     ('a', '?', '*'),
      True),
 
-    (['a', 'b'],
-     ['a', '?', '?'],
+    (('a', 'b'),
+     ('a', '?', '?'),
      False),
 
-    (['a', 'b'],
-     ['?', 'b'],
+    (('a', 'b'),
+     ('?', 'b'),
      True),
 
-    (['a', 'b'],
-     ['?', 'b', '*'],
+    (('a', 'b'),
+     ('?', 'b', '*'),
      True),
 
-    (['a', 'b'],
-     ['?', 'b', '?'],
+    (('a', 'b'),
+     ('?', 'b', '?'),
      False),
 
-    (['a', 'b'],
-     ['b', 'a'],
+    (('a', 'b'),
+     ('b', 'a'),
      False),
 
-    (['a', 'b'],
-     ['a', 'b', 'c'],
+    (('a', 'b'),
+     ('a', 'b', 'c'),
      False)
 ])
 def test_matches_query_type(event_type, query_type, is_match):
@@ -140,20 +140,20 @@ def test_matches_query_type(event_type, query_type, is_match):
     ([],
      []),
 
-    ([[]],
-     [[]]),
+    ([()],
+     [()]),
 
-    ([['a'], ['b'], ['c']],
-     [['a'], ['b'], ['c']]),
+    ([('a',), ('b',), ('c',)],
+     [('a',), ('b',), ('c',)]),
 
-    ([['a'], ['b', '*'], [], ['*']],
-     [['*']]),
+    ([('a',), ('b', '*'), (), ('*',)],
+     [('*',)]),
 
-    ([['a', '*'], ['a']],
-     [['a', '*']]),
+    ([('a', '*'), ('a',)],
+     [('a', '*')]),
 
-    ([['a', '*'], ['b'], ['c', '?'], ['c', '*']],
-     [['a', '*'], ['b'], ['c', '*']]),
+    ([('a', '*'), ('b',), ('c', '?'), ('c', '*')],
+     [('a', '*'), ('b',), ('c', '*')]),
 ])
 def test_subscription_get_query_types(query_types, sanitized):
     subscription = common.Subscription(query_types)
@@ -165,23 +165,23 @@ def test_subscription_get_query_types(query_types, sanitized):
 @pytest.mark.parametrize("query_types, matching, not_matching", [
     ([],
      [],
-     [['a'], ['a', 'b'], []]),
+     [('a',), ('a', 'b'), ()]),
 
-    ([[]],
-     [[]],
-     [['a'], ['a', 'b']]),
+    ([()],
+     [()],
+     [('a',), ('a', 'b')]),
 
-    ([['*']],
-     [[], ['a'], ['a', 'b']],
+    ([('*',)],
+     [(), ('a',), ('a', 'b')],
      []),
 
-    ([['a']],
-     [['a']],
-     [[], ['a', 'b'], ['b']]),
+    ([('a',)],
+     [('a',)],
+     [(), ('a', 'b'), ('b',)]),
 
-    ([['a', '?'], ['a']],
-     [['a'], ['a', 'b']],
-     [[], ['a', 'b', 'c'], ['b']]),
+    ([('a', '?'), ('a',)],
+     [('a',), ('a', 'b')],
+     [(), ('a', 'b', 'c'), ('b',)]),
 ])
 def test_subscription_matches(query_types, matching, not_matching):
     subscription = common.Subscription(query_types)
@@ -342,14 +342,14 @@ def test_now():
 @pytest.mark.parametrize("event", [
     common.Event(
         event_id=common.EventId(0, 0),
-        event_type=['a'],
+        event_type=('a',),
         timestamp=common.now(),
         source_timestamp=None,
         payload=None),
 
     common.Event(
         event_id=common.EventId(0, 0),
-        event_type=['a'],
+        event_type=('a',),
         timestamp=common.now(),
         source_timestamp=common.now(),
         payload=common.EventPayload(
@@ -358,7 +358,7 @@ def test_now():
 
     common.Event(
         event_id=common.EventId(123, 456),
-        event_type=['a', 'b', 'c'],
+        event_type=('a', 'b', 'c'),
         timestamp=common.now(),
         source_timestamp=common.now(),
         payload=common.EventPayload(
@@ -367,7 +367,7 @@ def test_now():
 
     common.Event(
         event_id=common.EventId(123, 456),
-        event_type=['a', 'b', 'c'],
+        event_type=('a', 'b', 'c'),
         timestamp=common.now(),
         source_timestamp=common.now(),
         payload=common.EventPayload(
@@ -382,33 +382,33 @@ def test_event_sbs(event):
 
 @pytest.mark.parametrize("register_event", [
     common.RegisterEvent(
-        event_type=['a'],
+        event_type=('a',),
         source_timestamp=None,
         payload=None),
 
     common.RegisterEvent(
-        event_type=['a'],
+        event_type=('a',),
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.SBS,
             data=common.SbsData(None, 'Integer', 123))),
 
     common.RegisterEvent(
-        event_type=['a'],
+        event_type=('a',),
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.BINARY,
             data=b'123')),
 
     common.RegisterEvent(
-        event_type=['a', 'b', 'c'],
+        event_type=('a', 'b', 'c'),
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.JSON,
             data=None)),
 
     common.RegisterEvent(
-        event_type=['a', 'b', 'c'],
+        event_type=('a', 'b', 'c'),
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.JSON,

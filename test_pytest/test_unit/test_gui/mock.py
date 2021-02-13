@@ -4,7 +4,7 @@ import hat.gui.common
 
 json_schema_id = None
 json_schema_repo = None
-event_type_prefix = ['hat', 'gui', 'mock']
+event_type_prefix = ('hat', 'gui', 'mock')
 
 
 async def create(conf, client):

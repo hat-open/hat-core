@@ -116,7 +116,8 @@ class _Connection(aio.Resource):
             await self._register_communication_event('disconnected')
 
     async def _process_msg_subscribe(self, msg):
-        self._subscription = common.Subscription(msg.data.data)
+        self._subscription = common.Subscription([tuple(i)
+                                                  for i in msg.data.data])
 
     async def _process_msg_register(self, msg):
         register_events = [common.register_event_from_sbs(i)
@@ -142,7 +143,7 @@ class _Connection(aio.Resource):
 
     async def _register_communication_event(self, status):
         register_event = common.RegisterEvent(
-            event_type=['event', 'communication', status],
+            event_type=('event', 'communication', status),
             source_timestamp=None,
             payload=None)
         await self._engine.register(self._source, [register_event])

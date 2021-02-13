@@ -91,7 +91,7 @@ def _event_to_json(event):
         raise ValueError('invalid event payload type')
 
     return {'event_id': event_id,
-            'event_type': event_type,
+            'event_type': list(event_type),
             'timestamp': timestamp,
             'source_timestamp': source_timestamp,
             'payload': payload}

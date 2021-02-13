@@ -24,7 +24,7 @@ async def test_register(create_event_server):
     modules_conf = []
 
     register_event = common.RegisterEvent(
-        event_type=['a'],
+        event_type=('a',),
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.BINARY,
@@ -54,7 +54,7 @@ async def test_register_with_response(create_event_server):
                      'subscriptions': [['*']]}]
 
     register_events = [common.RegisterEvent(
-        event_type=[f'a{i}'],
+        event_type=(f'a{i}',),
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.BINARY,
@@ -85,19 +85,19 @@ async def test_subscribe(create_event_server):
     with create_event_server(backend_conf, modules_conf) as srv:
         srv.wait_active(5)
 
-        client = await hat.event.client.connect(srv.address, [['a', '*']])
+        client = await hat.event.client.connect(srv.address, [('a', '*')])
 
-        client.register([common.RegisterEvent(['a'], None, None)])
+        client.register([common.RegisterEvent(('a',), None, None)])
         evts = await asyncio.wait_for(client.receive(), 0.1)
-        assert evts[0].event_type == ['a']
+        assert evts[0].event_type == ('a',)
 
-        client.register([common.RegisterEvent(['b'], None, None)])
+        client.register([common.RegisterEvent(('b',), None, None)])
         with pytest.raises(asyncio.TimeoutError):
             await asyncio.wait_for(client.receive(), 0.1)
 
-        client.register([common.RegisterEvent(['a', 'b', 'c'], None, None)])
+        client.register([common.RegisterEvent(('a', 'b', 'c'), None, None)])
         evts = await asyncio.wait_for(client.receive(), 0.1)
-        assert evts[0].event_type == ['a', 'b', 'c']
+        assert evts[0].event_type == ('a', 'b', 'c')
 
         await client.async_close()
 
@@ -114,17 +114,17 @@ async def test_query(tmp_path, create_event_server):
 
         client = await hat.event.client.connect(srv.address)
 
-        resp0 = await client.query(common.QueryData(event_types=[['*']]))
+        resp0 = await client.query(common.QueryData(event_types=[('*',)]))
         assert len(resp0) == 1
 
         resp1 = await client.register_with_response(
-            [common.RegisterEvent(['a'], common.now(), None)])
-        result = await client.query(common.QueryData(event_types=[['*']]))
+            [common.RegisterEvent(('a',), common.now(), None)])
+        result = await client.query(common.QueryData(event_types=[('*',)]))
         assert resp1 + resp0 == result
 
         resp2 = await client.register_with_response(
-            [common.RegisterEvent(['b'], common.now(), None)])
-        result = await client.query(common.QueryData(event_types=[['*']]))
+            [common.RegisterEvent(('b',), common.now(), None)])
+        result = await client.query(common.QueryData(event_types=[('*',)]))
         assert resp2 + resp1 + resp0 == result
 
         await client.async_close()
@@ -141,12 +141,12 @@ async def test_multiple_clients(create_event_server, client_count):
 
         clients = []
         for _ in range(client_count):
-            client = await hat.event.client.connect(srv.address, [['a']])
+            client = await hat.event.client.connect(srv.address, [('a',)])
             clients.append(client)
 
         for i, sender in enumerate(clients):
             client.register(
-                [common.RegisterEvent(['a'], None, common.EventPayload(
+                [common.RegisterEvent(('a',), None, common.EventPayload(
                     type=common.EventPayloadType.JSON,
                     data=i))])
             for receiver in clients:
@@ -168,13 +168,13 @@ async def test_multiple_clients_comm_event(create_event_server, client_count):
 
         clients = []
         for _ in range(client_count):
-            client = await hat.event.client.connect(srv.address, [['*']])
+            client = await hat.event.client.connect(srv.address, [('*',)])
             clients.append(client)
 
         for i, client in enumerate(clients):
             for _ in range(client_count - i - 1):
                 evts = await asyncio.wait_for(client.receive(), 1)
-                evts[0].event_type == ['event', 'communication', 'connected']
+                evts[0].event_type == ('event', 'communication', 'connected')
                 evts[0].event_id.instance == i + 2
 
         for client in clients:

@@ -97,7 +97,7 @@ async def adapter_factory(monkeypatch, event_client_factory):
                 group.spawn(
                     hat.gui.main.run_with_event, conf, None,
                     await event_client_factory(
-                        [test_unit.test_gui.mock.event_type_prefix + ['*']]))
+                        [(*test_unit.test_gui.mock.event_type_prefix, '*')]))
                 await asyncio.sleep(0.1)
                 yield adapters
 
@@ -108,8 +108,8 @@ async def adapter_factory(monkeypatch, event_client_factory):
 
 @pytest.mark.asyncio
 async def test_event_receive(event_client_factory, adapter_factory):
-    client = await event_client_factory([['hat', '*'],
-                                         ['should', '*']])
+    client = await event_client_factory([('hat', '*'),
+                                         ('should', '*')])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -118,34 +118,34 @@ async def test_event_receive(event_client_factory, adapter_factory):
 
         client.register([
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock', 'system'],
+                event_type=('hat', 'gui', 'mock', 'system'),
                 source_timestamp=hat.event.common.now(),
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock'],
+                event_type=('hat', 'gui', 'mock'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['should', 'not', 'receive'],
+                event_type=('should', 'not', 'receive'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'}))])
         events = await client.receive()
         filtered = [ev for ev in events
-                    if ev.event_type != ['should', 'not', 'receive']]
+                    if ev.event_type != ('should', 'not', 'receive')]
         adapter_events = await adapter.client.receive()
         assert filtered == adapter_events
 
 
 @pytest.mark.asyncio
 async def test_event_register(event_client_factory, adapter_factory):
-    client = await event_client_factory([['hat', '*'],
-                                         ['should', '*']])
+    client = await event_client_factory([('hat', '*'),
+                                         ('should', '*')])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -153,19 +153,19 @@ async def test_event_register(event_client_factory, adapter_factory):
 
         register_events = [
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock', 'system'],
+                event_type=('hat', 'gui', 'mock', 'system'),
                 source_timestamp=hat.event.common.now(),
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock'],
+                event_type=('hat', 'gui', 'mock'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['should', 'register'],
+                event_type=('should', 'register'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
@@ -183,8 +183,8 @@ async def test_event_register(event_client_factory, adapter_factory):
 @pytest.mark.asyncio
 async def test_event_register_with_response(event_client_factory,
                                             adapter_factory):
-    client = await event_client_factory([['hat', '*'],
-                                         ['1', '2']])
+    client = await event_client_factory([('hat', '*'),
+                                         ('1', '2')])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -192,19 +192,19 @@ async def test_event_register_with_response(event_client_factory,
 
         register_events = [
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock', 'system'],
+                event_type=('hat', 'gui', 'mock', 'system'),
                 source_timestamp=hat.event.common.now(),
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock'],
+                event_type=('hat', 'gui', 'mock'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['1', '2'],
+                event_type=('1', '2'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
@@ -216,8 +216,8 @@ async def test_event_register_with_response(event_client_factory,
 
 @pytest.mark.asyncio
 async def test_event_query(event_client_factory, adapter_factory):
-    client = await event_client_factory([['hat', '*'],
-                                         ['1', '2']])
+    client = await event_client_factory([('hat', '*'),
+                                         ('1', '2')])
     adapters_conf = [{'name': 'adapter1',
                       'module': 'test_unit.test_gui.mock'}]
     async with adapter_factory(adapters_conf) as adapters:
@@ -225,29 +225,29 @@ async def test_event_query(event_client_factory, adapter_factory):
 
         register_events = [
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock', 'system'],
+                event_type=('hat', 'gui', 'mock', 'system'),
                 source_timestamp=hat.event.common.now(),
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['hat', 'gui', 'mock'],
+                event_type=('hat', 'gui', 'mock'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'})),
             hat.event.common.RegisterEvent(
-                event_type=['1', '2'],
+                event_type=('1', '2'),
                 source_timestamp=None,
                 payload=hat.event.common.EventPayload(
                     hat.event.common.EventPayloadType.JSON,
                     data={'abc': 'def'}))]
         await client.register_with_response(register_events)
         events = await adapter.client.query(
-            hat.event.common.QueryData(event_types=[['1', '2']]))
+            hat.event.common.QueryData(event_types=[('1', '2')]))
         assert len(events) == 1
         event = events[0]
-        assert event.event_type == ['1', '2']
+        assert event.event_type == ('1', '2')
         assert event.source_timestamp is None
         assert event.payload.type == hat.event.common.EventPayloadType.JSON
         assert event.payload.data == {'abc': 'def'}

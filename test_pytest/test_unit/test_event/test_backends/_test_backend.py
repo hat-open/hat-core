@@ -89,22 +89,22 @@ async def backend_memory_backend(conf_factory, event_loop,
 @pytest.fixture(scope="module")
 def backend_events_factory():
     types_payloads = [
-        (['1'], {'value': 1.2, 'quality': "GOOD"},
+        (('1',), {'value': 1.2, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (['1'], {'value': 1.3, 'quality': "GOOD"},
+        (('1',), {'value': 1.3, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (['1'], {'value': 2.8, 'quality': "GOOD"},
+        (('1',), {'value': 2.8, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (['2'], {'value': 205, 'quality': "GOOD"},
+        (('2',), {'value': 205, 'quality': "GOOD"},
          hat.event.common.EventPayloadType.JSON),
-        (['2'], b'308', hat.event.common.EventPayloadType.BINARY),
-        (['2'], hat.event.common.SbsData(module=None, type='String',
-                                         data=b'ab '),
+        (('2',), b'308', hat.event.common.EventPayloadType.BINARY),
+        (('2',), hat.event.common.SbsData(module=None, type='String',
+                                          data=b'ab '),
          hat.event.common.EventPayloadType.SBS),
-        (['3'], [1, 2, 3], hat.event.common.EventPayloadType.JSON),
-        (['4'], 'payload', hat.event.common.EventPayloadType.JSON),
-        (['4'], None, hat.event.common.EventPayloadType.JSON),
-        (['5'], None, hat.event.common.EventPayloadType.JSON)]
+        (('3',), [1, 2, 3], hat.event.common.EventPayloadType.JSON),
+        (('4',), 'payload', hat.event.common.EventPayloadType.JSON),
+        (('4',), None, hat.event.common.EventPayloadType.JSON),
+        (('5',), None, hat.event.common.EventPayloadType.JSON)]
     event_id_state = {1: 0,
                       2: 0}
 
@@ -140,27 +140,27 @@ async def test_event_type_mappings(backend):
     mappings_stored = await backend.get_event_type_mappings()
     assert not mappings_stored
 
-    mappings = {1: ['a'],
-                2: ['b'],
-                3: ['a', 'b'],
-                4: ['a', 'c'],
-                5: ['a', 'b', 'c'],
-                6: ['a', 'b', 'd'],
-                7: []}
+    mappings = {1: ('a',),
+                2: ('b',),
+                3: ('a', 'b'),
+                4: ('a', 'c'),
+                5: ('a', 'b', 'c'),
+                6: ('a', 'b', 'd'),
+                7: ()}
     await backend.add_event_type_mappings(mappings)
     mappings_stored = await backend.get_event_type_mappings()
     assert mappings == mappings_stored
 
-    mappings_ = {8: ['d', 'e', 'f'],
-                 9: ['g', 'h', 'i']}
+    mappings_ = {8: ('d', 'e', 'f'),
+                 9: ('g', 'h', 'i')}
     await backend.add_event_type_mappings(mappings_)
     mappings_stored = await backend.get_event_type_mappings()
     mappings.update(mappings_)
     assert mappings_stored == mappings
 
     # event_type_id_mappings are immutable
-    mappings_ = {6: ['a', 'b', 'c', 'd'],
-                 7: ['k', 'l']}
+    mappings_ = {6: ('a', 'b', 'c', 'd'),
+                 7: ('k', 'l')}
     await backend.add_event_type_mappings(mappings_)
     mappings_stored = await backend.get_event_type_mappings()
     assert mappings_stored == mappings
@@ -192,7 +192,7 @@ async def test_get_last_event_id(backend, backend_events_factory):
 @pytest.mark.parametrize("event_ids, event_types, payload", [
     (None, None, None),
     ([hat.event.common.EventId(server=1, instance=0)], None, None),
-    (None, [['1'], ['4'], ['5']], None),
+    (None, [('1',), ('4',), ('5',)], None),
     (None, [], None),
     (None, None, hat.event.common.EventPayload(
         type=hat.event.common.EventPayloadType.JSON,

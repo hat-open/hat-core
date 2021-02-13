@@ -51,7 +51,7 @@ async def create_event_type_registry(storage: EventTypeRegistryStorage
     registry._nodes = {}
 
     new_mappings = {}
-    reverse_mappings = {tuple(v): k for k, v in registry._mappings.items()}
+    reverse_mappings = {v: k for k, v in registry._mappings.items()}
     for event_type in list(registry._mappings.values()):
         registry._init_node(reverse_mappings, registry._nodes, [], event_type,
                             new_mappings)
@@ -98,10 +98,10 @@ class EventTypeRegistry:
                    event_type_suffix, new_mappings):
         segment = event_type_suffix[0]
         node = nodes.get(segment)
-        next_event_type_prefix = [*event_type_prefix, segment]
+        next_event_type_prefix = (*event_type_prefix, segment)
         next_event_type_suffix = event_type_suffix[1:]
         if not node:
-            node_id = reverse_mappings.get(tuple(next_event_type_prefix))
+            node_id = reverse_mappings.get(next_event_type_prefix)
             if node_id is None:
                 self._last_id += 1
                 node = _EventTypeRegistryNode(id=self._last_id, nodes={})
@@ -121,7 +121,7 @@ class EventTypeRegistry:
                   new_mappings):
         segment = event_type_suffix[0]
         node = nodes.get(segment)
-        next_event_type_prefix = [*event_type_prefix, segment]
+        next_event_type_prefix = (*event_type_prefix, segment)
         next_event_type_suffix = event_type_suffix[1:]
         if not node:
             self._last_id += 1
@@ -142,7 +142,7 @@ class EventTypeRegistry:
             if segment == '*':
                 for subnode in nodes.values():
                     yield subnode
-                    yield from self._query_nodes(subnode.nodes, ['*'])
+                    yield from self._query_nodes(subnode.nodes, ('*',))
             elif segment == '?':
                 for subnode in nodes.values():
                     yield subnode
@@ -153,13 +153,13 @@ class EventTypeRegistry:
         else:
             if segment == '?':
                 for subnode in nodes.values():
-                    if event_subtype == ['*']:
+                    if event_subtype == ('*',):
                         yield subnode
                     yield from self._query_nodes(subnode.nodes, event_subtype)
             else:
                 subnode = nodes.get(segment)
                 if subnode:
-                    if event_subtype == ['*']:
+                    if event_subtype == ('*',):
                         yield subnode
                     yield from self._query_nodes(subnode.nodes, event_subtype)
 

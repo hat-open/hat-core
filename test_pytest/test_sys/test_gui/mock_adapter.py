@@ -3,7 +3,7 @@ from hat import util
 import hat.gui.common
 
 
-event_type_prefix = ['a1']
+event_type_prefix = ('a1',)
 
 json_schema_id = None
 json_schema_repo = None
@@ -41,7 +41,7 @@ class MockAdapter(hat.gui.common.Adapter):
             while True:
                 events = await self._event_client.receive()
                 killer = util.first(events,
-                                    lambda i: i.event_type == ['a1', 'kill'])
+                                    lambda i: i.event_type == ('a1', 'kill'))
                 if killer:
                     break
                 for session in self._sessions:
@@ -58,7 +58,7 @@ class MockAdapterSession(hat.gui.common.AdapterSession):
 
     def _on_change(self):
         self._event_client.register([hat.event.common.RegisterEvent(
-            event_type=['a1', 'action'],
+            event_type=('a1', 'action'),
             source_timestamp=None,
             payload=hat.event.common.EventPayload(
                 type=hat.event.common.EventPayloadType.JSON,
@@ -69,7 +69,7 @@ class MockAdapterSession(hat.gui.common.AdapterSession):
             while True:
                 msg = await self._adapter_client.receive()
                 self._event_client.register([hat.event.common.RegisterEvent(
-                    event_type=['a1', 'action'],
+                    event_type=('a1', 'action'),
                     source_timestamp=None,
                     payload=hat.event.common.EventPayload(
                         type=hat.event.common.EventPayloadType.JSON,

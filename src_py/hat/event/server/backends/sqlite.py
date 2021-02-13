@@ -82,7 +82,7 @@ class SqliteBackend(common.Backend, registry.EventTypeRegistryStorage):
     async def get_event_type_mappings(self):
         """See :meth:`common.EventTypeRegistryStorage.get_event_type_mappings`"""  # NOQA
         result = await self._conn.execute("SELECT * FROM mappings")
-        return {row[0]: json.decode(row[1]) for row in result}
+        return {row[0]: tuple(json.decode(row[1])) for row in result}
 
     async def add_event_type_mappings(self, mappings):
         """See :meth:`common.EventTypeRegistryStorage.add_event_type_mappings`"""  # NOQA
@@ -94,7 +94,7 @@ class SqliteBackend(common.Backend, registry.EventTypeRegistryStorage):
             values=', '.join(f':{label}' for label in labels))
         params = [{
             'event_type_id': event_type_id,
-            'event_type': json.encode(event_type)
+            'event_type': json.encode(list(event_type))
         } for event_type_id, event_type in mappings.items()]
 
         async with self._conn.transaction():
