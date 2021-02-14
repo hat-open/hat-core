@@ -84,20 +84,3 @@ async def test_invalid_data(addr):
 
     await conn.async_close()
     await srv.async_close()
-
-
-async def test_invalid_connect_cleanup(addr, monkeypatch):
-
-    class ConnectionMock:
-
-        def __init__(self):
-            raise Exception()
-
-    with monkeypatch.context() as ctx:
-        ctx.setattr(tpkt, 'Connection', ConnectionMock)
-        srv = await tpkt.listen(None, addr)
-
-        with pytest.raises(Exception):
-            await tpkt.connect(addr)
-
-        await srv.async_close()

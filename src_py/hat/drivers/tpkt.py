@@ -1,24 +1,16 @@
-"""Transport Service on top of TCP
-
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
+"""Transport Service on top of TCP"""
 
 import asyncio
-import contextlib
 import itertools
 import logging
 import typing
 
 from hat import aio
+from hat.drivers import tcp
 
 
-mlog = logging.getLogger(__name__)
-
-
-Data = typing.Union[bytes, bytearray, memoryview]
-"""Data"""
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
 class Address(typing.NamedTuple):
@@ -37,153 +29,120 @@ ConnectionCb = aio.AsyncCallable[['Connection'], None]
 
 async def connect(addr: Address) -> 'Connection':
     """Create new TPKT connection"""
-    reader, writer = await asyncio.open_connection(addr.host, addr.port)
-    try:
-        return _create_connection(reader, writer)
-    except Exception:
-        await aio.uncancellable(_asyncio_async_close(writer))
-        raise
+    conn = await tcp.connect(tcp.Address(*addr))
+    return Connection(conn)
 
 
 async def listen(connection_cb: ConnectionCb,
-                 addr: Address = Address('0.0.0.0', 102)
+                 addr: Address = Address('0.0.0.0')
                  ) -> 'Server':
-    """Create new TPKT listening server
-
-    Args:
-        connection_cb: new connection callback
-        addr: local listening address
-
-    """
-    def on_connection(reader, writer):
-        async_group.spawn(on_connection_async, reader, writer)
-
-    async def on_connection_async(reader, writer):
-        try:
-            try:
-                conn = _create_connection(reader, writer)
-            except Exception:
-                await aio.uncancellable(_asyncio_async_close(writer))
-                raise
-            try:
-                await aio.call(connection_cb, conn)
-            except BaseException:
-                await aio.uncancellable(conn.async_close())
-                raise
-        except Exception as e:
-            mlog.error("error creating new incomming connection: %s", e,
-                       exc_info=e)
-
-    async_group = aio.Group()
-    tcp_server = await asyncio.start_server(on_connection, addr.host,
-                                            addr.port)
-    async_group.spawn(aio.call_on_cancel, _asyncio_async_close, tcp_server)
-
-    socknames = [socket.getsockname() for socket in tcp_server.sockets]
-    addresses = [Address(*sockname[:2]) for sockname in socknames]
-
-    srv = Server()
-    srv._addresses = addresses
-    srv._async_group = async_group
-    return srv
+    """Create new TPKT listening server"""
+    server = Server()
+    server._connection_cb = connection_cb
+    server._srv = await tcp.listen(server._on_connection, tcp.Address(*addr))
+    return server
 
 
 class Server(aio.Resource):
     """TPKT listening server
 
-    For creation of new instance see :func:`listen`.
+    For creation of new instance see `listen` coroutine.
 
-    Closing server doesn't close active incomming connections.
+    Closing server doesn't close active incoming connections.
+
+    Closing server will cancel all running `connection_cb` coroutines.
 
     """
 
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
 
     @property
     def addresses(self) -> typing.List[Address]:
         """Listening addresses"""
-        return self._addresses
+        return self._srv.addresses
 
+    async def _on_connection(self, conn):
+        conn = Connection(conn)
+        try:
+            await aio.call(self._connection_cb, conn)
 
-def _create_connection(reader, writer):
-    sockname = writer.get_extra_info('sockname')
-    peername = writer.get_extra_info('peername')
-    info = ConnectionInfo(local_addr=Address(sockname[0], sockname[1]),
-                          remote_addr=Address(peername[0], peername[1]))
+        except Exception as e:
+            mlog.warning('connection callback error: %s', e, exc_info=e)
+            await aio.uncancellable(conn.async_close())
 
-    conn = Connection()
-    conn._reader = reader
-    conn._writer = writer
-    conn._info = info
-    conn._read_queue = aio.Queue()
-    conn._async_group = aio.Group()
-    conn._async_group.spawn(conn._read_loop)
-    return conn
+        except asyncio.CancelledError:
+            await aio.uncancellable(conn.async_close())
+            raise
 
 
 class Connection(aio.Resource):
-    """TPKT connection
+    """TPKT connection"""
 
-    For creation of new instance see :func:`connect`
-
-    """
+    def __init__(self, conn: tcp.Connection):
+        self._conn = conn
+        self._read_queue = aio.Queue()
+        conn.async_group.spawn(self._read_loop)
 
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._conn.async_group
 
     @property
     def info(self) -> ConnectionInfo:
         """Connection info"""
-        return self._info
+        return self._conn.info
 
-    async def read(self) -> Data:
+    async def read(self) -> bytes:
         """Read data"""
-        return await self._read_queue.get()
+        try:
+            return await self._read_queue.get()
 
-    def write(self, data: Data):
+        except aio.QueueClosedError:
+            raise ConnectionError()
+
+    def write(self, data: bytes):
         """Write data"""
         data_len = len(data)
+
         if data_len > 0xFFFB:
-            raise Exception("data length greater than 0xFFFB")
+            raise ValueError("data length greater than 0xFFFB")
+
         if data_len < 3:
-            raise Exception("data length less than 3")
+            raise ValueError("data length less than 3")
+
         packet_length = data_len + 4
-        self._writer.write(bytes(itertools.chain(
+        packet = bytes(itertools.chain(
             [3, 0, packet_length >> 8, packet_length & 0xFF],
-            data)))
+            data))
+        self._conn.write(packet)
 
     async def _read_loop(self):
         try:
             while True:
-                header = await self._reader.readexactly(4)
+                header = await self._conn.readexactly(4)
                 if header[0] != 3:
                     raise Exception(f"invalid vrsn number "
                                     f"(received {header[0]})")
+
                 packet_length = (header[2] << 8) | header[3]
                 if packet_length < 7:
                     raise Exception(f"invalid packet length "
                                     f"(received {packet_length})")
+
                 data_length = packet_length - 4
-                data = await self._reader.readexactly(data_length)
+                data = await self._conn.readexactly(data_length)
                 await self._read_queue.put(data)
+
+        except ConnectionError:
+            pass
+
         except Exception as e:
-            mlog.error("error while reading: %s", e, exc_info=e)
+            mlog.warning("read loop error: %s", e, exc_info=e)
+
         finally:
-            self._async_group.close()
+            self.close()
             self._read_queue.close()
-            await aio.uncancellable(_asyncio_async_close(self._writer, True))
-
-
-async def _asyncio_async_close(x, flush=False):
-    if flush:
-        with contextlib.suppress(Exception):
-            await x.drain()
-    with contextlib.suppress(Exception):
-        x.close()
-    with contextlib.suppress(ConnectionError):
-        await x.wait_closed()

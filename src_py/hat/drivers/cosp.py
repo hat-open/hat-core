@@ -17,7 +17,7 @@ from hat.drivers import cotp
 mlog = logging.getLogger(__name__)
 
 
-Data = cotp.Data
+Data = typing.Union[bytes, bytearray, memoryview]
 """Data"""
 
 

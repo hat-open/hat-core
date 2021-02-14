@@ -1,9 +1,4 @@
-"""Connection oriented transport protocol
-
-Attributes:
-    mlog (logging.Logger): module logger
-
-"""
+"""Connection oriented transport protocol"""
 
 import enum
 import logging
@@ -14,12 +9,8 @@ from hat import aio
 from hat.drivers import tpkt
 
 
-mlog = logging.getLogger(__name__)
-
-
-Data = tpkt.Data
-"""Data"""
-
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 Address = tpkt.Address
 """Address"""
@@ -52,15 +43,9 @@ async def connect(addr: Address,
 
 
 async def listen(connection_cb: ConnectionCb,
-                 addr: Address = Address('0.0.0.0', 102)
+                 addr: Address = Address('0.0.0.0')
                  ) -> 'Server':
-    """Create new COTP listening server
-
-    Args:
-        connection_cb: new connection callback
-        addr: local listening address
-
-    """
+    """Create new COTP listening server"""
 
     async def on_connection(tpkt_conn):
         try:
@@ -98,9 +83,11 @@ async def listen(connection_cb: ConnectionCb,
 class Server(aio.Resource):
     """COTP listening server
 
-    For creation of new instance see :func:`listen`
+    For creation of new instance see `listen` coroutine
 
-    Closing server doesn't close active incomming connections
+    Closing server doesn't close active incoming connections.
+
+    Closing server will cancel all running `connection_cb` coroutines.
 
     """
 
@@ -145,12 +132,13 @@ class Connection(aio.Resource):
         """Connection info"""
         return self._info
 
-    async def read(self) -> Data:
+    async def read(self) -> bytes:
         """Read data"""
         return await self._read_queue.get()
 
     def write(self, data: bytes):
         """Write data"""
+        data = memoryview(data)
         max_size = self._max_tpdu - 3
         while len(data) > 0:
             single_data, data = data[:max_size], data[max_size:]
@@ -239,7 +227,7 @@ class _DT(typing.NamedTuple):
     """Data TPDU"""
     eot: bool
     """end of transmition flag"""
-    data: Data
+    data: memoryview
 
 
 class _CR(typing.NamedTuple):

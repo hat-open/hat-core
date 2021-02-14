@@ -1,7 +1,6 @@
 """Asyncio TCP wrapper"""
 
 import asyncio
-import functools
 import logging
 import typing
 
@@ -22,7 +21,7 @@ class ConnectionInfo(typing.NamedTuple):
     remote_addr: Address
 
 
-ConnectionCb = typing.Callable[['Connection'], None]
+ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
 
 
@@ -50,6 +49,8 @@ async def listen(connection_cb: ConnectionCb,
     If `bind_connections` is ``True``, closing server will close all open
     incoming connections.
 
+
+
     Additional arguments are passed directly to `asyncio.start_server`.
 
     """
@@ -60,6 +61,7 @@ async def listen(connection_cb: ConnectionCb,
 
     server._srv = await asyncio.start_server(server._on_connection,
                                              addr.host, addr.port, **kwargs)
+    server._async_group.spawn(aio.call_on_cancel, server._on_close)
 
     socknames = (socket.getsockname() for socket in server._srv.sockets)
     server._addresses = [Address(*sockname[:2]) for sockname in socknames]
@@ -68,6 +70,11 @@ async def listen(connection_cb: ConnectionCb,
 
 
 class Server(aio.Resource):
+    """TCP listening server
+
+    Closing server will cancel all running `connection_cb` coroutines.
+
+    """
 
     @property
     def async_group(self) -> aio.Group:
@@ -79,11 +86,37 @@ class Server(aio.Resource):
         """Listening addresses"""
         return self._addresses
 
+    async def _on_close(self):
+        self._srv.close()
+        await self._srv.wait_closed()
+
     def _on_connection(self, reader, writer):
-        conn_async_group = (self._async_group.create_subgroup()
-                            if self._bind_connections else None)
-        conn = Connection(reader, writer, conn_async_group)
-        self._connection_cb(conn)
+        try:
+            conn_async_group = (self._async_group.create_subgroup()
+                                if self._bind_connections else None)
+            conn = Connection(reader, writer, conn_async_group)
+
+        except Exception:
+            reader.close()
+            return
+
+        try:
+            self._async_group.spawn(self._async_connection_cb, conn)
+
+        except Exception:
+            conn.close()
+
+    async def _async_connection_cb(self, conn):
+        try:
+            await aio.call(self._connection_cb, conn)
+
+        except Exception as e:
+            mlog.warning('connection callback error: %s', e, exc_info=e)
+            await aio.uncancellable(conn.async_close())
+
+        except asyncio.CancelledError:
+            await aio.uncancellable(conn.async_close())
+            raise
 
 
 class Connection(aio.Resource):
@@ -146,9 +179,8 @@ class Connection(aio.Resource):
             return b''
 
         future = asyncio.Future()
-        fn = functools.partial(self._reader.read, n)
         try:
-            self._read_queue.put_nowait((future, fn))
+            self._read_queue.put_nowait((future, False, n))
             return await future
 
         except aio.QueueClosedError:
@@ -169,9 +201,8 @@ class Connection(aio.Resource):
             return b''
 
         future = asyncio.Future()
-        fn = functools.partial(self._reader.readexactly, n)
         try:
-            self._read_queue.put_nowait((future, fn))
+            self._read_queue.put_nowait((future, True, n))
             return await future
 
         except aio.QueueClosedError:
@@ -181,8 +212,13 @@ class Connection(aio.Resource):
         future = None
         try:
             while True:
-                future, fn = await self._read_queue.get()
-                data = await fn()
+                future, is_exact, n = await self._read_queue.get()
+
+                if is_exact:
+                    data = await self._reader.readexactly(n)
+                else:
+                    data = await self._reader.read(n)
+
                 if not data:
                     break
                 future.set_result(data)
