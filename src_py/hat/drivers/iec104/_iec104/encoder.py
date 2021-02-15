@@ -1,31 +1,31 @@
-import asyncio
 import collections
 import logging
 import struct
 
 from hat import util
+from hat.drivers import tcp
 from hat.drivers.iec104._iec104 import common
 
 
 mlog = logging.getLogger(__name__)
 
 
-async def read_apdu(reader: asyncio.StreamReader
+async def read_apdu(conn: tcp.Connection
                     ) -> common.APDU:
-    start_byte = await reader.readexactly(1)
+    start_byte = await conn.readexactly(1)
     if start_byte[0] != 0x68:
         raise Exception('invalid start identifier')
 
-    length = await reader.readexactly(1)
+    length = await conn.readexactly(1)
     apdu_length = length[0]
     if apdu_length < 4:
         raise Exception("invalid APDU length")
 
-    control_fields = await reader.readexactly(4)
+    control_fields = await conn.readexactly(4)
 
     asdu_length = apdu_length - 4
     if asdu_length:
-        asdu_bytes = await reader.readexactly(asdu_length)
+        asdu_bytes = await conn.readexactly(asdu_length)
     else:
         asdu_bytes = b''
 
@@ -33,12 +33,12 @@ async def read_apdu(reader: asyncio.StreamReader
     return _decode_apdu(control_fields, asdu_bytes)
 
 
-def write_apdu(writer: asyncio.StreamWriter,
+def write_apdu(conn: tcp.Connection,
                apdu: common.APDU):
     apdu_bytes = bytes(_encode_apdu(apdu))
     header = bytes([0x68, len(apdu_bytes)])
-    writer.write(header)
-    writer.write(apdu_bytes)
+    conn.write(header)
+    conn.write(apdu_bytes)
 
 
 def _decode_apdu(control_fields, asdu_bytes):

@@ -1,9 +1,9 @@
 import asyncio
-import contextlib
 import itertools
 import logging
 
 from hat import aio
+from hat.drivers import tcp
 from hat.drivers.iec104._iec104 import common
 from hat.drivers.iec104._iec104 import encoder
 
@@ -14,16 +14,14 @@ mlog = logging.getLogger(__name__)
 class Transport(aio.Resource):
 
     def __init__(self,
-                 reader: asyncio.StreamReader,
-                 writer: asyncio.StreamWriter,
+                 conn: tcp.Connection,
                  always_enabled: bool,
                  response_timeout: float,
                  supervisory_timeout: float,
                  test_timeout: float,
                  send_window_size: int,
                  receive_window_size: int):
-        self._reader = reader
-        self._writer = writer
+        self._conn = conn
         self._always_enabled = always_enabled
         self._is_enabled = always_enabled
         self._response_timeout = response_timeout
@@ -41,15 +39,18 @@ class Transport(aio.Resource):
         self._write_supervisory_handle = None
         self._waiting_ack_handles = {}
         self._waiting_ack_cv = asyncio.Condition()
-        self._async_group = aio.Group()
-        self._async_group.spawn(self._read_loop)
-        self._async_group.spawn(self._write_loop)
-        self._async_group.spawn(self._test_loop)
-        self._async_group.spawn(aio.call_on_cancel, self._on_close)
+        self.async_group.spawn(self._read_loop)
+        self.async_group.spawn(self._write_loop)
+        self.async_group.spawn(self._test_loop)
+        self.async_group.spawn(aio.call_on_cancel, self._on_close)
 
     @property
     def async_group(self) -> aio.Group:
-        return self._async_group
+        return self._conn.async_group
+
+    @property
+    def conn(self):
+        return self._conn
 
     def write(self, asdu: common.ASDU):
         try:
@@ -74,16 +75,9 @@ class Transport(aio.Resource):
 
         self._stop_supervisory_timeout()
 
-        with contextlib.suppress(Exception):
-            await self._writer.drain()
-        with contextlib.suppress(Exception):
-            self._writer.close()
-        with contextlib.suppress(ConnectionError):
-            await self._writer.wait_closed()
-
     def _on_response_timeout(self):
         mlog.warning("response timeout occured - closing connection")
-        self._async_group.close()
+        self.close()
 
     def _on_supervisory_timeout(self):
         self._write_supervisory_handle = None
@@ -98,7 +92,7 @@ class Transport(aio.Resource):
     async def _read_loop(self):
         try:
             while True:
-                apdu = await encoder.read_apdu(self._reader)
+                apdu = await encoder.read_apdu(self._conn)
 
                 if isinstance(apdu, common.APDUU):
                     await self._process_apduu(apdu)
@@ -112,17 +106,14 @@ class Transport(aio.Resource):
                 else:
                     raise ValueError("unsupported APDU")
 
-        except asyncio.IncompleteReadError:
-            pass
-
-        except aio.QueueClosedError:
+        except (ConnectionError, aio.QueueClosedError):
             pass
 
         except Exception as e:
             mlog.warning('read loop error: %s', e, exc_info=e)
 
         finally:
-            self._async_group.close()
+            self.close()
 
     async def _write_loop(self):
         try:
@@ -151,14 +142,14 @@ class Transport(aio.Resource):
                         self._response_timeout, self._on_response_timeout))
                 self._ssn = (self._ssn + 1) % 0x8000
 
-        except aio.QueueClosedError:
+        except (ConnectionError, aio.QueueClosedError):
             pass
 
         except Exception as e:
             mlog.warning('write loop error: %s', e, exc_info=e)
 
         finally:
-            self._async_group.close()
+            self.close()
 
     async def _test_loop(self):
         try:
@@ -175,10 +166,10 @@ class Transport(aio.Resource):
             mlog.warning('test loop error: %s', e, exc_info=e)
 
         finally:
-            self._async_group.close()
+            self.close()
 
     def _write_apdu(self, apdu):
-        encoder.write_apdu(self._writer, apdu)
+        encoder.write_apdu(self._conn, apdu)
 
     async def _process_apduu(self, apdu):
         if apdu.function == common.ApduFunction.STARTDT_ACT:

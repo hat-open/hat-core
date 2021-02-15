@@ -324,7 +324,7 @@ async def test_send_command(addr, command, success):
 async def test_interrogate_negative_response(addr):
     conn_queue = aio.Queue()
     srv = await iec104.listen(conn_queue.put_nowait, addr,
-                              interrogate_cb=lambda _: None)
+                              interrogate_cb=lambda _, __: None)
     conn = await iec104.connect(addr)
     srv_conn = await conn_queue.get()
 

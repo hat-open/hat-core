@@ -2,11 +2,11 @@
 
 import asyncio
 import collections
-import contextlib
 import logging
 import typing
 
 from hat import aio
+from hat.drivers import tcp
 from hat.drivers.iec104 import _iec104
 from hat.drivers.iec104 import common
 
@@ -23,8 +23,6 @@ This method is called when local peer receives interrogate request.
 Called with asdu address, returns list of data. If ``None`` is returned,
 negative response is sent.
 
-Can be regular function or coroutine.
-
 """
 
 CounterInterrogateCb = aio.AsyncCallable[
@@ -36,8 +34,6 @@ This method is called when local peer receives counter interrogate request.
 Called with asdu address and freeze code, returns list of data. If ``None``
 is returned, negative response is sent.
 
-Can be regular function or coroutine.
-
 """
 
 CommandCb = aio.AsyncCallable[
@@ -48,11 +44,9 @@ CommandCb = aio.AsyncCallable[
 This method is called when local peer receives command request.
 Called with list of commands, returns if commands are successful.
 
-Can be regular function or coroutine.
-
 """
 
-ConnectionCb = typing.Callable[['Connection'], None]
+ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
 
 
@@ -92,11 +86,11 @@ async def connect(addr: Address,
     """
 
     def write_apdu(apdu):
-        _iec104.write_apdu(writer, apdu)
+        _iec104.write_apdu(conn, apdu)
 
     async def wait_startdt_con():
         while True:
-            apdu = await _iec104.read_apdu(reader)
+            apdu = await _iec104.read_apdu(conn)
 
             if not isinstance(apdu, _iec104.APDUU):
                 continue
@@ -107,19 +101,17 @@ async def connect(addr: Address,
             if apdu.function == _iec104.ApduFunction.TESTFR_ACT:
                 write_apdu(_iec104.APDUU(_iec104.ApduFunction.TESTFR_CON))
 
-    reader, writer = await asyncio.open_connection(addr.host, addr.port)
+    conn = await tcp.connect(tcp.Address(*addr))
 
     try:
         write_apdu(_iec104.APDUU(_iec104.ApduFunction.STARTDT_ACT))
         await asyncio.wait_for(wait_startdt_con(), response_timeout)
 
     except Exception:
-        with contextlib.suppress(Exception):
-            writer.close()
+        await aio.uncancellable(conn.async_close())
         raise
 
-    transport = _iec104.Transport(reader=reader,
-                                  writer=writer,
+    transport = _iec104.Transport(conn=conn,
                                   always_enabled=True,
                                   response_timeout=response_timeout,
                                   supervisory_timeout=supervisory_timeout,
@@ -127,8 +119,7 @@ async def connect(addr: Address,
                                   send_window_size=send_window_size,
                                   receive_window_size=receive_window_size)
 
-    return _create_connection(async_group=aio.Group(),
-                              transport=transport,
+    return _create_connection(transport=transport,
                               interrogate_cb=interrogate_cb,
                               counter_interrogate_cb=counter_interrogate_cb,
                               command_cb=command_cb)
@@ -170,13 +161,10 @@ async def listen(connection_cb: ConnectionCb,
     server._test_timeout = test_timeout
     server._send_window_size = send_window_size
     server._receive_window_size = receive_window_size
-    server._async_group = aio.Group()
 
-    server._srv = await asyncio.start_server(server._on_connection,
-                                             addr.host, addr.port)
-
-    socknames = [socket.getsockname() for socket in server._srv.sockets]
-    server._addresses = [Address(*sockname[:2]) for sockname in socknames]
+    server._srv = await tcp.listen(server._on_connection, tcp.Address(*addr),
+                                   bind_connections=True)
+    server._addresses = [Address(*i) for i in server._srv.addresses]
 
     return server
 
@@ -193,21 +181,16 @@ class Server(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
 
     @property
     def addresses(self) -> typing.List[Address]:
         """Listening addresses"""
         return self._addresses
 
-    async def _on_close(self):
-        self._srv.close()
-        await self._srv.wait_closed()
-
-    def _on_connection(self, reader, writer):
+    async def _on_connection(self, conn):
         transport = _iec104.Transport(
-            reader=reader,
-            writer=writer,
+            conn=conn,
             always_enabled=False,
             response_timeout=self._response_timeout,
             supervisory_timeout=self._supervisory_timeout,
@@ -216,25 +199,22 @@ class Server(aio.Resource):
             receive_window_size=self._receive_window_size)
 
         conn = _create_connection(
-            async_group=self._async_group.create_subgroup(),
             transport=transport,
             interrogate_cb=self._interrogate_cb,
             counter_interrogate_cb=self._counter_interrogate_cb,
             command_cb=self._command_cb)
 
-        self._connection_cb(conn)
+        await aio.call(self._connection_cb, conn)
 
 
-def _create_connection(async_group, transport, interrogate_cb,
+def _create_connection(transport, interrogate_cb,
                        counter_interrogate_cb, command_cb,):
 
-    sockname = transport._writer.get_extra_info('sockname')
-    peername = transport._writer.get_extra_info('peername')
-    info = ConnectionInfo(local_addr=Address(sockname[0], sockname[1]),
-                          remote_addr=Address(peername[0], peername[1]))
+    info = ConnectionInfo(
+        local_addr=Address(*transport.conn.info.local_addr),
+        remote_addr=Address(*transport.conn.info.remote_addr))
 
     conn = Connection()
-    conn._async_group = async_group
     conn._transport = transport
     conn._interrogate_cb = interrogate_cb
     conn._counter_interrogate_cb = counter_interrogate_cb
@@ -246,8 +226,7 @@ def _create_connection(async_group, transport, interrogate_cb,
     conn._counter_interrogate_lock = asyncio.Lock()
     conn._data_queue = aio.Queue()
     conn._command_futures = {}
-    conn._async_group.spawn(conn._read_loop)
-    conn._async_group.spawn(aio.call_on_cancel, conn._transport.async_close)
+    conn.async_group.spawn(conn._read_loop)
     return conn
 
 
@@ -261,7 +240,7 @@ class Connection(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._transport.async_group
 
     @property
     def info(self) -> ConnectionInfo:
@@ -422,7 +401,7 @@ class Connection(aio.Resource):
 
         finally:
             mlog.debug("closing connection: %s", self._info)
-            self._async_group.close()
+            self.close()
 
             self._data_queue.close()
             if self._interrogate_queue is not None:
