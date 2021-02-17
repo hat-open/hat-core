@@ -1,7 +1,7 @@
 .. _hat-drivers-tcp:
 
 `hat.drivers.tcp` - Transmission Control Protocol
-==========================================
+=================================================
 
 Asyncio wrapper for TCP communication.
 
