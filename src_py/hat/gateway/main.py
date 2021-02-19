@@ -1,44 +1,45 @@
-"""Gateway main
-
-Attributes:
-    user_conf_dir (Path): configuration directory
-    default_conf_path (Path): default configuration path
-
-"""
+"""Gateway main"""
 
 from pathlib import Path
-import argparse
 import asyncio
 import contextlib
 import functools
 import importlib
 import logging.config
 import sys
+import typing
 
 import appdirs
+import click
 
 from hat import aio
 from hat import json
+from hat.gateway import common
+from hat.gateway.engine import create_engine
 import hat.event.client
-import hat.event.common
-import hat.gateway.common
-import hat.gateway.engine
 import hat.monitor.client
-import hat.monitor.common
 
 
-user_conf_dir = Path(appdirs.user_config_dir('hat'))
-default_conf_path = user_conf_dir / 'gateway.yaml'
+user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
+"""User configuration directory path"""
 
 
-def main():
-    """Main"""
+@click.command()
+@click.option('--conf', default=None, metavar='PATH', type=Path,
+              help="configuration defined by hat://gateway/main.yaml# "
+                   "(default $XDG_CONFIG_HOME/hat/gateway.{yaml|yml|json})")
+def main(conf: typing.Optional[Path]):
+    """Main entry point"""
     aio.init_asyncio()
 
-    args = _create_parser().parse_args()
-    conf = json.decode_file(args.conf)
-    hat.gateway.common.json_schema_repo.validate('hat://gateway/main.yaml#',
-                                                 conf)
+    if not conf:
+        for suffix in ('.yaml', '.yml', '.json'):
+            conf = (user_conf_dir / 'gateway').with_suffix(suffix)
+            if conf.exists():
+                break
+    conf = json.decode_file(conf)
+    common.json_schema_repo.validate('hat://gateway/main.yaml#', conf)
+
     for device_conf in conf['devices']:
         module = importlib.import_module(device_conf['module'])
         if module.json_schema_repo and module.json_schema_id:
@@ -51,60 +52,34 @@ def main():
         aio.run_asyncio(async_main(conf))
 
 
-async def async_main(conf):
-    """Async main
-
-    Args:
-        conf (json.Data): configuration defined by ``hat://gateway/main.yaml#``
-
-    """
+async def async_main(conf: json.Data):
+    """Async main entry point"""
     monitor = await hat.monitor.client.connect(conf['monitor'])
     try:
-        await hat.monitor.client.run_component(
-            monitor, run_with_monitor, conf, monitor)
+        await hat.monitor.client.run_component(monitor, run_with_monitor,
+                                               conf, monitor)
     finally:
         await aio.uncancellable(monitor.async_close())
 
 
-async def run_with_monitor(conf, monitor):
-    """Run with monitor client
-
-    Args:
-        conf (json.Data): configuration defined by ``hat://gateway/main.yaml#``
-        monitor (hat.monitor.client.Client): monitor client
-
-    """
+async def run_with_monitor(conf: json.Data,
+                           monitor: hat.monitor.client.Client):
+    """Run monitor component"""
     run_cb = functools.partial(run_with_event, conf)
-    await hat.event.client.run_client(
-        monitor, conf['event_server_group'], run_cb,
-        [('gateway', conf['gateway_name'], '?', '?', 'system', '*')])
+    subscriptions = [('gateway', conf['gateway_name'], '?', '?', 'system',
+                      '*')]
+    await hat.event.client.run_client(monitor, conf['event_server_group'],
+                                      run_cb, subscriptions)
 
 
-async def run_with_event(conf, client):
-    """Run with event client
-
-    Args:
-        conf (json.Data): configuration defined by ``hat://gateway/main.yaml#``
-        client (hat.event.client.Client): event client
-
-    """
-    engine = None
+async def run_with_event(conf: json.Data,
+                         client: hat.event.client.Client):
+    """Run event client"""
+    engine = await create_engine(conf, client)
     try:
-        engine = await hat.gateway.engine.create_engine(conf, client)
-        await engine.wait_closed()
+        await engine.wait_closing()
     finally:
-        if engine:
-            await aio.uncancellable(engine.async_close())
-
-
-def _create_parser():
-    parser = argparse.ArgumentParser(prog='hat-gateway')
-    parser.add_argument(
-        '--conf', metavar='path', dest='conf',
-        default=default_conf_path, type=Path,
-        help="configuration defined by hat://gateway/main.yaml# "
-             "(default $XDG_CONFIG_HOME/hat/gateway.yaml)")
-    return parser
+        await aio.uncancellable(engine.async_close())
 
 
 if __name__ == '__main__':

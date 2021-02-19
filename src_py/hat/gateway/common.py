@@ -10,11 +10,12 @@ import hat.event.common
 import hat.monitor.common
 
 
-json_schema_repo = json.SchemaRepository(
+json_schema_repo: json.SchemaRepository = json.SchemaRepository(
     json.json_schema_repo,
     hat.monitor.common.json_schema_repo,
     json.SchemaRepository.from_json(Path(__file__).parent /
                                     'json_schema_repo.json'))
+"""JSON schema repository"""
 
 DeviceConf = json.Data
 """Device configuration"""
@@ -22,9 +23,9 @@ DeviceConf = json.Data
 EventTypePrefix = hat.event.common.EventType
 """Event type prefix"""
 
-CreateDevice = typing.Callable[
+CreateDevice = aio.AsyncCallable[
     [DeviceConf, 'DeviceEventClient', EventTypePrefix],
-    typing.Awaitable['Device']]
+    'Device']
 """Create device callable"""
 
 
@@ -54,47 +55,27 @@ class DeviceEventClient(abc.ABC):
     """Device's event client interface"""
 
     @abc.abstractmethod
-    async def receive(self):
-        """Receive device events
-
-        Returns:
-            List[hat.event.common.Event]
-
-        """
+    async def receive(self) -> typing.List[hat.event.common.Event]:
+        """Receive device events"""
 
     @abc.abstractmethod
-    def register(self, events):
-        """Register device events
-
-        Args:
-            events (List[hat.event.common.RegisterEvent]): register events
-
-        """
+    def register(self, events: typing.List[hat.event.common.RegisterEvent]):
+        """Register device events"""
 
     @abc.abstractmethod
-    async def register_with_response(self, events):
+    async def register_with_response(self,
+                                     events: typing.List[hat.event.common.RegisterEvent]  # NOQA
+                                     ) -> typing.List[typing.Optional[hat.event.common.Event]]:  # NOQA
         """Register device events
 
         Each `DeviceRegisterEvent` from `events` is paired with results
         `DeviceEvent` if new event was successfully created or `None` is new
         event could not be created.
 
-        Args:
-            events (List[hat.event.common.RegisterEvent]): register events
-
-        Returns:
-            List[Optional[hat.event.common.Event]]
-
         """
 
     @abc.abstractmethod
-    async def query(self, data):
-        """Query device events from server
-
-        Args:
-            data (hat.event.common.QueryData): query data
-
-        Returns:
-            List[hat.event.common.Event]
-
-        """
+    async def query(self,
+                    data: hat.event.common.QueryData
+                    ) -> typing.List[hat.event.common.Event]:
+        """Query device events from server"""
