@@ -520,7 +520,9 @@ async def test_adapter_state(run_gui, gui_conf, tmp_path,
 
     # event server to client
     await register_event(event_client, ('a1', 'data'), {'abc': 1})
-    await aio.first(client_change_queue, lambda _: client.server_state)
+    await aio.first(
+        client_change_queue,
+        lambda _: client.server_state and client.server_state['adapter1'])
     assert client.server_state == {'adapter1': [{'abc': 1}]}
 
     # client to event server
@@ -561,8 +563,10 @@ async def test_event_to_adapters(run_gui, gui_conf, tmp_path,
         assert await client.receive() == {'type': 'adapter',
                                           'name': adapter,
                                           'data': {'abc': 1}}
-    await aio.first(client_change_queue,
-                    lambda _: len(client.server_state) == no_adapters)
+    await aio.first(
+        client_change_queue,
+        lambda _: (len(client.server_state) == no_adapters and
+                   all(client.server_state.values())))
     assert client.server_state == {a: [{'abc': 1}] for a in adapters}
 
     await client.async_close()
