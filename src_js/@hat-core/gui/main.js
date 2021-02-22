@@ -49,7 +49,7 @@ class ViewManager {
     }
 
     vt() {
-        if (r.get('remote') == null || !this.view)
+        if (!this.view)
             return ['div'];
         return this.view.vt();
     }
