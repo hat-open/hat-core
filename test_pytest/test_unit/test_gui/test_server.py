@@ -267,29 +267,21 @@ async def test_adapter_remote_data(ui_path, ui_addr, ws_addr,
     views = ViewManager({})
     server = await hat.gui.server.create_server(conf, ui_path, adapters, views)
     client = await juggler.connect(ws_addr, autoflush_delay=0)
-    await client.receive()
-
-    assert client.remote_data == {}
-
-    backend_data_queue = aio.Queue()
-    client.register_change_cb(
-        lambda: backend_data_queue.put_nowait(client.remote_data))
-
     await client.send({'type': 'login',
                        'name': 'user',
                        'password': hash_password('pass')})
-    await client.receive()
-
-    data = await backend_data_queue.get()
-    assert data == {'adapter': None}
-
     session = await adapter.session_queue.get()
 
     assert session.client.remote_data is None
+    assert client.remote_data.get('adapter') is None
 
     frontend_data_queue = aio.Queue()
     session.client.register_change_cb(
         lambda: frontend_data_queue.put_nowait(session.client.remote_data))
+
+    backend_data_queue = aio.Queue()
+    client.register_change_cb(
+        lambda: backend_data_queue.put_nowait(client.remote_data))
 
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(frontend_data_queue.get(), 0.001)

@@ -112,9 +112,6 @@ class _Connection(aio.Resource):
 
         await self._set_state(user['name'], user['roles'], 'login',
                               user['view'])
-        self._conn.set_local_data({name: None
-                                   for name in self._adapters})
-        await self._conn.flush_local_data()
 
         self._session = await _create_session(self._conn, user['name'],
                                               user['roles'], self._adapters)
