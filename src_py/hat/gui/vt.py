@@ -1,10 +1,16 @@
 """Virtual tree XML parser"""
 
+import os
+import typing
 import xml.sax
 import xml.sax.handler
+import xml.sax.xmlreader
+
+from hat import json
 
 
-def parse(file):
+def parse(file: typing.Union[os.PathLike, xml.sax.xmlreader.InputSource]
+          ) -> json.Data:
     r"""Parse XML document into virtual tree
 
     Each element is recursively parsed into a list with the following
@@ -65,12 +71,6 @@ def parse(file):
                 ]
             ]
         ]
-
-    Args:
-        file: file stream
-
-    Returns:
-        hat.json.Data: json serializable virtual tree
 
     """
     handler = _ContentHandler()

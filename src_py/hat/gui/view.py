@@ -1,38 +1,30 @@
+"""View manager implementation"""
+
 from pathlib import Path
 import base64
-import logging
 import typing
 
 from hat import aio
 from hat import json
 from hat import util
-import hat.gui.vt
-
-
-mlog = logging.getLogger(__name__)
+from hat.gui import vt
 
 
 class View(typing.NamedTuple):
+    """View data"""
     name: str
     conf: json.Data
     data: typing.Dict[str, json.Data]
 
 
-async def create_view_manager(conf):
-    """Create view manager
-
-    Args:
-        conf (json.Data): configuration defined by
-            ``hat://gui/main.yaml#/definitions/views``
-
-    Returns:
-        ViewManager
-
-    """
+async def create_view_manager(conf: json.Data
+                              ) -> 'ViewManager':
+    """Create view manager"""
     manager = ViewManager()
-    manager._views = {view['name']: view for view in conf}
+    manager._view_confs = {view_conf['name']: view_conf
+                           for view_conf in conf['views']}
     manager._async_group = aio.Group()
-    manager._executor = aio.create_executor(1)
+    manager._executor = aio.create_executor()
     return manager
 
 
@@ -44,61 +36,52 @@ class ViewManager(aio.Resource):
         """Async group"""
         return self._async_group
 
-    async def get(self, name):
-        """Get view
+    async def get(self,
+                  name: str
+                  ) -> View:
+        """Get view"""
+        if not self.is_open:
+            raise Exception('view manager is not open')
 
-        Args:
-            name (str): view name
-
-        Returns:
-            View
-
-        """
-        if self.is_closed:
-            raise Exception('view manager is closed')
-        view = self._views[name]
+        conf = self._view_confs[name]
+        view_path = Path(conf['view_path'])
+        conf_path = Path(conf['conf_path']) if conf['conf_path'] else None
         return await self._async_group.spawn(self._executor, _ext_get_view,
-                                             view)
+                                             name, view_path, conf_path)
 
 
-def _ext_get_view(view):
+def _ext_get_view(name, view_path, conf_path):
     data = {}
-    view_path = Path(view['view_path'])
-    try:
-        for i in view_path.rglob('*'):
-            if i.is_dir():
-                continue
+    for i in view_path.rglob('*'):
+        if i.is_dir():
+            continue
 
-            name = i.relative_to(view_path).as_posix()
+        if i.suffix in {'.js', '.css', '.txt'}:
+            with open(i, encoding='utf-8') as f:
+                content = f.read()
 
-            if i.suffix in {'.js', '.css', '.txt'}:
-                with open(i, encoding='utf-8') as f:
-                    content = f.read()
-            elif i.suffix in {'.json', '.yaml', '.yml'}:
-                content = json.decode_file(i)
-            elif i.suffix in {'.xml', '.svg'}:
-                with open(i, encoding='utf-8') as f:
-                    content = hat.gui.vt.parse(f)
-            else:
-                with open(i, 'rb') as f:
-                    content = f.read()
-                content = base64.b64encode(content).decode('utf-8')
+        elif i.suffix in {'.json', '.yaml', '.yml'}:
+            content = json.decode_file(i)
 
-            data[name] = content
-    except Exception as e:
-        mlog.error('error loading view data %s', e, exc_info=e)
-        raise
+        elif i.suffix in {'.xml', '.svg'}:
+            with open(i, encoding='utf-8') as f:
+                content = vt.parse(f)
 
-    conf = None
-    if view['conf_path'] is not None:
-        conf_path = Path(view['conf_path'])
-        conf = json.decode_file(conf_path)
+        else:
+            with open(i, 'rb') as f:
+                content = f.read()
+            content = base64.b64encode(content).decode('utf-8')
+
+        file_name = i.relative_to(view_path).as_posix()
+        data[file_name] = content
+
+    conf = json.decode_file(conf_path) if conf_path else None
     schema = util.first(v for k, v in data.items()
                         if k in {'schema.json', 'schema.yaml', 'schema.yml'})
     if schema:
         repo = json.SchemaRepository(schema)
         repo.validate(schema['id'], conf)
 
-    return View(name=view['name'],
+    return View(name=name,
                 conf=conf,
                 data=data)

@@ -68,7 +68,8 @@ class ViewManager {
 
     async _initView(msg) {
         if (this.view) {
-            this.view.destroy();
+            if (this.view.destroy)
+                this.view.destroy();
             this._view = null;
             this._hat = null;
         }
@@ -84,11 +85,14 @@ class ViewManager {
             view: msg.view,
             conn: new ViewConnection(this.app)
         };
-        const src = msg.view['index.js'];
+        const src = u.get('index.js', msg.view);
+        if (!src)
+            return;
         const fn = new Function(
             'hat', `var exports = {};\n${src}\nreturn exports;`);
         const view = fn(this.hat);
-        await view.init();
+        if (view.init)
+            await view.init();
         this._view = view;
     }
 }

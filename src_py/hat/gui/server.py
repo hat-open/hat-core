@@ -1,6 +1,10 @@
+"""GUI web server"""
+
+from pathlib import Path
+import functools
 import hashlib
 import logging
-import secrets
+import typing
 import urllib
 
 from hat import aio
@@ -8,40 +12,38 @@ from hat import json
 from hat import juggler
 from hat import util
 from hat.gui import common
+import hat.gui.view
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
+
+autoflush_delay: float = 0.2
+"""Juggler autoflush delay"""
 
 
-async def create(conf, path, adapters, views):
-    """Create server
-
-    Args:
-        conf (json.Data): configuration defined by
-            ``hat://gui/main.yaml#/definitions/server``
-        path (pathlib.Path): web ui directory path
-        adapters (Dict[str,common.Adapter]): adapters
-        views (hat.gui.view.ViewManager): view manager
-
-    Return:
-        Server
-
-    """
-    srv = Server()
-    srv._async_group = aio.Group()
-    srv._conf = conf
-    srv._adapters = adapters
-    srv._views = views
-    srv._users = {i['name']: i for i in conf['users']}
-    srv._roles = {i['name']: i for i in conf['roles']}
-
+async def create_server(conf: json.Data,
+                        ui_path: Path,
+                        adapters: typing.Dict[str, common.Adapter],
+                        views: hat.gui.view.ViewManager
+                        ) -> 'Server':
+    """Create server"""
     addr = urllib.parse.urlparse(conf['address'])
-    juggler_srv = await juggler.listen(
-        addr.hostname, addr.port,
-        lambda conn: srv._async_group.spawn(srv._conn_loop, conn),
-        static_dir=path)
-    srv._async_group.spawn(aio.call_on_cancel, juggler_srv.async_close)
-    return srv
+    initial_view = conf['initial_view']
+    users = {i['name']: i for i in conf['users']}
+
+    server = Server()
+
+    connection_cb = functools.partial(_Connection, adapters, views,
+                                      initial_view, users)
+    server._srv = await juggler.listen(host=addr.hostname,
+                                       port=addr.port,
+                                       connection_cb=connection_cb,
+                                       static_dir=ui_path,
+                                       autoflush_delay=autoflush_delay)
+
+    mlog.debug("web server listening on %s", conf['address'])
+    return server
 
 
 class Server(aio.Resource):
@@ -50,195 +52,236 @@ class Server(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
 
-    async def _conn_loop(self, conn):
-        initial_view = self._conf['initial_view']
-        session = None
+
+class _Connection(aio.Resource):
+
+    def __init__(self, adapters, views, initial_view, users, conn):
+        self._adapters = adapters
+        self._views = views
+        self._initial_view = initial_view
+        self._users = users
+        self._conn = conn
+        self._session = None
+        self.async_group.spawn(self._connection_loop)
+
+    @property
+    def async_group(self):
+        return self._conn.async_group
+
+    async def _connection_loop(self):
         try:
-            await self._show_view(conn, initial_view, reason='init')
+            await self._set_state(None, [], 'init', self._initial_view)
+
             while True:
-                msg = await conn.receive()
+                msg = await self._conn.receive()
+
                 if msg['type'] == 'login':
-                    if session:
-                        await session.async_close()
-                    session = await self._login(
-                        conn, msg['name'], msg['password'])
+                    await self._process_msg_login(msg)
+
                 elif msg['type'] == 'logout':
-                    if session:
-                        await session.async_close()
-                        session = None
-                    await self._show_view(conn, initial_view, reason='logout')
+                    await self._process_msg_logout(msg)
+
                 elif msg['type'] == 'adapter':
-                    if not session:
-                        continue
-                    session.add_adapter_message(msg['name'], msg['data'])
+                    await self._process_msg_adapter(msg)
+
                 else:
                     raise Exception('received invalid message type')
-        except ConnectionError:
-            pass
-        finally:
-            if session:
-                await session.async_close()
-            await conn.async_close()
 
-    async def _login(self, conn, name, password):
-        initial_view = self._conf['initial_view']
-        user = self._authenticate(name, password)
+        except (ConnectionError, aio.QueueClosedError):
+            pass
+
+        except Exception as e:
+            mlog.warning('connection loop error: %s', e, exc_info=e)
+
+        finally:
+            if self._session:
+                self._session.close()
+            self.close()
+
+    async def _process_msg_login(self, msg):
+        if self._session:
+            await self._session.async_close()
+            self._session = None
+
+        user = self._authenticate(msg['name'], msg['password'])
         if not user:
-            await self._show_view(conn, initial_view, reason='auth_fail')
+            await self._set_state(None, [], 'auth_fail', self._initial_view)
             return
-        roles = [self._roles[i] for i in user['roles']]
-        if not roles:
-            mlog.warning('user %s has no roles', user['name'])
-            await self._show_view(conn, initial_view, reason='internal_error')
+
+        await self._set_state(user['name'], user['roles'], 'login',
+                              user['view'])
+
+        self._session = await _create_session(self._conn, user['name'],
+                                              user['roles'], self._adapters)
+
+    async def _process_msg_logout(self, msg):
+        if self._session:
+            await self._session.async_close()
+            self._session = None
+
+        await self._set_state(None, [], 'logout', self._initial_view)
+
+    async def _process_msg_adapter(self, msg):
+        if not self._session:
             return
-        await self._show_view(conn, roles[0]['view'], reason='login',
-                              username=user['name'], roles=user['roles'])
-        adapters = {i: self._adapters[i]
-                    for role in roles
-                    for i in role['adapters']}
-        return await create_session(conn, user['name'], user['roles'],
-                                    adapters)
+
+        adapter_client = self._session.adapter_clients.get(msg['name'])
+        if not adapter_client:
+            return
+
+        adapter_client.receive_queue.put_nowait(msg['data'])
+
+    async def _set_state(self, user, roles, reason, view_name):
+        view = await self._views.get(view_name) if view_name else None
+        self._conn.set_local_data({})
+        await self._conn.flush_local_data()
+        await self._conn.send({'type': 'state',
+                               'user': user,
+                               'roles': roles,
+                               'reason': reason,
+                               'view': view.data if view else None,
+                               'conf': view.conf if view else None})
 
     def _authenticate(self, name, password):
         user = self._users.get(name)
         if not user:
             return
-        m = hashlib.sha256(bytes.fromhex(user['password']['salt']))
-        m.update(password.encode())
-        hash = m.hexdigest()
-        # cryptographically secure comparison to prevent timing attacks
-        if not secrets.compare_digest(user['password']['hash'], hash):
+
+        password = bytes.fromhex(password)
+        user_salt = bytes.fromhex(user['password']['salt'])
+        user_hash = bytes.fromhex(user['password']['hash'])
+
+        h = hashlib.sha256()
+        h.update(user_salt)
+        h.update(password)
+
+        if h.digest() != user_hash:
             return
+
         return user
 
-    async def _show_view(self, conn, name,  reason='init',
-                         username=None, roles=[]):
-        view = await self._views.get(name)
-        conn.set_local_data(None)
-        await conn.flush_local_data()
-        await conn.send({'type': 'state',
-                         'user': username,
-                         'roles': roles,
-                         'reason': reason,
-                         'view': view.data,
-                         'conf': view.conf})
-        conn.set_local_data({})
-        await conn.flush_local_data()
 
+async def _create_session(conn, user, roles, adapters):
+    session = _Session()
+    session._conn = conn
+    session._async_group = conn.async_group.create_subgroup()
+    session._adapter_clients = {}
 
-async def create_session(conn, user, roles, adapters):
-    """Create client session
-
-    `adapters` contain only adapters associated with `roles`.
-
-    Args:
-        conn (juggler.Connection): juggler connection
-        user (str): user identifier
-        roles (List[str]): user roles
-        adapters (Dict[str,common.Adapter]): adapters
-
-    Return:
-        Session
-
-    """
-    session = Session()
-    session._async_group = aio.Group()
-    session._queues = {}
     for name, adapter in adapters.items():
-        queue = aio.Queue()
-        client = _AdapterSessionClientImpl(name, conn, queue, user, roles)
-        session._async_group.spawn(aio.call_on_cancel, client.close)
-        adapter_session = await adapter.create_session(client)
-        session._async_group.spawn(aio.call_on_cancel,
-                                   adapter_session.async_close)
-        session._queues[name] = queue
+        adapter_client = AdapterSessionClient(
+            session.async_group.create_subgroup(), name, conn, user, roles)
+        session._bind_resource(adapter_client)
+
+        adapter_session = await adapter.create_session(adapter_client)
+        session._bind_resource(adapter_session)
+
+        session._adapter_clients[name] = adapter_client
+
     return session
 
 
-class Session(aio.Resource):
-    """Client session"""
+class _Session(aio.Resource):
 
     @property
-    def async_group(self) -> aio.Group:
-        """Async group"""
+    def async_group(self):
         return self._async_group
 
-    def add_adapter_message(self, name, msg):
-        """Add adapter message
+    @property
+    def adapter_clients(self):
+        return self._adapter_clients
 
-        Args:
-            name (str): adapter name
-            msg (json.Data): message
-
-        """
-        if name in self._queues:
-            self._queues[name].put_nowait(msg)
+    def _bind_resource(self, resource):
+        self._async_group.spawn(aio.call_on_cancel, resource.async_close)
+        self._async_group.spawn(aio.call_on_done, resource.wait_closing(),
+                                self.close)
 
 
-class _AdapterSessionClientImpl(common.AdapterSessionClient):
+class AdapterSessionClient(common.AdapterSessionClient):
 
-    def __init__(self, name, conn, queue, user, roles):
+    def __init__(self, async_group, name, conn, user, roles):
         self._name = name
         self._conn = conn
-        self._queue = queue
         self._user = user
         self._roles = roles
-        self._cached_remote_data = self.remote_data
+        self._remote_data = None
         self._change_cbs = util.CallbackRegistry()
-        self._cb_handle = self._conn.register_change_cb(self._on_change)
+        self._receive_queue = aio.Queue()
+        self._async_group = aio.Group()
+        self._async_group.spawn(self._client_loop)
 
-    def close(self):
-        """close adapter session client"""
-        self._cb_handle.cancel()
+    @property
+    def async_group(self):
+        return self._async_group
+
+    @property
+    def receive_queue(self):
+        return self._receive_queue
 
     @property
     def user(self):
-        """See :meth:`common.AdapterSessionClient.user`"""
         return self._user
 
     @property
     def roles(self):
-        """See :meth:`common.AdapterSessionClient.roles`"""
         return self._roles
 
     @property
     def local_data(self):
-        """See :meth:`common.AdapterSessionClient.local_data`"""
-        if not isinstance(self._conn.local_data, dict):
-            return
         return self._conn.local_data.get(self._name)
 
     @property
     def remote_data(self):
-        """See :meth:`common.AdapterSessionClient.remote_data`"""
-        if not isinstance(self._conn.remote_data, dict):
-            return
-        return self._conn.remote_data.get(self._name)
+        return self._remote_data
 
     def register_change_cb(self, cb):
-        """See :meth:`common.AdapterSessionClient.register_change_cb`"""
         return self._change_cbs.register(cb)
 
     def set_local_data(self, data):
-        """See :meth:`common.AdapterSessionClient.set_local_data`"""
-        local_data = dict(self._conn.local_data)
+        if not self.is_open:
+            raise Exception('adapter session client not open')
+
+        local_data = dict(self._conn.local_data or {})
         local_data[self._name] = data
         self._conn.set_local_data(local_data)
 
     async def send(self, msg):
-        """See :meth:`common.AdapterSessionClient.send`"""
-        await self._conn.send({'type': 'adapter',
-                               'name': self._name,
-                               'data': msg})
+        await self.async_group.spawn(self._conn.send, {'type': 'adapter',
+                                                       'name': self._name,
+                                                       'data': msg})
 
     async def receive(self):
-        """See :meth:`common.AdapterSessionClient.receive`"""
-        return await self._queue.get()
+        try:
+            return await self._receive_queue.get()
 
-    def _on_change(self):
-        if json.equals(self.remote_data, self._cached_remote_data):
-            return
-        self._cached_remote_data = self.remote_data
-        self._change_cbs.notify()
+        except aio.QueueClosedError:
+            raise ConnectionError()
+
+    async def _client_loop(self):
+        changes = aio.Queue()
+
+        def on_change():
+            remote_data = (self._conn.remote_data
+                           if isinstance(self._conn.remote_data, dict)
+                           else {})
+            changes.put_nowait(remote_data.get(self._name))
+
+        try:
+            with self._conn.register_change_cb(on_change):
+                on_change()
+
+                while True:
+                    remote_data = await changes.get()
+                    if json.equals(remote_data, self._remote_data):
+                        continue
+
+                    self._remote_data = remote_data
+                    self._change_cbs.notify()
+
+        except Exception as e:
+            mlog.error("client loop error: %s", e, exc_info=e)
+
+        finally:
+            self.close()
+            self._receive_queue.close()

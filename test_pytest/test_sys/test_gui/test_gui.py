@@ -124,7 +124,7 @@ async def register_event(client, event_type, json_payload_data):
 
 async def create_client(gui_conf, user_conf):
     client = Client()
-    ui_port = urllib.parse.urlparse(gui_conf['server']['address']).port
+    ui_port = urllib.parse.urlparse(gui_conf['address']).port
     client._conn = await juggler.connect(f'ws://127.0.0.1:{ui_port}/ws')
     client._user_conf = user_conf
     return client
@@ -152,7 +152,8 @@ class Client(aio.Resource):
 
     async def login(self, name=None, password=None):
         name = name or self._user_conf['name']
-        password = password or self._user_conf['password']['pass']
+        password = (password.encode().hex() if password
+                    else self._user_conf['password']['pass'])
         await self._conn.send({'type': 'login',
                                'name': name,
                                'password': password})
@@ -276,12 +277,12 @@ def gui_port(unused_tcp_port_factory):
 def generate_password():
     password = ('').join(random.choices(string.ascii_letters + string.digits,
                                         k=8))
-    password_hashed = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    password_hashed = hashlib.sha256(password.encode('utf-8')).digest()
     salt = secrets.token_bytes(16)
     m = hashlib.sha256(salt)
-    m.update(password_hashed.encode('utf-8'))
+    m.update(password_hashed)
     return {'hash': m.hexdigest(), 'salt': salt.hex(),
-            'pass': password_hashed}
+            'pass': password_hashed.hex()}
 
 
 @pytest.fixture
@@ -296,11 +297,9 @@ def gui_conf(monitor_address, event_address, gui_port):
         'event_server_group': 'es',
         'adapters': [],
         'views': [],
-        'server': {
-            'address': f'http://localhost:{gui_port}',
-            'initial_view': 'init',
-            'roles': [],
-            'users': []}}
+        'address': f'http://localhost:{gui_port}',
+        'initial_view': 'init',
+        'users': []}
 
 
 def add_adapters_users_roles(gui_conf, views_path, no_users_roles, views=None,
@@ -309,15 +308,10 @@ def add_adapters_users_roles(gui_conf, views_path, no_users_roles, views=None,
                              'module': 'test_sys.test_gui.mock_adapter'}
                             for j in range(adapters_per_role)
                             for i in range(no_users_roles)]
-    gui_conf['server']['roles'] = [
-        {'name': f'role{i + 1}',
-         'view': f'view{i + 1}',
-         'adapters': [f'adapter{i*adapters_per_role + j + 1}'
-                      for j in range(adapters_per_role)]}
-        for i in range(no_users_roles)]
-    gui_conf['server']['users'] = [
+    gui_conf['users'] = [
         {'name': f'user{i + 1}',
          'password': generate_password(),
+         'view': f'view{i + 1}',
          'roles': [f'role{j + 1}' for j in range(i, no_users_roles)]}
         for i in range(no_users_roles)]
     views = views if views else [
@@ -415,7 +409,7 @@ async def test_user_login(run_gui, gui_conf, gui_port,
     view_name = gui_conf['views'][0]['name']
     gui_process = run_gui(gui_conf)
     wait_until(gui_process.listens_on, gui_port)
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
 
     msg_initial = {'type': 'state',
@@ -470,7 +464,7 @@ async def test_adapter_msg(run_gui, gui_conf, tmp_path,
     gui_conf = add_adapters_users_roles(gui_conf, tmp_path, no_users_roles=1)
     gui_process = run_gui(gui_conf)
 
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
     await client.receive()
 
@@ -516,7 +510,7 @@ async def test_adapter_state(run_gui, gui_conf, tmp_path,
     gui_conf = add_adapters_users_roles(gui_conf, tmp_path, no_users_roles=1)
     gui_process = run_gui(gui_conf)
 
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
     client_change_queue = aio.Queue()
     client.register_change_cb(lambda: client_change_queue.put_nowait(None))
@@ -551,10 +545,10 @@ async def test_event_to_adapters(run_gui, gui_conf, tmp_path,
     no_adapters = 10
     gui_conf = add_adapters_users_roles(gui_conf, tmp_path, no_users_roles=1,
                                         adapters_per_role=no_adapters)
-    adapters = gui_conf['server']['roles'][0]['adapters']
+    adapters = [i['name'] for i in gui_conf['adapters']]
     gui_process = run_gui(gui_conf)
 
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
     client_change_queue = aio.Queue()
     client.register_change_cb(lambda: client_change_queue.put_nowait(None))
@@ -584,7 +578,7 @@ async def test_invalid_message(run_gui, gui_conf, tmp_path,
     gui_conf = add_adapters_users_roles(gui_conf, tmp_path, no_users_roles=1)
     gui_process = run_gui(gui_conf)
 
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
 
     # invalid message before login
@@ -618,27 +612,20 @@ async def test_users_roles(tmp_path, run_gui, gui_conf,
     gui_process = run_gui(gui_conf)
     # create and login all clients
     clients = []
-    for user_conf in gui_conf['server']['users']:
+    for user_conf in gui_conf['users']:
         client = await create_client(gui_conf, user_conf)
         clients.append(client)
         await client.receive()
         await client.login()
         msg = await client.receive()
-        role = user_conf['roles'][0]
-        role_conf = util.first(gui_conf['server']['roles'],
-                               lambda i: i['name'] == role)
         assert msg['user'] == user_conf['name']
         assert msg['roles'] == user_conf['roles']
-        assert msg['view'] == {f"{role_conf['view']}.txt":
-                               f"this is {role_conf['view']}"}
+        assert msg['view'] == {f"{user_conf['view']}.txt":
+                               f"this is {user_conf['view']}"}
     # event gets to all clients for each adapter
     await register_event(event_client, ('a1', 'data'), {'abc': 1})
     for client in clients:
-        client_adapters = set()
-        for role in client._user_conf['roles']:
-            role_conf = util.first(gui_conf['server']['roles'],
-                                   lambda i: i['name'] == role)
-            client_adapters.update(role_conf['adapters'])
+        client_adapters = {i['name'] for i in gui_conf['adapters']}
         while client_adapters:
             msg = await client.receive()
             adapter_name = msg['name']
@@ -677,7 +664,7 @@ async def test_view_conf(tmp_path, run_gui, gui_conf, gui_port, event_process,
     gui_process = run_gui(gui_conf)
     wait_until(gui_process.listens_on, gui_port)
 
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
     await client.receive()
 
@@ -730,7 +717,7 @@ async def test_view_xml(tmp_path, run_gui, gui_conf, gui_port, event_process):
     gui_process = run_gui(gui_conf)
     wait_until(gui_process.listens_on, gui_port)
 
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
     await client.receive()
 
@@ -748,7 +735,7 @@ async def test_adapter_close(run_gui, gui_conf, tmp_path,
                              event_process, event_client):
     gui_conf = add_adapters_users_roles(gui_conf, tmp_path, no_users_roles=1)
     gui_process = run_gui(gui_conf)
-    user_conf = gui_conf['server']['users'][0]
+    user_conf = gui_conf['users'][0]
     client = await create_client(gui_conf, user_conf)
     await client.receive()
     await client.login()

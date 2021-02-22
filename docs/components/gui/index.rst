@@ -166,7 +166,6 @@ Supported juggler `MESSAGE` messages sent from server to client are::
                         - login
                         - logout
                         - auth_fail
-                        - internal_error
                 user:
                     type:
                         - string
@@ -175,8 +174,6 @@ Supported juggler `MESSAGE` messages sent from server to client are::
                     type: array
                     items:
                         type: string
-                view:
-                    type: object
         adapter:
             type: object
             required:
@@ -218,9 +215,6 @@ client and adapter client.
 
 After a client logs out, server sends `state` message with `reason`
 ``logout`` and `user` set to ``null``.
-
-If a server-side error causes sending a `state` message with initial view,
-`reason` is set to ``internal_error``.
 
 
 Adapters
@@ -348,10 +342,6 @@ with properties:
 
                 authentication attempt was unsuccessful, wrong credentials were
                 provided
-
-            * `internal_error`
-
-                server experienced internal error
 
     * ``user``
 

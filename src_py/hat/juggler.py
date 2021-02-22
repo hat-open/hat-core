@@ -319,12 +319,14 @@ class Connection(aio.Resource):
         flush_future = None
 
         try:
+            if not self.is_open:
+                return
             get_data_future = self._async_group.spawn(
                 self._local_data_queue.get)
             get_flush_future = self._async_group.spawn(
                 self._flush_queue.get)
 
-            while True:
+            while self.is_open:
 
                 await asyncio.wait([get_data_future, get_flush_future],
                                    return_when=asyncio.FIRST_COMPLETED)

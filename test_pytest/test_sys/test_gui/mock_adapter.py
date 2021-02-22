@@ -1,9 +1,10 @@
 from hat import aio
 from hat import util
+import hat.event.common
 import hat.gui.common
 
 
-event_type_prefix = ('a1',)
+subscription = hat.event.common.Subscription([('a1', '*')])
 
 json_schema_id = None
 json_schema_repo = None

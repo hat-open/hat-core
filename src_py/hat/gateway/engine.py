@@ -221,7 +221,7 @@ class DeviceProxy(aio.Resource):
                 data=is_running))])
 
 
-class DeviceEventClient(common.DeviceEventClient, aio.Resource):
+class DeviceEventClient(common.DeviceEventClient):
 
     def __init__(self, client: hat.event.client.Client):
         self._client = client

@@ -51,7 +51,7 @@ class Device(aio.Resource):
     """
 
 
-class DeviceEventClient(abc.ABC):
+class DeviceEventClient(aio.Resource):
     """Device's event client interface"""
 
     @abc.abstractmethod
@@ -68,9 +68,9 @@ class DeviceEventClient(abc.ABC):
                                      ) -> typing.List[typing.Optional[hat.event.common.Event]]:  # NOQA
         """Register device events
 
-        Each `DeviceRegisterEvent` from `events` is paired with results
-        `DeviceEvent` if new event was successfully created or `None` is new
-        event could not be created.
+        Each `RegisterEvent` from `events` is paired with results `Event` if
+        new event was successfully created or `None` is new event could not be
+        created.
 
         """
 

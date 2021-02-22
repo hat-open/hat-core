@@ -1,205 +1,128 @@
-import asyncio
 import base64
-import io
-import json
-import jsonschema
+
 import pytest
-import xml.sax
-import yaml
 
-from hat import aio
+from hat import json
 import hat.gui.view
-import hat.gui.vt
-import hat.json
-
-from test_unit.test_gui import common
 
 
-@pytest.mark.parametrize('views', [
-    {
-        'view1': [
-            common.FileDescriptor(
-                relative_path='src_js/test.js',
-                serialization_method=common.SerializationMethod.TEXT,
-                content="console.log('Hello world!')"),
-            common.FileDescriptor(
-                relative_path='src_js/test2.js',
-                serialization_method=common.SerializationMethod.TEXT,
-                content="console.log('Hello world! (2)')")],
-        'view2': [
-            common.FileDescriptor(
-                relative_path='test.css',
-                serialization_method=common.SerializationMethod.TEXT,
-                content='body { background-color: pink; }'),
-            common.FileDescriptor(
-                relative_path='test.txt',
-                serialization_method=common.SerializationMethod.TEXT,
-                content='Lorem ipsum...')]},
-    {
-        'view1': [
-            common.FileDescriptor(
-                relative_path='src_json/test.json',
-                serialization_method=common.SerializationMethod.JSON,
-                content={'a': 'b', 'c': 'd', 'e': 'f'}),
-            common.FileDescriptor(
-                relative_path='src_yaml/test.yaml',
-                serialization_method=common.SerializationMethod.YAML,
-                content={'g': 'h', 'i': 'j', 'k': 'l'})],
-        'view2': [
-            common.FileDescriptor(
-                relative_path='src_yaml/test.yml',
-                serialization_method=common.SerializationMethod.YAML,
-                content={'m': 'n', 'o': 'p', 'q': 'r'})]}
+pytestmark = pytest.mark.asyncio
+
+
+async def test_empty_view_manager():
+    conf = {'views': []}
+    manager = await hat.gui.view.create_view_manager(conf)
+
+    assert manager.is_open
+
+    with pytest.raises(Exception):
+        await manager.get('abc')
+
+    await manager.async_close()
+
+
+@pytest.mark.parametrize('files, data', [
+    ({},
+     {}),
+
+    ({'a/b/c.txt': 'abc',
+      'x.js': 'x',
+      'y.css': 'y'},
+     {'a/b/c.txt': 'abc',
+      'x.js': 'x',
+      'y.css': 'y'}),
+
+    ({'a.json': '[1, true, null, {}]'},
+     {'a.json': [1, True, None, {}]}),
+
+    ({'test1.yaml': '1',
+      'test2.yml': '2'},
+     {'test1.yaml': 1,
+      'test2.yml': 2}),
+
+    ({'a.xml': '<a>123</a>',
+      'b.svg': '<b1><b2>123</b2></b1>'},
+     {'a.xml': ['a', '123'],
+      'b.svg': ['b1', ['b2', '123']]}),
+
+    ({'a.bin': '123'},
+     {'a.bin': base64.b64encode(b'123').decode('utf-8')}),
 ])
-@pytest.mark.asyncio
-async def test_unchanging_content(view_factory, view_manager_factory, views):
-    conf = []
-    for view_name, file_descriptors in views.items():
-        conf.append(view_factory(view_name, file_descriptors))
+async def test_view_data(tmp_path, files, data):
+    name = 'name'
+    conf = {'views': [{'name': name,
+                       'view_path': str(tmp_path),
+                       'conf_path': None}]}
+    manager = await hat.gui.view.create_view_manager(conf)
 
-    view_manager = await view_manager_factory(conf)
-    for view_name, file_descriptors in views.items():
-        view = await view_manager.get(view_name)
-        assert view.name == view_name
-        assert view.conf is None
-        for fd in file_descriptors:
-            assert fd.relative_path in view.data
-            assert fd.content == view.data[fd.relative_path]
-
-
-@pytest.mark.asyncio
-async def test_binary_content(view_factory, view_manager_factory):
-    view_name = 'binaries_view'
-    file_descriptors = [
-        common.FileDescriptor(
-            relative_path='test.bin',
-            serialization_method=common.SerializationMethod.BINARY,
-            content='Hello world'.encode('utf-8')),
-        common.FileDescriptor(
-            relative_path='test2.bin',
-            serialization_method=common.SerializationMethod.BINARY,
-            content='Hello2'.encode('utf-8'))]
-    conf = [view_factory(view_name, file_descriptors)]
-
-    view_manager = await view_manager_factory(conf)
-    view = await view_manager.get(view_name)
-    assert view.name == view_name
+    view = await manager.get(name)
+    assert view.name == name
     assert view.conf is None
-    for fd in file_descriptors:
-        assert fd.relative_path in view.data
-        assert fd.content == base64.b64decode(
-            view.data[fd.relative_path].encode('utf-8'))
-
-
-@pytest.mark.asyncio
-async def test_xml_content(view_factory, view_manager_factory):
-    view_name = 'binaries_view'
-    file_descriptors = [
-        common.FileDescriptor(
-            relative_path='test.xml',
-            serialization_method=common.SerializationMethod.TEXT,
-            content='<div id="123"><div/></div>'),
-        common.FileDescriptor(
-            relative_path='test2.svg',
-            serialization_method=common.SerializationMethod.TEXT,
-            content='<svg></svg>')]
-    conf = [view_factory(view_name, file_descriptors)]
-    view_manager = await view_manager_factory(conf)
-
-    view = await view_manager.get(view_name)
-    assert view.name == view_name
-    assert view.conf is None
-    for fd in file_descriptors:
-        assert fd.relative_path in view.data
-        stream = io.StringIO(fd.content)
-        assert hat.gui.vt.parse(stream) == view.data[fd.relative_path]
-
-
-@pytest.mark.parametrize('file_descriptor, exception_cls', [
-    (common.FileDescriptor(
-        relative_path='test.xml',
-        serialization_method=common.SerializationMethod.TEXT,
-        content='invalid xml</div>'), xml.sax.SAXParseException),
-    (common.FileDescriptor(
-        relative_path='test.json',
-        serialization_method=common.SerializationMethod.TEXT,
-        content='{"key": "value", this should not be here}'),
-     json.decoder.JSONDecodeError),
-    (common.FileDescriptor(
-        relative_path='test.yaml',
-        serialization_method=common.SerializationMethod.TEXT,
-        content='{"key": "value"123, this should not be here}'),
-     yaml.parser.ParserError)])
-@pytest.mark.asyncio
-async def test_invalid_file(view_factory, view_manager_factory,
-                            file_descriptor, exception_cls):
-    view_name = 'invalid_view'
-    conf = [view_factory(view_name, [file_descriptor])]
-    view_manager = await view_manager_factory(conf)
-
-    with pytest.raises(exception_cls):
-        await view_manager.get(view_name)
-
-
-@pytest.mark.asyncio
-async def test_conf_returned(view_factory, view_manager_factory):
-    file_descriptors = []
-    conf = {'abc': 'def'}
-    view_name = 'test_conf_returned'
-
-    manager_conf = [view_factory(view_name, file_descriptors, conf)]
-    view_manager = await view_manager_factory(manager_conf)
-
-    view = await view_manager.get(view_name)
-    assert view.name == view_name
-    assert view.conf == conf
-
-
-@pytest.mark.asyncio
-async def test_conf_validated(view_factory, view_manager_factory):
-    conf_schema = """
-        type: object
-        id: hat://test_schema
-        required:
-            - required_property
-        properties:
-            required_property:
-                type: string
-        """
-    file_descriptors = [
-        common.FileDescriptor(
-            relative_path='schema.yaml',
-            serialization_method=common.SerializationMethod.TEXT,
-            content=conf_schema)]
-    conf = {'abc': 'def'}
-    view_name = 'test_conf_validated'
-    manager_conf = [view_factory(view_name, file_descriptors, conf)]
-    view_manager = await view_manager_factory(manager_conf)
-
-    with pytest.raises(jsonschema.ValidationError):
-        await view_manager.get(view_name)
-
-
-@pytest.mark.asyncio
-async def test_view_manager_closed(view_factory, view_manager_factory):
-    view_manager = await view_manager_factory([view_factory('view', [])])
-    view = await view_manager.get('view')
     assert view.data == {}
 
-    await view_manager.async_close()
+    for file_name, file_content in files.items():
+        path = tmp_path / file_name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(file_content)
 
-    with pytest.raises(Exception, match='view manager is closed'):
-        view = await view_manager.get('view')
+    view = await manager.get(name)
+    assert view.name == name
+    assert view.conf is None
+    assert view.data == data
+
+    await manager.async_close()
+
+    with pytest.raises(Exception):
+        await manager.get(name)
 
 
-@pytest.mark.asyncio
-async def test_view_manager_closing(view_factory, view_manager_factory):
-    view_manager = await view_manager_factory([view_factory('view', [])])
-    view = await view_manager.get('view')
-    assert view.data == {}
+async def test_invalid_view_path():
+    name = 'name'
+    conf = {'views': [{'name': name,
+                       'view_path': None,
+                       'conf_path': None}]}
+    manager = await hat.gui.view.create_view_manager(conf)
 
-    async with aio.Group() as group:
-        group.spawn(view_manager.async_close)
+    with pytest.raises(Exception):
+        await manager.get(name)
 
-        with pytest.raises(asyncio.CancelledError):
-            await view_manager.get('view')
+    await manager.async_close()
+
+
+async def test_validate_conf(tmp_path):
+    name = 'name'
+    conf_path = tmp_path / 'conf.json'
+    schema_path = tmp_path / 'schema.json'
+    conf = {'views': [{'name': name,
+                       'view_path': str(tmp_path),
+                       'conf_path': str(conf_path)}]}
+    manager = await hat.gui.view.create_view_manager(conf)
+
+    with pytest.raises(Exception):
+        await manager.get(name)
+
+    schema = {'id': 'test://schema',
+              'type': 'object',
+              'required': ['abc']}
+    json.encode_file(schema, schema_path)
+
+    with pytest.raises(Exception):
+        await manager.get(name)
+
+    data = {'cba': 123}
+    json.encode_file(data, conf_path)
+
+    with pytest.raises(Exception):
+        await manager.get(name)
+
+    data = {'abc': 321}
+    json.encode_file(data, conf_path)
+
+    view = await manager.get(name)
+    assert view.name == name
+    assert view.conf == data
+    assert view.data == {conf_path.name: data,
+                         schema_path.name: schema}
+
+    await manager.async_close()
