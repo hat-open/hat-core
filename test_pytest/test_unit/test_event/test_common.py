@@ -391,7 +391,7 @@ def test_event_sbs(event):
         source_timestamp=common.now(),
         payload=common.EventPayload(
             type=common.EventPayloadType.SBS,
-            data=common.SbsData(None, 'Integer', 123))),
+            data=common.SbsData(None, 'Integer', b'123'))),
 
     common.RegisterEvent(
         event_type=('a',),
