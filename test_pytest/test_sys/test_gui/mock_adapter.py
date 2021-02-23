@@ -4,13 +4,15 @@ import hat.event.common
 import hat.gui.common
 
 
-subscription = hat.event.common.Subscription([('a1', '*')])
-
 json_schema_id = None
 json_schema_repo = None
 
 
-async def create(conf, event_client):
+def create_subscription(conf):
+    return hat.event.common.Subscription([('a1', '*')])
+
+
+async def create_adapter(conf, event_client):
     adapter = MockAdapter()
     adapter._event_client = event_client
     adapter._group = aio.Group()

@@ -27,8 +27,8 @@ def adapter_module():
     module = types.ModuleType(module_name)
     module.json_schema_id = None
     module.json_schema_repo = None
-    module.subscription = subscription
-    module.create = Adapter
+    module.create_subscription = lambda _: subscription
+    module.create_adapter = Adapter
     sys.modules[module_name] = module
 
     try:

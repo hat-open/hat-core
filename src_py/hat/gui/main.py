@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import asyncio
+import collections
 import contextlib
 import functools
 import importlib
@@ -79,12 +80,7 @@ async def run_with_monitor(conf: json.Data,
                            ui_path: Path,
                            monitor: hat.monitor.client.Client):
     """Run monitor component"""
-    modules = (importlib.import_module(adapter_conf['module'])
-               for adapter_conf in conf['adapters'])
-    query_types = itertools.chain.from_iterable(
-        module.subscription.get_query_types() for module in modules
-        if module.subscription)
-    subscription = hat.event.common.Subscription(query_types)
+    subscription = await _create_subscription(conf)
     subscriptions = list(subscription.get_query_types())
 
     run_cb = functools.partial(run_with_event, conf, ui_path)
@@ -120,6 +116,18 @@ def _bind_resource(async_group, resource):
     async_group.spawn(aio.call_on_cancel, resource.async_close)
     async_group.spawn(aio.call_on_done, resource.wait_closing(),
                       async_group.close)
+
+
+async def _create_subscription(conf):
+    subscriptions = collections.deque()
+    for adapter_conf in conf['adapters']:
+        module = importlib.import_module(adapter_conf['module'])
+        subscription = await aio.call(module.create_subscription, adapter_conf)
+        subscriptions.append(subscription)
+
+    query_types = itertools.chain.from_iterable(i.get_query_types()
+                                                for i in subscriptions)
+    return hat.event.common.Subscription(query_types)
 
 
 if __name__ == '__main__':

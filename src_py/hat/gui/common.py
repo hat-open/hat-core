@@ -21,6 +21,11 @@ json_schema_repo: json.SchemaRepository = json.SchemaRepository(
 AdapterConf = json.Data
 """Adapter configuration"""
 
+CreateSubscription = aio.AsyncCallable[
+    [AdapterConf],
+    hat.event.common.Subscription]
+"""Create subscription callable"""
+
 CreateAdapter = aio.AsyncCallable[
     [AdapterConf, 'AdapterEventClient'],
     'Adapter']
@@ -36,19 +41,18 @@ class Adapter(aio.Resource):
 
         * json_schema_id (Optional[str]): JSON schema id
         * json_schema_repo (Optional[json.SchemaRepository]): JSON schema repo
-        * subscription (Optional[hat.event.common.Subscription]): subscription
-        * create (CreateAdapter): create new adapter instance
+        * create_subscription (CreateSubscription): create subscription
+        * create_adapter (CreateAdapter): create new adapter instance
 
     If module defines JSON schema repositoy and JSON schema id, JSON schema
     repository will be used for additional validation of adapter configuration
     with JSON schema id.
 
     Subscription is used for filtering events that can be obtained
-    by calling `AdapterEventClient.receive` method. If it is None, adapter will
-    not receive any event notifications.
+    by calling `AdapterEventClient.receive` method.
 
-    `create` is called with adapter instance configuration and adapter event
-    client.
+    `create_adapter` is called with adapter instance configuration and adapter
+    event client.
 
     """
 

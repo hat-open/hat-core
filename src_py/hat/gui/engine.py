@@ -35,15 +35,15 @@ async def create_engine(conf: json.Data,
             module = importlib.import_module(adapter_conf['module'])
             adapter_client = AdapterEventClient(client)
 
-            adapter = await aio.call(module.create, adapter_conf,
+            adapter = await aio.call(module.create_adapter, adapter_conf,
                                      adapter_client)
             engine.async_group.spawn(aio.call_on_cancel, adapter.async_close)
             engine.async_group.spawn(aio.call_on_done, adapter.wait_closing(),
                                      engine.close)
 
             engine._adapters[name] = adapter
-            if module.subscription:
-                engine._adapter_subscriptions[name] = module.subscription
+            engine._adapter_subscriptions[name] = await aio.call(
+                module.create_subscription, adapter_conf)
             engine._adapter_clients[name] = adapter_client
 
         engine.async_group.spawn(engine._receive_loop)
