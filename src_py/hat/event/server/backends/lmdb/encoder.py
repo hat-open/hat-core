@@ -1,0 +1,59 @@
+import struct
+import typing
+
+from hat import json
+from hat.event.server.backends.lmdb import common
+
+
+def encode_event(event: common.Event) -> bytes:
+    event_sbs = common.event_to_sbs(event)
+    return common.sbs_repo.encode('HatEvent', 'Event', event_sbs)
+
+
+def decode_event(event_bytes: bytes) -> common.Event:
+    event_sbs = common.sbs_repo.decode('HatEvent', 'Event', event_bytes)
+    return common.event_from_sbs(event_sbs)
+
+
+def encode_timestamp_id(x: typing.Tuple[common.Timestamp, int]) -> bytes:
+    t, instance_id = x
+    return struct.pack(">QIQ", t.s + (1 << 63), t.us, instance_id)
+
+
+def decode_timestamp_id(x: bytes) -> typing.Tuple[common.Timestamp, int]:
+    t_s, t_us, instance_id = struct.unpack(">QIQ", x)
+    return common.Timestamp(t_s - (1 << 63), t_us), instance_id
+
+
+def encode_timestamp(x: common.Timestamp) -> bytes:
+    return common.timestamp_to_bytes(x)
+
+
+def decode_timestamp(x: bytes) -> common.Timestamp:
+    return common.timestamp_from_bytes(x)
+
+
+def encode_tuple_str(x: typing.Tuple[str, ...]) -> bytes:
+    return encode_str(json.encode(list(x)))
+
+
+def decode_tuple_str(x: bytes) -> typing.Tuple[str, ...]:
+    return tuple(json.decode(decode_str(x)))
+
+
+def encode_int(x: int) -> bytes:
+    bit_length = x.bit_length() or 1
+    byte_length = (bit_length + 7) // 8
+    return x.to_bytes(byte_length, 'big')
+
+
+def decode_int(x: bytes) -> int:
+    return int.from_bytes(x, 'big')
+
+
+def encode_str(x: str) -> bytes:
+    return bytes(x, encoding='utf-8')
+
+
+def decode_str(x: bytes) -> str:
+    return str(x, encoding='utf-8')

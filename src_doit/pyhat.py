@@ -371,6 +371,7 @@ def task_pyhat_event():
         readme_path=Path('README.hat-event.rst'),
         dependencies=['appdirs',
                       'click',
+                      'lmdb',
                       'hat-util',
                       'hat-aio',
                       'hat-json',

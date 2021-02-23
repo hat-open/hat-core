@@ -220,15 +220,22 @@ async def call_on_done(f: typing.Awaitable,
     return await call(fn, *args, *kwargs)
 
 
+Executor = typing.Callable[..., typing.Awaitable]
+"""Executor coroutine
+
+This coroutine takes a function and its arguments, executes the
+function in executor and returns the result.
+
+"""
+
+
 def create_executor(*args: typing.Any,
                     executor_cls: typing.Type = concurrent.futures.ThreadPoolExecutor,  # NOQA
                     loop: typing.Optional[asyncio.AbstractEventLoop] = None
-                    ) -> typing.Callable[..., typing.Awaitable]:
+                    ) -> Executor:
     """Create `asyncio.loop.run_in_executor` wrapper.
 
-    Returns a coroutine that takes a function and its arguments, executes the
-    function using executor created from `executor_cls` and `args`; and
-    returns the result.
+    Wrapped executor is created from `executor_cls` with provided `args`.
 
     Args:
         args: executor args
