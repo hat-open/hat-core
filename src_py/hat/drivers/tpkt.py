@@ -40,6 +40,7 @@ async def listen(connection_cb: ConnectionCb,
     server = Server()
     server._connection_cb = connection_cb
     server._srv = await tcp.listen(server._on_connection, tcp.Address(*addr))
+    server._addresses = [Address(*i) for i in server._srv.addresses]
     return server
 
 
@@ -62,7 +63,7 @@ class Server(aio.Resource):
     @property
     def addresses(self) -> typing.List[Address]:
         """Listening addresses"""
-        return self._srv.addresses
+        return self._addresses
 
     async def _on_connection(self, conn):
         conn = Connection(conn)
@@ -83,6 +84,7 @@ class Connection(aio.Resource):
 
     def __init__(self, conn: tcp.Connection):
         self._conn = conn
+        self._info = ConnectionInfo(*(Address(*i) for i in conn.info))
         self._read_queue = aio.Queue()
         conn.async_group.spawn(self._read_loop)
 
@@ -94,7 +96,7 @@ class Connection(aio.Resource):
     @property
     def info(self) -> ConnectionInfo:
         """Connection info"""
-        return self._conn.info
+        return self._info
 
     async def read(self) -> bytes:
         """Read data"""
