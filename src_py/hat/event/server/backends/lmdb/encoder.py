@@ -57,3 +57,27 @@ def encode_str(x: str) -> bytes:
 
 def decode_str(x: bytes) -> str:
     return str(x, encoding='utf-8')
+
+
+def encode_json(x: json.Data) -> bytes:
+    return encode_str(json.encode(x))
+
+
+def decode_json(x: bytes) -> json.Data:
+    return json.decode(decode_str(x))
+
+
+def encode_system_data(data: common.SystemData) -> bytes:
+    last_timestamp = list(data.last_timestamp) if data.last_timestamp else None
+    encode_json({'server_id': data.server_id,
+                 'last_instance_id': data.last_instance_id,
+                 'last_timestamp': last_timestamp})
+
+
+def decode_system_data(data_bytes: bytes) -> common.SystemData:
+    data_json = decode_json(data_bytes)
+    last_timestamp = (common.Timestamp(*data_json['last_timestamp'])
+                      if data_json['last_timestamp'] else None)
+    return common.SystemData(server_id=data_json['server_id'],
+                             last_instance_id=data_json['last_instance_id'],
+                             last_timestamp=last_timestamp)

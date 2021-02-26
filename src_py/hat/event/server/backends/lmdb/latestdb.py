@@ -35,16 +35,14 @@ class LatestDb:
     def subscription(self) -> common.Subscription:
         return self._subscription
 
-    def add(self, events: typing.Iterable[common.Event]):
-        for event in events:
-            if not self._subscription.matches(event.event_type):
-                continue
-            if not self._conditions.matches(event):
-                continue
+    def add(self, event: common.Event) -> bool:
+        if not self._subscription.matches(event.event_type):
+            return False
 
-            key, value = event.event_type, event
-            self._events[key] = value
-            self._changes[key] = value
+        key, value = event.event_type, event
+        self._events[key] = value
+        self._changes[key] = value
+        return True
 
     def query(self,
               event_types: typing.Optional[typing.List[common.EventType]]

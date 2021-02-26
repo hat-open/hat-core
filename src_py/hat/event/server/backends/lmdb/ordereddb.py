@@ -42,25 +42,23 @@ class OrderedDb:
     def order_by(self):
         return self._order_by
 
-    def add(self, events: typing.Iterable[common.Event]):
-        for event in events:
-            if not self._subscription.matches(event.event_type):
-                continue
-            if not self._conditions.matches(event):
-                continue
+    def add(self, event: common.Event) -> bool:
+        if not self._subscription.matches(event.event_type):
+            return False
 
-            if self._order_by == common.OrderBy.TIMESTAMP:
-                key = event.timestamp, event.event_id.instance
+        if self._order_by == common.OrderBy.TIMESTAMP:
+            key = event.timestamp, event.event_id.instance
 
-            elif self._order_by == common.OrderBy.SOURCE_TIMESTAMP:
-                if event.source_timestamp is None:
-                    continue
-                key = event.source_timestamp, event.event_id.instance
+        elif self._order_by == common.OrderBy.SOURCE_TIMESTAMP:
+            if event.source_timestamp is None:
+                return False
+            key = event.source_timestamp, event.event_id.instance
 
-            else:
-                raise ValueError('unsupported order by')
+        else:
+            raise ValueError('unsupported order by')
 
-            self._changes.append((key, event))
+        self._changes.append((key, event))
+        return True
 
     async def query(self,
                     subscription: typing.Optional[common.Subscription],
