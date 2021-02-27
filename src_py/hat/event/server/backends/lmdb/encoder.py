@@ -25,32 +25,6 @@ def decode_timestamp_id(x: bytes) -> typing.Tuple[common.Timestamp, int]:
     return common.Timestamp(t_s - (1 << 63), t_us), instance_id
 
 
-def encode_timestamp(x: common.Timestamp) -> bytes:
-    return common.timestamp_to_bytes(x)
-
-
-def decode_timestamp(x: bytes) -> common.Timestamp:
-    return common.timestamp_from_bytes(x)
-
-
-def encode_tuple_str(x: typing.Tuple[str, ...]) -> bytes:
-    return encode_str(json.encode(list(x)))
-
-
-def decode_tuple_str(x: bytes) -> typing.Tuple[str, ...]:
-    return tuple(json.decode(decode_str(x)))
-
-
-def encode_int(x: int) -> bytes:
-    bit_length = x.bit_length() or 1
-    byte_length = (bit_length + 7) // 8
-    return x.to_bytes(byte_length, 'big')
-
-
-def decode_int(x: bytes) -> int:
-    return int.from_bytes(x, 'big')
-
-
 def encode_str(x: str) -> bytes:
     return bytes(x, encoding='utf-8')
 
@@ -69,9 +43,9 @@ def decode_json(x: bytes) -> json.Data:
 
 def encode_system_data(data: common.SystemData) -> bytes:
     last_timestamp = list(data.last_timestamp) if data.last_timestamp else None
-    encode_json({'server_id': data.server_id,
-                 'last_instance_id': data.last_instance_id,
-                 'last_timestamp': last_timestamp})
+    return encode_json({'server_id': data.server_id,
+                        'last_instance_id': data.last_instance_id,
+                        'last_timestamp': last_timestamp})
 
 
 def decode_system_data(data_bytes: bytes) -> common.SystemData:
@@ -81,3 +55,11 @@ def decode_system_data(data_bytes: bytes) -> common.SystemData:
     return common.SystemData(server_id=data_json['server_id'],
                              last_instance_id=data_json['last_instance_id'],
                              last_timestamp=last_timestamp)
+
+
+def encode_tuple_str(x: typing.Tuple[str, ...]) -> bytes:
+    return encode_str(json.encode(list(x)))
+
+
+def decode_tuple_str(x: bytes) -> typing.Tuple[str, ...]:
+    return tuple(json.decode(decode_str(x)))

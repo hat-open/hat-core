@@ -12,7 +12,7 @@ async def create(executor: aio.Executor,
                  env: lmdb.Environment,
                  name: str,
                  subscription: common.Subscription,
-                 conditions: common.Condition
+                 conditions: common.Conditions
                  ) -> 'LatestDb':
     db = LatestDb()
     db._env = env

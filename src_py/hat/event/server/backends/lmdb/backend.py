@@ -9,8 +9,8 @@ import lmdb
 from hat import aio
 from hat import json
 from hat.event.server.backends.lmdb import common
-import hat.event.server.backend.lmdb.systemdb
-import hat.event.server.backend.lmdb.latestdb
+import hat.event.server.backends.lmdb.systemdb
+import hat.event.server.backends.lmdb.latestdb
 
 
 mlog = logging.getLogger(__name__)
