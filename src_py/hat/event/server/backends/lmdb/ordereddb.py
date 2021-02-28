@@ -175,44 +175,9 @@ class OrderedDb:
         else:
             raise ValueError('unsupported order')
 
-        for event in events:
-            if max_results is not None and max_results <= 0:
-                return
-
-            if subscription and not subscription.matches(event.event_type):
-                continue
-
-            if event_ids is not None and event.event_id not in event_ids:
-                continue
-
-            if t_from is not None and event.timestamp < t_from:
-                continue
-
-            if t_to is not None and t_to < event.timestamp:
-                continue
-
-            if source_t_from is not None and (
-                    event.source_timestamp is None or
-                    event.source_timestamp < source_t_from):
-                continue
-
-            if source_t_to is not None and (
-                    event.source_timestamp is None or
-                    source_t_to < event.source_timestamp):
-                continue
-
-            if payload is not None and event.payload != payload:
-                continue
-
-            if unique_types is not None:
-                if event.event_type in unique_types:
-                    continue
-                unique_types.add(event.event_type)
-
-            if max_results is not None:
-                max_results -= 1
-
-            yield event
+        yield from _filter_events(events, subscription, event_ids, t_from,
+                                  t_to, source_t_from, source_t_to, payload,
+                                  unique_types, max_results)
 
     def _ext_open_db(self):
         return self._env.open_db(bytes(self._name, encoding='utf-8'))
@@ -220,7 +185,57 @@ class OrderedDb:
     def _ext_query(self, subscription, event_ids, t_from, t_to,
                    source_t_from, source_t_to, payload, order,
                    unique_types, max_results):
-        raise NotImplementedError()
+        if self._order_by == common.OrderBy.TIMESTAMP:
+            events = self._ext_query_events(t_from, t_to, order)
+
+        elif self._order_by == common.OrderBy.SOURCE_TIMESTAMP:
+            events = self._ext_query_events(source_t_from, source_t_to, order)
+
+        else:
+            raise ValueError('unsupported order by')
+
+        events = _filter_events(events, subscription, event_ids, t_from,
+                                t_to, source_t_from, source_t_to, payload,
+                                unique_types, max_results)
+        return list(events)
+
+    def _ext_query_events(self, t_from, t_to, order):
+        from_key = (encoder.encode_timestamp_id(t_from, 0)
+                    if t_from is not None else None)
+        to_key = (encoder.encode_timestamp_id(_next_timestamp(t_to), 0)
+                  if t_to is not None else None)
+
+        with self._env.begin(db=self._db, buffers=True) as txn:
+            cursor = txn.cursor()
+
+            if order == common.Order.DESCENDING:
+                start_key, stop_key = to_key, from_key
+
+                if (start_key is not None and cursor.set_range(start_key)):
+                    more = cursor.prev()
+                else:
+                    more = cursor.last()
+
+                while more and (stop_key is None or
+                                stop_key <= bytes(cursor.key())):
+                    yield encoder.decode_event(cursor.value())
+                    more = cursor.prev()
+
+            elif order == common.Order.ASCENDING:
+                start_key, stop_key = from_key, to_key
+
+                if start_key is not None:
+                    more = cursor.set_range(start_key)
+                else:
+                    more = cursor.first()
+
+                while more and (stop_key is None or
+                                bytes(cursor.key()) < stop_key):
+                    yield encoder.decode_event(cursor.value())
+                    more = cursor.next()
+
+            else:
+                raise ValueError('unsupported order')
 
     def _ext_flush(self, changes, parent):
         with self._env.begin(db=self._db, parent=parent, write=True) as txn:
@@ -228,3 +243,52 @@ class OrderedDb:
                 # TODO: maybe call put with append=True
                 txn.put(encoder.encode_timestamp_id(key),
                         encoder.encode_event(value))
+
+
+def _filter_events(events, subscription, event_ids, t_from, t_to,
+                   source_t_from, source_t_to, payload, unique_types,
+                   max_results):
+    for event in events:
+        if max_results is not None and max_results <= 0:
+            return
+
+        if subscription and not subscription.matches(event.event_type):
+            continue
+
+        if event_ids is not None and event.event_id not in event_ids:
+            continue
+
+        if t_from is not None and event.timestamp < t_from:
+            continue
+
+        if t_to is not None and t_to < event.timestamp:
+            continue
+
+        if source_t_from is not None and (
+                event.source_timestamp is None or
+                event.source_timestamp < source_t_from):
+            continue
+
+        if source_t_to is not None and (
+                event.source_timestamp is None or
+                source_t_to < event.source_timestamp):
+            continue
+
+        if payload is not None and event.payload != payload:
+            continue
+
+        if unique_types is not None:
+            if event.event_type in unique_types:
+                continue
+            unique_types.add(event.event_type)
+
+        if max_results is not None:
+            max_results -= 1
+
+        yield event
+
+
+def _next_timestamp(t):
+    next_us = t.us + 1
+    return common.Timestamp(s=t.s + next_us // int(1e6),
+                            us=next_us % int(1e6))
