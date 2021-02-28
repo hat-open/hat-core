@@ -191,6 +191,65 @@ def test_subscription_matches(query_types, matching, not_matching):
         assert subscription.matches(i) is False
 
 
+@pytest.mark.parametrize("query_types, union", [
+    ([],
+     []),
+
+    ([[]],
+     []),
+
+    ([[('a',)], [('b',)]],
+     [('a',), ('b',)]),
+
+    ([[('a',)], [('b',)], [('*',)]],
+     [('*',)]),
+
+    ([[('a', 'b')], [('a', 'c')]],
+     [('a', 'b'), ('a', 'c')]),
+])
+def test_subscription_union(query_types, union):
+    subscription = common.Subscription([]).union(*(common.Subscription(i)
+                                                   for i in query_types))
+    result = subscription.get_query_types()
+    assert set(result) == set(union)
+
+
+@pytest.mark.parametrize("first, second, isdisjoint", [
+    ([],
+     [],
+     True),
+
+    ([('a',)],
+     [('b',)],
+     True),
+
+    ([('a',)],
+     [('a',)],
+     False),
+
+    ([('a',)],
+     [('?',)],
+     False),
+
+    ([('?',)],
+     [('?',)],
+     False),
+
+    ([('?', 'a')],
+     [('?', 'b')],
+     True),
+
+    ([('a', 'b')],
+     [('*',)],
+     False),
+])
+def test_subscription_isdisjoint(first, second, isdisjoint):
+    first = common.Subscription(first)
+    second = common.Subscription(second)
+    result = first.isdisjoint(second)
+    assert result is isdisjoint
+
+
 @pytest.mark.parametrize("t1, t2", itertools.permutations([
     common.Timestamp(0, 0),
     common.Timestamp(0, 1),

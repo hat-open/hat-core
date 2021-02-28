@@ -1,6 +1,7 @@
 """Common functionality shared between clients and event server"""
 
 from pathlib import Path
+import collections
 import datetime
 import enum
 import struct
@@ -147,17 +148,31 @@ class Subscription:
     def __init__(self, query_types: typing.Iterable[EventType]):
         self._root = False, {}
         for query_type in query_types:
-            self._root = self._add_query_type(self._root, query_type)
+            self._root = Subscription._add_query_type(self._root, query_type)
 
     def get_query_types(self) -> typing.Iterable[EventType]:
         """Calculate sanitized query event types"""
-        yield from self._get_query_types(self._root)
+        yield from Subscription._get_query_types(self._root)
 
     def matches(self, event_type: EventType) -> bool:
         """Does `event_type` match subscription"""
-        return self._matches(self._root, event_type)
+        return Subscription._matches(self._root, event_type)
 
-    def _add_query_type(self, node, query_type):
+    def union(self, *others: 'Subscription') -> 'Subscription':
+        """Create new subscription including event types from this and
+        other subscriptions."""
+        result = Subscription([])
+        result._root = Subscription._union(
+            [self._root, *(other._root for other in others)])
+        return result
+
+    def isdisjoint(self, other: 'Subscription') -> bool:
+        """Return ``True`` if this subscription has no event types in common
+        with other subscription."""
+        return Subscription._isdisjoint(self._root, other._root)
+
+    @staticmethod
+    def _add_query_type(node, query_type):
         is_leaf, children = node
 
         if '*' in children:
@@ -176,22 +191,24 @@ class Subscription:
 
         else:
             child = children.get(head, (False, {}))
-            child = self._add_query_type(child, rest)
+            child = Subscription._add_query_type(child, rest)
             children[head] = child
 
         return node
 
-    def _get_query_types(self, node):
+    @staticmethod
+    def _get_query_types(node):
         is_leaf, children = node
 
         if is_leaf and '*' not in children:
             yield ()
 
         for head, child in children.items():
-            for rest in self._get_query_types(child):
+            for rest in Subscription._get_query_types(child):
                 yield (head, *rest)
 
-    def _matches(self, node, event_type):
+    @staticmethod
+    def _matches(node, event_type):
         is_leaf, children = node
 
         if '*' in children:
@@ -206,10 +223,65 @@ class Subscription:
             child = children.get(i)
             if not child:
                 continue
-            if self._matches(child, rest):
+            if Subscription._matches(child, rest):
                 return True
 
         return False
+
+    @staticmethod
+    def _union(nodes):
+        if len(nodes) < 2:
+            return nodes[0]
+
+        is_leaf = any(i for i, _ in nodes)
+
+        names = {}
+        for _, node_children in nodes:
+            for name, node_child in node_children.items():
+                if name == '*':
+                    return is_leaf, {'*': (True, {})}
+                if name not in names:
+                    names[name] = collections.deque()
+                names[name].append(node_child)
+
+        children = {name: Subscription._union(named_children)
+                    for name, named_children in names.items()}
+
+        return is_leaf, children
+
+    @staticmethod
+    def _isdisjoint(first_node, second_node):
+        first_is_leaf, first_children = first_node
+        second_is_leaf, second_children = second_node
+
+        if first_is_leaf and second_is_leaf:
+            return False
+
+        if (('*' in first_children and second_children) or
+                ('*' in second_children and first_children)):
+            return False
+
+        if '?' in first_children:
+            for child in second_children.values():
+                if not Subscription._isdisjoint(first_children['?'], child):
+                    return False
+
+        if '?' in second_children:
+            for name, child in first_children.items():
+                if name == '?':
+                    continue
+                if not Subscription._isdisjoint(second_children['?'], child):
+                    return False
+
+        names = set(first_children.keys()).intersection(second_children.keys())
+        for name in names:
+            if name == '?':
+                continue
+            if not Subscription._isdisjoint(first_children[name],
+                                            second_children[name]):
+                return False
+
+        return True
 
 
 class Timestamp(typing.NamedTuple):

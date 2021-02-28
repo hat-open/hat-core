@@ -220,7 +220,7 @@ class OrderedDb:
     def _ext_query(self, subscription, event_ids, t_from, t_to,
                    source_t_from, source_t_to, payload, order,
                    unique_types, max_results):
-        pass
+        raise NotImplementedError()
 
     def _ext_flush(self, changes, parent):
         with self._env.begin(db=self._db, parent=parent, write=True) as txn:

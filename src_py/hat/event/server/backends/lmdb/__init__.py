@@ -1,7 +1,7 @@
 """LMDB backend"""
 
-from hat.event.server.backends.lmdb import common
 from hat.event.server.backends.lmdb import backend
+from hat.event.server.backends.lmdb import common
 
 
 json_schema_id = 'hat://event/backends/lmdb.yaml#'

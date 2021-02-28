@@ -1,16 +1,16 @@
 from pathlib import Path
 import asyncio
+import collections
 import logging
 import typing
-import collections
 
 import lmdb
 
 from hat import aio
 from hat import json
 from hat.event.server.backends.lmdb import common
-import hat.event.server.backends.lmdb.systemdb
 import hat.event.server.backends.lmdb.latestdb
+import hat.event.server.backends.lmdb.systemdb
 
 
 mlog = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ async def create(conf: json.Data
     backend._sync_period = conf['sync_period']
     backend._executor = aio.create_executor(1)
 
-    backend._conditions = None
+    backend._conditions = common.Conditions(conf['conditions'])
 
     backend._env = await backend.executor(
         _ext_create_env, Path(conf['db_path']), conf['max_db_size'],
@@ -112,6 +112,51 @@ class LmdbBackend(common.Backend):
     async def query(self,
                     data: common.QueryData
                     ) -> typing.List[common.Event]:
+        if (data.event_id is None and
+                data.t_to is None and
+                data.source_t_from is None and
+                data.source_t_to is None and
+                data.payload is None and
+                data.order == common.Order.DESCENDING and
+                data.order_by == common.OrderBy.TIMESTAMP and
+                data.unique_type):
+            events = self._latest_db.query(event_types=data.event_types,
+                                           t_from=data.t_from,
+                                           max_results=data.max_results)
+
+            if data.t_from is not None:
+                events = (event for event in events
+                          if data.t_from <= event.timestamp)
+
+            events = sorted(events,
+                            key=lambda i: (i.timestamp, i.event_id),
+                            reverse=True)
+
+            if data.max_results is not None:
+                events = events[:data.max_results]
+
+            return events
+
+        subscription = (common.Subscription(data.event_types)
+                        if data.event_types is not None else None)
+
+        for db in self._ordered_dbs:
+            if db.order_by != data.order_by:
+                continue
+            if subscription and subscription.isdisjoint(db.subscription):
+                continue
+
+            events = await db.query(subscription=subscription,
+                                    event_ids=data.event_ids,
+                                    t_from=data.t_from,
+                                    t_to=data.t_to,
+                                    source_t_from=data.source_t_from,
+                                    source_t_to=data.source_t_to,
+                                    payload=data.payload,
+                                    order=data.order,
+                                    unique_type=data.unique_type,
+                                    max_results=data.max_results)
+            return list(events)
 
         return []
 

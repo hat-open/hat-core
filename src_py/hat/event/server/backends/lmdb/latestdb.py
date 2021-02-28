@@ -47,7 +47,6 @@ class LatestDb:
     def query(self,
               event_types: typing.Optional[typing.List[common.EventType]]
               ) -> typing.Iterable[common.Event]:
-
         if event_types is None:
             yield from self._events.values()
 
