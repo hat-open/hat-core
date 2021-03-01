@@ -1,4 +1,3 @@
-
 import pytest
 
 from hat.event.server.backends.lmdb import common

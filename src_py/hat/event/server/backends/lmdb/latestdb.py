@@ -60,7 +60,7 @@ class LatestDb:
                     yield event
 
         else:
-            for event_types in event_types:
+            for event_type in event_types:
                 event = self._events.get(event_type)
                 if event:
                     yield event
