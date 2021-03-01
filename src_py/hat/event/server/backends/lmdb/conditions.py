@@ -19,11 +19,11 @@ class Conditions:
 
 
 def _create_condition(conf):
-    if conf['type'] == 'and':
-        return _AndCondition(conf)
+    if conf['type'] == 'all':
+        return _AllCondition(conf)
 
-    if conf['type'] == 'or':
-        return _OrCondition(conf)
+    if conf['type'] == 'any':
+        return _AnyCondition(conf)
 
     if conf['type'] == 'json':
         return _JsonCondition(conf)
@@ -31,7 +31,7 @@ def _create_condition(conf):
     raise ValueError('unsupported condition type')
 
 
-class _AndCondition:
+class _AllCondition:
 
     def __init__(self, conf):
         self._conditions = [_create_condition(i) for i in conf['conditions']]
@@ -40,7 +40,7 @@ class _AndCondition:
         return all(condition.matches(event) for condition in self._conditions)
 
 
-class _OrCondition:
+class _AnyCondition:
 
     def __init__(self, conf):
         self._conditions = [_create_condition(i) for i in conf['conditions']]
@@ -55,13 +55,15 @@ class _JsonCondition:
         self._conf = conf
 
     def matches(self, event):
+        if event.payload is None:
+            return False
         if event.payload.type != common.EventPayloadType.JSON:
             return False
 
         data_path = self._conf.get('data_path', [])
         data = json.get(event.payload.data, data_path)
 
-        if 'data_type' in self._conf['data_type']:
+        if 'data_type' in self._conf:
             data_type = self._conf['data_type']
 
             if data_type == 'null':
