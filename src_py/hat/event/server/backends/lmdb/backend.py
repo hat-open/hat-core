@@ -9,6 +9,7 @@ import lmdb
 from hat import aio
 from hat import json
 from hat.event.server.backends.lmdb import common
+from hat.event.server.backends.lmdb.conditions import Conditions
 import hat.event.server.backends.lmdb.latestdb
 import hat.event.server.backends.lmdb.systemdb
 
@@ -22,7 +23,7 @@ async def create(conf: json.Data
     backend._sync_period = conf['sync_period']
     backend._executor = aio.create_executor(1)
 
-    backend._conditions = common.Conditions(conf['conditions'])
+    backend._conditions = Conditions(conf['conditions'])
 
     backend._env = await backend.executor(
         _ext_create_env, Path(conf['db_path']), conf['max_db_size'],

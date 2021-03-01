@@ -6,13 +6,14 @@ import lmdb
 from hat import aio
 from hat.event.server.backends.lmdb import common
 from hat.event.server.backends.lmdb import encoder
+from hat.event.server.backends.lmdb.conditions import Conditions
 
 
 async def create(executor: aio.Executor,
                  env: lmdb.Environment,
                  name: str,
                  subscription: common.Subscription,
-                 conditions: common.Conditions
+                 conditions: Conditions
                  ) -> 'LatestDb':
     db = LatestDb()
     db._env = env

@@ -8,13 +8,14 @@ import lmdb
 from hat import aio
 from hat.event.server.backends.lmdb import common
 from hat.event.server.backends.lmdb import encoder
+from hat.event.server.backends.lmdb.conditions import Conditions
 
 
 async def create(executor: aio.Executor,
                  env: lmdb.Environment,
                  name: str,
                  subscription: common.Subscription,
-                 conditions: common.Condition,
+                 conditions: Conditions,
                  order_by: common.OrderBy
                  ) -> 'OrderedDb':
     db = OrderedDb()
@@ -193,6 +194,8 @@ class OrderedDb:
 
         else:
             raise ValueError('unsupported order by')
+
+        events = (event for event in events if self._conditions.matches(event))
 
         events = _filter_events(events, subscription, event_ids, t_from,
                                 t_to, source_t_from, source_t_to, payload,
