@@ -1,7 +1,7 @@
 @import 'color';
 
 
-table.grid {
+%table-grid, table.grid {
     table-layout: fixed;
     border-spacing: 0px;
     width: 100%;

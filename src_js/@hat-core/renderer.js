@@ -1,12 +1,12 @@
 /** @module @hat-core/renderer
  */
 
-import {init as snabbdomInit} from 'snabbdom/build/package/init';
-import {h as snabbdomH} from 'snabbdom/build/package/h';
-import {classModule as snabbdomClass} from 'snabbdom/build/package/modules/class';
-import {datasetModule as snabbdomDataset} from 'snabbdom/build/package/modules/dataset';
-import {eventListenersModule as snabbdomEvent} from 'snabbdom/build/package/modules/eventlisteners';
-import {styleModule as snabbdomStyle} from 'snabbdom/build/package/modules/style';
+import {init as snabbdomInit} from 'snabbdom/init';
+import {h as snabbdomH} from 'snabbdom/h';
+import {classModule as snabbdomClass} from 'snabbdom/modules/class';
+import {datasetModule as snabbdomDataset} from 'snabbdom/modules/dataset';
+import {eventListenersModule as snabbdomEvent} from 'snabbdom/modules/eventlisteners';
+import {styleModule as snabbdomStyle} from 'snabbdom/modules/style';
 
 import * as u from '@hat-core/util';
 

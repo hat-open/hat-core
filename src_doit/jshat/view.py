@@ -81,12 +81,24 @@ module.exports = {{
         rules: [
             {{
                 test: /\.scss$/,
-                use: ["style-loader", "css-loader", "resolve-url-loader",
-                      "sass-loader?sourceMap"]
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    "resolve-url-loader",
+                    {{
+                        loader: "sass-loader",
+                        options: {{ sourceMap: true }}
+                    }}
+                ]
             }},
             {{
                 test: /\.woff2$/,
-                use: "file-loader?name=fonts/[name].[ext]"
+                use: [
+                    {{
+                        loader: "file-loader",
+                        options: {{ name: "fonts/[name].[ext]" }}
+                    }}
+                ]
             }}
         ]
     }},

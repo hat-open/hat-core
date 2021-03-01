@@ -18,7 +18,7 @@ html, body {
     align-items: stretch;
 
     table {
-        @extend table.grid;
+        @extend %table-grid;
 
         th.col-id { width: 70px; }
         th.col-name {}
