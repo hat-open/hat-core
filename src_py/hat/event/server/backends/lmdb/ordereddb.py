@@ -19,6 +19,7 @@ async def create(executor: aio.Executor,
                  order_by: common.OrderBy
                  ) -> 'OrderedDb':
     db = OrderedDb()
+    db._executor = executor
     db._env = env
     db._name = name
     db._subscription = subscription
@@ -74,42 +75,42 @@ class OrderedDb:
                     max_results: typing.Optional[int]
                     ) -> typing.Iterable[common.Event]:
         unique_types = set() if unique_type else None
+        events = collections.deque()
 
         if order == common.Order.DESCENDING:
-            events = collections.deque(self._query_changes(
+            events.extend(self._query_changes(
                 subscription, event_ids, t_from, t_to, source_t_from,
                 source_t_to, payload, order, unique_types, max_results))
-            yield from events
 
             if max_results is not None:
                 max_results -= len(events)
                 if max_results <= 0:
-                    return
+                    return events
 
-            events = await self._executor(
+            events.extend(await self._executor(
                 self._ext_query, subscription, event_ids, t_from, t_to,
                 source_t_from, source_t_to, payload, order, unique_types,
-                max_results)
-            yield from events
+                max_results))
 
         elif order == common.Order.ASCENDING:
-            events = await self._executor(
+            events.extend(await self._executor(
                 self._ext_query, subscription, event_ids, t_from, t_to,
                 source_t_from, source_t_to, payload, order, unique_types,
-                max_results)
-            yield from events
+                max_results))
 
             if max_results is not None:
                 max_results -= len(events)
                 if max_results <= 0:
-                    return
+                    return events
 
-            yield from self._query_changes(
+            events.extend(self._query_changes(
                 subscription, event_ids, t_from, t_to, source_t_from,
-                source_t_to, payload, order, unique_types, max_results)
+                source_t_to, payload, order, unique_types, max_results))
 
         else:
             raise ValueError('unsupported order')
+
+        return events
 
     def create_ext_flush(self) -> common.ExtFlushCb:
         changes = self._changes
@@ -203,9 +204,9 @@ class OrderedDb:
         return list(events)
 
     def _ext_query_events(self, t_from, t_to, order):
-        from_key = (encoder.encode_timestamp_id(t_from, 0)
+        from_key = (encoder.encode_timestamp_id((t_from, 0))
                     if t_from is not None else None)
-        to_key = (encoder.encode_timestamp_id(_next_timestamp(t_to), 0)
+        to_key = (encoder.encode_timestamp_id((_next_timestamp(t_to), 0))
                   if t_to is not None else None)
 
         with self._env.begin(db=self._db, buffers=True) as txn:
