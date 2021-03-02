@@ -15,7 +15,6 @@ pandoc
 python
 python-pip
 samba
-sassc
 socat
 sqlite
 unixodbc

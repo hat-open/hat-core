@@ -27,7 +27,8 @@ def task_articles():
     """Articles - build"""
     for name in get_article_names():
         yield {'name': name,
-               'actions': [(_build_article, [name])]}
+               'actions': [(_build_article, [name])],
+               'task_dep': ['jshat_deps']}
 
 
 def _build_article(name):
@@ -56,7 +57,7 @@ def _build_article(name):
 
 
 def _build_scss(src_path, dst_path):
-    subprocess.run(['sassc', '-t', 'compressed',
+    subprocess.run(['node_modules/.bin/sass', '--no-source-map',
                     str(src_path), str(dst_path)],
                    check=True)
 

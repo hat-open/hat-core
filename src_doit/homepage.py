@@ -70,8 +70,10 @@ def task_homepage_sass():
     for src_path, dst_path in mappings.items():
         yield {'name': str(dst_path),
                'actions': [(common.mkdir_p, [dst_path.parent]),
-                           f'sassc {src_path} {dst_path}'],
-               'targets': [dst_path]}
+                           f'node_modules/.bin/sass --no-source-map'
+                           f' {src_path} {dst_path}'],
+               'targets': [dst_path],
+               'task_dep': ['jshat_deps']}
 
 
 def task_homepage_docs():
