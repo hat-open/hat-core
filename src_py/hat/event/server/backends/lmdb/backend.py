@@ -11,6 +11,7 @@ from hat import json
 from hat.event.server.backends.lmdb import common
 from hat.event.server.backends.lmdb.conditions import Conditions
 import hat.event.server.backends.lmdb.latestdb
+import hat.event.server.backends.lmdb.ordereddb
 import hat.event.server.backends.lmdb.systemdb
 
 
@@ -25,16 +26,16 @@ async def create(conf: json.Data
 
     backend._conditions = Conditions(conf['conditions'])
 
-    backend._env = await backend.executor(
+    backend._env = await backend._executor(
         _ext_create_env, Path(conf['db_path']), conf['max_db_size'],
         2 + 2 * len(conf['ordered_subscriptions']))
 
-    backend._sys_db = await hat.event.server.backend.lmdb.systemdb.create(
+    backend._sys_db = await hat.event.server.backends.lmdb.systemdb.create(
         backend._executor, backend._env, 'system', conf['server_id'])
 
     subscription = common.Subscription(tuple(i)
                                        for i in conf['latest_subscriptions'])
-    backend._latest_db = await hat.event.server.backend.lmdb.latestdb.create(
+    backend._latest_db = await hat.event.server.backends.lmdb.latestdb.create(
         backend._executor, backend._env, 'latest', subscription,
         backend._conditions)
 
@@ -42,11 +43,12 @@ async def create(conf: json.Data
     subscriptions = [
         common.Subscription(tuple(i) for i in ordered_subscriptions)
         for ordered_subscriptions in conf['ordered_subscriptions']]
-    for subscription in subscriptions:
+    for i, subscription in enumerate(subscriptions):
         for order_by in common.OrderBy:
-            ordered_dbs = await hat.event.server.backend.lmdb.ordered.create(
-                backend._executor, backend._env, 'latest', subscription,
-                order_by)
+            name = f'ordered_{i}_{order_by.name}'
+            ordered_dbs = await hat.event.server.backends.lmdb.ordereddb.create(  # NOQA
+                backend._executor, backend._env, name, subscription,
+                backend._conditions, order_by)
             backend._ordered_dbs.append(ordered_dbs)
 
     backend._async_group = aio.Group()
@@ -65,7 +67,8 @@ class LmdbBackend(common.Backend):
                                 server_id: int
                                 ) -> common.EventId:
         if server_id != self._sys_db.data.server_id:
-            return 0
+            return common.EventId(server=server_id,
+                                  instance=0)
 
         instance_id = self._sys_db.data.last_instance_id or 0
         return common.EventId(server=server_id,
@@ -78,22 +81,23 @@ class LmdbBackend(common.Backend):
         for event in sorted_events:
             server_id = self._sys_db.data.server_id
             if server_id != event.event_id.server:
-                mlog.error("event registration error: invalid server id")
+                mlog.warning("event registration skipped: invalid server id")
                 continue
 
             last_instance_id = self._sys_db.data.last_instance_id
             if (last_instance_id is not None and
                     last_instance_id >= event.event_id.instance):
-                mlog.error("event registration error: invalid instance id")
+                mlog.warning("event registration skipped: invalid instance id")
                 continue
 
             last_timestamp = self._sys_db.data.last_timestamp
             if (last_timestamp is not None and
                     last_timestamp > event.timestamp):
-                mlog.error("event registration error: invalid timestamp")
+                mlog.warning("event registration skipped: invalid timestamp")
                 continue
 
             if not self._conditions.matches(event):
+                mlog.warning("event registration skipped: invalid conditions")
                 continue
 
             registered = False
@@ -113,7 +117,7 @@ class LmdbBackend(common.Backend):
     async def query(self,
                     data: common.QueryData
                     ) -> typing.List[common.Event]:
-        if (data.event_id is None and
+        if (data.event_ids is None and
                 data.t_to is None and
                 data.source_t_from is None and
                 data.source_t_to is None and
@@ -121,9 +125,7 @@ class LmdbBackend(common.Backend):
                 data.order == common.Order.DESCENDING and
                 data.order_by == common.OrderBy.TIMESTAMP and
                 data.unique_type):
-            events = self._latest_db.query(event_types=data.event_types,
-                                           t_from=data.t_from,
-                                           max_results=data.max_results)
+            events = self._latest_db.query(event_types=data.event_types)
 
             if data.t_from is not None:
                 events = (event for event in events
