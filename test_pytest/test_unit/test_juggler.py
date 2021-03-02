@@ -234,6 +234,26 @@ async def test_autoflush_not_zero(server_port):
         assert conn2_changes.empty()
 
 
+async def test_rpc(server_port):
+    async with create_conn_pair(server_port, 0.001) as conn_pair:
+        conn1, conn2 = conn_pair
+        actions = {'act': lambda x: x + 1}
+        rpc1 = juggler.RpcConnection(conn1, actions)
+        rpc2 = juggler.RpcConnection(conn2, actions)
+
+        result = await rpc1.call('act', 123)
+        assert result == 124
+
+        result = await rpc2.call('act', 321)
+        assert result == 322
+
+        with pytest.raises(Exception):
+            await rpc1.call('act', '123')
+
+        with pytest.raises(Exception):
+            await rpc1.call('not act', 321)
+
+
 async def test_example_docs():
 
     from hat import aio

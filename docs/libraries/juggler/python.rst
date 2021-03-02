@@ -80,6 +80,86 @@ and for server-side is the same::
         async def receive(self) -> json.Data: ...
 
 
+.. _hat-juggler-RpcConnection:
+
+RpcConnection
+-------------
+
+Simple wrapper for juggler connection which provides remote procedure call
+mechanics. Additional communication utilizes juggler `MESSAGE` messages::
+
+    oneOf:
+      - type: object
+        required:
+            - type
+            - id
+            - direction
+            - action
+            - args
+        properties:
+            type:
+                const: rpc
+            id:
+                type: integer
+            direction:
+                const: request
+            action:
+                type: string
+            args:
+                type: array
+      - type: object
+        required:
+            - type
+            - id
+            - direction
+            - success
+            - result
+        properties:
+            type:
+                const: rpc
+            id:
+                type: integer
+            direction:
+                const: response
+            success:
+                type: boolean
+
+Provided API is similar to Connection's with addition of `actions` and `call`
+coroutine::
+
+    class Connection(aio.Resource):
+
+        def __init__(self,
+                     conn: Connection,
+                     actions: typing.Dict[str, aio.AsyncCallable]): ...
+
+        @property
+        def async_group(self) -> aio.Group: ...
+
+        @property
+        def local_data(self) -> json.Data: ...
+
+        @property
+        def remote_data(self) -> json.Data: ...
+
+        def register_change_cb(self,
+                               cb: typing.Callable[[], None]
+                               ) -> util.RegisterCallbackHandle: ...
+
+        def set_local_data(self, data: json.Data): ...
+
+        async def flush_local_data(self): ...
+
+        async def send(self, msg: json.Data): ...
+
+        async def receive(self) -> json.Data: ...
+
+        async def call(self,
+                       action: str,
+                       *args: json.Data
+                       ) -> json.Data: ...
+
+
 Example
 -------
 

@@ -382,3 +382,169 @@ def _create_ssl_context(pem_file):
     if pem_file:
         ssl_ctx.load_cert_chain(str(pem_file))
     return ssl_ctx
+
+
+class RpcConnection(aio.Resource):
+    """Remote procedure call juggler connection wrapper"""
+
+    def __init__(self,
+                 conn: Connection,
+                 actions: typing.Dict[str, aio.AsyncCallable]):
+        self._conn = conn
+        self._actions = actions
+        self._message_queue = aio.Queue()
+        self._last_msg_id = 0
+        self._call_futures = {}
+
+        self.async_group.spawn(self._receive_loop)
+
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._conn.async_group
+
+    @property
+    def local_data(self) -> json.Data:
+        """Local data"""
+        return self._conn.local_data
+
+    @property
+    def remote_data(self) -> json.Data:
+        """Remote data"""
+        return self._conn.remote_data
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[], None]
+                           ) -> util.RegisterCallbackHandle:
+        """Register remote data change callback"""
+        return self._conn.register_change_cb(cb)
+
+    def set_local_data(self, data: json.Data):
+        """Set local data
+
+        Raises:
+            ConnectionError
+
+        """
+        self._conn.set_local_data(data)
+
+    async def flush_local_data(self):
+        """Force synchronization of local data
+
+        Raises:
+            ConnectionError
+
+        """
+        await self._conn.flush_local_data()
+
+    async def send(self, msg: json.Data):
+        """Send message
+
+        Raises:
+            ConnectionError
+
+        """
+        await self._conn.send(msg)
+
+    async def receive(self) -> json.Data:
+        """Receive message
+
+        Raises:
+            ConnectionError
+
+        """
+        try:
+            return await self._message_queue.get()
+
+        except aio.QueueClosedError:
+            raise ConnectionError()
+
+    async def call(self,
+                   action: str,
+                   *args: json.Data
+                   ) -> json.Data:
+        """Call remote action
+
+        Raises:
+            ConnectionError
+
+        """
+        if not self.is_open:
+            raise ConnectionError()
+
+        self._last_msg_id += 1
+        msg_id = self._last_msg_id
+        future = asyncio.Future()
+
+        try:
+            self._call_futures[msg_id] = future
+            await self.send({'type': 'rpc',
+                             'id': msg_id,
+                             'direction': 'request',
+                             'action': action,
+                             'args': list(args)})
+            return await future
+
+        finally:
+            del self._call_futures[msg_id]
+
+    async def _receive_loop(self):
+        try:
+            while True:
+                msg = await self._conn.receive()
+
+                if isinstance(msg, dict) and msg.get('type') == 'rpc':
+                    await self._process_msg_rpc(msg)
+
+                else:
+                    self._message_queue.put_nowait(msg)
+
+        except Exception as e:
+            mlog.error("rpc receive loop error: %s", e, exc_info=e)
+
+        finally:
+            self.close()
+            self._message_queue.close()
+            for future in self._call_futures.values():
+                if not future.done():
+                    future.set_exception(ConnectionError())
+
+    async def _process_msg_rpc(self, msg):
+        if msg['direction'] == 'request':
+            await self._process_msg_rpc_req(msg)
+
+        elif msg['direction'] == 'response':
+            await self._process_msg_rpc_res(msg)
+
+        else:
+            raise Exception('invalid rpc direction')
+
+    async def _process_msg_rpc_req(self, msg):
+        action = self._actions.get(msg['action'])
+        args = msg['args']
+
+        try:
+            if not action:
+                raise Exception('invalid action')
+            result = await aio.call(action, *args)
+            success = True
+
+        except Exception as e:
+            result = str(e)
+            success = False
+
+        await self.send({'type': 'rpc',
+                         'id': msg['id'],
+                         'direction': 'response',
+                         'success': success,
+                         'result': result})
+
+    async def _process_msg_rpc_res(self, msg):
+        future = self._call_futures.get(msg['id'])
+        if not future or future.done():
+            return
+
+        if msg['success']:
+            future.set_result(msg['result'])
+        else:
+            future.set_exception(Exception(msg['result']))
