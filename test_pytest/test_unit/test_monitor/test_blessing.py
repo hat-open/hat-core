@@ -99,6 +99,22 @@ def group_component_infos(blessings, ranks, *, readies=None, starting_cid=0,
      group_component_infos(blessings=[None, 456],
                            ranks=[1, 1],
                            readies=[123, 456])),
+
+    (Algorithm.BLESS_ONE,
+     group_component_infos(blessings=[None, None],
+                           ranks=[1, 2],
+                           readies=[0, None]),
+     group_component_infos(blessings=[None, generic_token],
+                           ranks=[1, 2],
+                           readies=[0, None])),
+
+    (Algorithm.BLESS_ONE,
+     group_component_infos(blessings=[None, None],
+                           ranks=[1, 2],
+                           readies=[0, 0]),
+     group_component_infos(blessings=[None, None],
+                           ranks=[1, 2],
+                           readies=[0, 0])),
 ])
 def test_calculate_blessing(algorithm, components, result):
     calculated_result = calculate(components, {}, algorithm)

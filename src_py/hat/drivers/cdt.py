@@ -104,14 +104,13 @@ class Connection(aio.Resource):
                 if 'id' in msg:
                     future = self._result_futures.get(msg['id'])
                     if future and not future.done():
-
                         future.set_result(msg['result'])
 
                 else:
                     self._event_cbs.notify(msg['method'], msg['params'])
 
         except Exception as e:
-            mlog.error("juggler receive loop error: %s", e, exc_info=e)
+            mlog.error("receive loop error: %s", e, exc_info=e)
 
         finally:
             self.close()

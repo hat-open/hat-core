@@ -173,6 +173,8 @@ class Client(aio.Resource):
 T = typing.TypeVar('T')
 
 
+# TODO: rewrite run_component - provide interface for setting ready to 0
+
 async def run_component(client: Client,
                         async_run_cb: typing.Callable[..., typing.Awaitable[T]],  # NOQA
                         *args, **kwargs

@@ -361,6 +361,11 @@ Currently supported algorithms:
         components revoke their ready tokens, master issues new blessing token
         to chosen component.
 
+        Ready token 0 is used by component to signalize state in which it
+        is not ready to provide full functionality. Server will never set
+        blessing to 0 and will not provide blessing token to any component with
+        ready set to 0.
+
 
 Components rank
 ---------------
