@@ -68,15 +68,25 @@ def main(conf: typing.Optional[Path],
 async def async_main(conf: json.Data,
                      ui_path: Path):
     """Async main entry point"""
-    monitor = await hat.monitor.client.connect(conf['monitor'])
+    async_group = aio.Group()
+
     try:
-        await hat.monitor.client.run_component(monitor, run_with_monitor,
-                                               conf, ui_path, monitor)
+        monitor = await hat.monitor.client.connect(conf['monitor'])
+        _bind_resource(async_group, monitor)
+
+        component = hat.monitor.client.Component(monitor, run_with_monitor,
+                                                 conf, ui_path, monitor)
+        component.set_enabled(True)
+        _bind_resource(async_group, component)
+
+        await async_group.wait_closing()
+
     finally:
         await aio.uncancellable(monitor.async_close())
 
 
-async def run_with_monitor(conf: json.Data,
+async def run_with_monitor(component: hat.monitor.client.Component,
+                           conf: json.Data,
                            ui_path: Path,
                            monitor: hat.monitor.client.Client):
     """Run monitor component"""

@@ -44,7 +44,7 @@ estabishment process.
 
 Example of high-level interface usage::
 
-    async def monitor_async_run():
+    async def monitor_async_run(component):
         await hat.event.client.run_client(
             monitor_client=monitor,
             server_group='event servers',
@@ -60,7 +60,8 @@ Example of high-level interface usage::
         'group': 'test clients',
         'monitor_address': 'tcp+sbs://127.0.0.1:23010',
         'component_address': None})
-    await hat.monitor.client.run_component(monitor, monitor_async_run)
+    component = hat.monitor.client.Component(monitor, monitor_async_run)
+    component.set_enabled(True)
     await monitor.async_close()
 
 """

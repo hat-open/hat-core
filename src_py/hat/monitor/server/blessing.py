@@ -60,8 +60,9 @@ def _bless_all(components):
         if c.blessing is not None:
             yield c
 
-        _last_token_id += 1
-        yield c._replace(blessing=_last_token_id)
+        else:
+            _last_token_id += 1
+            yield c._replace(blessing=_last_token_id)
 
 
 def _bless_one(components):

@@ -1,7 +1,7 @@
 """Library used by components for communication with Monitor Server
 
 This module provides low-level interface (`connect`/`Client`) and high-level
-interface (`run_component`) for communication with Monitor Server.
+interface (`Component`) for communication with Monitor Server.
 
 `connect` is used for establishing single chatter based connection
 with Monitor Server which is represented by `Client`. Termination of
@@ -20,28 +20,29 @@ Example of low-level interface usage::
     finally:
         await client.async_close()
 
-`run_component` provide high-level interface for communication with
-Monitor Server. This function first establishes connection to Monitor
-Server and then listens component changes and in regard to blessing
-and ready tokens calls or cancels `async_run_cb` callback.
-In case blessing token matches ready token, `async_run_cb` is called.
-While `async_run_cb` is running, once blessing token changes, `async_run_cb` is
-canceled. If `async_run_cb` finishes or raises exception, this function closes
-connection to monitor server and returns `async_run_cb` result. If connection
-to monitor server is closed, this function raises exception.
+`Component` provide high-level interface for communication with
+Monitor Server. Component, listens to client changes and in regard to blessing
+and ready tokens calls or cancels `async_run_cb` callback. In case component is
+enabled and blessing token matches ready token, `async_run_cb` is called.
+While `async_run_cb` is running, once enable state or blessing token changes,
+`async_run_cb` is canceled. If `async_run_cb` finishes or raises exception or
+connection to monitor server is closed, component is closed.
 
 Example of high-level interface usage::
 
-    async def monitor_async_run():
+    async def monitor_async_run(f):
         await asyncio.sleep(10)
-        return 13
+        f.set_result(13)
 
     client = await hat.monitor.client.connect({
         'name': 'client',
         'group': 'test clients',
         'monitor_address': 'tcp+sbs://127.0.0.1:23010',
         'component_address': None})
-    res = await hat.monitor.client.run_component(client, monitor_async_run)
+    f = asyncio.Future()
+    component = Component(client, monitor_async_run, f)
+    component.set_enabled(True)
+    res = await f
     assert res == 13
 
 """
@@ -170,100 +171,121 @@ class Client(aio.Resource):
         self._change_cbs.notify()
 
 
-T = typing.TypeVar('T')
+class Component(aio.Resource):
+    """Monitor component
 
+    Implementation of component behaviour according to BLESS_ALL and BLESS_ONE
+    algorithms.
 
-# TODO: rewrite run_component - provide interface for setting ready to 0
+    Component runs client's loop which manages blessing/ready states based on
+    provided monitor client and component's enabled state.
 
-async def run_component(client: Client,
-                        async_run_cb: typing.Callable[..., typing.Awaitable[T]],  # NOQA
-                        *args, **kwargs
-                        ) -> T:
-    """Run component
+    When component is enabled and blessing token matches ready token,
+    `async_run_cb` is called with component instance and additional `args` and
+    `kwargs` arguments. While `async_run_cb` is running, if enabled state or
+    blessing token changes, `async_run_cb` is canceled.
 
-    This starts client's loop which manages blessing/ready states based on
-    provided monitor client. This implementation sets ready token immediately
-    after blessing token is detected.
-
-    When blessing token matches ready token, `async_run_cb` is called with
-    additional `args` and `kwargs` arguments. While `async_run_cb` is running,
-    if blessing token changes, `async_run_cb` is canceled.
-
-    If `async_run_cb` finishes or raises exception, this function returns
-    `async_run_cb` result. If connection to monitor server is closed, this
-    function raises `ConnectionError`.
+    If `async_run_cb` finishes or raises exception, component is closed.
 
     """
-    change_queue = aio.Queue()
-    async_group = aio.Group()
 
-    def on_client_change():
-        change_queue.put_nowait(None)
+    def __init__(self,
+                 client: Client,
+                 async_run_cb: typing.Callable[..., typing.Awaitable],
+                 *args, **kwargs):
+        self._client = client
+        self._async_run_cb = async_run_cb
+        self._args = args
+        self._kwargs = kwargs
+        self._enabled = False
+        self._change_queue = aio.Queue()
+        self._async_group = client.async_group.create_subgroup()
+        self._async_group.spawn(self._component_loop)
 
-    closing_future = async_group.spawn(client.wait_closing)
-    change_handler = client.register_change_cb(on_client_change)
-    async_group.spawn(aio.call_on_cancel, change_handler.cancel)
+    @property
+    def async_group(self) -> aio.Group:
+        """Async group"""
+        return self._async_group
 
-    async def wait_until_blessed_and_ready():
+    @property
+    def client(self) -> Client:
+        """Client"""
+        return self._client
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
+
+    def set_enabled(self, enabled: bool):
+        if self._enabled == enabled:
+            return
+
+        self._enabled = enabled
+        self._change_queue.put_nowait(None)
+
+    def _on_client_change(self):
+        self._change_queue.put_nowait(None)
+
+    async def _component_loop(self):
+        try:
+            with self._client.register_change_cb(self._on_client_change):
+                while True:
+                    mlog.debug("waiting blessing and ready")
+                    await self._wait_until_blessed_and_ready()
+
+                    async with self._async_group.create_subgroup() as subgroup:
+                        mlog.debug("running component's async_run_cb")
+
+                        run_future = subgroup.spawn(
+                            self._async_run_cb, self, *self._args,
+                            **self._kwargs)
+                        ready_future = subgroup.spawn(
+                            self._wait_while_blessed_and_ready)
+
+                        await asyncio.wait([run_future, ready_future],
+                                           return_when=asyncio.FIRST_COMPLETED)
+
+                        if run_future.done():
+                            return
+
+        except ConnectionError:
+            raise
+
+        except Exception as e:
+            mlog.warning("component loop error: %s", e, exc_info=e)
+
+        finally:
+            self.close()
+
+    async def _wait_until_blessed_and_ready(self):
         while True:
-            blessing = client.info.blessing if client.info else None
-            ready = client.info.ready if client.info else None
+            if self._enabled:
+                info = self._client.info
+                blessing = info.blessing if info else None
+                ready = info.ready if info else None
 
-            client.set_ready(blessing)
-            if blessing is not None and blessing == ready:
+                self._client.set_ready(blessing)
+                if blessing and blessing == ready:
+                    break
+
+            else:
+                self._client.set_ready(0)
+
+            await self._change_queue.get_until_empty()
+
+    async def _wait_while_blessed_and_ready(self):
+        while True:
+            if self._enabled:
+                info = self._client.info
+                blessing = info.blessing if info else None
+                ready = info.ready if info else None
+
+                if not blessing or blessing != ready:
+                    self._client.set_ready(None)
+                    break
+
+            else:
+                self._client.set_ready(0)
                 break
 
-            await change_queue.get_until_empty()
-
-    async def wait_while_blessed_and_ready():
-        while True:
-            blessing = client.info.blessing if client.info else None
-            ready = client.info.ready if client.info else None
-
-            if blessing is None or blessing != ready:
-                client.set_ready(None)
-                break
-
-            await change_queue.get_until_empty()
-
-    try:
-        while True:
-            async with async_group.create_subgroup() as subgroup:
-                mlog.debug("waiting blessing and ready")
-
-                ready_future = subgroup.spawn(wait_until_blessed_and_ready)
-
-                await asyncio.wait([ready_future,
-                                    closing_future],
-                                   return_when=asyncio.FIRST_COMPLETED)
-
-                if closing_future.done():
-                    raise ConnectionError()
-
-            async with async_group.create_subgroup() as subgroup:
-                mlog.debug("running component's async_run_cb")
-
-                run_future = subgroup.spawn(async_run_cb, *args, **kwargs)
-                ready_future = subgroup.spawn(wait_while_blessed_and_ready)
-
-                await asyncio.wait([run_future,
-                                    ready_future,
-                                    closing_future],
-                                   return_when=asyncio.FIRST_COMPLETED)
-
-                if run_future.done():
-                    return run_future.result()
-
-                if closing_future.done():
-                    raise ConnectionError()
-
-    except ConnectionError:
-        raise
-
-    except Exception as e:
-        mlog.warning("run component error: %s", e, exc_info=e)
-        raise
-
-    finally:
-        await aio.uncancellable(async_group.async_close())
-        mlog.debug("component closed")
+            await self._change_queue.get_until_empty()

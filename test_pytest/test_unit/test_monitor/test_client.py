@@ -192,7 +192,7 @@ async def test_client_change(server_address):
     await server.async_close()
 
 
-async def test_run_component(server_address):
+async def test_component(server_address):
     conf = {'name': 'name',
             'group': 'group',
             'monitor_address': server_address,
@@ -209,7 +209,7 @@ async def test_run_component(server_address):
 
     running_queue = aio.Queue()
 
-    async def async_run():
+    async def async_run(component):
         running_queue.put_nowait(True)
         try:
             await asyncio.Future()
@@ -218,13 +218,13 @@ async def test_run_component(server_address):
 
     server = await create_server(server_address)
     client = await hat.monitor.client.connect(conf)
-    run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(client, async_run))
+    component = hat.monitor.client.Component(client, async_run)
+    component.set_enabled(True)
     conn = await server.get_connection()
 
     msg = await conn.receive()
     assert msg.ready is None
-    assert not run_future.done()
+    assert component.is_open
     assert running_queue.empty()
 
     msg = common.MsgServer(cid=1, mid=2,
@@ -232,7 +232,7 @@ async def test_run_component(server_address):
     conn.send(msg)
     msg = await conn.receive()
     assert msg.ready == 123
-    assert not run_future.done()
+    assert component.is_open
     assert running_queue.empty()
 
     msg = common.MsgServer(cid=1, mid=2,
@@ -241,7 +241,7 @@ async def test_run_component(server_address):
     conn.send(msg)
     running = await running_queue.get()
     assert running is True
-    assert not run_future.done()
+    assert component.is_open
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(conn.receive(), 0.001)
 
@@ -260,7 +260,7 @@ async def test_run_component(server_address):
     conn.send(msg)
     msg = await conn.receive()
     assert msg.ready == 321
-    assert not run_future.done()
+    assert component.is_open
     assert running_queue.empty()
 
     msg = common.MsgServer(cid=1, mid=2,
@@ -269,22 +269,21 @@ async def test_run_component(server_address):
     conn.send(msg)
     running = await running_queue.get()
     assert running is True
-    assert not run_future.done()
+    assert component.is_open
     with pytest.raises(asyncio.TimeoutError):
         await asyncio.wait_for(conn.receive(), 0.001)
 
     await conn.async_close()
     running = await running_queue.get()
     assert running is False
-    with pytest.raises(ConnectionError):
-        await run_future
+    await component.wait_closed()
 
     await client.async_close()
     await server.async_close()
     assert running_queue.empty()
 
 
-async def test_run_component_return(server_address):
+async def test_component_return(server_address):
     conf = {'name': 'name',
             'group': 'group',
             'monitor_address': server_address,
@@ -299,13 +298,13 @@ async def test_run_component_return(server_address):
                                 blessing=None,
                                 ready=None)
 
-    async def async_run():
-        return 123
+    async def async_run(component):
+        return
 
     server = await create_server(server_address)
     client = await hat.monitor.client.connect(conf)
-    run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(client, async_run))
+    component = hat.monitor.client.Component(client, async_run)
+    component.set_enabled(True)
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -321,15 +320,14 @@ async def test_run_component_return(server_address):
                            components=[info._replace(blessing=123,
                                                      ready=123)])
     conn.send(msg)
-    result = await run_future
-    assert result == 123
+    await component.wait_closed()
 
     await client.async_close()
     await conn.wait_closed()
     await server.async_close()
 
 
-async def test_run_component_exception(server_address):
+async def test_component_exception(server_address):
     conf = {'name': 'name',
             'group': 'group',
             'monitor_address': server_address,
@@ -344,13 +342,13 @@ async def test_run_component_exception(server_address):
                                 blessing=None,
                                 ready=None)
 
-    async def async_run():
+    async def async_run(component):
         raise Exception()
 
     server = await create_server(server_address)
     client = await hat.monitor.client.connect(conf)
-    run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(client, async_run))
+    component = hat.monitor.client.Component(client, async_run)
+    component.set_enabled(True)
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -366,15 +364,14 @@ async def test_run_component_exception(server_address):
                            components=[info._replace(blessing=123,
                                                      ready=123)])
     conn.send(msg)
-    with pytest.raises(Exception):
-        await run_future
+    await component.wait_closed()
 
     await client.async_close()
     await conn.wait_closed()
     await server.async_close()
 
 
-async def test_run_component_close_before_ready(server_address):
+async def test_component_close_before_ready(server_address):
     conf = {'name': 'name',
             'group': 'group',
             'monitor_address': server_address,
@@ -389,13 +386,13 @@ async def test_run_component_close_before_ready(server_address):
                                 blessing=None,
                                 ready=None)
 
-    async def async_run():
+    async def async_run(component):
         await asyncio.Future()
 
     server = await create_server(server_address)
     client = await hat.monitor.client.connect(conf)
-    run_future = asyncio.ensure_future(
-        hat.monitor.client.run_component(client, async_run))
+    component = hat.monitor.client.Component(client, async_run)
+    component.set_enabled(True)
     conn = await server.get_connection()
 
     msg = await conn.receive()
@@ -409,7 +406,102 @@ async def test_run_component_close_before_ready(server_address):
 
     await conn.async_close()
     await client.wait_closed()
-    with pytest.raises(ConnectionError):
-        await run_future
+    await component.wait_closed()
 
+    await server.async_close()
+
+
+async def test_component_enable(server_address):
+    conf = {'name': 'name',
+            'group': 'group',
+            'monitor_address': server_address,
+            'component_address': 'address'}
+
+    info = common.ComponentInfo(cid=1,
+                                mid=2,
+                                name='name',
+                                group='group',
+                                address='address',
+                                rank=3,
+                                blessing=None,
+                                ready=None)
+
+    running_queue = aio.Queue()
+
+    async def async_run(component):
+        running_queue.put_nowait(True)
+        try:
+            await asyncio.Future()
+        finally:
+            running_queue.put_nowait(False)
+
+    server = await create_server(server_address)
+    client = await hat.monitor.client.connect(conf)
+    component = hat.monitor.client.Component(client, async_run)
+    conn = await server.get_connection()
+
+    msg = await conn.receive()
+    assert msg.ready is None
+
+    msg = await conn.receive()
+    assert msg.ready == 0
+
+    msg = common.MsgServer(cid=1, mid=2,
+                           components=[info._replace(blessing=123,
+                                                     ready=0)])
+    conn.send(msg)
+
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(conn.receive(), 0.001)
+    assert running_queue.empty()
+
+    component.set_enabled(True)
+
+    msg = await conn.receive()
+    assert msg.ready == 123
+
+    msg = common.MsgServer(cid=1, mid=2,
+                           components=[info._replace(blessing=123,
+                                                     ready=123)])
+    conn.send(msg)
+
+    running = await running_queue.get()
+    assert running is True
+    assert running_queue.empty()
+
+    component.set_enabled(False)
+
+    running = await running_queue.get()
+    assert running is False
+    assert running_queue.empty()
+
+    msg = await conn.receive()
+    assert msg.ready == 0
+
+    msg = common.MsgServer(cid=1, mid=2,
+                           components=[info._replace(blessing=123,
+                                                     ready=0)])
+    conn.send(msg)
+
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(conn.receive(), 0.001)
+    assert running_queue.empty()
+
+    msg = common.MsgServer(cid=1, mid=2,
+                           components=[info._replace(blessing=None,
+                                                     ready=0)])
+    conn.send(msg)
+
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(conn.receive(), 0.001)
+    assert running_queue.empty()
+
+    component.set_enabled(True)
+
+    msg = await conn.receive()
+    assert msg.ready is None
+
+    await component.async_close()
+    await client.async_close()
+    await conn.wait_closed()
     await server.async_close()

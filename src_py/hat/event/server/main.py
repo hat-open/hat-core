@@ -63,33 +63,17 @@ async def async_main(conf: json.Data):
     async_group.spawn(aio.call_on_cancel, asyncio.sleep, 0.1)
 
     try:
-        monitor = await _create_resource(
-            async_group, hat.monitor.client.connect, conf['monitor'])
+        monitor = await hat.monitor.client.connect(conf['monitor'])
+        _bind_resource(async_group, monitor)
 
-        backend_engine = await _create_resource(
-            async_group, hat.event.server.backend_engine.create,
+        backend_engine = await hat.event.server.backend_engine.create(
             conf['backend_engine'])
+        _bind_resource(async_group, monitor)
 
-        await async_group.spawn(hat.monitor.client.run_component, monitor, run,
-                                conf, backend_engine)
-
-    finally:
-        await aio.uncancellable(async_group.async_close())
-
-
-async def run(conf: json.Data,
-              backend_engine: hat.event.server.backend_engine.BackendEngine):
-    """Run monitor component"""
-    async_group = aio.Group()
-
-    try:
-        module_engine = await _create_resource(
-            async_group, hat.event.server.module_engine.create,
-            conf['module_engine'], backend_engine)
-
-        await _create_resource(
-            async_group, hat.event.server.communication.create,
-            conf['communication'], module_engine)
+        component = hat.monitor.client.Component(monitor, run, conf,
+                                                 backend_engine)
+        component.set_enabled(True)
+        _bind_resource(async_group, component)
 
         await async_group.wait_closing()
 
@@ -97,12 +81,31 @@ async def run(conf: json.Data,
         await aio.uncancellable(async_group.async_close())
 
 
-async def _create_resource(async_group, fn, *args):
-    resource = await async_group.spawn(fn, *args)
+async def run(component: hat.monitor.client.Component,
+              conf: json.Data,
+              backend_engine: hat.event.server.backend_engine.BackendEngine):
+    """Run monitor component"""
+    async_group = aio.Group()
+
+    try:
+        module_engine = await hat.event.server.module_engine.create(
+            conf['module_engine'], backend_engine)
+        _bind_resource(async_group, module_engine)
+
+        communication = await hat.event.server.communication.create(
+            conf['communication'], module_engine)
+        _bind_resource(async_group, communication)
+
+        await async_group.wait_closing()
+
+    finally:
+        await aio.uncancellable(async_group.async_close())
+
+
+def _bind_resource(async_group, resource):
     async_group.spawn(aio.call_on_cancel, resource.async_close)
     async_group.spawn(aio.call_on_done, resource.wait_closing(),
                       async_group.close)
-    return resource
 
 
 if __name__ == '__main__':
