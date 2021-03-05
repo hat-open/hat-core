@@ -58,6 +58,10 @@ class Server(aio.Resource):
             while True:
                 self._update_events(events)
                 events = await self._client.receive()
+
+        except ConnectionError:
+            pass
+
         finally:
             self._async_group.close()
 

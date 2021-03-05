@@ -32,7 +32,7 @@ async def async_main(qt_executor, addr, debug, ui_path):
     try:
         await srv.wait_closed()
     finally:
-        aio.uncancellable(srv.async_close())
+        await aio.uncancellable(srv.async_close())
 
 
 _ext_qt_view = None

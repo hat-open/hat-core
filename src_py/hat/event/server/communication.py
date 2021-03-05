@@ -113,7 +113,8 @@ class _Connection(aio.Resource):
         finally:
             mlog.debug("closing client connection loop")
             self.close()
-            await self._register_communication_event('disconnected')
+            with contextlib.suppress(Exception):
+                await self._register_communication_event('disconnected')
 
     async def _process_msg_subscribe(self, msg):
         self._subscription = common.Subscription([tuple(i)
