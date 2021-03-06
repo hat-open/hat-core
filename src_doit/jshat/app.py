@@ -1,11 +1,9 @@
 from pathlib import Path
 import functools
-import io
 import subprocess
 import tempfile
 
-from hat import json
-from hat.gui import vt
+from hat.doit import common
 
 
 __all__ = ['task_jshat_app',
@@ -14,15 +12,15 @@ __all__ = ['task_jshat_app',
            'task_jshat_app_gui',
            'task_jshat_app_syslog',
            'task_jshat_app_manager_event',
-           'task_jshat_app_manager_hue',
-           'task_jshat_app_manager_hue_assets']
+           'task_jshat_app_manager_hue']
 
 
 build_dir = Path('build/jshat/app')
+static_dir = Path('static_web/app')
 src_js_dir = Path('src_js')
 src_scss_dir = Path('src_scss')
-src_web_dir = Path('src_web')
 node_modules_dir = Path('node_modules')
+favicon_path = Path('logo/favicon.ico')
 
 
 def task_jshat_app():
@@ -39,65 +37,53 @@ def task_jshat_app():
 def task_jshat_app_orchestrator():
     """JsHat application - build orchestrator"""
     return _get_task_build('orchestrator',
+                           'Hat Orchestrator',
                            src_js_dir / '@hat-core/orchestrator/main.js')
 
 
 def task_jshat_app_monitor():
     """JsHat application - build monitor"""
     return _get_task_build('monitor',
+                           'Hat Monitor',
                            src_js_dir / '@hat-core/monitor/main.js')
 
 
 def task_jshat_app_gui():
     """JsHat application - build gui"""
     return _get_task_build('gui',
+                           'Hat GUI',
                            src_js_dir / '@hat-core/gui/main.js')
 
 
 def task_jshat_app_syslog():
     """JsHat application - build syslog"""
     return _get_task_build('syslog',
+                           'Hat Syslog',
                            src_js_dir / '@hat-core/syslog/main.js')
 
 
 def task_jshat_app_manager_event():
     """JsHat application - build manager_event"""
     return _get_task_build('manager-event',
+                           'Hat Event Manager',
                            src_js_dir / '@hat-core/manager-event/main.js')
 
 
 def task_jshat_app_manager_hue():
     """JsHat application - build manager-hue"""
     return _get_task_build('manager-hue',
-                           src_js_dir / '@hat-core/manager-hue/main.js',
-                           task_dep=['jshat_app_manager_hue_assets'])
+                           'Hat Hue Manager',
+                           src_js_dir / '@hat-core/manager-hue/main.js')
 
 
-def task_jshat_app_manager_hue_assets():
-    """JsHat assets - build manager-hue assets"""
-    def mappings():
-        yield 'bars', node_modules_dir / 'svg-loaders/svg-css-loaders/bars.svg'
-
-    return _get_task_assets(src_js_dir / '@hat-core/manager-hue/assets.js',
-                            mappings)
-
-
-def _get_task_build(name, entry, task_dep=[]):
-    return {'actions': [functools.partial(_build_app, name, entry)],
+def _get_task_build(name, title, entry, task_dep=[]):
+    return {'actions': [functools.partial(_build_app, name, title, entry)],
             'pos_arg': 'args',
             'task_dep': ['jshat_deps',
                          *task_dep]}
 
 
-def _get_task_assets(dst_path, mappings):
-    src_paths = [src_path for _, src_path in mappings()]
-    return {'actions': [(_build_assets, [dst_path, mappings])],
-            'file_dep': src_paths,
-            'targets': [dst_path],
-            'task_dep': ['jshat_deps']}
-
-
-def _build_app(name, entry, args):
+def _build_app(name, title, entry, args):
     args = args or []
     conf = _webpack_conf.format(
         name=name,
@@ -105,8 +91,20 @@ def _build_app(name, entry, args):
         build_dir=build_dir.resolve(),
         src_js_dir=src_js_dir.resolve(),
         src_scss_dir=src_scss_dir.resolve(),
-        src_web_dir=src_web_dir.resolve(),
         node_modules_dir=node_modules_dir.resolve())
+    index_html = _index_html.format(title=title,
+                                    script=f'{name}.js')
+
+    dst_dir = build_dir / name
+    dst_dir.mkdir(parents=True, exist_ok=True)
+    with open(dst_dir / 'index.html', 'w', encoding='utf-8') as f:
+        f.write(index_html)
+    common.cp_r(favicon_path, dst_dir / 'favicon.ico')
+
+    app_static_dir = static_dir / name
+    for i in app_static_dir.glob('*'):
+        common.cp_r(i, dst_dir / i.relative_to(app_static_dir))
+
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
         config_path = tmpdir / 'webpack.config.js'
@@ -118,25 +116,20 @@ def _build_app(name, entry, args):
                        check=True)
 
 
-def _build_assets(dst_path, mappings):
-    assets = {name: _build_asset(src_path) for name, src_path in mappings()}
-    assets_str = json.encode(assets)
-    with open(dst_path, 'w', encoding='utf-8') as f:
-        f.write(f'export default {assets_str};')
-
-
-def _build_asset(src_path):
-    with open(src_path, encoding='utf-8') as f:
-        src = f.read()
-    if src_path.suffix == '.svg':
-        return vt.parse(io.StringIO(src))
-    return src
+_index_html = r"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    <script src="{script}"></script>
+</head>
+<body>
+</body>
+</html>
+"""
 
 
 _webpack_conf = r"""
-const path = require('path');
-const CopyWebpackPlugin = require('{node_modules_dir}/copy-webpack-plugin');
-
 module.exports = {{
     mode: 'none',
     entry: '{entry}',
@@ -179,11 +172,6 @@ module.exports = {{
     watchOptions: {{
         ignored: /node_modules/
     }},
-    plugins: [
-        new CopyWebpackPlugin({{
-            patterns: [{{from: '{src_web_dir}/app/{name}'}}]
-        }})
-    ],
     devtool: 'source-map',
     stats: 'errors-only'
 }};

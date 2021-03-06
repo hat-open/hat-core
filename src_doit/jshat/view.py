@@ -1,17 +1,19 @@
 from pathlib import Path
+import functools
 import subprocess
 import tempfile
 
+from hat.doit import common
+
 
 __all__ = ['task_jshat_view',
-           'task_jshat_view_login',
-           'task_jshat_view_login_watch']
+           'task_jshat_view_login']
 
 
 build_dir = Path('build/jshat/view')
+static_dir = Path('static_web/view')
 src_js_dir = Path('src_js')
 src_scss_dir = Path('src_scss')
-src_web_dir = Path('src_web')
 node_modules_dir = Path('node_modules')
 
 
@@ -27,33 +29,30 @@ def task_jshat_view_login():
                            src_js_dir / '@hat-core/gui/views/login/index.js')
 
 
-def task_jshat_view_login_watch():
-    """JsHat viewlication - build login on change"""
-    return _get_task_watch('login',
-                           src_js_dir / '@hat-core/gui/views/login/index.js')
-
-
 def _get_task_build(name, entry, task_dep=[]):
-    return {'actions': [(_build_view, [name, entry])],
+    return {'actions': [functools.partial(_build_view, name, entry)],
+            'pos_arg': 'args',
             'task_dep': ['jshat_deps',
                          *task_dep]}
 
 
-def _get_task_watch(name, entry, task_dep=[]):
-    return {'actions': [(_build_view, [name, entry, '-w'])],
-            'task_dep': ['jshat_deps',
-                         *task_dep]}
-
-
-def _build_view(name, entry, *args):
+def _build_view(name, entry, args):
+    args = args or []
     conf = _webpack_conf.format(
         name=name,
         entry=entry.resolve(),
         build_dir=build_dir.resolve(),
         src_js_dir=src_js_dir.resolve(),
         src_scss_dir=src_scss_dir.resolve(),
-        src_web_dir=src_web_dir.resolve(),
         node_modules_dir=node_modules_dir.resolve())
+
+    dst_dir = build_dir / name
+    dst_dir.mkdir(parents=True, exist_ok=True)
+
+    app_static_dir = static_dir / name
+    for i in app_static_dir.glob('*'):
+        common.cp_r(i, dst_dir / i.relative_to(app_static_dir))
+
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
         config_path = tmpdir / 'webpack.config.js'
@@ -66,9 +65,6 @@ def _build_view(name, entry, *args):
 
 
 _webpack_conf = r"""
-const path = require('path');
-const CopyWebpackPlugin = require('{node_modules_dir}/copy-webpack-plugin');
-
 module.exports = {{
     mode: 'none',
     entry: '{entry}',
@@ -112,11 +108,6 @@ module.exports = {{
     watchOptions: {{
         ignored: /node_modules/
     }},
-    plugins: [
-        new CopyWebpackPlugin({{
-            patterns: [{{from: '{src_web_dir}/view/{name}'}}]
-        }})
-    ],
     devtool: 'eval-source-map',
     stats: 'errors-only'
 }};
