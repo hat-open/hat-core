@@ -58,7 +58,7 @@ export class Connection {
                 } else if (msg.type == 'MESSAGE') {
                     this._onMessage(msg.payload);
                 } else {
-                    throw('unsupported message type');
+                    throw new Error('unsupported message type');
                 }
             } catch (e) {
                 this._ws.close();
@@ -179,8 +179,9 @@ export class Application {
      *     {@link module:@hat-core/juggler.Connection}
      * @param {?module:@hat-core/util.Path} localPath local data state path
      * @param {?module:@hat-core/util.Path} remotePath remote data state path
+     * @param {?object} rpcCbs local RPC function callbacs
      */
-    constructor(r, address, localPath, remotePath) {
+    constructor(r, address, localPath, remotePath, rpcCbs) {
         this._conn = null;
         this._onMessage = () => {};
 
@@ -192,6 +193,23 @@ export class Application {
             });
         }
 
+        let lastRpcId = 0;
+        const rpcCalls = new Map();
+        this._rpc = new Proxy({}, {
+            get: (_, action) => (...args) => {
+                lastRpcId += 1;
+                this._conn.send({
+                    type: 'rpc',
+                    id: lastRpcId,
+                    direction: 'request',
+                    action: action,
+                    args: args});
+                const f = future.create();
+                rpcCalls.set(lastRpcId, f);
+                return f;
+            }
+        });
+
         u.delay(async () => {
             while (true) {
                 const closeFuture = future.create();
@@ -201,7 +219,38 @@ export class Application {
                         this._conn.setLocalData(r.get(localPath));
                     }
                 };
-                this._conn._onMessage = this._onMessage;
+                this._conn._onMessage = msg => {
+                    if (u.isObject(msg) && msg.type == 'rpc') {
+                        if (msg.direction == 'request') {
+                            let success;
+                            let result;
+                            try {
+                                result = (rpcCbs || {})[msg.action](...msg.args);
+                                success = true;
+                            } catch (e) {
+                                result = String(e);
+                                success = false;
+                            }
+                            this._conn.send({
+                                type: 'rpc',
+                                id: msg.id,
+                                direction: 'response',
+                                success: success,
+                                result: result
+                            });
+                        } else if (msg.direction == 'response') {
+                            const f = rpcCalls.get(msg.id);
+                            rpcCalls.delete(msg.id);
+                            if (msg.success) {
+                                f.setResult(msg.result);
+                            } else {
+                                f.setError(msg.result);
+                            }
+                        }
+                    } else {
+                        this._onMessage(msg);
+                    }
+                };
                 this._conn._onRemoteDataChange = data => {
                     if (remotePath != null) r.set(remotePath, data);
                 };
@@ -214,6 +263,14 @@ export class Application {
                 await u.sleep(settings.retryDelay);
             }
         });
+    }
+
+    /**
+     * RPC proxy
+     * @type {*}
+     */
+    get rpc() {
+        return this._rpc;
     }
 
     /**
