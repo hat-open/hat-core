@@ -26,7 +26,7 @@ def task_jshat_view():
 def task_jshat_view_login():
     """JsHat view - build login"""
     return _get_task_build('login',
-                           src_js_dir / '@hat-core/gui/views/login/index.js')
+                           src_js_dir / '@hat-core/views/login/main.js')
 
 
 def _get_task_build(name, entry, task_dep=[]):
