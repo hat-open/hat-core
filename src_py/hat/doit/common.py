@@ -36,7 +36,7 @@ def cp_r(src, dest):
     src = Path(src)
     dest = Path(dest)
     if src.is_dir():
-        shutil.copytree(str(src), str(dest))
+        shutil.copytree(str(src), str(dest), dirs_exist_ok=True)
     else:
         shutil.copy2(str(src), str(dest))
 
