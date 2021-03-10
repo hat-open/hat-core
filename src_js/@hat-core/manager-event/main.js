@@ -23,7 +23,7 @@ function main() {
     r.init(root, defaultState, vt);
 
     // eslint-disable-next-line no-unused-vars
-    app = new juggler.Application(r, null, null, 'remote');
+    app = new juggler.Application(null, 'remote');
 }
 
 

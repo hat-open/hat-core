@@ -17,7 +17,7 @@ let app = null;
 function main() {
     const root = document.body.appendChild(document.createElement('div'));
     r.init(root, defaultState, vt);
-    app = new juggler.Application(r, null, null, 'remote');
+    app = new juggler.Application(null, 'remote');
 }
 
 

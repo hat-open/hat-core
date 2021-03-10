@@ -3,68 +3,49 @@
 
 import jiff from 'jiff';
 
+import r from '@hat-core/renderer';
 import * as u from '@hat-core/util';
 import * as future from '@hat-core/future';
 
 
+function getDefaultAddress() {
+    const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
+    const hostname = window.location.hostname || 'localhost';
+    const port = window.location.port;
+    return `${protocol}://${hostname}` + (port ? `:${port}` : '') + '/ws';
+}
+
+
 /**
- * Settings
- * @property {number} settings.syncDelay sync delay [ms]
- * @property {number} settings.retryDelay retry delay [ms]
+ * Juggler client connection
+ *
+ * Available events:
+ *  - open - connection is opened (detail is undefined)
+ *  - close - connection is closed (detail is undefined)
+ *  - message - received new message (detail is received message)
+ *  - change - remote data changed (detail is new remote data)
  */
-export const settings = {
-    syncDelay: 100,
-    retryDelay: 5000
-};
+export class Connection extends EventTarget {
 
-
-/** Juggler client connection */
-export class Connection {
     /**
      * Create connection
-     * @param {?string} address Juggler server address, formatted as
+     * @param {string} address Juggler server address, formatted as
      *     ``ws[s]://<host>[:<port>][/<path>]``. If not provided, hostname
      *     and port obtained from ``widow.location`` are used instead, with
      *     ``ws`` as a path.
+     * @param {number} syncDelay sync delay in ms
      */
-    constructor(address) {
+    constructor(address=getDefaultAddress(), syncDelay=100) {
+        super();
+        this._syncDelay = syncDelay;
         this._localData = null;
         this._remoteData = null;
-        this._onOpen = () => {};
-        this._onClose = () => {};
-        this._onMessage = () => {};
-        this._onRemoteDataChange = () => {};
         this._delayedSyncID = null;
         this._syncedLocalData = null;
-
-        address = address || (() => {
-            const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
-            const hostname = window.location.hostname || 'localhost';
-            const port = window.location.port;
-            return `${protocol}://${hostname}` + (port ? `:${port}` : '') + '/ws';
-        })();
         this._ws = new WebSocket(address);
-        this._ws.onopen = () => this._onOpen();
-        this._ws.onclose = () => {
-            clearTimeout(this._delayedSyncID);
-            this._onClose();
-        };
-        this._ws.onmessage = (evt) => {
-            try {
-                let msg = JSON.parse(evt.data);
-                if (msg.type == 'DATA') {
-                    this._remoteData = jiff.patch(msg.payload, this._remoteData);
-                    this._onRemoteDataChange(this._remoteData);
-                } else if (msg.type == 'MESSAGE') {
-                    this._onMessage(msg.payload);
-                } else {
-                    throw new Error('unsupported message type');
-                }
-            } catch (e) {
-                this._ws.close();
-                throw e;
-            }
-        };
+        this._ws.addEventListener('open', () => this._onOpen());
+        this._ws.addEventListener('close', () => this._onClose());
+        this._ws.addEventListener('message', evt => this._onMessage(evt.data));
     }
 
     /**
@@ -92,38 +73,6 @@ export class Connection {
     }
 
     /**
-     * Set on open callback
-     * @type {function}
-     */
-    set onOpen(cb) {
-        this._onOpen = cb;
-    }
-
-    /**
-     * Set on close callback
-     * @type {function}
-     */
-    set onClose(cb) {
-        this._onClose = cb;
-    }
-
-    /**
-     * Set on message callback
-     * @type {function(*)}
-     */
-    set onMessage(cb) {
-        this._onMessage = cb;
-    }
-
-    /**
-     * Set on remote data change callback
-     * @type {function(*)}
-     */
-    set onRemoteDataChange(cb) {
-        this._onRemoteDataChange = cb;
-    }
-
-    /**
      * Close connection
      */
     close() {
@@ -136,7 +85,7 @@ export class Connection {
      */
     send(msg) {
         if (this.readyState != WebSocket.OPEN) {
-            throw new Error("Connection not open");
+            throw new Error("connection not open");
         }
         this._ws.send(JSON.stringify({
             type: 'MESSAGE',
@@ -150,119 +99,107 @@ export class Connection {
      */
     setLocalData(data) {
         if (this.readyState != WebSocket.OPEN) {
-            throw new Error("Connection not open");
+            throw new Error("connection not open");
         }
         this._localData = data;
-        if (this._delayedSyncID == null) {
-            this._delayedSyncID = setTimeout(() => {
-                const patch = jiff.diff(this._syncedLocalData, this._localData);
-                if (patch.length > 0) {
-                    this._ws.send(JSON.stringify({
-                        type: 'DATA',
-                        payload: patch
-                    }));
-                    this._syncedLocalData = this._localData;
-                }
-                this._delayedSyncID = null;
-            }, settings.syncDelay);
+        if (this._delayedSyncID != null)
+            return;
+        this._delayedSyncID = setTimeout(
+            () => { this._onSync(); },
+            this._syncDelay);
+    }
+
+    _onOpen() {
+        this.dispatchEvent(new CustomEvent('open'));
+    }
+
+    _onClose() {
+        if (this._delayedSyncID != null) {
+            clearTimeout(this._delayedSyncID);
+            this._delayedSyncID = null;
+        }
+        this.dispatchEvent(new CustomEvent('close'));
+    }
+
+    _onMessage(data) {
+        try {
+            const msg = JSON.parse(data);
+            if (msg.type == 'DATA') {
+                this._remoteData = jiff.patch(msg.payload, this._remoteData);
+                this.dispatchEvent(new CustomEvent('change', {detail: this._remoteData}));
+            } else if (msg.type == 'MESSAGE') {
+                this.dispatchEvent(new CustomEvent('message', {detail: msg.payload}));
+            } else {
+                throw new Error('unsupported message type');
+            }
+        } catch (e) {
+            this._ws.close();
+            throw e;
         }
     }
+
+    _onSync() {
+        const patch = jiff.diff(this._syncedLocalData, this._localData);
+        if (patch.length > 0) {
+            this._ws.send(JSON.stringify({
+                type: 'DATA',
+                payload: patch
+            }));
+            this._syncedLocalData = this._localData;
+        }
+        this._delayedSyncID = null;
+    }
+
 }
 
 
-/** Juggler based application */
-export class Application {
+/**
+ * Juggler based application
+ *
+ * Available events:
+ *  - connected - connected to server (detail is undefined)
+ *  - disconnected - disconnected from server (detail is undefined)
+ *  - message - received new message (detail is received message)
+ */
+export class Application extends EventTarget {
+
     /**
      * Create application
-     * @param {module:@hat-core/renderer.Renderer} r renderer
-     * @param {?string} address juggler server address, see
-     *     {@link module:@hat-core/juggler.Connection}
      * @param {?module:@hat-core/util.Path} localPath local data state path
      * @param {?module:@hat-core/util.Path} remotePath remote data state path
-     * @param {?object} rpcCbs local RPC function callbacs
+     * @param {object} localRpcCbs local RPC function callbacs
+     * @param {module:@hat-core/renderer.Renderer} renderer renderer
+     * @param {string} address juggler server address, see
+     *     {@link module:@hat-core/juggler.Connection}
      */
-    constructor(r, address, localPath, remotePath, rpcCbs) {
+    constructor(
+        localPath=null,
+        remotePath=null,
+        localRpcCbs={},
+        renderer=r,
+        address=getDefaultAddress(),
+        syncDelay=100,
+        retryDelay=5000) {
+
+        super();
+        this._localPath = localPath;
+        this._remotePath = remotePath;
+        this._localRpcCbs = localRpcCbs;
+        this._renderer = renderer;
+        this._address = address;
+        this._syncDelay = syncDelay;
+        this._retryDelay = retryDelay;
         this._conn = null;
-        this._onMessage = () => {};
-
-        if (localPath != null) {
-            r.addEventListener('change', () => {
-                if (this._conn && this._conn.readyState == WebSocket.OPEN) {
-                    this._conn.setLocalData(r.get(localPath));
-                }
-            });
-        }
-
-        let lastRpcId = 0;
-        const rpcCalls = new Map();
+        this._lastRpcId = 0;
+        this._rpcFutures = new Map();
         this._rpc = new Proxy({}, {
-            get: (_, action) => (...args) => {
-                lastRpcId += 1;
-                this._conn.send({
-                    type: 'rpc',
-                    id: lastRpcId,
-                    direction: 'request',
-                    action: action,
-                    args: args});
-                const f = future.create();
-                rpcCalls.set(lastRpcId, f);
-                return f;
-            }
+            get: (_, action) => (...args) => this._rpcCall(action, args)
         });
 
-        u.delay(async () => {
-            while (true) {
-                const closeFuture = future.create();
-                this._conn = new Connection(address);
-                this._conn._onOpen = () =>{
-                    if (localPath != null) {
-                        this._conn.setLocalData(r.get(localPath));
-                    }
-                };
-                this._conn._onMessage = msg => {
-                    if (u.isObject(msg) && msg.type == 'rpc') {
-                        if (msg.direction == 'request') {
-                            let success;
-                            let result;
-                            try {
-                                result = (rpcCbs || {})[msg.action](...msg.args);
-                                success = true;
-                            } catch (e) {
-                                result = String(e);
-                                success = false;
-                            }
-                            this._conn.send({
-                                type: 'rpc',
-                                id: msg.id,
-                                direction: 'response',
-                                success: success,
-                                result: result
-                            });
-                        } else if (msg.direction == 'response') {
-                            const f = rpcCalls.get(msg.id);
-                            rpcCalls.delete(msg.id);
-                            if (msg.success) {
-                                f.setResult(msg.result);
-                            } else {
-                                f.setError(msg.result);
-                            }
-                        }
-                    } else {
-                        this._onMessage(msg);
-                    }
-                };
-                this._conn._onRemoteDataChange = data => {
-                    if (remotePath != null) r.set(remotePath, data);
-                };
-                this._conn._onClose = () => {
-                    if (remotePath != null) r.set(remotePath, null);
-                    this._conn = null;
-                    closeFuture.setResult();
-                };
-                await closeFuture;
-                await u.sleep(settings.retryDelay);
-            }
-        });
+        if (localPath != null)
+            renderer.addEventListener('change', () => this._onRendererChange());
+
+        u.delay(() => this._connectLoop());
     }
 
     /**
@@ -274,25 +211,113 @@ export class Application {
     }
 
     /**
-     * Set on message callback
-     * @type {function(*)}
-     */
-    set onMessage(cb) {
-        this._onMessage = cb;
-        if (this._conn) {
-            this._conn._onMessage = cb;
-        }
-    }
-
-    /**
      * Send message
      * @param {*} msg
      */
     send(msg) {
-        if(this._conn) {
-            this._conn.send(msg);
+        if (!this._conn)
+            throw new Error("connection closed");
+        this._conn.send(msg);
+    }
+
+    _onOpen() {
+        if (this._localPath == null)
+            return;
+        this._conn.setLocalData(this._renderer.get(this._localPath));
+        this.dispatchEvent(new CustomEvent('connected'));
+    }
+
+    _onClose() {
+        if (this._remotePath == null)
+            return;
+        this._renderer.set(this._remotePath, null);
+        this.dispatchEvent(new CustomEvent('disconnected'));
+    }
+
+    _onMessage(msg) {
+        if (u.isObject(msg) && msg.type == 'rpc') {
+            this._onRpcMessage(msg);
         } else {
-            throw new Error("Connection closed");
+            this.dispatchEvent(new CustomEvent('message', {detail: msg}));
         }
     }
+
+    _onRpcMessage(msg) {
+        if (msg.direction == 'request') {
+            this._onRpcReqMessage(msg);
+        } else if (msg.direction == 'response') {
+            this._onRpcResMessage(msg);
+        }
+    }
+
+    _onRpcReqMessage(msg) {
+        let success;
+        let result;
+        try {
+            result = this._localRpcCbs[msg.action](...msg.args);
+            success = true;
+        } catch (e) {
+            result = String(e);
+            success = false;
+        }
+        this.send({
+            type: 'rpc',
+            id: msg.id,
+            direction: 'response',
+            success: success,
+            result: result
+        });
+    }
+
+    _onRpcResMessage(msg) {
+        const f = this._rpcFutures.get(msg.id);
+        this._rpcFutures.delete(msg.id);
+        if (msg.success) {
+            f.setResult(msg.result);
+        } else {
+            f.setError(msg.result);
+        }
+    }
+
+    _onConnectionChange(data) {
+        if (this._remotePath == null)
+            return;
+        this._renderer.set(this._remotePath, data);
+    }
+
+    _onRendererChange() {
+        if (!this._conn || this._conn.readyState != WebSocket.OPEN)
+            return;
+        this._conn.setLocalData(this._renderer.get(this._localPath));
+    }
+
+    _rpcCall(action, args) {
+        this._lastRpcId += 1;
+        this.send({
+            type: 'rpc',
+            id: this._lastRpcId,
+            direction: 'request',
+            action: action,
+            args: args});
+        const f = future.create();
+        this._rpcFutures.set(this._lastRpcId, f);
+        return f;
+    }
+
+    async _connectLoop() {
+        while (true) {
+            this._conn = new Connection(this._address, this._syncDelay);
+            this._conn.addEventListener('open', () => this._onOpen());
+            this._conn.addEventListener('close', () => this._onClose());
+            this._conn.addEventListener('message', evt => this._onMessage(evt.detail));
+            this._conn.addEventListener('change', evt => this._onConnectionChange(evt.detail));
+
+            const closeFuture = future.create();
+            this._conn.addEventListener('close', () => closeFuture.setResult());
+            await closeFuture;
+            this._conn = null;
+            await u.sleep(this._retryDelay);
+        }
+    }
+
 }

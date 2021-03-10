@@ -16,7 +16,7 @@ function main() {
     viewManager = new ViewManager();
     const root = document.body.appendChild(document.createElement('div'));
     r.init(root, defaultState, () => viewManager.vt());
-    viewManager.app = new juggler.Application(r, null, 'local', 'remote');
+    viewManager.app = new juggler.Application('local', 'remote');
     window.viewManager = viewManager;
 }
 
@@ -44,7 +44,7 @@ class ViewManager {
     set app(app) {
         this._app = app;
         if (app) {
-            app.onMessage = msg => this._onMessage(msg);
+            app.addEventListener('message', evt => this._onMessage(evt.detail));
         }
     }
 
