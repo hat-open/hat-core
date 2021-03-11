@@ -238,7 +238,7 @@ class Connection(aio.Resource):
                     future.set_exception(ConnectionError())
                 if self._read_queue.empty():
                     break
-                future = self._read_queue.get_nowait()
+                future, _, _ = self._read_queue.get_nowait()
 
             self._writer.close()
             await aio.uncancellable(self._writer.wait_closed())
