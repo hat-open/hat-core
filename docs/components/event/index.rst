@@ -477,6 +477,7 @@ Backends available as part of `hat-event` package:
 
        backends/dummy
        backends/sqlite
+       backends/lmdb
 
 
 Implementation
