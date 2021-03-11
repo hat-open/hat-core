@@ -1,3 +1,5 @@
+import datetime
+
 import lmdb
 import pytest
 
@@ -39,8 +41,9 @@ def flush(executor, env):
 
     async def flush(db):
         txn = await executor(env.begin, write=True)
+        now = datetime.datetime.now(datetime.timezone.utc)
         try:
-            await executor(db.create_ext_flush(), txn)
+            await executor(db.create_ext_flush(), txn, now)
         finally:
             await executor(txn.commit)
 
@@ -56,7 +59,6 @@ async def test_create_empty(executor, env, flush):
         name=name,
         server_id=server_id)
 
-    assert db.has_changed is True
     assert db.data == common.SystemData(server_id=server_id,
                                         last_instance_id=None,
                                         last_timestamp=None)
@@ -69,7 +71,6 @@ async def test_create_empty(executor, env, flush):
         name=name,
         server_id=server_id)
 
-    assert db.has_changed is False
     assert db.data == common.SystemData(server_id=server_id,
                                         last_instance_id=None,
                                         last_timestamp=None)
@@ -86,7 +87,6 @@ async def test_change(executor, env, flush):
 
     await flush(db)
 
-    assert db.has_changed is False
     assert db.data == common.SystemData(server_id=server_id,
                                         last_instance_id=None,
                                         last_timestamp=None)
@@ -94,7 +94,6 @@ async def test_change(executor, env, flush):
     t = common.now()
     db.change(123, t)
 
-    assert db.has_changed is True
     assert db.data == common.SystemData(server_id=server_id,
                                         last_instance_id=123,
                                         last_timestamp=t)
@@ -107,7 +106,6 @@ async def test_change(executor, env, flush):
         name=name,
         server_id=server_id)
 
-    assert db.has_changed is False
     assert db.data == common.SystemData(server_id=server_id,
                                         last_instance_id=123,
                                         last_timestamp=t)

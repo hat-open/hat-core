@@ -29,10 +29,6 @@ async def create(executor: aio.Executor,
 class LatestDb:
 
     @property
-    def has_changed(self) -> bool:
-        return bool(self._changes)
-
-    @property
     def subscription(self) -> common.Subscription:
         return self._subscription
 
@@ -85,7 +81,7 @@ class LatestDb:
                 events[event.event_type] = event
         return events
 
-    def _ext_flush(self, changes, parent):
+    def _ext_flush(self, changes, parent, now):
         with self._env.begin(db=self._db, parent=parent, write=True) as txn:
             for key, value in changes.items():
                 txn.put(encoder.encode_tuple_str(key),

@@ -16,7 +16,8 @@ async def create(executor: aio.Executor,
                  name: str,
                  subscription: common.Subscription,
                  conditions: Conditions,
-                 order_by: common.OrderBy
+                 order_by: common.OrderBy,
+                 limit: typing.Optional[float]
                  ) -> 'OrderedDb':
     db = OrderedDb()
     db._executor = executor
@@ -25,16 +26,13 @@ async def create(executor: aio.Executor,
     db._subscription = subscription
     db._conditions = conditions
     db._order_by = order_by
+    db._limit = limit
     db._changes = collections.deque()
     db._db = await executor(db._ext_open_db)
     return db
 
 
 class OrderedDb:
-
-    @property
-    def has_changed(self) -> bool:
-        return bool(self._changes)
 
     @property
     def subscription(self) -> common.Subscription:
@@ -241,12 +239,23 @@ class OrderedDb:
             else:
                 raise ValueError('unsupported order')
 
-    def _ext_flush(self, changes, parent):
+    def _ext_flush(self, changes, parent, now):
         with self._env.begin(db=self._db, parent=parent, write=True) as txn:
             for key, value in changes:
                 # TODO: maybe call put with append=True
                 txn.put(encoder.encode_timestamp_id(key),
                         encoder.encode_event(value))
+
+            if self._limit is None:
+                return
+
+            t_last = _timestamp_add_seconds(now, -self._limit)
+            stop_key = encoder.encode_timestamp_id((t_last, 0))
+
+            cursor = txn.cursor()
+            more = cursor.first()
+            while more and bytes(cursor.key()) < stop_key:
+                more = cursor.delete()
 
 
 def _filter_events(events, subscription, event_ids, t_from, t_to,
@@ -296,3 +305,17 @@ def _next_timestamp(t):
     next_us = t.us + 1
     return common.Timestamp(s=t.s + next_us // int(1e6),
                             us=next_us % int(1e6))
+
+
+def _timestamp_add_seconds(t, s):
+    us = round((s - int(s)) * 1e6)
+    s = int(s)
+    new_us = t.us + us
+    new_s = t.s + s
+    if new_us >= int(1e6):
+        new_us = new_us % int(1e6)
+        new_s = new_s + new_us // int(1e6)
+    elif new_us <= -int(1e6):
+        new_us = -((-new_us) % int(1e6))
+        new_s = new_s - (-new_us) // int(1e6)
+    return common.Timestamp(s=new_s, us=new_us)

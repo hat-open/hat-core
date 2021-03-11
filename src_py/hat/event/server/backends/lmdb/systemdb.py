@@ -21,23 +21,17 @@ async def create(executor: aio.Executor,
 
     if not data:
         db._data = common.SystemData(server_id, None, None)
-        db._has_changed = True
 
     elif data.server_id != server_id:
         raise Exception('server_id not matching')
 
     else:
         db._data = data
-        db._has_changed = False
 
     return db
 
 
 class SystemDb:
-
-    @property
-    def has_changed(self) -> bool:
-        return self._has_changed
 
     @property
     def data(self) -> common.SystemData:
@@ -48,10 +42,8 @@ class SystemDb:
                last_timestamp: common.Timestamp):
         self._data = self._data._replace(last_instance_id=last_instance_id,
                                          last_timestamp=last_timestamp)
-        self._has_changed = True
 
     def create_ext_flush(self) -> common.ExtFlushCb:
-        self._has_changed = False
         return functools.partial(self._ext_flush, self._data)
 
     def _ext_open_db(self):
@@ -62,6 +54,6 @@ class SystemDb:
             data = txn.get(b'data')
             return encoder.decode_system_data(data) if data else None
 
-    def _ext_flush(self, data, parent):
+    def _ext_flush(self, data, parent, now):
         with self._env.begin(db=self._db, parent=parent, write=True) as txn:
             txn.put(b'data', encoder.encode_system_data(data))

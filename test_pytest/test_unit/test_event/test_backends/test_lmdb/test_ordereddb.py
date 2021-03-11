@@ -40,10 +40,12 @@ async def env(executor, db_path):
 @pytest.fixture
 def flush(executor, env):
 
-    async def flush(db):
+    async def flush(db, now=None):
         txn = await executor(env.begin, write=True)
+        if now is None:
+            now = common.now()
         try:
-            await executor(db.create_ext_flush(), txn)
+            await executor(db.create_ext_flush(), txn, now)
         finally:
             await executor(txn.commit)
 
@@ -102,9 +104,9 @@ async def test_create_empty(executor, env, query, order_by):
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
-    assert db.has_changed is False
     assert db.subscription == subscription
     assert db.order_by == order_by
     result = await query(db)
@@ -122,7 +124,8 @@ async def test_add(executor, env, flush, query, create_event, order_by):
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     event2 = create_event(('b',), True)
@@ -160,7 +163,8 @@ async def test_query_max_results(executor, env, flush, query, create_event,
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     event2 = create_event(('a',), True)
@@ -217,7 +221,8 @@ async def test_query_timestamps(executor, env, flush, query, create_event,
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     await asyncio.sleep(0.001)
@@ -299,7 +304,8 @@ async def test_query_subscription(executor, env, flush, query, create_event,
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     event2 = create_event(('b',), True)
@@ -331,7 +337,8 @@ async def test_query_event_ids(executor, env, flush, query, create_event,
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     event2 = create_event(('b',), True)
@@ -367,7 +374,8 @@ async def test_query_payload(executor, env, flush, query, create_event,
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     event2 = create_event(('b',), True)._replace(payload=common.EventPayload(
@@ -403,7 +411,8 @@ async def test_query_unique_type(executor, env, flush, query, create_event,
         name=name,
         subscription=subscription,
         conditions=conditions,
-        order_by=order_by)
+        order_by=order_by,
+        limit=None)
 
     event1 = create_event(('a',), True)
     event2 = create_event(('b',), True)
@@ -420,3 +429,44 @@ async def test_query_unique_type(executor, env, flush, query, create_event,
 
     result = await query(db, unique_type=True)
     assert result == [event4, event3]
+
+
+@pytest.mark.parametrize('order_by', common.OrderBy)
+async def test_limit(executor, env, flush, query, create_event, order_by):
+    name = 'name'
+    subscription = common.Subscription([('*',)])
+    conditions = hat.event.server.backends.lmdb.conditions.Conditions([])
+    limit = 1
+    db = await hat.event.server.backends.lmdb.ordereddb.create(
+        executor=executor,
+        env=env,
+        name=name,
+        subscription=subscription,
+        conditions=conditions,
+        order_by=order_by,
+        limit=limit)
+
+    t1 = common.now()
+    t2 = t1._replace(s=t1.s + 2 * limit)
+    t3 = t2._replace(s=t2.s + 2 * limit)
+
+    event1 = create_event(('a',), True)._replace(timestamp=t1,
+                                                 source_timestamp=t1)
+    event2 = create_event(('a',), True)._replace(timestamp=t2,
+                                                 source_timestamp=t2)
+
+    db.add(event1)
+    db.add(event2)
+
+    result = await query(db)
+    assert result == [event2, event1]
+
+    await flush(db, t2)
+
+    result = await query(db)
+    assert result == [event2]
+
+    await flush(db, t3)
+
+    result = await query(db)
+    assert result == []

@@ -9,8 +9,8 @@ required:
     - sync_period
     - server_id
     - conditions
-    - latest_subscriptions
-    - ordered_subscriptions
+    - latest
+    - ordered
 properties:
     db_path:
         type: string
@@ -32,12 +32,27 @@ properties:
                     "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
                 condition:
                     "$ref": "hat://event/backends/lmdb.yaml#/definitions/condition"
-    latest_subscriptions:
-        "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
-    ordered_subscriptions:
+    latest:
+        type: object
+        required:
+            - subscriptions:
+        properties:
+            subscriptions:
+                "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
+    ordered:
         type: array
         items:
-            "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
+            type: object
+            required:
+                - subscriptions
+            properties:
+                subscriptions:
+                    "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
+                limit:
+                    type: number
+                    description: |
+                        limit for the persisted history based on keys expressed
+                        as duration in seconds
 definitions:
     event_types:
         type: array

@@ -28,27 +28,27 @@ async def create(conf: json.Data
 
     backend._env = await backend._executor(
         _ext_create_env, Path(conf['db_path']), conf['max_db_size'],
-        2 + 2 * len(conf['ordered_subscriptions']))
+        2 + 2 * len(conf['ordered']))
 
     backend._sys_db = await hat.event.server.backends.lmdb.systemdb.create(
         backend._executor, backend._env, 'system', conf['server_id'])
 
-    subscription = common.Subscription(tuple(i)
-                                       for i in conf['latest_subscriptions'])
+    subscription = common.Subscription(
+        tuple(i) for i in conf['latest']['subscriptions'])
     backend._latest_db = await hat.event.server.backends.lmdb.latestdb.create(
         backend._executor, backend._env, 'latest', subscription,
         backend._conditions)
 
     backend._ordered_dbs = collections.deque()
-    subscriptions = [
-        common.Subscription(tuple(i) for i in ordered_subscriptions)
-        for ordered_subscriptions in conf['ordered_subscriptions']]
-    for i, subscription in enumerate(subscriptions):
+    for i, i_conf in enumerate(conf['ordered']):
+        subscription = common.Subscription(tuple(et)
+                                           for et in i_conf['subscriptions'])
+        limit = i_conf.get('limit')
         for order_by in common.OrderBy:
             name = f'ordered_{i}_{order_by.name}'
             ordered_dbs = await hat.event.server.backends.lmdb.ordereddb.create(  # NOQA
                 backend._executor, backend._env, name, subscription,
-                backend._conditions, order_by)
+                backend._conditions, order_by, limit)
             backend._ordered_dbs.append(ordered_dbs)
 
     backend._async_group = aio.Group()
@@ -178,11 +178,7 @@ class LmdbBackend(common.Backend):
 
     async def _flush_env(self):
         dbs = [self._sys_db, self._latest_db, *self._ordered_dbs]
-        ext_db_flush_fns = [db.create_ext_flush()
-                            for db in dbs
-                            if db.has_changed]
-        if not ext_db_flush_fns:
-            return
+        ext_db_flush_fns = [db.create_ext_flush() for db in dbs]
         await self._executor(_ext_flush, self._env, ext_db_flush_fns)
 
     async def _close_env(self):
@@ -196,6 +192,7 @@ def _ext_create_env(path, max_size, max_dbs):
 
 
 def _ext_flush(env, db_flush_fns):
+    now = common.now()
     with env.begin(write=True) as txn:
         for db_flush_fn in db_flush_fns:
-            db_flush_fn(txn)
+            db_flush_fn(txn, now)

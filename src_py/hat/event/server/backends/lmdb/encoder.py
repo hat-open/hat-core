@@ -17,7 +17,9 @@ def decode_event(event_bytes: bytes) -> common.Event:
 
 def encode_timestamp_id(x: typing.Tuple[common.Timestamp, int]) -> bytes:
     t, instance_id = x
-    return struct.pack(">QIQ", t.s + (1 << 63), t.us, instance_id)
+    s = t.s - (1 if t.us < 0 else 0)
+    us = t.us if t.us >= 0 else int(1e6) + t.us
+    return struct.pack(">QIQ", s + (1 << 63), us, instance_id)
 
 
 def decode_timestamp_id(x: bytes) -> typing.Tuple[common.Timestamp, int]:

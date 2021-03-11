@@ -1,3 +1,5 @@
+import datetime
+
 import lmdb
 import pytest
 
@@ -40,8 +42,9 @@ def flush(executor, env):
 
     async def flush(db):
         txn = await executor(env.begin, write=True)
+        now = datetime.datetime.now(datetime.timezone.utc)
         try:
-            await executor(db.create_ext_flush(), txn)
+            await executor(db.create_ext_flush(), txn, now)
         finally:
             await executor(txn.commit)
 
@@ -77,7 +80,6 @@ async def test_create_empty(executor, env):
         subscription=subscription,
         conditions=conditions)
 
-    assert db.has_changed is False
     assert db.subscription == subscription
     result = list(db.query(None))
     assert result == []
@@ -94,33 +96,28 @@ async def test_add(executor, env, flush, create_event):
         subscription=subscription,
         conditions=conditions)
 
-    assert db.has_changed is False
     result = list(db.query(None))
     assert result == []
 
     event1 = create_event(('a',), None)
     db.add(event1)
 
-    assert db.has_changed is True
     result = set(db.query(None))
     assert result == {event1}
 
     event2 = create_event(('b',), None)
     db.add(event2)
 
-    assert db.has_changed is True
     result = set(db.query(None))
     assert result == {event1, event2}
 
     event3 = create_event(('a',), None)
     db.add(event3)
 
-    assert db.has_changed is True
     result = set(db.query(None))
     assert result == {event2, event3}
 
     await flush(db)
-    assert db.has_changed is False
 
     db = await hat.event.server.backends.lmdb.latestdb.create(
         executor=executor,
@@ -129,7 +126,6 @@ async def test_add(executor, env, flush, create_event):
         subscription=subscription,
         conditions=conditions)
 
-    assert db.has_changed is False
     result = set(db.query(None))
     assert result == {event2, event3}
 
