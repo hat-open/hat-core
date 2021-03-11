@@ -498,3 +498,55 @@ async def test_run_client_reconnect(patch_reconnect_delay, server_address):
     await conn.wait_closed()
 
     await server.async_close()
+
+
+async def test_run_client_cancellation(server_address):
+    component_info = hat.monitor.common.ComponentInfo(cid=1,
+                                                      mid=2,
+                                                      name='name',
+                                                      group='group',
+                                                      address=server_address,
+                                                      rank=3,
+                                                      blessing=None,
+                                                      ready=None)
+
+    is_open_queue = aio.Queue()
+
+    async def run_cb(client):
+        is_open_queue.put_nowait(client.is_open)
+        try:
+            await asyncio.Future()
+        finally:
+            is_open_queue.put_nowait(client.is_open)
+
+    monitor_client = MonitorClient()
+    server = await create_server(server_address)
+
+    run_future = asyncio.ensure_future(
+        hat.event.client.run_client(monitor_client, component_info.group,
+                                    run_cb))
+
+    monitor_client.change([component_info._replace(blessing=1, ready=1)])
+    conn = await server.get_connection()
+
+    is_open = await is_open_queue.get()
+    assert is_open is True
+
+    assert is_open_queue.empty()
+
+    run_future.cancel()
+
+    is_open = await is_open_queue.get()
+    assert is_open is True
+
+    with pytest.raises(asyncio.CancelledError):
+        await run_future
+
+    assert is_open_queue.empty()
+
+    assert conn.is_open is False
+
+    await conn.wait_closed()
+
+    await monitor_client.async_close()
+    await server.async_close()

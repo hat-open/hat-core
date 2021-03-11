@@ -276,11 +276,11 @@ async def run_client(monitor_client: hat.monitor.client.Client,
     """Continuously communicate with currently active Event Server
 
     This function tries to establish active connection with Event Server
-    whithin monitor component group `server_group`. Once this connection is
+    within monitor component group `server_group`. Once this connection is
     established, `async_run_cb` is called with currently active `Client`
     instance. Once connection to Event Server is closed or new active Event
     Server is detected, execution of `async_run_cb` is canceled. If new
-    connection to Event Server is successfuly established,
+    connection to Event Server is successfully established,
     `async_run_cb` is called with new instance of `Client`.
 
     `async_run_cb` is called when:
@@ -300,6 +300,10 @@ async def run_client(monitor_client: hat.monitor.client.Client,
     Return value of this function is the same as return value of
     `async_run_cb`. If `async_run_cb` finishes by raising exception or if
     connection to Monitor Server is closed, ConnectionError is raised.
+
+    If execution of `run_client` is canceled while `async_run_cb` is
+    running, connection to event server is closed after `async_run_cb`
+    cancellation finishes.
 
     """
     async_group = aio.Group()
@@ -370,11 +374,13 @@ async def _client_loop(async_group, address, subscriptions, async_run_cb):
             subgroup.spawn(aio.call_on_cancel, client.async_close)
             subgroup.spawn(aio.call_on_done, client.wait_closing(),
                            subgroup.close)
-            run_future = subgroup.spawn(async_run_cb, client)
 
-            await asyncio.wait([run_future])
-            with contextlib.suppress(asyncio.CancelledError):
-                return run_future.result()
+            async with subgroup.create_subgroup() as subsubgroup:
+                run_future = subsubgroup.spawn(async_run_cb, client)
+
+                await asyncio.wait([run_future])
+                with contextlib.suppress(asyncio.CancelledError):
+                    return run_future.result()
 
         mlog.debug("connection to server closed")
         await asyncio.sleep(reconnect_delay)
