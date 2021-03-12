@@ -510,23 +510,25 @@ async def test_run_client_cancellation(server_address):
                                                       blessing=None,
                                                       ready=None)
 
-    is_open_queue = aio.Queue()
-    reg_future_queue = aio.Queue()
-    group = aio.Group()
-
     async def run_cb(client):
-        is_open_queue.put_nowait(client.is_open)
+        client.register([
+            common.RegisterEvent(
+                event_type=('a',),
+                source_timestamp=common.now(),
+                payload=None)])
         try:
             await asyncio.Future()
         finally:
-            is_open_queue.put_nowait(client.is_open)
-            reg_future_queue.put_nowait(group.spawn(
-                client.register_with_response,
-                [common.RegisterEvent(
-                    event_type=('a', 'b', 'c'),
+            await client.register_with_response([
+                common.RegisterEvent(
+                    event_type=('b'),
                     source_timestamp=common.now(),
-                    payload=common.EventPayload(common.EventPayloadType.JSON,
-                                                0))]))
+                    payload=None)])
+            client.register([
+                common.RegisterEvent(
+                    event_type=('c'),
+                    source_timestamp=common.now(),
+                    payload=None)])
 
     monitor_client = MonitorClient()
     server = await create_server(server_address)
@@ -538,28 +540,29 @@ async def test_run_client_cancellation(server_address):
     monitor_client.change([component_info._replace(blessing=1, ready=1)])
     conn = await server.get_connection()
 
-    is_open = await is_open_queue.get()
-    assert is_open is True
+    msg = await conn.receive()
+    assert msg.data.data[0]['type'] == ['a']
 
-    assert is_open_queue.empty()
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(conn.receive(), 0.001)
 
     run_future.cancel()
 
-    is_open = await is_open_queue.get()
-    assert is_open is True
+    msg = await conn.receive()
+    assert msg.data.data[0]['type'] == ['b']
 
-    reg_future = await reg_future_queue.get()
-    await reg_future
+    with pytest.raises(asyncio.TimeoutError):
+        await asyncio.wait_for(conn.receive(), 0.001)
+
+    conn.send_register_res(msg.conv, [None])
+
+    msg = await conn.receive()
+    assert msg.data.data[0]['type'] == ['c']
 
     with pytest.raises(asyncio.CancelledError):
         await run_future
-
-    assert is_open_queue.empty()
-
-    assert conn.is_open is False
 
     await conn.wait_closed()
 
     await monitor_client.async_close()
     await server.async_close()
-    await group.async_close()

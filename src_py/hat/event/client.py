@@ -321,7 +321,7 @@ async def run_client(monitor_client: hat.monitor.client.Client,
 
             async with async_group.create_subgroup() as subgroup:
                 address_future = subgroup.spawn(address_queue.get_until_empty)
-                client_future = subgroup.spawn(_client_loop, subgroup, address,
+                client_future = subgroup.spawn(_client_loop, address,
                                                subscriptions, async_run_cb)
 
                 await asyncio.wait([address_future, client_future],
@@ -359,9 +359,10 @@ async def _address_loop(monitor_client, server_group, address_queue):
             await changes.get()
 
 
-async def _client_loop(async_group, address, subscriptions, async_run_cb):
+async def _client_loop(address, subscriptions, async_run_cb):
     while True:
-        async with async_group.create_subgroup() as subgroup:
+        async_group = aio.Group()
+        try:
             mlog.debug("connecting to server %s", address)
             try:
                 client = await connect(address, subscriptions)
@@ -371,16 +372,19 @@ async def _client_loop(async_group, address, subscriptions, async_run_cb):
                 continue
 
             mlog.debug("connected to server - running async_run_cb")
-            subgroup.spawn(aio.call_on_cancel, client.async_close)
-            subgroup.spawn(aio.call_on_done, client.wait_closing(),
-                           subgroup.close)
+            async_group.spawn(aio.call_on_cancel, client.async_close)
+            async_group.spawn(aio.call_on_done, client.wait_closing(),
+                              async_group.close)
 
-            async with subgroup.create_subgroup() as subsubgroup:
-                run_future = subsubgroup.spawn(async_run_cb, client)
-
+            async with async_group.create_subgroup() as subgroup:
+                run_future = subgroup.spawn(async_run_cb, client)
                 await asyncio.wait([run_future])
-                with contextlib.suppress(asyncio.CancelledError):
-                    return run_future.result()
+
+            with contextlib.suppress(asyncio.CancelledError):
+                return run_future.result()
+
+        finally:
+            await aio.uncancellable(async_group.async_close())
 
         mlog.debug("connection to server closed")
         await asyncio.sleep(reconnect_delay)
