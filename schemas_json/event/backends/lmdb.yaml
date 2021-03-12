@@ -44,8 +44,13 @@ properties:
         items:
             type: object
             required:
+                - order_by
                 - subscriptions
             properties:
+                order_by:
+                    enum:
+                        - TIMESTAMP
+                        - SOURCE_TIMESTAMP
                 subscriptions:
                     "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
                 limit:

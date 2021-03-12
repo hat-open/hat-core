@@ -41,15 +41,15 @@ async def create(conf: json.Data
 
     backend._ordered_dbs = collections.deque()
     for i, i_conf in enumerate(conf['ordered']):
+        order_by = common.OrderBy[i_conf['order_by']]
         subscription = common.Subscription(tuple(et)
                                            for et in i_conf['subscriptions'])
         limit = i_conf.get('limit')
-        for order_by in common.OrderBy:
-            name = f'ordered_{i}_{order_by.name}'
-            ordered_dbs = await hat.event.server.backends.lmdb.ordereddb.create(  # NOQA
-                backend._executor, backend._env, name, subscription,
-                backend._conditions, order_by, limit)
-            backend._ordered_dbs.append(ordered_dbs)
+        name = f'ordered_{i}'
+        ordered_dbs = await hat.event.server.backends.lmdb.ordereddb.create(
+            backend._executor, backend._env, name, subscription,
+            backend._conditions, order_by, limit)
+        backend._ordered_dbs.append(ordered_dbs)
 
     backend._async_group = aio.Group()
     backend._async_group.spawn(backend._write_loop)

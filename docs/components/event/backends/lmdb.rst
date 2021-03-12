@@ -11,7 +11,7 @@ This backend provides following characteristics:
     * querying by all query data parameters
     * optimization for latest events querying
     * optimization for time series querying
-    * fragmentation of time series records based on event types
+    * fragmentation of time series entries based on event types
     * in memory caching of event registration with periodic disk persistence
     * configurable condition rules for filtering event by their content
 

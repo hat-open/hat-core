@@ -40,7 +40,8 @@ async def test_create_empty(db_path):
             'server_id': 1,
             'conditions': [],
             'latest': {'subscriptions': [['*']]},
-            'ordered': [{'subscriptions': [['*']]}]}
+            'ordered': [{'order_by': 'TIMESTAMP',
+                         'subscriptions': [['*']]}]}
 
     backend = await hat.event.server.backends.lmdb.backend.create(conf)
 
@@ -57,7 +58,8 @@ async def test_get_last_event_id(db_path, create_event):
             'server_id': server_id,
             'conditions': [],
             'latest': {'subscriptions': [['*']]},
-            'ordered': [{'subscriptions': [['*']]}]}
+            'ordered': [{'order_by': 'TIMESTAMP',
+                         'subscriptions': [['*']]}]}
 
     backend = await hat.event.server.backends.lmdb.backend.create(conf)
 
@@ -94,7 +96,8 @@ async def test_register(db_path, create_event):
             'conditions': [{'subscriptions': [('f',)],
                             'condition': {'type': 'json'}}],
             'latest': {'subscriptions': [['*']]},
-            'ordered': [{'subscriptions': [['*']]}]}
+            'ordered': [{'order_by': 'TIMESTAMP',
+                         'subscriptions': [['*']]}]}
 
     backend = await hat.event.server.backends.lmdb.backend.create(conf)
 
@@ -140,7 +143,10 @@ async def test_query(db_path, create_event):
             'server_id': 1,
             'conditions': [],
             'latest': {'subscriptions': [['*']]},
-            'ordered': [{'subscriptions': [['*']]}]}
+            'ordered': [{'order_by': 'TIMESTAMP',
+                         'subscriptions': [['*']]},
+                        {'order_by': 'SOURCE_TIMESTAMP',
+                         'subscriptions': [['*']]}]}
 
     backend = await hat.event.server.backends.lmdb.backend.create(conf)
 
@@ -177,8 +183,10 @@ async def test_query_partitioning(db_path, create_event):
             'server_id': 1,
             'conditions': [],
             'latest': {'subscriptions': [['*']]},
-            'ordered': [{'subscriptions': [['a']]},
-                        {'subscriptions': [['b']]}]}
+            'ordered': [{'order_by': 'TIMESTAMP',
+                         'subscriptions': [['a']]},
+                        {'order_by': 'TIMESTAMP',
+                         'subscriptions': [['b']]}]}
 
     backend = await hat.event.server.backends.lmdb.backend.create(conf)
 
