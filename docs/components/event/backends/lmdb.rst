@@ -12,7 +12,7 @@ This backend provides following characteristics:
     * optimization for latest events querying
     * optimization for time series querying
     * fragmentation of time series records based on event types
-    * in memory caching of event registration with periodic disk persistention
+    * in memory caching of event registration with periodic disk persistence
     * configurable condition rules for filtering event by their content
 
 
@@ -62,10 +62,10 @@ condition composition (by operators `all` and `any`) and testing based on event
 content.
 
 
-Query planing
+Query planning
 -------------
 
-During event querying, simple query planing is done based on following steps:
+During event querying, simple query planning is done based on following steps:
 
     * if query data filters only latest events for each queried event type,
       then only key-value storage is searched for possible event instances
@@ -76,7 +76,7 @@ During event querying, simple query planing is done based on following steps:
       time series storage partition is used as source of event instances
       returned by query
 
-    * if no time series storage could by found, empty list is returned as query
+    * if no time series storage could be found, empty list is returned as query
       result
 
 
@@ -90,5 +90,5 @@ period is defined by configuration. Writing of memory cache is also part of
 backend's standard closing procedure. Single transaction responsible for
 writing all memory caches to disk also include cleanup operation which enabled
 deletion of oldest entries in time series storages. Each time series storage
-can have it's own configuration defined limit which specifies event
+can have its own configuration defined limit which specifies event
 persistent period based on event timestamp or event source timestamp.
