@@ -511,6 +511,8 @@ async def test_run_client_cancellation(server_address):
                                                       ready=None)
 
     is_open_queue = aio.Queue()
+    reg_future_queue = aio.Queue()
+    group = aio.Group()
 
     async def run_cb(client):
         is_open_queue.put_nowait(client.is_open)
@@ -518,6 +520,13 @@ async def test_run_client_cancellation(server_address):
             await asyncio.Future()
         finally:
             is_open_queue.put_nowait(client.is_open)
+            reg_future_queue.put_nowait(group.spawn(
+                client.register_with_response,
+                [common.RegisterEvent(
+                    event_type=('a', 'b', 'c'),
+                    source_timestamp=common.now(),
+                    payload=common.EventPayload(common.EventPayloadType.JSON,
+                                                0))]))
 
     monitor_client = MonitorClient()
     server = await create_server(server_address)
@@ -539,6 +548,9 @@ async def test_run_client_cancellation(server_address):
     is_open = await is_open_queue.get()
     assert is_open is True
 
+    reg_future = await reg_future_queue.get()
+    await reg_future
+
     with pytest.raises(asyncio.CancelledError):
         await run_future
 
@@ -550,3 +562,4 @@ async def test_run_client_cancellation(server_address):
 
     await monitor_client.async_close()
     await server.async_close()
+    await group.async_close()
