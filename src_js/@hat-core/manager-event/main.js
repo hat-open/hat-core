@@ -11,6 +11,10 @@ const defaultState = {
     remote: null,
     local: {
         expanded: []
+    },
+    register: {
+        text: '',
+        withSourceTimestamp: false
     }
 };
 
@@ -30,19 +34,50 @@ function main() {
 function vt() {
     const eventTree = getEventTree();
     return ['div#main',
-        ['table.events',
-            ['thead',
-                ['tr',
-                    ['th.col-type', 'Type'],
-                    ['th.col-id', 'Server'],
-                    ['th.col-id', 'Instance'],
-                    ['th.col-timestamp', 'Timestamp'],
-                    ['th.col-timestamp', 'Source timestamp'],
-                    ['th.col-payload', 'Payload']
+        ['div.events',
+            ['table',
+                ['thead',
+                    ['tr',
+                        ['th.col-type', 'Type'],
+                        ['th.col-id', 'Server'],
+                        ['th.col-id', 'Instance'],
+                        ['th.col-timestamp', 'Timestamp'],
+                        ['th.col-timestamp', 'Source timestamp'],
+                        ['th.col-payload', 'Payload']
+                    ]
+                ],
+                ['tbody',
+                    eventTree.children.map(vtEventTree)
                 ]
+            ]
+        ],
+        ['div.register',
+            ['div.title', 'Register events'],
+            ['label.withSourceTimestamp',
+                ['input', {
+                    props: {
+                        type: 'checkbox',
+                        checked: r.get('register', 'withSourceTimestamp')
+                    },
+                    on: {
+                        change: evt => r.set(['register', 'withSourceTimestamp'], evt.target.checked)
+                    }
+                }],
+                ' source timestamp'
             ],
-            ['tbody',
-                eventTree.children.map(vtEventTree)
+            ['textarea.text', {
+                props: {
+                    value: r.get('register', 'text')
+                },
+                on: {
+                    change: evt => r.set(['register', 'text'], evt.target.value)
+                }
+            }],
+            ['button.register', {
+                on: {
+                    click: register
+                }},
+                'Register'
             ]
         ]
     ];
@@ -116,6 +151,13 @@ function getEventTree() {
         [], u.reduce((acc, val) => u.set([val.event_type, '*'], val, acc),
                      {},
                      r.get('remote') || []));
+}
+
+
+function register() {
+    const text = r.get('register', 'text');
+    const withSourceTimestamp = r.get('register', 'withSourceTimestamp');
+    app.rpc.register(text, withSourceTimestamp);
 }
 
 

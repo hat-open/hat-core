@@ -8,56 +8,92 @@
 html, body {
     margin: 0px;
     font-family: 'Inter';
+    font-size: 12pt;
     user-select: none;
     height: 100%;
     overflow: hidden;
 }
 
 #main {
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    overflow: auto;
 
-    table.events {
-        width: 100%;
-        border-spacing: 0px;
-        table-layout: fixed;
-        position: relative;
+    & > .events {
+        flex-grow: 1;
+        overflow: auto;
 
-        th {
-            padding: 5px;
-            background: $color-grey-800;
-            color: $color-grey-100;
-            position: sticky;
-            top: 0px;
+        & > table {
+            width: 100%;
+            border-spacing: 0px;
+            table-layout: fixed;
+            position: relative;
+
+            th {
+                padding: 5px;
+                background: $color-grey-800;
+                color: $color-grey-100;
+                position: sticky;
+                top: 0px;
+            }
+
+            tr:nth-child(even) {
+                background-color: $color-grey-300;
+            }
+
+            tr:nth-child(odd) {
+                background-color: $color-grey-100;
+            }
+
+            td {
+                padding: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .expand-icon {
+                padding: 5px;
+                color: $color-grey-800;
+            }
+
+            .col-type { width: 400px; }
+            .col-id { width: 75px; }
+            .col-timestamp { width: 200px; }
+            .col-payload { }
+
+            td.col-id { text-align: right; }
+            td.col-timestamp { text-align: center; }
+
+        }
+    }
+
+    & > .register {
+        height: 20%;
+        background-color: $color-grey-200;
+        padding: 0.5rem;
+        border-top: 1px solid $color-grey-500;
+        display: grid;
+        grid-gap: 0.5rem;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto 1fr;
+        grid-template-areas: "title withSourceTimestamp"
+                             "text register";
+
+        & > .title {
+            grid-area: title;
         }
 
-        tr:nth-child(even) {
-            background-color: $color-grey-300;
+        & > .withSourceTimestamp {
+            grid-area: withSourceTimestamp;
         }
 
-        tr:nth-child(odd) {
-            background-color: $color-grey-100;
+        & > .text {
+            grid-area: text;
         }
 
-        td {
-            padding: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        & > .register {
+            grid-area: register;
         }
-
-        .expand-icon {
-            padding: 5px;
-            color: $color-grey-800;
-        }
-
-        .col-type { width: 400px; }
-        .col-id { width: 75px; }
-        .col-timestamp { width: 200px; }
-        .col-payload { }
-
-        td.col-id { text-align: right; }
-        td.col-timestamp { text-align: center; }
-
     }
 }

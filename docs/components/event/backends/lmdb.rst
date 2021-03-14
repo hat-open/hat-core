@@ -63,7 +63,7 @@ content.
 
 
 Query planning
--------------
+--------------
 
 During event querying, simple query planning is done based on following steps:
 

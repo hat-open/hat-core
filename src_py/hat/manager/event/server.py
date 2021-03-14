@@ -1,7 +1,8 @@
 import asyncio
-import functools
+import io
 
 from hat import aio
+from hat import json
 from hat import juggler
 from hat import util
 from hat.event import client
@@ -23,10 +24,8 @@ async def create(evt_srv_addr, ui_path):
     try:
         port = util.get_unused_tcp_port()
         srv._addr = f'http://127.0.0.1:{port}'
-        srv._srv = await juggler.listen(
-            '127.0.0.1', port,
-            functools.partial(srv._async_group.spawn, srv._connection_loop),
-            static_dir=ui_path)
+        srv._srv = await juggler.listen('127.0.0.1', port, srv._on_connection,
+                                        static_dir=ui_path)
         srv._async_group.spawn(aio.call_on_cancel, srv._srv.async_close)
         srv._async_group.spawn(aio.call_on_done, srv._srv.wait_closed(),
                                srv._async_group.close)
@@ -49,6 +48,7 @@ class Server(aio.Resource):
         return self._addr
 
     def _on_connection(self, conn):
+        conn = juggler.RpcConnection(conn, {'register': self._act_register})
         self._async_group.spawn(self._connection_loop, conn)
 
     async def _server_loop(self):
@@ -75,6 +75,13 @@ class Server(aio.Resource):
             self._events[tuple(event.event_type)] = _event_to_json(event)
         self._change_cbs.notify(list(self._events.values()))
 
+    def _act_register(self, text, with_source_timestamp):
+        source_timestamp = common.now() if with_source_timestamp else None
+        events = list(_parse_register_events(text, source_timestamp))
+        if not events:
+            return
+        self._client.register(events)
+
 
 def _event_to_json(event):
     event_id = {'server': event.event_id.server,
@@ -99,3 +106,18 @@ def _event_to_json(event):
             'timestamp': timestamp,
             'source_timestamp': source_timestamp,
             'payload': payload}
+
+
+def _parse_register_events(text, source_timestamp):
+    reader = io.StringIO(text)
+    while line := reader.readline():
+        elements = line.split(':', 1)
+        event_type = elements[0].strip()
+        if not event_type:
+            continue
+        event_type = tuple(event_type.split('/'))
+        payload = elements[1].strip() if len(elements) > 1 else ''
+        payload = (common.EventPayload(common.EventPayloadType.JSON,
+                                       json.decode(payload, json.Format.JSON))
+                   if payload else None)
+        yield common.RegisterEvent(event_type, source_timestamp, payload)
