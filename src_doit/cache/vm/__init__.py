@@ -6,6 +6,6 @@ from . import key
 from . import win10
 
 
-__all__ = (archlinux.__all__ +
-           key.__all__ +
-           win10.__all__)
+__all__ = [*archlinux.__all__,
+           *key.__all__,
+           *win10.__all__]

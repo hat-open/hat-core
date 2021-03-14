@@ -3,7 +3,6 @@ import itertools
 
 from hat.doit import common
 
-from .articles import *  # NOQA
 from .cache import *  # NOQA
 from .check import *  # NOQA
 from .dist import *  # NOQA
@@ -18,7 +17,6 @@ from .schemas import *  # NOQA
 from .test import *  # NOQA
 from .vm import *  # NOQA
 from .win32_launcher import *  # NOQA
-from . import articles
 from . import cache
 from . import check
 from . import dist
@@ -35,22 +33,21 @@ from . import vm
 from . import win32_launcher
 
 
-__all__ = (['task_clean_all'] +
-           articles.__all__ +
-           cache.__all__ +
-           check.__all__ +
-           dist.__all__ +
-           docs.__all__ +
-           duktape.__all__ +
-           format.__all__ +
-           homepage.__all__ +
-           jshat.__all__ +
-           pyhat.__all__ +
-           pymod.__all__ +
-           schemas.__all__ +
-           test.__all__ +
-           vm.__all__ +
-           win32_launcher.__all__)
+__all__ = ['task_clean_all',
+           *cache.__all__,
+           *check.__all__,
+           *dist.__all__,
+           *docs.__all__,
+           *duktape.__all__,
+           *format.__all__,
+           *homepage.__all__,
+           *jshat.__all__,
+           *pyhat.__all__,
+           *pymod.__all__,
+           *schemas.__all__,
+           *test.__all__,
+           *vm.__all__,
+           *win32_launcher.__all__]
 
 
 build_dir = Path('build')

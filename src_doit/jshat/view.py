@@ -86,15 +86,6 @@ module.exports = {{
                         options: {{ sourceMap: true }}
                     }}
                 ]
-            }},
-            {{
-                test: /\.woff2$/,
-                use: [
-                    {{
-                        loader: "file-loader",
-                        options: {{ name: "fonts/[name].[ext]" }}
-                    }}
-                ]
             }}
         ]
     }},

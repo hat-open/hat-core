@@ -1,10 +1,7 @@
 from pathlib import Path
-import xml.etree.ElementTree
 
 from hat.doit import common
 
-from .articles import dst_dir as articles_src_dir
-from .articles import get_article_names
 from .docs import dst_dir as docs_src_dir
 
 
@@ -12,14 +9,12 @@ __all__ = ['task_homepage',
            'task_homepage_pages',
            'task_homepage_static',
            'task_homepage_sass',
-           'task_homepage_docs',
-           'task_homepage_articles']
+           'task_homepage_docs']
 
 
 src_dir = Path('homepage')
 dst_dir = Path('build/homepage')
 docs_dst_dir = dst_dir / 'docs'
-articles_dst_dir = dst_dir / 'articles'
 
 
 def task_homepage():
@@ -28,8 +23,7 @@ def task_homepage():
             'task_dep': ['homepage_pages',
                          'homepage_static',
                          'homepage_sass',
-                         'homepage_docs',
-                         'homepage_articles']}
+                         'homepage_docs']}
 
 
 def task_homepage_pages():
@@ -40,12 +34,10 @@ def task_homepage_pages():
         name = i.relative_to(src_dir).with_suffix('').as_posix()
         src_path = src_dir / f"{name}.html"
         dst_path = dst_dir / f"{name}.html"
-        params = {'get_articles': _get_articles}
         yield {'name': str(dst_path),
                'actions': [(common.mako_build, [src_dir, src_path, dst_path,
-                                                params])],
-               'targets': [dst_path],
-               'task_dep': ['homepage_articles']}
+                                                {}])],
+               'targets': [dst_path]}
 
 
 def task_homepage_static():
@@ -81,34 +73,3 @@ def task_homepage_docs():
     return {'actions': [(common.rm_rf, [docs_dst_dir]),
                         (common.cp_r, [docs_src_dir, docs_dst_dir])],
             'task_dep': ['docs']}
-
-
-def task_homepage_articles():
-    """Homepage - copy articles"""
-
-    def copy_article(name):
-        common.rm_rf(articles_dst_dir / name)
-        common.cp_r(articles_src_dir / name, articles_dst_dir / name)
-
-    return {'actions': [(copy_article, [name])
-                        for name in get_article_names()],
-            'task_dep': ['articles']}
-
-
-def _get_articles():
-    ns = {'xhtml': 'http://www.w3.org/1999/xhtml'}
-    for name in sorted(get_article_names()):
-        rst_path = articles_src_dir / f'{name}/index.html'
-        root = xml.etree.ElementTree.parse(str(rst_path)).getroot()
-        title_tag = root.find("./xhtml:head/xhtml:title", ns)
-        author_tag = root.find("./xhtml:head/xhtml:meta[@name='author']",
-                               ns)
-        date_tag = root.find("./xhtml:head/xhtml:meta[@name='date']", ns)
-        title = title_tag.text
-        author = (author_tag.get('content')
-                  if author_tag is not None else None)
-        date = date_tag.get('content') if date_tag is not None else None
-        yield {'link': f'articles/{name}/index.html',
-               'title': title,
-               'author': author,
-               'date': date}

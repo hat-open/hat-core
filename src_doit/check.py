@@ -1,3 +1,4 @@
+from pathlib import Path
 import subprocess
 import sys
 
@@ -6,6 +7,10 @@ __all__ = ['task_check',
            'task_check_pyhat',
            'task_check_jshat',
            'task_check_sass']
+
+
+eslint_path = Path('node_modules/.bin/eslint')
+saslint_path = Path('node_modules/.bin/sass-lint')
 
 
 def task_check():
@@ -18,24 +23,23 @@ def task_check():
 
 def task_check_pyhat():
     """Check - check pyhat with flake8"""
-    def check():
-        subprocess.run([sys.executable, '-m', 'flake8', '.'],
-                       cwd='src_py',
-                       check=True)
-        subprocess.run([sys.executable, '-m', 'flake8', '.'],
-                       cwd='test_pytest',
-                       check=True)
-
-    return {'actions': [check]}
+    return {'actions': [(_run_flake8, ['src_py']),
+                        (_run_flake8, ['test_pytest'])]}
 
 
 def task_check_jshat():
     """Check - check jshat with eslint"""
-    return {'actions': ['node_modules/.bin/eslint src_js'],
+    return {'actions': [f'{eslint_path} src_js'],
             'task_dep': ['jshat_deps']}
 
 
 def task_check_sass():
     """Check - check sass with sass-lint"""
-    return {'actions': ['node_modules/.bin/sass-lint src_scss/**/*.scss'],
+    return {'actions': [f'{saslint_path} src_scss/**/*.scss'],
             'task_dep': ['jshat_deps']}
+
+
+def _run_flake8(path):
+    subprocess.run([sys.executable, '-m', 'flake8', '.'],
+                   cwd=str(path),
+                   check=True)

@@ -4,5 +4,5 @@ from . import tools
 from . import vm
 
 
-__all__ = (tools.__all__ +
-           vm.__all__)
+__all__ = [*tools.__all__,
+           *vm.__all__]
