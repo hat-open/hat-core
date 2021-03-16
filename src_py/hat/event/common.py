@@ -288,7 +288,7 @@ class Timestamp(typing.NamedTuple):
     s: int
     """seconds since 1970-01-01 (can be negative)"""
     us: int
-    """microseconds added to timestamp seconds in range (-1e6, 1e6)"""
+    """microseconds added to timestamp seconds in range [0, 1e6)"""
 
     def __lt__(self, other):
         if not isinstance(other, Timestamp):
@@ -317,15 +317,22 @@ class Timestamp(typing.NamedTuple):
     def __hash__(self):
         return self.s * 1000000 + self.us
 
+    def add(self, s: float) -> 'Timestamp':
+        """Create new timestamp by adding seconds to existing timestamp"""
+        us = self.us + round((s - int(s)) * 1e6)
+        s = self.s + int(s)
+        return Timestamp(s=s + us // int(1e6),
+                         us=us % int(1e6))
+
 
 def timestamp_to_bytes(t: Timestamp) -> bytes:
     """Convert timestamp to 12 byte representation
 
-    Bytes [0, 8] are big endian two's complement encoded `Timestamp.s` and
-    bytes [9, 12] are big endian two's complement encoded `Timestamp.us`.
+    Bytes [0, 8] are big endian unsigned `Timestamp.s` + 2^63 and
+    bytes [9, 12] are big endian unsigned `Timestamp.us`.
 
     """
-    return struct.pack(">qi", t.s, t.us)
+    return struct.pack(">QI", t.s + (1 << 63), t.us)
 
 
 def timestamp_from_bytes(data: bytes) -> Timestamp:
@@ -334,8 +341,8 @@ def timestamp_from_bytes(data: bytes) -> Timestamp:
     Bytes representation is same as defined for `timestamp_to_bytes` function.
 
     """
-    s, us = struct.unpack(">qi", data)
-    return Timestamp(s, us)
+    s, us = struct.unpack(">QI", data)
+    return Timestamp(s - (1 << 63), us)
 
 
 def timestamp_to_float(t: Timestamp) -> float:

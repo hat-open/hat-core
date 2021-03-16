@@ -255,9 +255,8 @@ def test_subscription_isdisjoint(first, second, isdisjoint):
     common.Timestamp(0, 1),
     common.Timestamp(1, 0),
     common.Timestamp(1, 1),
-    common.Timestamp(0, -1),
     common.Timestamp(-1, 0),
-    common.Timestamp(-1, -1),
+    common.Timestamp(-1, 1),
     common.Timestamp(-1, 999_999)
 ], r=2))
 def test_timestamp(t1, t2):
@@ -281,15 +280,28 @@ def test_timestamp(t1, t2):
     assert t1 != 123
 
 
+@pytest.mark.parametrize("t1, s, t2", [
+    (common.Timestamp(0, 0), 0, common.Timestamp(0, 0)),
+    (common.Timestamp(0, 0), 0.001, common.Timestamp(0, 1000)),
+    (common.Timestamp(0, 0), -0.001, common.Timestamp(-1, 999000)),
+    (common.Timestamp(0, 0), 1, common.Timestamp(1, 0)),
+    (common.Timestamp(0, 0), 1.001, common.Timestamp(1, 1000)),
+    (common.Timestamp(0, 0), -1.001, common.Timestamp(-2, 999000))
+])
+def test_timestamp_add(t1, s, t2):
+    assert t1.add(s) == t2
+    assert t2.add(-s) == t1
+
+
 @pytest.mark.parametrize("t, t_bytes", [
     (common.Timestamp(0, 0),
-     b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'),
+     b'\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'),
 
     (common.Timestamp(2_145_916_800, 99_999),
-     b'\x00\x00\x00\x00\x7f\xe8\x17\x80\x00\x01\x86\x9f'),
+     b'\x80\x00\x00\x00\x7f\xe8\x17\x80\x00\x01\x86\x9f'),
 
     (common.Timestamp(12_321, 99_999),
-     b'\x00\x00\x00\x00\x00\x00\x30\x21\x00\x01\x86\x9f')
+     b'\x80\x00\x00\x00\x00\x00\x30\x21\x00\x01\x86\x9f')
 ])
 def test_timestamp_bytes(t, t_bytes):
     assert common.timestamp_to_bytes(t) == t_bytes

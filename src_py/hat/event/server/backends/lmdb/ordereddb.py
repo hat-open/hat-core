@@ -204,7 +204,7 @@ class OrderedDb:
     def _ext_query_events(self, t_from, t_to, order):
         from_key = (encoder.encode_timestamp_id((t_from, 0))
                     if t_from is not None else None)
-        to_key = (encoder.encode_timestamp_id((_next_timestamp(t_to), 0))
+        to_key = (encoder.encode_timestamp_id((t_to.add(1e6), 0))
                   if t_to is not None else None)
 
         with self._env.begin(db=self._db, buffers=True) as txn:
@@ -249,8 +249,7 @@ class OrderedDb:
             if self._limit is None:
                 return
 
-            t_last = _timestamp_add_seconds(now, -self._limit)
-            stop_key = encoder.encode_timestamp_id((t_last, 0))
+            stop_key = encoder.encode_timestamp_id((now.add(-self._limit), 0))
 
             cursor = txn.cursor()
             more = cursor.first()
@@ -299,23 +298,3 @@ def _filter_events(events, subscription, event_ids, t_from, t_to,
             max_results -= 1
 
         yield event
-
-
-def _next_timestamp(t):
-    next_us = t.us + 1
-    return common.Timestamp(s=t.s + next_us // int(1e6),
-                            us=next_us % int(1e6))
-
-
-def _timestamp_add_seconds(t, s):
-    us = round((s - int(s)) * 1e6)
-    s = int(s)
-    new_us = t.us + us
-    new_s = t.s + s
-    if new_us >= int(1e6):
-        new_us = new_us % int(1e6)
-        new_s = new_s + new_us // int(1e6)
-    elif new_us <= -int(1e6):
-        new_us = -((-new_us) % int(1e6))
-        new_s = new_s - (-new_us) // int(1e6)
-    return common.Timestamp(s=new_s, us=new_us)
