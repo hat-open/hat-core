@@ -1,5 +1,4 @@
 import r from '@hat-core/renderer';
-import * as u from '@hat-core/util';
 import * as datetime from '@hat-core/syslog/datetime';
 
 

@@ -1,3 +1,5 @@
+import r from '@hat-core/renderer';
+
 import * as latest from '@hat-core/manager-event/vt/latest';
 import * as changes from '@hat-core/manager-event/vt/changes';
 import * as register from '@hat-core/manager-event/vt/register';

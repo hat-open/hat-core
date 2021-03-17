@@ -1,3 +1,5 @@
+import r from '@hat-core/renderer';
+
 import * as common from '@hat-core/manager-event/common';
 
 
