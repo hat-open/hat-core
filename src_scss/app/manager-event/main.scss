@@ -18,82 +18,139 @@ html, body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    background-color: $color-grey-200;
 
-    & > .events {
-        flex-grow: 1;
-        overflow: auto;
+    & > .header {
+        display: flex;
+        border-bottom: 1px solid $color-grey-500;
 
-        & > table {
-            width: 100%;
-            border-spacing: 0px;
-            table-layout: fixed;
-            position: relative;
+        & > div {
+            padding: 0.5rem;
 
-            th {
-                padding: 5px;
+            &:hover {
+                background: $color-grey-300;
+            }
+
+            &.selected {
                 background: $color-grey-800;
                 color: $color-grey-100;
-                position: sticky;
-                top: 0px;
             }
-
-            tr:nth-child(even) {
-                background-color: $color-grey-300;
-            }
-
-            tr:nth-child(odd) {
-                background-color: $color-grey-100;
-            }
-
-            td {
-                padding: 5px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .expand-icon {
-                padding: 5px;
-                color: $color-grey-800;
-            }
-
-            .col-type { width: 400px; }
-            .col-id { width: 75px; }
-            .col-timestamp { width: 200px; }
-            .col-payload { }
-
-            td.col-id { text-align: right; }
-            td.col-timestamp { text-align: center; }
-
         }
     }
 
-    & > .register {
-        height: 20%;
-        background-color: $color-grey-200;
-        padding: 0.5rem;
-        border-top: 1px solid $color-grey-500;
-        display: grid;
-        grid-gap: 0.5rem;
-        grid-template-columns: 1fr auto;
-        grid-template-rows: auto 1fr;
-        grid-template-areas: "title withSourceTimestamp"
-                             "text register";
+    & > .page {
+        flex-grow: 1;
 
-        & > .title {
-            grid-area: title;
+        &.latest {
+            overflow: auto;
+
+            & > table {
+                width: 100%;
+                border-spacing: 0px;
+                table-layout: fixed;
+                position: relative;
+
+                th {
+                    padding: 5px;
+                    background: $color-grey-800;
+                    color: $color-grey-100;
+                    position: sticky;
+                    top: 0px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: $color-grey-300;
+                }
+
+                tr:nth-child(odd) {
+                    background-color: $color-grey-100;
+                }
+
+                td {
+                    padding: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .expand-icon {
+                    padding: 5px;
+                    color: $color-grey-800;
+                }
+
+                .col-type { width: 400px; }
+                .col-id { width: 75px; }
+                .col-timestamp { width: 200px; }
+                .col-payload { }
+
+                td.col-id { text-align: right; }
+                td.col-timestamp { text-align: center; }
+            }
         }
 
-        & > .withSourceTimestamp {
-            grid-area: withSourceTimestamp;
+        &.changes {
+            overflow: auto;
+
+            & > table {
+                width: 100%;
+                border-spacing: 0px;
+                table-layout: fixed;
+                position: relative;
+
+                th {
+                    padding: 5px;
+                    background: $color-grey-800;
+                    color: $color-grey-100;
+                    position: sticky;
+                    top: 0px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: $color-grey-300;
+                }
+
+                tr:nth-child(odd) {
+                    background-color: $color-grey-100;
+                }
+
+                td {
+                    padding: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .col-type { width: 400px; }
+                .col-id { width: 75px; }
+                .col-timestamp { width: 200px; }
+                .col-payload { }
+
+                td.col-id { text-align: right; }
+                td.col-timestamp { text-align: center; }
+            }
         }
 
-        & > .text {
-            grid-area: text;
-        }
+        &.register {
+            padding: 0.5rem;
+            display: grid;
+            grid-gap: 0.5rem;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto auto 1fr;
+            grid-template-areas: "text sourceTimestamp"
+                                 "text register"
+                                 "text .";
 
-        & > .register {
-            grid-area: register;
+            & > .source-timestamp {
+                grid-area: sourceTimestamp;
+            }
+
+            & > .text {
+                grid-area: text;
+            }
+
+            & > .register {
+                grid-area: register;
+            }
         }
     }
 }

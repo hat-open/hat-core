@@ -1,5 +1,6 @@
 import asyncio
 import io
+import itertools
 
 from hat import aio
 from hat import json
@@ -9,10 +10,14 @@ from hat.event import client
 from hat.event import common
 
 
+changes_size = 100
+
+
 async def create(evt_srv_addr, ui_path):
     srv = Server()
     srv._client = client
-    srv._events = {}
+    srv._latest = {}
+    srv._changes = []
     srv._change_cbs = util.CallbackRegistry()
     srv._async_group = aio.Group()
 
@@ -55,9 +60,16 @@ class Server(aio.Resource):
         try:
             events = await self._client.query(
                 common.QueryData(unique_type=True))
+            events = [_event_to_json(event) for event in events]
             while True:
-                self._update_events(events)
+                for event in events:
+                    self._latest[tuple(event['event_type'])] = event
+                self._change_cbs.notify(self._create_local_data())
                 events = await self._client.receive()
+                events = [_event_to_json(event) for event in events]
+                changes = itertools.chain(reversed(events), self._changes)
+                changes = itertools.islice(changes, changes_size)
+                self._changes = list(changes)
 
         except ConnectionError:
             pass
@@ -67,13 +79,12 @@ class Server(aio.Resource):
 
     async def _connection_loop(self, conn):
         with self._change_cbs.register(conn.set_local_data):
-            conn.set_local_data(list(self._events.values()))
+            conn.set_local_data(self._create_local_data())
             await asyncio.Future()
 
-    def _update_events(self, events):
-        for event in events:
-            self._events[tuple(event.event_type)] = _event_to_json(event)
-        self._change_cbs.notify(list(self._events.values()))
+    def _create_local_data(self):
+        return {'latest': list(self._latest.values()),
+                'changes': self._changes}
 
     def _act_register(self, text, with_source_timestamp):
         source_timestamp = common.now() if with_source_timestamp else None
