@@ -3,10 +3,10 @@
 . ./env.sh
 
 LOG_LEVEL=DEBUG
-CONF_PATH=$DATA_PATH/monitor.yaml
+CONF_PATH=$DATA_PATH/orchestrator.yaml
 
 cat > $CONF_PATH << EOF
-type: monitor
+type: orchestrator
 log:
     version: 1
     formatters:
@@ -24,20 +24,19 @@ log:
         level: INFO
         handlers: ['console_handler']
     disable_existing_loggers: false
-server:
-    address: "tcp+sbs://127.0.0.1:23010"
-    default_rank: 1
-master:
-    address: "tcp+sbs://127.0.0.1:23011"
-    default_algorithm: BLESS_ALL
-    group_algorithms: {}
-slave:
-    parents: []
+components:
+  - name: test
+    args:
+        - sh
+        - "-c"
+        - "sleep 5 && echo test"
+    delay: 0
+    revive: true
 ui:
-    address: "http://127.0.0.1:23022"
+    address: "http://127.0.0.1:23021"
 EOF
 
-exec $PYTHON -m hat.monitor.server \
-    --ui-path $JSHAT_APP_PATH/monitor \
+exec $PYTHON -m hat.orchestrator \
+    --ui-path $JSHAT_APP_PATH/orchestrator \
     --conf $CONF_PATH \
     "$@"

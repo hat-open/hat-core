@@ -2,7 +2,7 @@
 
 . ./env.sh
 
-$PYTHON << EOF
+exec $PYTHON << EOF
 import asyncio
 import contextlib
 

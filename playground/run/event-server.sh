@@ -39,6 +39,6 @@ communication:
     address: "tcp+sbs://localhost:23012"
 EOF
 
-$PYTHON -m hat.event.server \
+exec $PYTHON -m hat.event.server \
     --conf $CONF_PATH \
     "$@"

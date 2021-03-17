@@ -188,7 +188,9 @@ data which is defined by JSON schema:
                         enum:
                             - STOPPED
                             - DELAYED
+                            - STARTING
                             - RUNNING
+                            - STOPPING
 
 Once juggler connection between server and client is established, server will
 immediately set correct local data.
@@ -220,8 +222,7 @@ Frontend to backend juggler `MESSAGE` message JSON schema:
                 - payload
             properties:
                 type:
-                    enum:
-                        - start
+                    const: start
                 payload:
                     type: object
                     required:
@@ -236,8 +237,7 @@ Frontend to backend juggler `MESSAGE` message JSON schema:
                 - payload
             properties:
                 type:
-                    enum:
-                        - stop
+                    const: stop
                 payload:
                     type: object
                     required:
@@ -252,8 +252,7 @@ Frontend to backend juggler `MESSAGE` message JSON schema:
                 - payload
             properties:
                 type:
-                    enum:
-                        - revive
+                    const: revive
                 payload:
                     type: object
                     required:

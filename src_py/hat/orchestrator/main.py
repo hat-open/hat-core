@@ -39,7 +39,7 @@ json_schema_repo: json.SchemaRepository = json.SchemaRepository(
               help="Override web ui directory path (development argument)")
 def main(conf: typing.Optional[Path],
          ui_path: Path):
-    """Main"""
+    """Orchestrator"""
     aio.init_asyncio()
 
     if not conf:
@@ -85,4 +85,5 @@ def _bind_resource(async_group, resource):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = 'hat-orchestrator'
     sys.exit(main())

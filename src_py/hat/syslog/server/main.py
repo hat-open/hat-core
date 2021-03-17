@@ -92,7 +92,7 @@ def main(conf: typing.Optional[Path],
          db_high_size: typing.Optional[int],
          db_enable_archive: bool,
          db_disable_journal: bool):
-    """Syslog Server main"""
+    """Syslog Server"""
     aio.init_asyncio()
 
     if not conf:
@@ -219,4 +219,5 @@ async def _create_resource(async_group, fn, *args):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = 'hat-syslog'
     sys.exit(main())

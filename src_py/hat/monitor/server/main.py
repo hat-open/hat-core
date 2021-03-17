@@ -40,7 +40,7 @@ default_ui_path: Path = package_path / 'ui'
               help="Override web ui directory path (development argument)")
 def main(conf: typing.Optional[Path],
          ui_path: Path):
-    """Main entry point"""
+    """Monitor Server"""
     aio.init_asyncio()
 
     if not conf:
@@ -98,4 +98,5 @@ async def async_main(conf: json.Data,
 
 
 if __name__ == '__main__':
+    sys.argv[0] = 'hat-monitor'
     sys.exit(main())

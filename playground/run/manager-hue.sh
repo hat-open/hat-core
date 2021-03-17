@@ -2,6 +2,6 @@
 
 . ./env.sh
 
-$PYTHON -m hat.manager.hue \
+exec $PYTHON -m hat.manager.hue \
     --ui-path $JSHAT_APP_PATH/manager-hue \
     "$@"

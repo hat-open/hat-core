@@ -369,41 +369,30 @@ processing of process event and is discarded once event is created.
 Process of creating events based on a single set of process events is called
 session. Module engine starts new session each time communication or module
 requests new registration. Session ends once backend engine returns result
-of event registration and all modules are notified with this result. Start
-and end of each session is notified to each module by creating and closing
-module session. Each module instantiates its own module session.
+of event registration. Start and end of each session is notified to each module
+by creating and closing module session. Each module instantiates its own module
+session.
 
-During session processing, each module session is notified with a list of new
-and deleted process events which are not previously presented to that module.
+During session processing, each module session is notified with a list of newly
+created process events which are not previously presented to that module.
 Processing these process events by module session can result in new process
-events which are to be added to current session or list of previously
-added process events which are to be deleted from session. All other module
-sessions, except the one that produced list of new and deleted process events,
-are notified with those process event lists. This process continues iteratively
-until all module sessions return empty lists for both new and deleted process
-events. Processing process events by single module session is always sequential
-- module session is notified with session changes after its previous
-notification processing is finished. Different module sessions may be processed
-concurrently. Module engine keeps order of new process events added to session,
-but it is allowed to aggregate processing results from multiple module sessions
-into a single session change notification.
+events which are to be added to current session. All module sessions, including
+the one that added new process events, are notified with new additions. This
+process continues iteratively until all module sessions return empty lists of
+new process events. Processing process events by single module session is
+always sequential - module session is notified with session changes after its
+previous notification processing is finished. Different module sessions may be
+processed concurrently. Module engine keeps order of new process events added
+to session, but it is allowed to aggregate processing results from multiple
+module sessions into a single session change notification.
 
 Care should be taken by module implementation not to cause self recursive or
 mutually recursive endless processing loop.
 
-Each module can define its event type filter condition which is used for
-filtering new and deleted process events that will get notified to module
+Each module can define its event type filter condition (subscription) which is
+used for filtering new process events that will get notified to module
 session. When session finishes, module session is closed by calling its
-`async_close` method, which receives a list of all newly created events
-resulting from the session processing. These events are not filtered by module
-subscription. By calling `async_close` with list of all newly registered
-events, module engine provides each module session with opportunity to
-post-process single session as a whole.
-
-.. todo::
-
-    do we want to filter resulting events passed to module session close
-    with module's subscription?
+`async_close` method.
 
 
 Modules
@@ -426,13 +415,6 @@ process events and querying events. Responsibility of each module, upon
 creation, is to create its own source identifier which will be unique for
 single Event Server process execution.
 
-Modules available as part of `hat-event` package:
-
-    .. toctree::
-       :maxdepth: 1
-
-       modules/dummy
-
 
 Backend engine
 ''''''''''''''
@@ -443,21 +425,7 @@ instance of backend which is used for storage.
 
 During registration of events, backend engine converts process events to
 backend events. This conversion involves setting event's timestamp (which is
-the same for all events registered in a single session) and replacing
-event type with event type identifier. To enable this, backend engine
-has to maintain association reference between event types and corresponding
-event type identifiers. By replacing event types with identifiers, list of
-strings which represent event type is replaced with a single numeric identifier.
-
-Query request which is passed to backend engine contains event types as
-optional filter condition. Responsibility of backend engine is to find
-all matching event type identifiers and query backend based on a list of
-identifiers.
-
-.. todo::
-
-    can we associate type identifiers based on subtypes and utilize identifier
-    ranges instead of explicitly passing each identifier to backend
+the same for all events registered in a single session).
 
 .. todo::
 
@@ -467,7 +435,7 @@ identifiers.
 Backends
 ''''''''
 
-Backends are simple wrappers for storing and retrieving events from specialized
+Backends are wrappers for storing and retrieving events from specialized
 storage engines.
 
 Backends available as part of `hat-event` package:
@@ -476,7 +444,6 @@ Backends available as part of `hat-event` package:
        :maxdepth: 1
 
        backends/dummy
-       backends/sqlite
        backends/lmdb
 
 

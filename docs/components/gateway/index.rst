@@ -109,7 +109,7 @@ All devices, regardless of device type, support following events:
         * `source timestamp` - required timestamp when Device is successfully
           created (started) or destroyed (stopped)
 
-        * `payload` - JSON payload encoding boolean value set to `true` when
+        * `payload` - JSON payload encoding boolean value set to ``true`` when
           Device is successfully created (started) or destroyed (stopped)
 
 All other Gateway events are specified in dependence of `<device_type>`.
@@ -131,7 +131,7 @@ Device proxy
 Each device proxy is responsible for managing lifetime of single device and
 providing custom device's interface to event server. Device lifetime is
 dependent of last `enable` event state. During initialization, device proxy
-registers a new `running` event with payload `false`, queries last device's
+registers a new `running` event with payload ``false``, queries last device's
 associated `enable` event and keeps monitoring for any new `enable` events. When
 device is enabled, proxy creates new instance of device. Once device is
 successfully created, proxy registers new `running` event with payload ``true``.
@@ -168,7 +168,7 @@ Devices available as part of `hat-gateway` package:
     .. toctree::
        :maxdepth: 1
 
-       devices/dummy
+       devices/iec104
 
 
 Implementation

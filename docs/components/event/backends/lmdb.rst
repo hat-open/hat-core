@@ -1,7 +1,6 @@
 LMDB backend
 ============
 
-
 LMDB backend utilizes python `lmdb package <https://pypi.org/project/lmdb/>`_
 wrapper for `LMDB data store <https://symas.com/lmdb/>`_.
 

@@ -33,7 +33,7 @@ user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
               help="configuration defined by hat://event/main.yaml# "
                    "(default $XDG_CONFIG_HOME/hat/event.{yaml|yml|json})")
 def main(conf: typing.Optional[Path]):
-    """Main entry point"""
+    """Event Server"""
     aio.init_asyncio()
 
     if not conf:
@@ -109,4 +109,5 @@ def _bind_resource(async_group, resource):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = 'hat-event'
     sys.exit(main())

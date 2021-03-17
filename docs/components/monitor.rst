@@ -32,7 +32,7 @@ By installing Monitor Server from `hat-monitor` package, executable
 
 Additionally, `hat-monitor` package provides implementation of library which
 can be used as basis for communication between components and Monitor Server.
-This library is available in :mod:`hat.monitor.client` module.
+This library is available in `hat.monitor.client` module.
 
 
 Communication model
@@ -310,14 +310,15 @@ supervised by master Monitor Server. Redundancy utilizes two tokens:
         This token is controlled exclusively by client. It will match
         `blessing` value only if component is ready to provide its primary
         functionality. At any time, if component stops providing primary
-        functionality, it should revoke this token.
+        functionality, it should revoke this token. Value ``0`` should be
+        reserved for special usage defined by blessing algorithm.
 
 Each component determines if it should provide primary functionality based on
 global state provided by local Monitor Server. If client's component
 information contains `blessing` and `ready` token with same value, component
 can provide primary functionality. If, at any time, these values do not match,
 component should stop its usual activity which is indicated by client's
-revoking of `ready` flag.
+revoking of `ready` token.
 
 
 Blessing algorithm
@@ -508,8 +509,7 @@ transmitted as juggler's `MESSAGE` messages defined by JSON schema:
                 - payload
             properties:
                 type:
-                    enum:
-                        - set_rank
+                    const: set_rank
                 payload:
                     type: object
                     required:

@@ -29,7 +29,7 @@ user_conf_dir: Path = Path(appdirs.user_config_dir('hat'))
               help="configuration defined by hat://gateway/main.yaml# "
                    "(default $XDG_CONFIG_HOME/hat/gateway.{yaml|yml|json})")
 def main(conf: typing.Optional[Path]):
-    """Main entry point"""
+    """Gateway"""
     aio.init_asyncio()
 
     if not conf:
@@ -99,4 +99,5 @@ def _bind_resource(async_group, resource):
 
 
 if __name__ == '__main__':
+    sys.argv[0] = 'hat-gateway'
     sys.exit(main())

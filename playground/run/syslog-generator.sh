@@ -2,5 +2,5 @@
 
 . ./env.sh
 
-$PYTHON -m hat.syslog.generator \
+exec $PYTHON -m hat.syslog.generator \
     "$@"
