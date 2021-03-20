@@ -12,7 +12,8 @@ __all__ = ['task_jshat_app',
            'task_jshat_app_gui',
            'task_jshat_app_syslog',
            'task_jshat_app_manager_event',
-           'task_jshat_app_manager_hue']
+           'task_jshat_app_manager_hue',
+           'task_jshat_app_manager_iec104']
 
 
 build_dir = Path('build/jshat/app')
@@ -31,7 +32,8 @@ def task_jshat_app():
                          'jshat_app_gui',
                          'jshat_app_syslog',
                          'jshat_app_manager_event',
-                         'jshat_app_manager_hue']}
+                         'jshat_app_manager_hue',
+                         'jshat_app_manager_iec104']}
 
 
 def task_jshat_app_orchestrator():
@@ -74,6 +76,13 @@ def task_jshat_app_manager_hue():
     return _get_task_build('manager-hue',
                            'Hat Hue Manager',
                            src_js_dir / '@hat-core/manager-hue/main.js')
+
+
+def task_jshat_app_manager_iec104():
+    """JsHat application - build manager-iec104"""
+    return _get_task_build('manager-iec104',
+                           'Hat IEC104 Manager',
+                           src_js_dir / '@hat-core/manager-iec104/main.js')
 
 
 def _get_task_build(name, title, entry, task_dep=[]):

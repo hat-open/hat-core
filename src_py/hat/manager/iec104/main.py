@@ -8,8 +8,10 @@ import PySide2.QtWebEngineWidgets
 import PySide2.QtWidgets
 
 from hat import aio
+from hat import juggler
 from hat import qt
-from hat.manager.event import server
+from hat import util
+from hat.manager.iec104.client import Client
 
 
 package_path = Path(__file__).parent
@@ -17,26 +19,28 @@ default_ui_path = package_path / 'ui'
 
 
 @click.command()
-@click.option('--addr', metavar='URL',
-              default='tcp+sbs://127.0.0.1:23012', show_default=True,
-              help='Event Server address')
 @click.option('--browser', default=False, is_flag=True,
               help='Open in external browser')
 @click.option('--debug', default=False, is_flag=True,
               help='Show debugging console')
 @click.option('--ui-path', default=default_ui_path, metavar='PATH', type=Path,
               help='Override web ui directory path (development argument)')
-def main(addr, browser, debug, ui_path):
+def main(browser, debug, ui_path):
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-    return qt.run(async_main, addr, browser, debug, ui_path)
+    return qt.run(async_main, browser, debug, ui_path)
 
 
-async def async_main(qt_executor, addr, browser, debug, ui_path):
-    srv = await server.create(addr, ui_path)
+async def async_main(qt_executor, browser, debug, ui_path):
+    port = util.get_unused_tcp_port()
+    addr = f'http://127.0.0.1:{port}'
+
+    srv = await juggler.listen('127.0.0.1', port, Client, static_dir=ui_path)
+
     if browser:
         subprocess.Popen(['xdg-open', addr])
     else:
-        await qt_executor(_ext_qt_open_window, srv.addr, debug)
+        await qt_executor(_ext_qt_open_window, addr, debug)
+
     try:
         await srv.wait_closed()
     finally:
@@ -53,7 +57,7 @@ def _ext_qt_open_window(url, debug):
 
     _view = PySide2.QtWebEngineWidgets.QWebEngineView()
     _view.contextMenuEvent = lambda _: None
-    _view.setWindowTitle('Event Manager')
+    _view.setWindowTitle('IEC104 Manager')
     _view.load(url)
     _view.show()
 
