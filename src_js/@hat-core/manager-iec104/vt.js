@@ -2,6 +2,8 @@ import r from '@hat-core/renderer';
 import * as u from '@hat-core/util';
 import * as datetime from '@hat-core/syslog/datetime';
 
+import * as common from '@hat-core/manager-iec104/common';
+
 
 export function main() {
     return ['div#main',
@@ -13,28 +15,48 @@ export function main() {
 
 
 function sidebar() {
-    const devices = r.get('devices');
+    const devices = r.get('remote', 'devices') || [];
     return ['div.sidebar',
         ['div.devices',
-            u.map((_, id) => sidebarDevice(id), devices)
+            u.toPairs(devices).map(([deviceId, device]) => {
+                const name = device.properties.name;
+                const selected = r.get('selectedDeviceId') == deviceId;
+                return ['div.device', {
+                    class: {
+                        selected: selected
+                    }},
+                    ['span.status.fa.fa-circle', {
+                        class: {
+                            [device.properties.status]: true
+                        }
+                    }],
+                    ['span.name', name],
+                    ['button.remove', {
+                        on: {
+                            click: _ => common.removeDevice(deviceId)
+                        }},
+                        ['span.fa.fa-trash-o']
+                    ]
+                ];
+            })
         ],
         ['div.add',
-            ['button',
+            ['button', {
+                on: {
+                    click: common.createMaster
+                }},
                 ['span.fa.fa-plug'],
                 ' Add master'
             ],
-            ['button',
+            ['button', {
+                on: {
+                    click: common.createSlave
+                }},
                 ['span.fa.fa-server'],
                 ' Add slave'
             ]
         ]
     ];
-}
-
-
-function sidebarDevice(id) {
-    const selected = r.get('selected') == id;
-    return ['div.device', 'device'];
 }
 
 

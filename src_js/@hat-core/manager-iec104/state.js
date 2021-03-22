@@ -3,8 +3,7 @@
 export const main = {
     remote: null,
     local: null,
-    selected: null,
-    devices: {}
+    selectedDeviceId: null
 };
 
 
