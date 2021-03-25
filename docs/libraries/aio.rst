@@ -17,7 +17,7 @@ Same as :ref:`hat.util.first <hat-util-first>` where `Iterable` is replaced
 with `AsyncIterable`::
 
     async def first(xs: typing.AsyncIterable[T],
-                    fn: typing.Callable[[T], bool] = lambda _: True,
+                    fn: typing.Callable[[T], typing.Any] = lambda _: True,
                     default: typing.Optional[T] = None
                     ) -> typing.Optional[T]: ...
 

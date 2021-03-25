@@ -30,11 +30,14 @@ Async utility functions.
 * `hat.aio.first`::
 
     async def first(xs: typing.AsyncIterable[T],
-                    fn: typing.Callable[[T], bool] = lambda _: True,
+                    fn: typing.Callable[[T], typing.Any] = lambda _: True,
                     default: typing.Optional[T] = None
                     ) -> typing.Optional[T]:
         """Return the first element from async iterable that satisfies
         predicate `fn`, or `default` if no such element exists.
+
+        Result of predicate `fn` can be of any type. Predicate is satisfied if
+        it's return value is truthy.
 
         Args:
             xs: async collection
