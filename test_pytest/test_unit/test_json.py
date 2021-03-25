@@ -229,6 +229,60 @@ def test_set_invalid_path():
         json.set_(None, True, 1)
 
 
+@pytest.mark.parametrize("data, path, result", [
+    (None,
+     [],
+     None),
+
+    (123,
+     [],
+     None),
+
+    ([1, {}, 'abc'],
+     [],
+     None),
+
+    ([1, 2, 3],
+     1,
+     [1, 3]),
+
+    ({'a': 1, 'b': 2},
+     'a',
+     {'b': 2}),
+
+    ([1, {'a': [2, 3]}],
+     [1, 'a', 0],
+     [1, {'a': [3]}]),
+
+    (123,
+     123,
+     123),
+
+    ([1, 2, 3],
+     5,
+     [1, 2, 3]),
+
+    ({'a': 123},
+     'b',
+     {'a': 123})
+])
+def test_remove(data, path, result):
+    x = json.remove(data, path)
+    assert json.equals(x, result)
+
+
+def test_remove_example():
+    data = [1, {'a': 2, 'b': 3}, 4]
+    path = [1, 'b']
+    result = json.remove(data, path)
+    assert result == [1, {'a': 2}, 4]
+    assert result is not data
+
+    data = [1, 2, 3]
+    result = json.remove(data, 4)
+    assert result == [1, 2, 3]
+
+
 @pytest.mark.parametrize("x, y, diff", [
     ({'a': 0},
      {'a': False},

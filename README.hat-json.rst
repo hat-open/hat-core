@@ -78,7 +78,7 @@ JSON data manipulation and validation functions.
         """
 
 
-* `hat.json.get` and `hat.json.set_`::
+* `hat.json.get`, `hat.json.set_` and `hat.json.remove`::
 
     def get(data: Data,
             path: Path,
@@ -115,6 +115,25 @@ JSON data manipulation and validation functions.
             data = [1, 2, 3]
             result = set_(data, 4, 4)
             assert result == [1, 2, 3, None, 4]
+
+        """
+
+    def remove(data: Data,
+               path: Path
+               ) -> Data:
+        """Create new data by removing part of data referenced by path
+
+        Example::
+
+            data = [1, {'a': 2, 'b': 3}, 4]
+            path = [1, 'b']
+            result = remove(data, path)
+            assert result == [1, {'a': 2}, 4]
+            assert result is not data
+
+            data = [1, 2, 3]
+            result = remove(data, 4)
+            assert result == [1, 2, 3]
 
         """
 

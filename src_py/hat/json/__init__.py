@@ -186,6 +186,73 @@ def set_(data: Data,
     return value
 
 
+def remove(data: Data,
+           path: Path
+           ) -> Data:
+    """Create new data by removing part of data referenced by path
+
+    Example::
+
+        data = [1, {'a': 2, 'b': 3}, 4]
+        path = [1, 'b']
+        result = remove(data, path)
+        assert result == [1, {'a': 2}, 4]
+        assert result is not data
+
+        data = [1, 2, 3]
+        result = remove(data, 4)
+        assert result == [1, 2, 3]
+
+    """
+    result = data
+    parents = collections.deque()
+
+    for i in flatten(path):
+        parent = data
+
+        if isinstance(i, str):
+            if not isinstance(data, dict) or i not in data:
+                return result
+            data = data[i]
+
+        elif isinstance(i, int) and not isinstance(i, bool):
+            if not isinstance(data, list):
+                return result
+            try:
+                data = data[i]
+            except IndexError:
+                return result
+
+        else:
+            raise ValueError('invalid path')
+
+        parents.append((parent, i))
+
+    result = None
+
+    while parents:
+        parent, i = parents.pop()
+
+        if isinstance(i, str):
+            parent = dict(parent)
+
+        elif isinstance(i, int) and not isinstance(i, bool):
+            parent = list(parent)
+
+        else:
+            raise ValueError('invalid path')
+
+        if result is None:
+            del parent[i]
+
+        else:
+            parent[i] = result
+
+        result = parent
+
+    return result
+
+
 def diff(src: Data,
          dst: Data
          ) -> Data:
