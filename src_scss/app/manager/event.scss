@@ -1,0 +1,166 @@
+@import '../../common/color';
+
+
+#main {
+    & > .page {
+        &.event {
+            display: flex;
+            flex-direction: column;
+
+            & > .header {
+                display: flex;
+                align-items: center;
+                padding: 0.2rem;
+                border-bottom: 1px solid $color-grey-700;
+
+                & > .menu {
+                    display: flex;
+
+                    & > * {
+                        margin-right: 0.2rem;
+                        padding: 0.2rem 0.5rem;
+                        border-radius: 0.2rem;
+
+                        &.selected, &:hover {
+                            color: $color-grey-100;
+                            background-color: $color-grey-700;
+                        }
+                    }
+                }
+
+                & > .spacer {
+                    flex-grow: 1;
+                }
+
+                & > .form {
+                    display: flex;
+                    align-items: center;
+
+                    & > * {
+                        &:not(:last-child) {
+                            margin-right: 0.2rem;
+                        }
+                    }
+                }
+            }
+
+            & > .subpage {
+                flex-grow: 1;
+
+                &.latest {
+                    overflow: auto;
+
+                    & > table {
+                        width: 100%;
+                        border-spacing: 0px;
+                        table-layout: fixed;
+                        position: relative;
+
+                        th {
+                            padding: 5px;
+                            background: $color-grey-700;
+                            color: $color-grey-100;
+                            position: sticky;
+                            top: 0px;
+
+                            &.col-type { width: 400px; }
+                            &.col-id { width: 75px; }
+                            &.col-timestamp { width: 200px; }
+                        }
+
+                        tr {
+                            &:nth-child(even) {
+                                background-color: $color-grey-300;
+                            }
+
+                            &:nth-child(odd) {
+                                background-color: $color-grey-100;
+                            }
+                        }
+
+                        td {
+                            padding: 5px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+
+                            &.col-id { text-align: right; }
+                            &.col-timestamp { text-align: center; }
+                        }
+
+                        .expand-icon {
+                            padding: 5px;
+                            color: $color-grey-700;
+                        }
+                    }
+                }
+
+                &.changes {
+                    overflow: auto;
+
+                    & > table {
+                        width: 100%;
+                        border-spacing: 0px;
+                        table-layout: fixed;
+                        position: relative;
+
+                        th {
+                            padding: 5px;
+                            background: $color-grey-700;
+                            color: $color-grey-100;
+                            position: sticky;
+                            top: 0px;
+
+                            &.col-type { width: 400px; }
+                            &.col-id { width: 75px; }
+                            &.col-timestamp { width: 200px; }
+                        }
+
+                        tr {
+                            &:nth-child(even) {
+                                background-color: $color-grey-300;
+                            }
+
+                            &:nth-child(odd) {
+                                background-color: $color-grey-100;
+                            }
+                        }
+
+                        td {
+                            padding: 5px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+
+                            &.col-id { text-align: right; }
+                            &.col-timestamp { text-align: center; }
+                        }
+                    }
+                }
+
+                &.register {
+                    padding: 0.5rem;
+                    display: grid;
+                    grid-gap: 0.5rem;
+                    grid-template-columns: 1fr auto;
+                    grid-template-rows: auto auto 1fr;
+                    grid-template-areas: 'text sourceTimestamp'
+                                         'text register'
+                                         'text .';
+
+                    & > .source-timestamp {
+                        grid-area: sourceTimestamp;
+                    }
+
+                    & > .text {
+                        grid-area: text;
+                    }
+
+                    & > .register {
+                        grid-area: register;
+                    }
+                }
+            }
+        }
+    }
+}

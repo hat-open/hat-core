@@ -1,0 +1,14 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://manager/iec104.yaml#"
+title: IEC104 devices
+oneOf:
+  - type: object
+    properties:
+        type:
+            const: iec104_master
+  - type: object
+    properties:
+        type:
+            const: iec104_slave
+...

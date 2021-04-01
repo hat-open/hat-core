@@ -1,0 +1,12 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://manager/orchestrator.yaml#"
+title: Orchestrator device
+required:
+    - address
+properties:
+    type:
+        const: orchestrator
+    address:
+        type: string
+...

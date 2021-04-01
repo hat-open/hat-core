@@ -1,0 +1,88 @@
+@import '../../common/color';
+
+
+#main {
+    & > .page {
+        &.orchestrator {
+            display: flex;
+            flex-direction: column;
+
+            & > .header {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                padding: 0.2rem;
+                border-bottom: 1px solid $color-grey-700;
+
+                & > * {
+                    &:not(:last-child) {
+                        margin-right: 0.2rem;
+                    }
+                }
+            }
+
+            & > .components {
+                flex-grow: 1;
+
+                table {
+                    width: 100%;
+                    border-spacing: 0px;
+                    table-layout: fixed;
+                    position: relative;
+
+                    th {
+                        padding: 5px;
+                        background: $color-grey-700;
+                        color: $color-grey-100;
+                        position: sticky;
+                        top: 0px;
+
+                        &.col-delay { width: 100px; }
+                        &.col-fatal { width: 100px; }
+                        &.col-revive { width: 100px; }
+                        &.col-status { width: 100px; }
+                        &.col-action { width: 100px; }
+                    }
+
+                    tr {
+                        &:nth-child(even) {
+                            background-color: $color-grey-300;
+                        }
+
+                        &:nth-child(odd) {
+                            background-color: $color-grey-100;
+                        }
+                    }
+
+                    td {
+                        padding: 5px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+
+                        &.col-delay { text-align: right; }
+                        &.col-fatal { text-align: center; }
+                        &.col-revive { text-align: center; }
+                        &.col-status { text-align: center; }
+
+                        &.col-action {
+                            text-align: center;
+
+                            button {
+                                margin: 0px 2px;
+                            }
+                        }
+                    }
+
+                    .center {
+                        text-align: center;
+                    }
+
+                    .right {
+                        text-align: right;
+                    }
+                }
+            }
+        }
+    }
+}

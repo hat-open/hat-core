@@ -1,0 +1,83 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://manager/main.yaml#"
+title: Manger
+description: Manager's configuration
+type: object
+required:
+    - type
+    - log
+    - settings
+    - devices
+properties:
+    type:
+        const: manager
+        description: configuration type identification
+    version:
+        type: string
+        description: component version
+    log:
+        "$ref": "hat://logging.yaml#"
+    settings:
+        type: object
+        required:
+            - ui
+            - log
+        properties:
+            ui:
+                type: object
+                required:
+                    - address
+                properties:
+                    address:
+                        type: string
+            log:
+                type: object
+                required:
+                    - level
+                    - syslog
+                    - console
+                properties:
+                    level:
+                        type: string
+                    syslog:
+                        type: object
+                        required:
+                            - enabled
+                            - host
+                            - port
+                        properties:
+                            enabled:
+                                type: boolean
+                            host:
+                                type: string
+                            port:
+                                type: integer
+                    console:
+                        type: object
+                        required:
+                            - enabled
+                        properties:
+                            enabled:
+                                type: boolean
+    devices:
+        type: array
+        items:
+            allOf:
+              - type: object
+                required:
+                    - type
+                    - name
+                    - auto_start
+                properties:
+                    name:
+                        type: string
+                    auto_start:
+                        type: boolean
+              - oneOf:
+                    - "$ref": "hat://manager/orchestrator.yaml#"
+                    - "$ref": "hat://manager/monitor.yaml#"
+                    - "$ref": "hat://manager/event.yaml#"
+                    - "$ref": "hat://manager/iec104.yaml#"
+                    - "$ref": "hat://manager/modbus.yaml#"
+...

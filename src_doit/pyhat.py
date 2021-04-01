@@ -459,12 +459,8 @@ def task_pyhat_manager():
         for i in (src_py_dir / 'hat/manager').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
 
-        jshat_dirs = [(Path('build/jshat/app/manager-event'),
-                       dst_dir / 'hat/manager/event/ui'),
-                      (Path('build/jshat/app/manager-hue'),
-                       dst_dir / 'hat/manager/hue/ui'),
-                      (Path('build/jshat/app/manager-iec104'),
-                       dst_dir / 'hat/manager/iec104/ui')]
+        jshat_dirs = [(Path('build/jshat/app/manager'),
+                       dst_dir / 'hat/manager/ui')]
         for jshat_src_dir, jshat_dst_dir in jshat_dirs:
             for i in jshat_src_dir.rglob('*'):
                 if i.is_dir():
@@ -473,11 +469,10 @@ def task_pyhat_manager():
 
     return _get_task_build(
         name='hat-manager',
-        description='Hat manager GUIs',
+        description='Hat managment GUI',
         readme_path=Path('README.hat-manager.rst'),
         dependencies=['appdirs',
                       'click',
-                      'PySide2',
                       'hat-aio',
                       'hat-drivers',
                       'hat-event',
@@ -486,12 +481,8 @@ def task_pyhat_manager():
                       'hat-qt',
                       'hat-util'],
         mappings=mappings,
-        gui_scripts=['hat-manager-event = hat.manager.event.main:main',
-                     'hat-manager-hue = hat.manager.hue.main:main',
-                     'hat-manager-iec104 = hat.manager.iec104.main:main'],
-        task_dep=['jshat_app_manager_event',
-                  'jshat_app_manager_hue',
-                  'jshat_app_manager_iec104'])
+        console_scripts=['hat-manager = hat.manager.main:main'],
+        task_dep=['jshat_app_manager'])
 
 
 def _get_task_build(name, description, readme_path, dependencies, mappings, *,

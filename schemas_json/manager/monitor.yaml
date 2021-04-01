@@ -1,0 +1,12 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://manager/monitor.yaml#"
+title: Monitor device
+required:
+    - address
+properties:
+    type:
+        const: monitor
+    address:
+        type: string
+...

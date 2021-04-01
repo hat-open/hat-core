@@ -1,0 +1,12 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://manager/event.yaml#"
+title: Event device
+required:
+    - address
+properties:
+    type:
+        const: event
+    address:
+        type: string
+...

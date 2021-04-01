@@ -1,0 +1,94 @@
+@import '../../common/color';
+
+
+#main {
+    & > .page {
+        &.monitor {
+            display: flex;
+            flex-direction: column;
+
+            & > .header {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                padding: 0.2rem;
+                border-bottom: 1px solid $color-grey-700;
+
+                & > * {
+                    &:not(:last-child) {
+                        margin-right: 0.2rem;
+                    }
+                }
+            }
+
+            & > .components {
+                flex-grow: 1;
+
+                table {
+                    width: 100%;
+                    border-spacing: 0px;
+                    table-layout: fixed;
+                    position: relative;
+
+                    th {
+                        padding: 5px;
+                        background: $color-grey-700;
+                        color: $color-grey-100;
+                        position: sticky;
+                        top: 0px;
+
+                        &.col-id { width: 70px; }
+                        &.col-group { width: 150px; }
+                        &.col-address { width: 150px; }
+                        &.col-blessing { width: 70px; }
+                        &.col-ready { width: 70px; }
+                        &.col-rank { width: 120px; }
+                    }
+
+                    tr {
+                        &:nth-child(even) {
+                            background-color: $color-grey-300;
+                        }
+
+                        &:nth-child(odd) {
+                            background-color: $color-grey-100;
+                        }
+                    }
+
+                    td {
+                        padding: 5px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+
+                        &.col-id { text-align: center; }
+                        &.col-blessing { text-align: center; }
+                        &.col-ready { text-align: center; }
+
+                        &.col-rank {
+                            text-align: center;
+
+                            & > div {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+
+                                button {
+                                    margin: 0px 2px;
+                                }
+                            }
+                        }
+                    }
+
+                    .center {
+                        text-align: center;
+                    }
+
+                    .right {
+                        text-align: right;
+                    }
+                }
+            }
+        }
+    }
+}

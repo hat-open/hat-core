@@ -1,0 +1,14 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://manager/modbus.yaml#"
+title: Modbus devices
+oneOf:
+  - type: object
+    properties:
+        type:
+            const: modbus_master
+  - type: object
+    properties:
+        type:
+            const: modbus_slave
+...
