@@ -56,6 +56,14 @@ def test_equals_example():
     assert json.equals(1, True) is False
 
 
+def test_clone_example():
+    x = {'a': [1, 2, 3]}
+    y = json.clone(x)
+    assert x is not y
+    assert x['a'] is not y['a']
+    assert json.equals(x, y)
+
+
 @pytest.mark.parametrize("data, result", [
     (None,
      [None]),

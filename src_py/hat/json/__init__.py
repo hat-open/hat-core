@@ -56,6 +56,30 @@ def equals(a: Data,
         return True
 
 
+def clone(data: Data) -> Data:
+    """Deep clone data
+
+    This function recursivly creates new instances of array and object data
+    based on input data. Resulting json data is equal to provided data.
+
+    Example::
+
+        x = {'a': [1, 2, 3]}
+        y = clone(x)
+        assert x is not y
+        assert x['a'] is not y['a']
+        assert equals(x, y)
+
+    """
+    if isinstance(data, list):
+        return [clone(i) for i in data]
+
+    if isinstance(data, dict):
+        return {k: clone(v) for k, v in data.items()}
+
+    return data
+
+
 def flatten(data: Data
             ) -> typing.Iterable[Data]:
     """Flatten JSON data

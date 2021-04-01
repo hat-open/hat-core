@@ -41,7 +41,7 @@ JSON data manipulation and validation functions.
     """Data path"""
 
 
-* `hat.json.equals` and `hat.json.flatten`::
+* `hat.json.equals`, `hat.json.clone` and `hat.json.flatten`::
 
     def equals(a: Data,
                b: Data
@@ -58,6 +58,22 @@ JSON data manipulation and validation functions.
             assert equals(0, 0.0) is True
             assert equals({'a': 1, 'b': 2}, {'b': 2, 'a': 1}) is True
             assert equals(1, True) is False
+
+        """
+
+    def clone(data: Data) -> Data:
+        """Deep clone data
+
+        This function recursivly creates new instances of array and object data
+        based on input data. Resulting json data is equal to provided data.
+
+        Example::
+
+            x = {'a': [1, 2, 3]}
+            y = clone(x)
+            assert x is not y
+            assert x['a'] is not y['a']
+            assert equals(x, y)
 
         """
 

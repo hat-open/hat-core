@@ -57,6 +57,18 @@ Example usage::
     assert equals({'a': 1, 'b': 2}, {'b': 2, 'a': 1}) is True
     assert equals(1, True) is False
 
+Function `hat.json.clone` enables deep cloning of composite JSON data::
+
+    def clone(data: Data) -> Data: ...
+
+Example usage::
+
+    x = {'a': [1, 2, 3]}
+    y = clone(x)
+    assert x is not y
+    assert x['a'] is not y['a']
+    assert equals(x, y)
+
 Additional utility function `hat.json.flatten` is provided. This generator
 is used for recursively flattening of `Array`'s::
 
