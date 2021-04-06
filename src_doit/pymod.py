@@ -30,19 +30,19 @@ def _get_cpp_flags():
 
 
 def _get_ld_flags():
-    stdlib_path = sysconfig.get_path('stdlib')
-
     if sys.platform == 'linux':
         return []
 
     elif sys.platform == 'darwin':
+        stdlib_path = sysconfig.get_path('stdlib')
         python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
         return [f"-L{stdlib_path}",
                 f"-lpython{python_version}"]
 
     elif sys.platform == 'win32':
+        data_path = sysconfig.get_path('data')
         python_version = f'{sys.version_info.major}{sys.version_info.minor}'
-        return [f"-L{stdlib_path}",
+        return [f"-L{data_path}",
                 f"-lpython{python_version}"]
 
     raise Exception('unsupported platform')

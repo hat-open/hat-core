@@ -15,8 +15,8 @@ if sys.platform == 'win32':
     cc = common.cc
     windres = 'windres'
 else:
-    cc = 'i686-w64-mingw32-gcc'
-    windres = 'i686-w64-mingw32-windres'
+    cc = 'x86_64-w64-mingw32-gcc'
+    windres = 'x86_64-w64-mingw32-windres'
 
 
 def task_win32_launcher():

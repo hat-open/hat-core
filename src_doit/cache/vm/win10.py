@@ -124,8 +124,7 @@ def _init_shared_dir(path):
 _shared_files = {
     'authorized_keys': authorized_keys_path,
     'requirements.pip.txt': Path('requirements.pip.txt'),
-    'requirements.pacman.win.txt': Path('requirements.pacman.win.txt'),
-    'requirements.pacman.linux.txt': Path('requirements.pacman.linux.txt'),
+    'requirements.msys2.txt': Path('requirements.msys2.txt'),
     'package.json': Path('package.json'),
 
     'win10_sshd_config': r"""
@@ -138,7 +137,7 @@ Subsystem sftp sftp-server.exe
         r"C:\Windows\System32\OpenSSH",
         r"C:\Python38",
         r"C:\Python38\Scripts",
-        r"C:\msys64\mingw32\bin",
+        r"C:\msys64\mingw64\bin",
         r"C:\msys64\usr\bin",
         r"C:\Windows\system32",
         r"C:\Windows",
@@ -163,16 +162,16 @@ $wc.DownloadFile("http://10.0.2.100/environment",
                  "c:\\Users\\User\\Downloads\\environment")
 $wc.DownloadFile("http://10.0.2.100/requirements.pip.txt",
                  "c:\\Users\\User\\Downloads\\requirements.pip.txt")
-$wc.DownloadFile("http://10.0.2.100/requirements.pacman.win.txt",
-                 "c:\\Users\\User\\Downloads\\requirements.pacman.win.txt")
+$wc.DownloadFile("http://10.0.2.100/requirements.msys2.txt",
+                 "c:\\Users\\User\\Downloads\\requirements.msys2.txt")
 $wc.DownloadFile("http://10.0.2.100/package.json",
                  "c:\\Users\\User\\Downloads\\package.json")
-$wc.DownloadFile("https://www.python.org/ftp/python/3.8.1/python-3.8.1.exe",
-                 "c:\\Users\\User\\Downloads\\python-3.8.1.exe")
-$wc.DownloadFile("http://repo.msys2.org/distrib/x86_64/msys2-x86_64-20190524.exe",
-                 "c:\\Users\\User\\Downloads\\msys2-x86_64-20190524.exe")
-$wc.DownloadFile("https://nodejs.org/dist/v13.7.0/node-v13.7.0-x86.msi",
-                 "c:\\Users\\User\\Downloads\\node-v13.7.0-x86.msi")
+$wc.DownloadFile("https://www.python.org/ftp/python/3.8.9/python-3.8.9-amd64.exe",
+                 "c:\\Users\\User\\Downloads\\python-3.8.9-amd64.exe")
+$wc.DownloadFile("https://repo.msys2.org/distrib/x86_64/msys2-x86_64-20210228.exe",
+                 "c:\\Users\\User\\Downloads\\msys2-x86_64-20210228.exe")
+$wc.DownloadFile("https://nodejs.org/dist/v14.16.1/node-v14.16.1-x64.msi",
+                 "c:\\Users\\User\\Downloads\\node-v14.16.1-x64.msi")
 $wc.DownloadFile("https://yarnpkg.com/latest.msi",
                  "c:\\Users\\User\\Downloads\\yarn.msi")
 
@@ -183,25 +182,26 @@ Copy-Item -Force -Path c:\Users\User\Downloads\authorized_keys -Destination c:\U
 Copy-Item -Force -Path c:\Users\User\Downloads\environment -Destination c:\Users\User\.ssh\
 Copy-Item -Force -Path c:\Users\User\Downloads\package.json -Destination c:\Users\User\
 
-Add-WindowsCapability -Online -Name OpenSSH.Server*
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Set-Service -Name sshd -StartupType Automatic
 Start-Service -Name sshd
 
-$env:Path = "C:\Windows\System32\OpenSSH;C:\Python38;C:\Python38\Scripts;C:\msys64\mingw32\bin;C:\msys64\usr\bin;" + $env:Path
+$env:Path = "C:\Windows\System32\OpenSSH;C:\Python38;C:\Python38\Scripts;C:\msys64\mingw64\bin;C:\msys64\usr\bin;" + $env:Path
 $env:Path += ";C:\nodejs;C:\Yarn\bin"
 [Environment]::SetEnvironmentVariable(
     "Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
-cmd /C "c:\Users\User\Downloads\python-3.8.1.exe InstallAllUsers=1 TargetDir=c:\Python38 /passive"
-cmd /C "c:\Users\User\Downloads\node-v13.7.0-x86.msi INSTALLDIR=C:\nodejs /passive"
+cmd /C "c:\Users\User\Downloads\python-3.8.9-amd64.exe InstallAllUsers=1 TargetDir=c:\Python38 /passive"
+cmd /C "c:\Users\User\Downloads\node-v14.16.1-x64.msi INSTALLDIR=C:\nodejs /passive"
 cmd /C "c:\Users\User\Downloads\yarn.msi INSTALLDIR=c:\Yarn /passive"
 
 cmd /C "pip install -r c:\Users\User\Downloads\requirements.pip.txt"
 cmd /C "cd c:\Users\User && yarn install"
 
-cmd /C "c:\Users\User\Downloads\msys2-x86_64-20190524.exe"
-# - 2x pacman -Syu
-# - bash -c "pacman -S --noconfirm $(< requirements.pacman.win.txt)"
+cmd /C "c:\Users\User\Downloads\msys2-x86_64-20210228.exe install -c --root c:\msys64"
+cmd.exe /C "pacman -Syu --noconfirm"
+cmd.exe /C "pacman -Syu --noconfirm"
+c:\msys64\usr\bin\bash -c "pacman -S --noconfirm $(< c:/Users/User/Downloads/requirements.msys2.txt)"
 
 """  # NOQA
 }

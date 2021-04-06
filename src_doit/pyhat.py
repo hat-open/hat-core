@@ -37,6 +37,8 @@ src_json_dir = Path('schemas_json')
 src_sbs_dir = Path('schemas_sbs')
 src_py_dir = Path('src_py')
 
+python_tag = 'cp38.cp39'
+
 
 def task_pyhat_clean():
     """PyHat - clean"""
@@ -521,7 +523,6 @@ def _create_setup_py(path, name, description, readme_path, dependencies,
                      optional_dependencies, console_scripts, gui_scripts,
                      platform_specific):
     plat_name = _get_plat_name() if platform_specific else 'any'
-    python_tag = f'cp{sys.version_info.major}{sys.version_info.minor}'
     version = common.get_version(common.VersionType.PIP)
     readme = _get_readme(readme_path)
     with open(path, 'w', encoding='utf-8') as f:
