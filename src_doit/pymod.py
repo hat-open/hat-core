@@ -34,8 +34,9 @@ def _get_ld_flags():
         return []
 
     elif sys.platform == 'darwin':
-        stdlib_path = sysconfig.get_path('stdlib')
         python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
+        stdlib_path = (Path(sysconfig.get_path('stdlib')) /
+                       f'config-{python_version}-darwin')
         return [f"-L{stdlib_path}",
                 f"-lpython{python_version}"]
 
