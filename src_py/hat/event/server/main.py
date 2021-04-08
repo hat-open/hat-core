@@ -68,7 +68,7 @@ async def async_main(conf: json.Data):
 
         backend_engine = await hat.event.server.backend_engine.create(
             conf['backend_engine'])
-        _bind_resource(async_group, monitor)
+        _bind_resource(async_group, backend_engine)
 
         component = hat.monitor.client.Component(monitor, run, conf,
                                                  backend_engine)
