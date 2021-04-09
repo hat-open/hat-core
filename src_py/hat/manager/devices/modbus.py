@@ -1,6 +1,3 @@
-from hat import aio
-from hat import util
-
 from hat.manager import common
 
 
@@ -13,20 +10,11 @@ class Master(common.Device):
 
     def __init__(self, conf, logger):
         self._logger = logger
-        self._async_group = aio.Group()
-        self._change_cbs = util.CallbackRegistry()
-        self._data = {}
-
-    @property
-    def async_group(self):
-        return self._async_group
+        self._data = common.DataStorage()
 
     @property
     def data(self):
         return self._data
-
-    def register_change_cb(self, cb):
-        return self._change_cbs.register(cb)
 
     def get_conf(self):
         return {}
@@ -42,20 +30,11 @@ class Slave(common.Device):
 
     def __init__(self, conf, logger):
         self._logger = logger
-        self._async_group = aio.Group()
-        self._change_cbs = util.CallbackRegistry()
-        self._data = {}
-
-    @property
-    def async_group(self):
-        return self._async_group
+        self._data = common.DataStorage()
 
     @property
     def data(self):
         return self._data
-
-    def register_change_cb(self, cb):
-        return self._change_cbs.register(cb)
 
     def get_conf(self):
         return {}

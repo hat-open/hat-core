@@ -461,6 +461,10 @@ def task_pyhat_manager():
         for i in (src_py_dir / 'hat/manager').rglob('*.py'):
             yield i, dst_dir / i.relative_to(src_py_dir)
 
+        json_schema_repo = src_py_dir / 'hat/manager/json_schema_repo.json'
+        yield json_schema_repo, (dst_dir /
+                                 json_schema_repo.relative_to(src_py_dir))
+
         jshat_dirs = [(Path('build/jshat/app/manager'),
                        dst_dir / 'hat/manager/ui')]
         for jshat_src_dir, jshat_dst_dir in jshat_dirs:

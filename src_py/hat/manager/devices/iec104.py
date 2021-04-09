@@ -1,8 +1,6 @@
 import functools
 import itertools
 
-from hat import aio
-from hat import json
 from hat import util
 from hat.drivers import iec104
 from hat.manager import common
@@ -31,28 +29,19 @@ class Master(common.Device):
 
     def __init__(self, conf, logger):
         self._logger = logger
-        self._async_group = aio.Group()
-        self._change_cbs = util.CallbackRegistry()
         self._conn = None
-        self._data = {'properties': conf,
-                      'data': []}
-
-    @property
-    def async_group(self):
-        return self._async_group
+        self._data = common.DataStorage({'properties': conf,
+                                         'data': []})
 
     @property
     def data(self):
         return self._data
 
-    def register_change_cb(self, cb):
-        return self._change_cbs.register(cb)
-
     def get_conf(self):
-        return self._data['properties']
+        return self._data.data['properties']
 
     async def create(self):
-        properties = self._data['properties']
+        properties = self._data.data['properties']
         self._conn = await iec104.connect(
             addr=iec104.Address(properties['host'],
                                 properties['port']),
@@ -92,7 +81,7 @@ class Master(common.Device):
             conn.close()
 
     def _act_set_property(self, path, value):
-        self._set(['properties', path], value)
+        self._data.set(['properties', path], value)
 
     async def _act_interrogate(self, asdu):
         data = await self._conn.interrogate(asdu)
@@ -113,50 +102,36 @@ class Master(common.Device):
             return
         new_data = [_data_to_json(i) for i in new_data]
         new_data_ids = {(i['type'], i['asdu'], i['io']) for i in new_data}
-        old_data = (i for i in self._data
+        old_data = (i for i in self._data.data['data']
                     if (i['type'], i['asdu'], i['io']) not in new_data_ids)
         data = sorted(itertools.chain(old_data, new_data),
                       key=lambda i: (i['type'], i['asdu'], i['io']))
-        self._set('data', data)
-
-    def _set(self, path, value):
-        self._data = json.set_(self._data, path, value)
-        self._change_cbs.notify(self._data)
-
-    def _remove(self, path):
-        self._data = json.remove(self._data, path)
-        self._change_cbs.notify(self._data)
+        self._data.set('data', data)
 
 
 class Slave(common.Device):
 
     def __init__(self, conf, logger):
         self._logger = logger
-        self._async_group = aio.Group()
-        self._change_cbs = util.CallbackRegistry()
+        self._next_data_ids = (str(i) for i in itertools.count(1))
+        self._next_command_ids = (str(i) for i in itertools.count(1))
         self._data_change_cbs = util.CallbackRegistry()
-        self._next_ids = (str(i) for i in itertools.count(1))
-        self._data = {
+        self._data = common.DataStorage({
             'properties': conf['properties'],
             'connection_count': 0,
-            'data': {next(self._next_ids): i for i in conf['data']},
-            'commands': {next(self._next_ids): i for i in conf['commands']}}
-
-    @property
-    def async_group(self):
-        return self._async_group
+            'data': {next(self._next_data_ids): i
+                     for i in conf['data']},
+            'commands': {next(self._next_command_ids): i
+                         for i in conf['commands']}})
 
     @property
     def data(self):
         return self._data
 
-    def register_change_cb(self, cb):
-        return self._change_cbs.register(cb)
-
     def get_conf(self):
-        return {'properties': self._data['properties'],
-                'data': list(self._data['data'].values()),
-                'commands': list(self._data['commands'].values())}
+        return {'properties': self._data.data['properties'],
+                'data': list(self._data.data['data'].values()),
+                'commands': list(self._data.data['commands'].values())}
 
     async def create(self):
         properties = self._data['properties']
@@ -200,7 +175,8 @@ class Slave(common.Device):
 
     async def _connection_loop(self, conn):
         try:
-            self._set('connection_count', self._data['connection_count'] + 1)
+            self._data.set('connection_count',
+                           self._data.data['connection_count'] + 1)
             change_cb = functools.partial(self._on_data_change, conn)
             with self._data_change_cbs.register(change_cb):
                 while True:
@@ -211,16 +187,21 @@ class Slave(common.Device):
 
         finally:
             conn.close()
-            self._set('connection_count', self._data['connection_count'] - 1)
+            self._data.set('connection_count',
+                           self._data.data['connection_count'] - 1)
 
     def _on_interrogate(self, conn, asdu):
-        data = [_data_from_json(i) for i in self._data['data'].values()
+        cause = iec104.Cause.INTERROGATED_STATION
+        data = [_data_from_json(i)._replace(cause=cause)
+                for i in self._data.data['data'].values()
                 if i['type'] != 'BinaryCounter' and (asdu == 0xFFFF or
                                                      asdu == i['asdu'])]
         return data
 
     def _on_counter_interrogate(self, conn, asdu, freeze):
-        data = [_data_from_json(i) for i in self._data['data'].values()
+        cause = iec104.Cause.INTERROGATED_COUNTER
+        data = [_data_from_json(i)._replace(cause=cause)
+                for i in self._data.data['data'].values()
                 if i['type'] == 'BinaryCounter' and (asdu == 0xFFFF or
                                                      asdu == i['asdu'])]
         return data
@@ -237,58 +218,220 @@ class Slave(common.Device):
         conn.notify_data_change([data])
 
     def _act_set_property(self, path, value):
-        self._set(['properties', path], value)
+        self._data.set(['properties', path], value)
 
     def _act_add_data(self):
-        data_id = next(self._next_ids)
-        self._set(['data', data_id], {'type': None,
-                                      'asdu': None,
-                                      'io': None,
-                                      'value': None,
-                                      'quality': None,
-                                      'time': None,
-                                      'cause': None,
-                                      'is_test': None})
+        data_id = next(self._next_data_ids)
+        self._data.set(['data', data_id], {'type': None,
+                                           'asdu': None,
+                                           'io': None,
+                                           'value': None,
+                                           'quality': None,
+                                           'time': None,
+                                           'cause': None,
+                                           'is_test': None})
 
     def _act_remove_data(self, data_id):
-        self._remove(['data', data_id])
+        self._data.remove(['data', data_id])
 
     def _act_change_data(self, data_id, path, value):
-        self._set(['data', data_id, path], value)
-        self._data_change_cbs.notify(self._data['data'][data_id])
+        self._data.set(['data', data_id, path], value)
+        self._data_change_cbs.notify(self._data.data['data'][data_id])
 
     def _act_add_command(self):
-        command_id = next(self._next_ids)
-        self._set(['commands', command_id], {'type': None,
-                                             'asdu': None,
-                                             'io': None,
-                                             'success': None})
+        command_id = next(self._next_command_ids)
+        self._data.set(['commands', command_id], {'type': None,
+                                                  'asdu': None,
+                                                  'io': None,
+                                                  'success': None})
 
     def _act_remove_command(self, command_id):
-        self._remove(['commands', command_id])
+        self._data.remove(['commands', command_id])
 
     def _act_change_command(self, command_id, path, value):
-        self._set(['commands', command_id, path], value)
-
-    def _set(self, path, value):
-        self._data = json.set_(self._data, path, value)
-        self._change_cbs.notify(self._data)
-
-    def _remove(self, path):
-        self._data = json.remove(self._data, path)
-        self._change_cbs.notify(self._data)
+        self._data.set(['commands', command_id, path], value)
 
 
 def _data_to_json(data):
-    pass
+    return {'type': _value_to_type(data.value),
+            'asdu': data.asdu_address,
+            'io': data.io_address,
+            'value': _value_to_json(data.value),
+            'quality': _quality_to_json(data.quality),
+            'time': _time_to_json(data.time),
+            'cause': _cause_to_json(data.cause),
+            'is_test': data.is_test}
 
 
 def _data_from_json(data):
-    pass
+    return iec104.Data(
+        value=_value_from_json(data['type'], data['value']),
+        quality=_quality_from_json(data['type'], data['quality']),
+        time=_time_from_json(data['time']),
+        asdu_address=data['asdu'],
+        io_address=data['io'],
+        cause=_cause_from_json(data['cause']),
+        is_test=data['is_test'] or False)
 
 
 def _cmd_from_json(cmd):
-    pass
+    return iec104.Command(
+        action=_action_from_json(cmd['action']),
+        value=_value_from_json(cmd['type'], cmd['value']),
+        asdu_address=cmd['asdu'],
+        io_address=cmd['io'],
+        time=_time_from_json(cmd['time']),
+        qualifier=cmd['qualifier'] or 0)
+
+
+def _value_to_json(value):
+    if isinstance(value, iec104.SingleValue):
+        return value.name
+
+    if isinstance(value, iec104.DoubleValue):
+        return value.name
+
+    if isinstance(value, iec104.RegulatingValue):
+        return value.name
+
+    if isinstance(value, iec104.StepPositionValue):
+        return value._asdict()
+
+    if isinstance(value, iec104.BitstringValue):
+        return value.value.hex()
+
+    if isinstance(value, iec104.NormalizedValue):
+        return value.value
+
+    if isinstance(value, iec104.ScaledValue):
+        return value.value
+
+    if isinstance(value, iec104.FloatingValue):
+        return value.value
+
+    if isinstance(value, iec104.BinaryCounterValue):
+        return value._asdict()
+
+    raise ValueError('unsupported value')
+
+
+def _value_from_json(data_type, value):
+    if data_type == 'Single':
+        try:
+            return iec104.SingleValue[value]
+        except Exception:
+            return iec104.SingleValue.OFF
+
+    if data_type == 'Double':
+        try:
+            return iec104.DoubleValue[value]
+        except Exception:
+            return iec104.DoubleValue.FAULT
+
+    if data_type == 'Regulating':
+        try:
+            return iec104.RegulatingValue[value]
+        except Exception:
+            return iec104.RegulatingValue.LOWER
+
+    if data_type == 'StepPosition':
+        try:
+            return iec104.StepPositionValue(value=int(value['value']),
+                                            transient=bool(value['transient']))
+        except Exception:
+            return iec104.StepPositionValue(0, False)
+
+    if data_type == 'Bitstring':
+        try:
+            return iec104.BitstringValue(
+                (bytes.fromhex(value) + b'\x00\x00\x00\x00')[:4])
+        except Exception:
+            return iec104.BitstringValue(b'\x00\x00\x00\x00')
+
+    if data_type == 'Normalized':
+        try:
+            return iec104.NormalizedValue(float(value))
+        except Exception:
+            return iec104.NormalizedValue(0)
+
+    if data_type == 'Scaled':
+        try:
+            return iec104.ScaledValue(int(value))
+        except Exception:
+            return iec104.ScaledValue(0)
+
+    if data_type == 'Floating':
+        try:
+            return iec104.FloatingValue(float(value))
+        except Exception:
+            return iec104.FloatingValue(0)
+
+    if data_type == 'BinaryCounter':
+        try:
+            return iec104.BinaryCounterValue(value=int(value['value']),
+                                             sequence=int(value['sequence']),
+                                             overflow=bool(value['overflow']),
+                                             adjusted=bool(value['adjusted']),
+                                             invalid=bool(value['invalid']))
+        except Exception:
+            return iec104.BinaryCounterValue(0, 0, False, False, False)
+
+    raise ValueError('unsupported data type')
+
+
+def _quality_to_json(quality):
+    if not quality:
+        return
+    return quality._asdict()
+
+
+def _quality_from_json(data_type, quality):
+    if data_type == 'BinaryCounter':
+        return None
+    quality = quality or {}
+    if data_type in ('Single', 'Double'):
+        overflow = None
+    else:
+        overflow = bool(quality.get('overflow'))
+    return iec104.Quality(invalid=bool(quality.get('invalid')),
+                          not_topical=bool(quality.get('not_topical')),
+                          substituted=bool(quality.get('substituted')),
+                          blocked=bool(quality.get('blocked')),
+                          overflow=overflow)
+
+
+def _time_to_json(time):
+    return time._asdict() if time else None
+
+
+def _time_from_json(time):
+    if not time:
+        return
+    return iec104.Time(milliseconds=int(time['milliseconds']),
+                       invalid=bool(time['invalid']),
+                       minutes=int(time['minutes']),
+                       summer_time=bool(time['summer_time']),
+                       hours=int(time['hours']),
+                       day_of_week=int(time['day_of_week']),
+                       day_of_month=int(time['day_of_month']),
+                       months=int(time['months']),
+                       years=int(time['years']))
+
+
+def _cause_to_json(cause):
+    return cause.name
+
+
+def _cause_from_json(cause):
+    if not cause:
+        return iec104.Cause.UNDEFINED
+    return iec104.Cause[cause]
+
+
+def _action_from_json(action):
+    if not action:
+        return iec104.Action.EXECUTE
+    return iec104.Action[action]
 
 
 def _value_to_type(value):
@@ -297,6 +440,9 @@ def _value_to_type(value):
 
     if isinstance(value, iec104.DoubleValue):
         return 'Double'
+
+    if isinstance(value, iec104.RegulatingValue):
+        return 'Regulating'
 
     if isinstance(value, iec104.StepPositionValue):
         return 'StepPosition'
@@ -315,8 +461,5 @@ def _value_to_type(value):
 
     if isinstance(value, iec104.BinaryCounterValue):
         return 'BinaryCounter'
-
-    if isinstance(value, iec104.RegulatingValue):
-        return 'Regulating'
 
     raise ValueError('invalid value')

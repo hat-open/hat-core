@@ -1,10 +1,7 @@
 import io
 import itertools
 
-from hat import aio
 from hat import json
-from hat import util
-
 from hat.manager import common
 import hat.event.client
 import hat.event.common
@@ -19,31 +16,21 @@ class Device(common.Device):
 
     def __init__(self, conf, logger):
         self._logger = logger
-        self._async_group = aio.Group()
-        self._change_cbs = util.CallbackRegistry()
         self._client = None
-        self._address = conf['address']
-        self._latest = {}
-        self._changes = []
-        self._data = None
-        self._update_data()
-
-    @property
-    def async_group(self):
-        return self._async_group
+        self._data = common.DataStorage({'address': conf['address'],
+                                         'latest': [],
+                                         'changes': []})
 
     @property
     def data(self):
         return self._data
 
-    def register_change_cb(self, cb):
-        return self._change_cbs.register(cb)
-
     def get_conf(self):
-        return {'address': self._address}
+        return {'address': self._data.data['address']}
 
     async def create(self):
-        self._client = await hat.event.client.connect(self._address, [('*',)])
+        address = self._data.data['address']
+        self._client = await hat.event.client.connect(address, [('*',)])
         self._client.async_group.spawn(self._client_loop, self._client)
         return self._client
 
@@ -58,29 +45,33 @@ class Device(common.Device):
 
     async def _client_loop(self, client):
         try:
-            self._latest = []
-            self._changes = []
-            self._update_data()
+            latest = []
+            changes = []
+            self._data.set([], dict(self._data.data,
+                                    latest=latest,
+                                    changes=changes))
 
             events = await client.query(
                 hat.event.common.QueryData(unique_type=True))
             events = [_event_to_json(event) for event in events]
 
-            latest = {}
+            latest_cache = {}
             while True:
                 if events:
                     for event in events:
-                        latest[tuple(event['event_type'])] = event
-                    self._latest = list(latest.values())
+                        latest_cache[tuple(event['event_type'])] = event
+                    latest = list(latest_cache.values())
 
-                self._update_data()
+                self._data.set([], dict(self._data.data,
+                                        latest=latest,
+                                        changes=changes))
 
                 events = await self._client.receive()
                 events = [_event_to_json(event) for event in events]
 
-                changes = itertools.chain(reversed(events), self._changes)
+                changes = itertools.chain(reversed(events), changes)
                 changes = itertools.islice(changes, changes_size)
-                self._changes = list(changes)
+                changes = list(changes)
 
         except ConnectionError:
             pass
@@ -90,8 +81,7 @@ class Device(common.Device):
 
     def _act_set_address(self, address):
         self._logger.log(f'changing address to {address}')
-        self._address = address
-        self._update_data()
+        self._data.set('address', address)
 
     def _act_register(self, text, with_source_timestamp):
         source_timestamp = (hat.event.common.now() if with_source_timestamp
@@ -108,12 +98,6 @@ class Device(common.Device):
 
         self._logger.log(f'registering events (count: {len(events)})')
         self._client.register(events)
-
-    def _update_data(self):
-        self._data = {'address': self._address,
-                      'latest': self._latest,
-                      'changes': self._changes}
-        self._change_cbs.notify(self._data)
 
 
 def _event_to_json(event):

@@ -1,8 +1,5 @@
-from hat import aio
 from hat import json
 from hat import juggler
-from hat import util
-
 from hat.manager import common
 
 
@@ -13,32 +10,22 @@ class Device(common.Device):
 
     def __init__(self, conf, logger):
         self._logger = logger
-        self._async_group = aio.Group()
-        self._change_cbs = util.CallbackRegistry()
         self._client = None
-        self._address = conf['address']
-        self._mid = 0
-        self._local_components = []
-        self._global_components = []
-        self._data = None
-        self._update_data()
-
-    @property
-    def async_group(self):
-        return self._async_group
+        self._data = common.DataStorage({'address': conf['address'],
+                                         'mid': 0,
+                                         'local_components': [],
+                                         'global_components': []})
 
     @property
     def data(self):
         return self._data
 
-    def register_change_cb(self, cb):
-        return self._change_cbs.register(cb)
-
     def get_conf(self):
-        return {'address': self._address}
+        return {'address': self._data.data['address']}
 
     async def create(self):
-        self._client = await juggler.connect(self._address)
+        address = self._data.data['address']
+        self._client = await juggler.connect(address)
         self._client.async_group.spawn(self._client_loop, self._client)
         return self._client
 
@@ -54,12 +41,15 @@ class Device(common.Device):
     async def _client_loop(self, client):
 
         def on_change():
-            self._mid = json.get(client.remote_data, 'mid') or 0
-            self._local_components = \
-                json.get(client.remote_data, 'local_components') or []
-            self._global_components = \
-                json.get(client.remote_data, 'global_components') or []
-            self._update_data()
+            mid = json.get(client.remote_data, 'mid')
+            local_components = json.get(client.remote_data,
+                                        'local_components')
+            global_components = json.get(client.remote_data,
+                                         'global_components')
+            self._data.set([], dict(self._data.data,
+                                    mid=mid or 0,
+                                    local_components=local_components or [],
+                                    global_components=global_components or []))
 
         try:
             with client.register_change_cb(on_change):
@@ -74,8 +64,7 @@ class Device(common.Device):
 
     def _act_set_address(self, address):
         self._logger.log(f'changing address to {address}')
-        self._address = address
-        self._update_data()
+        self._data.set('address', address)
 
     async def _act_set_rank(self, cid, rank):
         if not self._client or not self._client.is_open:
@@ -86,10 +75,3 @@ class Device(common.Device):
                                  'payload': {'cid': cid,
                                              'rank': rank}})
         self._logger.log(f'send set rank (cid: {cid}; rank: {rank})')
-
-    def _update_data(self):
-        self._data = {'address': self._address,
-                      'mid': self._mid,
-                      'local_components': self._local_components,
-                      'global_components': self._global_components}
-        self._change_cbs.notify(self._data)

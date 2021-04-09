@@ -1,12 +1,10 @@
 from hat import json
-
 from hat.manager import common
-
-import hat.manager.devices.orchestrator
-import hat.manager.devices.monitor
 import hat.manager.devices.event
 import hat.manager.devices.iec104
 import hat.manager.devices.modbus
+import hat.manager.devices.monitor
+import hat.manager.devices.orchestrator
 
 
 def get_default_conf(device_type: str) -> json.Data:

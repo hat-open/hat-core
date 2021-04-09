@@ -70,19 +70,59 @@ default_conf: json.Data = {
 """Default configuration"""
 
 
-class Device(aio.Resource):
-    """Abstract device interface"""
+class Logger:
+    """Message logger"""
+
+    def __init__(self):
+        self._log_cbs = util.CallbackRegistry()
+
+    def log(self, msg: str):
+        """Log message"""
+        self._log_cbs.notify(msg)
+
+    def register_log_cb(self,
+                        cb: typing.Callable[[str], None]
+                        ) -> util.RegisterCallbackHandle:
+        """Register log callback"""
+        return self._log_cbs.register(cb)
+
+
+class DataStorage:
+    """Data storage"""
+
+    def __init__(self, data: json.Data = None):
+        self._data = data
+        self._change_cbs = util.CallbackRegistry()
 
     @property
-    @abc.abstractmethod
     def data(self) -> json.Data:
-        """Local data"""
+        """Data"""
+        return self._data
 
-    @abc.abstractmethod
     def register_change_cb(self,
                            cb: typing.Callable[[json.Data], None]
                            ) -> util.RegisterCallbackHandle:
         """Register data change callback"""
+        return self._change_cbs.register(cb)
+
+    def set(self, path: json.Path, value: json.Data):
+        """Set data"""
+        self._data = json.set_(self._data, path, value)
+        self._change_cbs.notify(self._data)
+
+    def remove(self, path: json.Path):
+        """Remove data"""
+        self._data = json.remove(self._data, path)
+        self._change_cbs.notify(self._data)
+
+
+class Device(abc.ABC):
+    """Abstract device interface"""
+
+    @property
+    @abc.abstractmethod
+    def data(self) -> DataStorage:
+        """Local data"""
 
     @abc.abstractmethod
     def get_conf(self) -> json.Data:
@@ -98,10 +138,3 @@ class Device(aio.Resource):
                       *args: json.Data
                       ) -> json.Data:
         """Execute action"""
-
-
-class Logger(abc.ABC):
-    """Message logger"""
-
-    def log(self, msg: str):
-        """Add log message"""
