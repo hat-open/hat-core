@@ -1,0 +1,91 @@
+@import '../../common/color';
+
+
+#main {
+    & > .page {
+        &.iec104 {
+            display: flex;
+            flex-direction: column;
+
+            & > .properties {
+                padding: 0.2rem;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, 10rem 8rem);
+                grid-gap: 0.2rem;
+                align-items: center;
+
+                & > label {
+                    justify-self: end;
+                }
+            }
+
+
+            &.master {
+                & > .control {
+                    margin: 0.2rem 0;
+
+                    & > .header {
+                        display: flex;
+                        padding: 0.2rem;
+                        border-bottom: 1px solid $color-grey-700;
+
+                        & > * {
+                            margin-right: 0.2rem;
+                            padding: 0.2rem 0.5rem;
+                            border-radius: 0.2rem;
+
+                            &.selected, &:hover {
+                                color: $color-grey-100;
+                                background-color: $color-grey-700;
+                            }
+                        }
+                    }
+
+                    & > .content {
+                        margin: 0.2rem;
+                        display: flex;
+                        align-items: stretch;
+
+                        & > .form {
+                            flex-grow: 1;
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, 8rem 12rem);
+                            grid-gap: 0.2rem;
+                            align-items: center;
+
+                            & > label {
+                                justify-self: end;
+                            }
+                        }
+
+                        & > button {
+                            margin-left: 0.2rem;
+                        }
+                    }
+                }
+
+                & > .data {
+                    flex-grow: 1;
+                }
+            }
+
+            &.slave {
+                & > .control {
+
+                }
+
+                & > .data {
+                    flex-grow: 1;
+                }
+
+                & > .command {
+                    flex-grow: 1;
+                }
+
+                & > .panel {
+
+                }
+            }
+        }
+    }
+}

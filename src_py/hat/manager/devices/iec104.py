@@ -6,13 +6,13 @@ from hat.drivers import iec104
 from hat.manager import common
 
 
-default_master_conf = {'host': '127.0.0.1',
-                       'port': 2404,
-                       'response_timeout': 15,
-                       'supervisory_timeout': 10,
-                       'test_timeout': 20,
-                       'send_window_size': 12,
-                       'receive_window_size': 8}
+default_master_conf = {'properties': {'host': '127.0.0.1',
+                                      'port': 2404,
+                                      'response_timeout': 15,
+                                      'supervisory_timeout': 10,
+                                      'test_timeout': 20,
+                                      'send_window_size': 12,
+                                      'receive_window_size': 8}}
 
 default_slave_conf = {'properties': {'host': '127.0.0.1',
                                      'port': 2404,
@@ -30,7 +30,7 @@ class Master(common.Device):
     def __init__(self, conf, logger):
         self._logger = logger
         self._conn = None
-        self._data = common.DataStorage({'properties': conf,
+        self._data = common.DataStorage({'properties': conf['properties'],
                                          'data': []})
 
     @property
@@ -38,7 +38,7 @@ class Master(common.Device):
         return self._data
 
     def get_conf(self):
-        return self._data.data['properties']
+        return {'properties': self._data.data['properties']}
 
     async def create(self):
         properties = self._data.data['properties']
@@ -72,6 +72,7 @@ class Master(common.Device):
         try:
             while True:
                 data = await conn.receive()
+                self._logger.log(f'received data changes (cound: {len(data)})')
                 self._update_data(data)
 
         except ConnectionError:
@@ -81,20 +82,40 @@ class Master(common.Device):
             conn.close()
 
     def _act_set_property(self, path, value):
+        self._logger.log(f'changing property {path} to {value}')
         self._data.set(['properties', path], value)
 
     async def _act_interrogate(self, asdu):
+        if not self._conn or not self._conn.is_open:
+            self._logger.log('interrogate failed - not connected')
+            return
+
+        self._logger.log(f'sending interrogate (asdu: {asdu})')
         data = await self._conn.interrogate(asdu)
+        self._logger.log(f'received interrogate result (count: {len(data)})')
         self._update_data(data)
 
     async def _act_counter_interrogate(self, asdu, freeze):
+        if not self._conn or not self._conn.is_open:
+            self._logger.log('counter interrogate failed - not connected')
+            return
+
+        self._logger.log(f'sending counter interrogate (asdu: {asdu})')
         freeze = iec104.FreezeCode[freeze]
         data = await self._conn.counter_interrogate(asdu, freeze)
+        self._logger.log(f'received counter interrogate result '
+                         f'(count: {len(data)})')
         self._update_data(data)
 
     async def _act_send_command(self, cmd):
+        if not self._conn or not self._conn.is_open:
+            self._logger.log('command failed - not connected')
+            return
+
+        self._logger.log('sending command')
         cmd = _cmd_from_json(cmd)
         result = await self._conn.send_command(cmd)
+        self._logger.log(f'received command result (success: {result})')
         return result
 
     def _update_data(self, new_data):
@@ -175,6 +196,7 @@ class Slave(common.Device):
 
     async def _connection_loop(self, conn):
         try:
+            self._logger.log('new connection accepted')
             self._data.set('connection_count',
                            self._data.data['connection_count'] + 1)
             change_cb = functools.partial(self._on_data_change, conn)
@@ -187,10 +209,12 @@ class Slave(common.Device):
 
         finally:
             conn.close()
+            self._logger.log('connection closed')
             self._data.set('connection_count',
                            self._data.data['connection_count'] - 1)
 
     def _on_interrogate(self, conn, asdu):
+        self._logger.log(f'received interrogate request (asdu: {asdu})')
         cause = iec104.Cause.INTERROGATED_STATION
         data = [_data_from_json(i)._replace(cause=cause)
                 for i in self._data.data['data'].values()
@@ -199,6 +223,8 @@ class Slave(common.Device):
         return data
 
     def _on_counter_interrogate(self, conn, asdu, freeze):
+        self._logger.log(f'received counter interrogate request '
+                         f'(asdu: {asdu})')
         cause = iec104.Cause.INTERROGATED_COUNTER
         data = [_data_from_json(i)._replace(cause=cause)
                 for i in self._data.data['data'].values()
@@ -207,6 +233,7 @@ class Slave(common.Device):
         return data
 
     def _on_command(self, conn, cmd):
+        self._logger.log(f'received command {cmd}')
         key = _value_to_type(cmd.value), cmd.asdu_address, cmd.io_address
         command = util.first(self._data['commands'].values(),
                              lambda i: (i['type'], i['asdu'], i['io']) == key)
@@ -218,9 +245,11 @@ class Slave(common.Device):
         conn.notify_data_change([data])
 
     def _act_set_property(self, path, value):
+        self._logger.log(f'changing property {path} to {value}')
         self._data.set(['properties', path], value)
 
     def _act_add_data(self):
+        self._logger.log('creating new data')
         data_id = next(self._next_data_ids)
         self._data.set(['data', data_id], {'type': None,
                                            'asdu': None,
@@ -230,25 +259,32 @@ class Slave(common.Device):
                                            'time': None,
                                            'cause': None,
                                            'is_test': None})
+        return data_id
 
     def _act_remove_data(self, data_id):
+        self._logger.log('removing data')
         self._data.remove(['data', data_id])
 
     def _act_change_data(self, data_id, path, value):
+        self._logger.log(f'changing data {path} to {value}')
         self._data.set(['data', data_id, path], value)
         self._data_change_cbs.notify(self._data.data['data'][data_id])
 
     def _act_add_command(self):
+        self._logger.log('creating new command')
         command_id = next(self._next_command_ids)
         self._data.set(['commands', command_id], {'type': None,
                                                   'asdu': None,
                                                   'io': None,
                                                   'success': None})
+        return command_id
 
     def _act_remove_command(self, command_id):
+        self._logger.log('removing command')
         self._data.remove(['commands', command_id])
 
     def _act_change_command(self, command_id, path, value):
+        self._logger.log(f'changing command {path} to {value}')
         self._data.set(['commands', command_id, path], value)
 
 

@@ -1,4 +1,3 @@
-
 import * as common from '@hat-core/manager/common';
 
 
