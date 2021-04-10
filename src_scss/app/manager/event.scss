@@ -1,4 +1,4 @@
-@import '../../common/color';
+@import './common';
 
 
 #main {
@@ -46,44 +46,19 @@
 
             & > .subpage {
                 flex-grow: 1;
+                overflow: auto;
 
-                &.latest {
-                    overflow: auto;
-
+                &.latest, &.changes {
                     & > table {
-                        width: 100%;
-                        border-spacing: 0px;
-                        table-layout: fixed;
-                        position: relative;
+                        @extend %table;
 
                         th {
-                            padding: 5px;
-                            background: $color-grey-700;
-                            color: $color-grey-100;
-                            position: sticky;
-                            top: 0px;
-
-                            &.col-type { width: 400px; }
-                            &.col-id { width: 75px; }
-                            &.col-timestamp { width: 200px; }
-                        }
-
-                        tr {
-                            &:nth-child(even) {
-                                background-color: $color-grey-300;
-                            }
-
-                            &:nth-child(odd) {
-                                background-color: $color-grey-100;
-                            }
+                            &.col-type { width: 25rem; }
+                            &.col-id { width: 5rem; }
+                            &.col-timestamp { width: 13rem; }
                         }
 
                         td {
-                            padding: 5px;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-
                             &.col-id { text-align: right; }
                             &.col-timestamp { text-align: center; }
                         }
@@ -91,49 +66,6 @@
                         .expand-icon {
                             padding: 5px;
                             color: $color-grey-700;
-                        }
-                    }
-                }
-
-                &.changes {
-                    overflow: auto;
-
-                    & > table {
-                        width: 100%;
-                        border-spacing: 0px;
-                        table-layout: fixed;
-                        position: relative;
-
-                        th {
-                            padding: 5px;
-                            background: $color-grey-700;
-                            color: $color-grey-100;
-                            position: sticky;
-                            top: 0px;
-
-                            &.col-type { width: 400px; }
-                            &.col-id { width: 75px; }
-                            &.col-timestamp { width: 200px; }
-                        }
-
-                        tr {
-                            &:nth-child(even) {
-                                background-color: $color-grey-300;
-                            }
-
-                            &:nth-child(odd) {
-                                background-color: $color-grey-100;
-                            }
-                        }
-
-                        td {
-                            padding: 5px;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-
-                            &.col-id { text-align: right; }
-                            &.col-timestamp { text-align: center; }
                         }
                     }
                 }
@@ -154,6 +86,7 @@
 
                     & > .text {
                         grid-area: text;
+                        resize: none;
                     }
 
                     & > .register {

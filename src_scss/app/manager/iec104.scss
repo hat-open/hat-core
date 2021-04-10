@@ -1,4 +1,4 @@
-@import '../../common/color';
+@import './common';
 
 
 #main {
@@ -66,6 +66,25 @@
 
                 & > .data {
                     flex-grow: 1;
+                    overflow: auto;
+
+                    & > table {
+                        @extend %table;
+
+                        th {
+                            &.hidden { padding: 0; }
+                            &.col-str { width: 8rem; }
+                            &.col-int { width: 4rem; }
+                            &.col-short { width: 3rem; }
+                            &.col-long { width: 5rem; }
+                            &.col-bool { width: 3rem; }
+                        }
+
+                        td {
+                            &.col-int, &.col-short, &.col-long { text-align: right; }
+                            &.col-bool { text-align: center; }
+                        }
+                    }
                 }
             }
 

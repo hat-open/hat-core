@@ -1,9 +1,4 @@
-@import '~normalize.css/normalize';
-
-@import '../../common/color';
-@import '../../common/shadow';
-@import '../../common/fonts/inter';
-@import '../../common/fonts/fontawesome';
+@import './common';
 
 @import './orchestrator';
 @import './monitor';
@@ -12,7 +7,7 @@
 
 
 html, body {
-    margin: 0px;
+    margin: 0;
     font-family: 'Inter';
     user-select: none;
     height: 100%;
@@ -24,7 +19,7 @@ html, body {
     height: 100%;
     background-color: $color-grey-200;
     display: grid;
-    grid-template-columns: 20rem 1fr;
+    grid-template-columns: max-content 1fr;
     grid-template-rows: auto 1fr 10rem;
     grid-template-areas: 'globalHeader deviceHeader'
                          'sidebar page'
@@ -63,6 +58,9 @@ html, body {
         background-color: $color-grey-100;
         display: flex;
         flex-direction: column;
+        resize: horizontal;
+        overflow: hidden;
+        min-width: 10rem;
 
         & > .devices {
             flex-grow: 1;
@@ -70,6 +68,9 @@ html, body {
 
             & > .device {
                 padding: 0.5rem;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
 
                 &:hover, &.selected {
                     background-color: $color-grey-300;
@@ -114,35 +115,7 @@ html, body {
         overflow: auto;
 
         & > table {
-            width: 100%;
-            border-spacing: 0;
-            table-layout: fixed;
-            position: relative;
-
-            th {
-                padding: 0.2rem;
-                background: $color-grey-700;
-                color: $color-grey-100;
-                position: sticky;
-                top: 0;
-            }
-
-            tr {
-                &:nth-child(even) {
-                    background-color: $color-grey-300;
-                }
-
-                &:nth-child(odd) {
-                    background-color: $color-grey-100;
-                }
-            }
-
-            td {
-                padding: 0.2rem;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
+            @extend %table;
 
             .col-time {
                 width: 15rem;

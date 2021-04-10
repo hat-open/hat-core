@@ -1,0 +1,39 @@
+@import '~normalize.css/normalize';
+
+@import '../../common/color';
+@import '../../common/shadow';
+@import '../../common/fonts/inter';
+@import '../../common/fonts/fontawesome';
+
+
+%table {
+    width: 100%;
+    border-spacing: 0;
+    table-layout: fixed;
+    position: relative;
+
+    th {
+        padding: 0.2rem;
+        background: $color-grey-700;
+        color: $color-grey-100;
+        position: sticky;
+        top: 0;
+    }
+
+    tr {
+        &:nth-child(even) {
+            background-color: $color-grey-300;
+        }
+
+        &:nth-child(odd) {
+            background-color: $color-grey-100;
+        }
+    }
+
+    td {
+        padding: 0.2rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

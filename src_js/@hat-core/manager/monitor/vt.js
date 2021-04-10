@@ -38,6 +38,13 @@ function localComponents(deviceId) {
         ['table',
             ['thead',
                 ['tr',
+                    ['th.col-id.hidden'],
+                    ['th.col-name.hidden'],
+                    ['th.col-group.hidden'],
+                    ['th.col-address.hidden'],
+                    ['th.col-rank.hidden']
+                ],
+                ['tr',
                     ['th', {
                         props: {
                             colSpan: 5
@@ -89,6 +96,16 @@ function globalComponents(deviceId) {
     return ['div.components',
         ['table',
             ['thead',
+                ['tr',
+                    ['th.col-id.hidden'],
+                    ['th.col-id.hidden'],
+                    ['th.col-name.hidden'],
+                    ['th.col-group.hidden'],
+                    ['th.col-address.hidden'],
+                    ['th.col-rank.hidden'],
+                    ['th.col-blessing.hidden'],
+                    ['th.col-ready.hidden']
+                ],
                 ['tr',
                     ['th', {
                         props: {

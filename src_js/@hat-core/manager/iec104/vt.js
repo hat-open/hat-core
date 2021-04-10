@@ -1,4 +1,5 @@
 import r from '@hat-core/renderer';
+import * as u from '@hat-core/util';
 
 import * as common from '@hat-core/manager/iec104/common';
 
@@ -173,8 +174,96 @@ function masterControlCommand(deviceId) {
 
 
 function masterData(deviceId) {
-    deviceId;
-    return ['div.data'];
+    const data = r.get('remote', 'devices', deviceId, 'data', 'data') || [];
+
+    return ['div.data',
+        ['table',
+            ['thead',
+                ['tr',
+                    ['th.col-str.hidden'],    // type
+                    ['th.col-int.hidden'],    // asdu
+                    ['th.col-int.hidden'],    // io
+                    ['th.hidden'],            // value
+                    ['th.col-bool.hidden'],   // quality-invalid
+                    ['th.col-bool.hidden'],   // quality-not_topical
+                    ['th.col-bool.hidden'],   // quality-substituted
+                    ['th.col-bool.hidden'],   // quality-blocked
+                    ['th.col-bool.hidden'],   // quality-overflow
+                    ['th.col-int.hidden'],    // time-years
+                    ['th.col-short.hidden'],  // time-months
+                    ['th.col-short.hidden'],  // time-day_of_month
+                    ['th.col-short.hidden'],  // time-day_of_week
+                    ['th.col-short.hidden'],  // time-hours
+                    ['th.col-short.hidden'],  // time-minutes
+                    ['th.col-long.hidden'],   // time-milliseconds
+                    ['th.col-bool.hidden'],   // time-invalid
+                    ['th.col-bool.hidden'],   // time-summer_time
+                    ['th.col-str.hidden'],    // cause
+                    ['th.col-bool.hidden']    // is_test
+                ],
+                ['tr',
+                    ['th', {props: {rowSpan: 2}}, 'Type'],
+                    ['th', {props: {rowSpan: 2}}, 'ASDU'],
+                    ['th', {props: {rowSpan: 2}}, 'IO'],
+                    ['th', {props: {rowSpan: 2}}, 'Value'],
+                    ['th', {props: {colSpan: 5}}, 'Quality'],
+                    ['th', {props: {colSpan: 9}}, 'Time'],
+                    ['th', {props: {rowSpan: 2}}, 'Cause'],
+                    ['th', {props: {rowSpan: 2}}, 'Test']
+                ],
+                ['tr',
+                    ['th', 'IN'],
+                    ['th', 'NT'],
+                    ['th', 'SU'],
+                    ['th', 'BL'],
+                    ['th', 'OV'],
+                    ['th', 'Y'],
+                    ['th', 'M'],
+                    ['th', 'DoM'],
+                    ['th', 'DoW'],
+                    ['th', 'H'],
+                    ['th', 'MIN'],
+                    ['th', 'MS'],
+                    ['th', 'IN'],
+                    ['th', 'ST']
+                ]
+            ],
+            ['tbody', data.map(i => {
+                const val = (...path) => {
+                    const x = u.get(path, i);
+                    if (u.isNil(x))
+                        return '';
+                    if (u.isBoolean(x))
+                        return ['span.fa.fa-' + (x ? 'check' : 'times')];
+                    if (u.isObject(x))
+                        return JSON.stringify(x);
+                    return String(x);
+                };
+                return ['tr',
+                    ['td.col-str', val('type')],
+                    ['td.col-int', val('asdu')],
+                    ['td.col-int', val('io')],
+                    ['td', val('value')],
+                    ['td.col-bool', val('quality', 'invalid')],
+                    ['td.col-bool', val('quality', 'not_topical')],
+                    ['td.col-bool', val('quality', 'substituted')],
+                    ['td.col-bool', val('quality', 'blocked')],
+                    ['td.col-bool', val('quality', 'overflow')],
+                    ['td.col-int', val('time', 'years')],
+                    ['td.col-short', val('time', 'months')],
+                    ['td.col-short', val('time', 'day_of_month')],
+                    ['td.col-short', val('time', 'day_of_week')],
+                    ['td.col-short', val('time', 'hours')],
+                    ['td.col-short', val('time', 'minutes')],
+                    ['td.col-long', val('time', 'milliseconds')],
+                    ['td.col-bool', val('time', 'invalid')],
+                    ['td.col-bool', val('time', 'summer_time')],
+                    ['td.col-str', val('cause')],
+                    ['td.col-bool', val('is_test')]
+                ];
+            })]
+        ]
+    ];
 }
 
 

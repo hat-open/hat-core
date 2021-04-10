@@ -1,4 +1,4 @@
-@import '../../common/color';
+@import './common';
 
 
 #main {
@@ -12,7 +12,6 @@
                 align-items: center;
                 justify-content: flex-end;
                 padding: 0.2rem;
-                border-bottom: 1px solid $color-grey-700;
 
                 & > * {
                     &:not(:last-child) {
@@ -23,44 +22,22 @@
 
             & > .components {
                 flex-grow: 1;
+                overflow: auto;
 
                 table {
-                    width: 100%;
-                    border-spacing: 0px;
-                    table-layout: fixed;
-                    position: relative;
+                    @extend %table;
 
                     th {
-                        padding: 5px;
-                        background: $color-grey-700;
-                        color: $color-grey-100;
-                        position: sticky;
-                        top: 0px;
-
-                        &.col-id { width: 70px; }
-                        &.col-group { width: 150px; }
-                        &.col-address { width: 150px; }
-                        &.col-blessing { width: 70px; }
-                        &.col-ready { width: 70px; }
-                        &.col-rank { width: 120px; }
-                    }
-
-                    tr {
-                        &:nth-child(even) {
-                            background-color: $color-grey-300;
-                        }
-
-                        &:nth-child(odd) {
-                            background-color: $color-grey-100;
-                        }
+                        &.hidden { padding: 0; }
+                        &.col-id { width: 5rem; }
+                        &.col-group { width: 10rem; }
+                        &.col-address { width: 15rem; }
+                        &.col-blessing { width: 5rem; }
+                        &.col-ready { width: 5rem; }
+                        &.col-rank { width: 8rem; }
                     }
 
                     td {
-                        padding: 5px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-
                         &.col-id { text-align: center; }
                         &.col-blessing { text-align: center; }
                         &.col-ready { text-align: center; }
@@ -74,18 +51,10 @@
                                 align-items: center;
 
                                 button {
-                                    margin: 0px 2px;
+                                    margin: 0 0.1rem;
                                 }
                             }
                         }
-                    }
-
-                    .center {
-                        text-align: center;
-                    }
-
-                    .right {
-                        text-align: right;
                     }
                 }
             }
