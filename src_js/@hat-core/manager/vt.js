@@ -336,7 +336,7 @@ function settingsDialog() {
                     value: settings.log.syslog.port
                 },
                 on: {
-                    change: evt => common.setSettings(['log', 'syslog', 'port'], evt.target.value)
+                    change: evt => common.setSettings(['log', 'syslog', 'port'], evt.target.valueAsNumber)
                 }
             }],
             ['span.note', '* changes applied on restart']

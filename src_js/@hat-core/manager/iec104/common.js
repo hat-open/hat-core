@@ -1,3 +1,5 @@
+import r from '@hat-core/renderer';
+
 import * as common from '@hat-core/manager/common';
 
 
@@ -17,35 +19,37 @@ export function counterInterrogate(deviceId, asdu, freeze) {
 
 
 export async function sendCommand(deviceId, cmd) {
-    return await common.execute(deviceId, 'send_command', cmd);
+    await common.execute(deviceId, 'send_command', cmd);
 }
 
 
 export async function addData(deviceId) {
-    return await common.execute(deviceId, 'add_data');
+    const dataId = await common.execute(deviceId, 'add_data');
+    r.set(['pages', deviceId, 'selected'], ['data', dataId]);
 }
 
 
 export function removeData(deviceId, dataId) {
-    return common.execute(deviceId, 'remove_data', dataId);
+    common.execute(deviceId, 'remove_data', dataId);
 }
 
 
 export function changeData(deviceId, dataId, path, value) {
-    return common.execute(deviceId, 'change_data', dataId, path, value);
+    common.execute(deviceId, 'change_data', dataId, path, value);
 }
 
 
 export async function addCommand(deviceId) {
-    return await common.execute(deviceId, 'add_command');
+    const commandId = await common.execute(deviceId, 'add_command');
+    r.set(['pages', deviceId, 'selected'], ['command', commandId]);
 }
 
 
 export function removeCommand(deviceId, commandId) {
-    return common.execute(deviceId, 'remove_command', commandId);
+    common.execute(deviceId, 'remove_command', commandId);
 }
 
 
 export function changeCommand(deviceId, commandId, path, value) {
-    return common.execute(deviceId, 'change_command', commandId, path, value);
+    common.execute(deviceId, 'change_command', commandId, path, value);
 }

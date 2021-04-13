@@ -14,11 +14,49 @@
                 grid-gap: 0.2rem;
                 align-items: center;
 
-                & > label {
+                & > .label {
                     justify-self: end;
                 }
             }
 
+            & > .data, & > .commands {
+                flex-grow: 1;
+                overflow: auto;
+
+                & > table {
+                    @extend %table;
+
+                    th {
+                        &.hidden { padding: 0; }
+                        &.col-str { width: 8rem; }
+                        &.col-int { width: 4rem; }
+                        &.col-short { width: 3rem; }
+                        &.col-long { width: 5rem; }
+                        &.col-bool { width: 3rem; }
+                        &.col-remove { width: 4.5rem; }
+                    }
+
+                    td {
+                        &.col-int, &.col-short, &.col-long { text-align: right; }
+                        &.col-bool { text-align: center; }
+                        &.col-remove { text-align: center; }
+                    }
+
+                    & > tbody {
+                        & > tr {
+                            &.selected, &:hover {
+                                background-color: $color-grey-400;
+                            }
+                        }
+                    }
+                }
+
+                & > .control {
+                    padding: 0.2rem;
+                    display: flex;
+                    justify-content: flex-end;
+                }
+            }
 
             &.master {
                 & > .control {
@@ -63,46 +101,21 @@
                         }
                     }
                 }
-
-                & > .data {
-                    flex-grow: 1;
-                    overflow: auto;
-
-                    & > table {
-                        @extend %table;
-
-                        th {
-                            &.hidden { padding: 0; }
-                            &.col-str { width: 8rem; }
-                            &.col-int { width: 4rem; }
-                            &.col-short { width: 3rem; }
-                            &.col-long { width: 5rem; }
-                            &.col-bool { width: 3rem; }
-                        }
-
-                        td {
-                            &.col-int, &.col-short, &.col-long { text-align: right; }
-                            &.col-bool { text-align: center; }
-                        }
-                    }
-                }
             }
 
             &.slave {
-                & > .control {
-
-                }
-
-                & > .data {
-                    flex-grow: 1;
-                }
-
-                & > .command {
-                    flex-grow: 1;
-                }
-
                 & > .panel {
+                    padding: 0.2rem;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, 10rem 8rem);
+                    grid-gap: 0.2rem;
+                    align-items: center;
+                    border-top: 1px solid $color-grey-700;
+                    margin-top: 0.2rem;
 
+                    & > .label {
+                        justify-self: end;
+                    }
                 }
             }
         }

@@ -142,7 +142,7 @@ class Slave(common.Device):
             'connection_count': 0,
             'data': {next(self._next_data_ids): i
                      for i in conf['data']},
-            'commands': {next(self._next_command_ids): i
+            'commands': {next(self._next_command_ids): dict(i, value=None)
                          for i in conf['commands']}})
 
     @property
@@ -152,10 +152,14 @@ class Slave(common.Device):
     def get_conf(self):
         return {'properties': self._data.data['properties'],
                 'data': list(self._data.data['data'].values()),
-                'commands': list(self._data.data['commands'].values())}
+                'commands': [{'type': i['type'],
+                              'asdu': i['asdu'],
+                              'io': i['io'],
+                              'success': i['success']}
+                             for i in self._data.data['commands'].values()]}
 
     async def create(self):
-        properties = self._data['properties']
+        properties = self._data.data['properties']
         srv = await iec104.listen(
             connection_cb=self._connection_loop,
             addr=iec104.Address(properties['host'],
@@ -175,22 +179,22 @@ class Slave(common.Device):
             return self._act_set_property(*args)
 
         if action == 'add_data':
-            return await self._act_add_data(*args)
+            return self._act_add_data(*args)
 
         if action == 'remove_data':
-            return await self._act_remove_data(*args)
+            return self._act_remove_data(*args)
 
         if action == 'change_data':
-            return await self._act_change_data(*args)
+            return self._act_change_data(*args)
 
         if action == 'add_command':
-            return await self._act_add_command(*args)
+            return self._act_add_command(*args)
 
         if action == 'remove_command':
-            return await self._act_remove_command(*args)
+            return self._act_remove_command(*args)
 
         if action == 'change_command':
-            return await self._act_change_command(*args)
+            return self._act_change_command(*args)
 
         raise ValueError('invalid action')
 
@@ -215,33 +219,43 @@ class Slave(common.Device):
 
     def _on_interrogate(self, conn, asdu):
         self._logger.log(f'received interrogate request (asdu: {asdu})')
-        cause = iec104.Cause.INTERROGATED_STATION
-        data = [_data_from_json(i)._replace(cause=cause)
+        data = (_data_from_json(i)
                 for i in self._data.data['data'].values()
                 if i['type'] != 'BinaryCounter' and (asdu == 0xFFFF or
-                                                     asdu == i['asdu'])]
+                                                     asdu == i['asdu']))
+        data = [i._replace(cause=iec104.Cause.INTERROGATED_STATION)
+                for i in data if i]
         return data
 
     def _on_counter_interrogate(self, conn, asdu, freeze):
         self._logger.log(f'received counter interrogate request '
                          f'(asdu: {asdu})')
-        cause = iec104.Cause.INTERROGATED_COUNTER
-        data = [_data_from_json(i)._replace(cause=cause)
+        data = (_data_from_json(i)
                 for i in self._data.data['data'].values()
                 if i['type'] == 'BinaryCounter' and (asdu == 0xFFFF or
-                                                     asdu == i['asdu'])]
+                                                     asdu == i['asdu']))
+        data = [i._replace(cause=iec104.Cause.INTERROGATED_COUNTER)
+                for i in data if i]
         return data
 
     def _on_command(self, conn, cmd):
         self._logger.log(f'received command {cmd}')
         key = _value_to_type(cmd.value), cmd.asdu_address, cmd.io_address
-        command = util.first(self._data['commands'].values(),
-                             lambda i: (i['type'], i['asdu'], i['io']) == key)
+        command_id, command = util.first(
+            self._data['commands'].items(),
+            lambda i: (i[1]['type'], i[1]['asdu'], i[1]['io']) == key,
+            (None, None))
         success = bool(command['success']) if command else False
+        if success:
+            self._data.set(['commands', command_id, 'value'],
+                           _value_to_json(cmd.value))
+        self._logger.log(f'sending command success {success}')
         return success
 
     def _on_data_change(self, conn, data):
         data = _data_from_json(data)
+        if not data:
+            return
         conn.notify_data_change([data])
 
     def _act_set_property(self, path, value):
@@ -276,6 +290,7 @@ class Slave(common.Device):
         self._data.set(['commands', command_id], {'type': None,
                                                   'asdu': None,
                                                   'io': None,
+                                                  'value': None,
                                                   'success': None})
         return command_id
 
@@ -300,6 +315,8 @@ def _data_to_json(data):
 
 
 def _data_from_json(data):
+    if not data['type'] or data['asdu'] is None or data['io'] is None:
+        return
     return iec104.Data(
         value=_value_from_json(data['type'], data['value']),
         quality=_quality_from_json(data['type'], data['quality']),
