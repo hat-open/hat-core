@@ -28,6 +28,7 @@
 
                     th {
                         &.hidden { padding: 0; }
+                        &.col-timestamp { width: 13rem; }
                         &.col-str { width: 8rem; }
                         &.col-int { width: 4rem; }
                         &.col-short { width: 3rem; }
@@ -107,7 +108,7 @@
                 & > .panel {
                     padding: 0.2rem;
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, 10rem 8rem);
+                    grid-template-columns: repeat(auto-fit, 12rem 12rem);
                     grid-gap: 0.2rem;
                     align-items: center;
                     border-top: 1px solid $color-grey-700;

@@ -1,5 +1,6 @@
 import functools
 import itertools
+import time
 
 from hat import util
 from hat.drivers import iec104
@@ -23,6 +24,8 @@ default_slave_conf = {'properties': {'host': '127.0.0.1',
                                      'receive_window_size': 8},
                       'data': [],
                       'commands': []}
+
+master_data_size = 100
 
 
 class Master(common.Device):
@@ -73,7 +76,7 @@ class Master(common.Device):
             while True:
                 data = await conn.receive()
                 self._logger.log(f'received data changes (cound: {len(data)})')
-                self._update_data(data)
+                self._add_data(data)
 
         except ConnectionError:
             pass
@@ -93,7 +96,7 @@ class Master(common.Device):
         self._logger.log(f'sending interrogate (asdu: {asdu})')
         data = await self._conn.interrogate(asdu)
         self._logger.log(f'received interrogate result (count: {len(data)})')
-        self._update_data(data)
+        self._add_data(data)
 
     async def _act_counter_interrogate(self, asdu, freeze):
         if not self._conn or not self._conn.is_open:
@@ -105,7 +108,7 @@ class Master(common.Device):
         data = await self._conn.counter_interrogate(asdu, freeze)
         self._logger.log(f'received counter interrogate result '
                          f'(count: {len(data)})')
-        self._update_data(data)
+        self._add_data(data)
 
     async def _act_send_command(self, cmd):
         if not self._conn or not self._conn.is_open:
@@ -118,16 +121,15 @@ class Master(common.Device):
         self._logger.log(f'received command result (success: {result})')
         return result
 
-    def _update_data(self, new_data):
-        if not new_data:
+    def _add_data(self, data):
+        if not data:
             return
-        new_data = [_data_to_json(i) for i in new_data]
-        new_data_ids = {(i['type'], i['asdu'], i['io']) for i in new_data}
-        old_data = (i for i in self._data.data['data']
-                    if (i['type'], i['asdu'], i['io']) not in new_data_ids)
-        data = sorted(itertools.chain(old_data, new_data),
-                      key=lambda i: (i['type'], i['asdu'], i['io']))
-        self._data.set('data', data)
+        now = time.time()
+        data = itertools.chain((dict(_data_to_json(i), timestamp=now)
+                                for i in reversed(data)),
+                               self._data.data['data'])
+        data = itertools.islice(data, master_data_size)
+        self._data.set('data', list(data))
 
 
 class Slave(common.Device):

@@ -1,6 +1,7 @@
 import r from '@hat-core/renderer';
 import * as u from '@hat-core/util';
 import * as iter from '@hat-core/iter';
+import * as datetime from '@hat-core/syslog/datetime';
 
 import * as common from '@hat-core/manager/iec104/common';
 
@@ -11,6 +12,48 @@ const dataTypes = ['', 'Single', 'Double', 'StepPosition',
 
 const commandTypes = ['', 'Single', 'Double', 'Regulating', 'Normalized',
                       'Scaled', 'Floating'];
+
+const dataCauses = ['',
+                    'UNDEFINED',
+                    'PERIODIC',
+                    'BACKGROUND_SCAN',
+                    'SPONTANEOUS',
+                    'INITIALIZED',
+                    'REQUEST',
+                    'ACTIVATION',
+                    'ACTIVATION_CONFIRMATION',
+                    'DEACTIVATION',
+                    'DEACTIVATION_CONFIRMATION',
+                    'ACTIVATION_TERMINATION',
+                    'REMOTE_COMMAND',
+                    'LOCAL_COMMAND',
+                    'FILE_TRANSFER',
+                    'INTERROGATED_STATION',
+                    'INTERROGATED_GROUP01',
+                    'INTERROGATED_GROUP02',
+                    'INTERROGATED_GROUP03',
+                    'INTERROGATED_GROUP04',
+                    'INTERROGATED_GROUP05',
+                    'INTERROGATED_GROUP06',
+                    'INTERROGATED_GROUP07',
+                    'INTERROGATED_GROUP08',
+                    'INTERROGATED_GROUP09',
+                    'INTERROGATED_GROUP10',
+                    'INTERROGATED_GROUP11',
+                    'INTERROGATED_GROUP12',
+                    'INTERROGATED_GROUP13',
+                    'INTERROGATED_GROUP14',
+                    'INTERROGATED_GROUP15',
+                    'INTERROGATED_GROUP16',
+                    'INTERROGATED_COUNTER',
+                    'INTERROGATED_COUNTER01',
+                    'INTERROGATED_COUNTER02',
+                    'INTERROGATED_COUNTER03',
+                    'INTERROGATED_COUNTER04',
+                    'UNKNOWN_TYPE',
+                    'UNKNOWN_CAUSE',
+                    'UNKNOWN_ASDU_ADDRESS',
+                    'UNKNOWN_IO_ADDRESS']
 
 
 export function master() {
@@ -175,7 +218,7 @@ function masterData(deviceId) {
     const data = r.get('remote', 'devices', deviceId, 'data', 'data') || [];
 
     return ['div.data',
-        tableData(iter.map(i => [null, i], data))
+        tableData(iter.map(i => [null, i], data), true)
     ];
 }
 
@@ -191,7 +234,7 @@ function slaveData(deviceId) {
     const onRemove = id => common.removeData(deviceId, id);
 
     return ['div.data',
-        tableData(Object.entries(data), isSelected, onClick, onRemove),
+        tableData(Object.entries(data), false, isSelected, onClick, onRemove),
         ['div.control',
             ['button', {
                 on: {
@@ -248,12 +291,17 @@ function slavePanelData(deviceId, selectedDataId) {
     if (!selectedData)
         return [];
 
-    const onChange = u.curry((path, value) => common.changeData(deviceId, selectedDataId, path, value));
+    const onChange = u.curry((property, value) => common.changeData(deviceId, selectedDataId, property, value));
 
     return ['div.panel',
         formEntrySelect('Type', selectedData.type, dataTypes, onChange('type')),
         formEntryNumber('ASDU', selectedData.asdu, onChange('asdu')),
-        formEntryNumber('IO', selectedData.io, onChange('io'))
+        formEntryNumber('IO', selectedData.io, onChange('io')),
+        slavePanelDataValue(deviceId, selectedDataId),
+        slavePanelDataQuality(deviceId, selectedDataId),
+        slavePanelDataTime(deviceId, selectedDataId),
+        formEntrySelect('Cause', selectedData.cause, dataCauses, onChange('cause')),
+        formEntryCheckbox('Is test', selectedData.is_test, onChange('is_test'))
     ];
 }
 
@@ -270,6 +318,107 @@ function slavePanelCommand(deviceId, selectedCommandId) {
         formEntryNumber('ASDU', selectedCommand.asdu, onChange('asdu')),
         formEntryNumber('IO', selectedCommand.io, onChange('io')),
         formEntryCheckbox('Success', selectedCommand.success, onChange('success'))
+    ];
+}
+
+
+function slavePanelDataValue(deviceId, dataId) {
+    const dataPath = ['remote', 'devices', deviceId, 'data', 'data', dataId];
+
+    return [];
+}
+
+
+function slavePanelDataQuality(deviceId, dataId) {
+    const qualityPath = ['remote', 'devices', deviceId, 'data', 'data', dataId, 'quality'];
+
+    if (!r.get(qualityPath))
+        return formEntryCheckbox('Quality', false, _ => common.changeData(
+            deviceId, dataId, 'quality', {
+                invalid: false,
+                not_topical: false,
+                substituted: false,
+                blocked: false,
+                overflow: false
+            }));
+
+    const onChange = u.curry((path, value) => common.changeData(
+        deviceId, dataId, ['quality', path], value));
+
+    return [
+        formEntryCheckbox('Quality',
+                          true,
+                          _ => common.changeData(deviceId, dataId, 'quality', null)),
+        formEntryCheckbox('Quality - invalid',
+                          r.get(qualityPath, 'invalid'),
+                          onChange('invalid')),
+        formEntryCheckbox('Quality - not topical',
+                          r.get(qualityPath, 'not_topical'),
+                          onChange('not_topical')),
+        formEntryCheckbox('Quality - substituted',
+                          r.get(qualityPath, 'substituted'),
+                          onChange('substituted')),
+        formEntryCheckbox('Quality - blocked',
+                          r.get(qualityPath, 'blocked'),
+                          onChange('blocked')),
+        formEntryCheckbox('Quality - overflow',
+                          r.get(qualityPath, 'overflow'),
+                          onChange('overflow'))
+    ];
+}
+
+
+function slavePanelDataTime(deviceId, dataId) {
+    const timePath = ['remote', 'devices', deviceId, 'data', 'data', dataId, 'time'];
+
+    if (!r.get(timePath))
+        return formEntryCheckbox('Time', false, _ => common.changeData(
+            deviceId, dataId, 'time', {
+                milliseconds: 0,
+                invalid: false,
+                minutes: 0,
+                summer_time: false,
+                hours: 0,
+                day_of_week: 0,
+                day_of_month: 0,
+                months: 0,
+                years: 0
+            }));
+
+    const onChange = u.curry((path, value) => common.changeData(
+        deviceId, dataId, ['time', path], value));
+
+    return [
+        formEntryCheckbox('Time',
+                          true,
+                          _ => common.changeData(deviceId, dataId, 'time', null)),
+        formEntryNumber('Time - milliseconds',
+                        r.get(timePath, 'milliseconds'),
+                        onChange('milliseconds')),
+        formEntryCheckbox('Time - invalid',
+                          r.get(timePath, 'invalid'),
+                          onChange('invalid')),
+        formEntryNumber('Time - minutes',
+                        r.get(timePath, 'minutes'),
+                        onChange('minutes')),
+        formEntryCheckbox('Time - summer time',
+                          r.get(timePath, 'summer_time'),
+                          onChange('summer_time')),
+        formEntryNumber('Time - hours',
+                        r.get(timePath, 'hours'),
+                        onChange('hours')),
+        formEntryNumber('Time - day of week',
+                        r.get(timePath, 'day_of_week'),
+                        onChange('day_of_week')),
+        formEntryNumber('Time - day of month',
+                        r.get(timePath, 'day_of_month'),
+                        onChange('day_of_month')),
+        formEntryNumber('Time - months',
+                        r.get(timePath, 'months'),
+                        onChange('months')),
+        formEntryNumber('Time - years',
+                        r.get(timePath, 'years'),
+                        onChange('years'))
     ];
 }
 
@@ -343,10 +492,11 @@ function formEntrySelect(label, selected, values, onChange) {
 }
 
 
-function tableData(data, isSelected=null, onClick=null, onRemove=null) {
+function tableData(data, showTimestamp, isSelected=null, onClick=null, onRemove=null) {
     return ['table',
         ['thead',
             ['tr',
+                (!showTimestamp ? [] : ['th.col-timestamp.hidden']),
                 ['th.col-str.hidden'],    // type
                 ['th.col-int.hidden'],    // asdu
                 ['th.col-int.hidden'],    // io
@@ -370,6 +520,7 @@ function tableData(data, isSelected=null, onClick=null, onRemove=null) {
                 (!onRemove ? [] : ['th.col-remove.hidden'])
             ],
             ['tr',
+                (!showTimestamp ? [] : ['th', {props: {rowSpan: 2}}, 'Timestamp']),
                 ['th', {props: {rowSpan: 2}}, 'Type'],
                 ['th', {props: {rowSpan: 2}}, 'ASDU'],
                 ['th', {props: {rowSpan: 2}}, 'IO'],
@@ -415,6 +566,9 @@ function tableData(data, isSelected=null, onClick=null, onRemove=null) {
                 on: {
                     click: _ => (onClick ? onClick(id) : null)
                 }},
+                (!showTimestamp ? [] : ['td.col-timestamp',
+                    datetime.utcTimestampToLocalString(i.timestamp)
+                ]),
                 ['td.col-str', val('type')],
                 ['td.col-int', val('asdu')],
                 ['td.col-int', val('io')],
