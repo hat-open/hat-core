@@ -101,7 +101,7 @@ class Engine(aio.Resource):
                 for device, events in device_events.items():
                     device.client.receive_queue.put_nowait(list(events))
 
-        except aio.QueueClosedError:
+        except ConnectionError:
             pass
 
         except Exception as e:
@@ -196,7 +196,7 @@ class DeviceProxy(aio.Resource):
                 self._register_running(False)
                 is_running = False
 
-        except aio.QueueClosedError:
+        except ConnectionError:
             pass
 
         except Exception as e:
@@ -239,7 +239,7 @@ class DeviceEventClient(common.DeviceEventClient):
         try:
             return await self._receive_queue.get()
 
-        except aio.QueueClosedError:
+        except ConnectionError:
             raise ConnectionError()
 
     def register(self, events: typing.List[hat.event.common.RegisterEvent]):
