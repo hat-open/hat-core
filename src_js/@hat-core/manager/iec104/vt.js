@@ -53,7 +53,7 @@ const dataCauses = ['',
                     'UNKNOWN_TYPE',
                     'UNKNOWN_CAUSE',
                     'UNKNOWN_ASDU_ADDRESS',
-                    'UNKNOWN_IO_ADDRESS']
+                    'UNKNOWN_IO_ADDRESS'];
 
 
 export function master() {
@@ -324,6 +324,8 @@ function slavePanelCommand(deviceId, selectedCommandId) {
 
 function slavePanelDataValue(deviceId, dataId) {
     const dataPath = ['remote', 'devices', deviceId, 'data', 'data', dataId];
+
+    dataPath;
 
     return [];
 }
