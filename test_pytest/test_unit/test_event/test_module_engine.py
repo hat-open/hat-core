@@ -49,7 +49,7 @@ def create_module():
                 return self._async_group
 
             async def process(self, events):
-                return process_cb(events)
+                return await aio.call(process_cb, events)
 
         for i in itertools.count(1):
             module_name = f'mock_module_{i}'
@@ -89,7 +89,14 @@ class BackendEngine(aio.Resource):
 
     async def register(self, process_events):
         if not self._register_cb:
-            return [None for _ in process_events]
+            now = common.now()
+            return [
+                common.Event(event_id=process_event.event_id,
+                             event_type=process_event.event_type,
+                             timestamp=now,
+                             source_timestamp=process_event.source_timestamp,
+                             payload=process_event.payload)
+                for process_event in process_events]
         return self._register_cb(process_events)
 
     async def query(self, data):
@@ -223,3 +230,42 @@ async def test_query():
 
     await engine.async_close()
     await backend.async_close()
+
+
+async def test_cancel_register(create_module):
+
+    process_enter_future = asyncio.Future()
+    process_exit_future = asyncio.Future()
+
+    async def process(events):
+        process_enter_future.set_result(None)
+        await process_exit_future
+        return []
+
+    source = common.Source(common.SourceType.MODULE, None, 1)
+    module_name = create_module(process)
+
+    conf = {'modules': [{'module': module_name}]}
+    backend = BackendEngine()
+
+    engine = await hat.event.server.module_engine.create(conf, backend)
+    registered_events = aio.Queue()
+    engine.register_events_cb(registered_events.put_nowait)
+
+    source = common.Source(common.SourceType.COMMUNICATION, None, 0)
+    register_future = asyncio.ensure_future(
+        engine.register(source, [common.RegisterEvent(
+            event_type=(),
+            source_timestamp=None,
+            payload=None)]))
+
+    await process_enter_future
+    register_future.cancel()
+    process_exit_future.set_result(None)
+
+    assert registered_events.empty()
+    await asyncio.wait_for(registered_events.get(), 0.01)
+
+    assert engine.is_open
+
+    await engine.async_close()

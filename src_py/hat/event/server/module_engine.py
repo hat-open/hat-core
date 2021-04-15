@@ -119,11 +119,11 @@ class ModuleEngine(aio.Resource):
                 events = await self._backend.register(process_events)
 
                 result = events[:len(initial_events)]
-                future.set_result(result)
+                if not future.done():
+                    future.set_result(result)
 
                 events = [event for event in events if event]
                 if events:
-
                     self._register_cbs.notify(events)
 
         except Exception as e:
