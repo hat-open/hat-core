@@ -334,6 +334,9 @@ class Connection(aio.Resource):
         except asyncio.IncompleteReadError:
             mlog.debug("closed connection detected while reading")
 
+        except ConnectionError:
+            mlog.debug("connection error")
+
         except Exception as e:
             mlog.error("read loop error: %s", e, exc_info=e)
 
