@@ -1,7 +1,8 @@
-import pytest
 import asyncio
 import unittest.mock
 import sys
+
+import pytest
 
 from hat import aio
 from hat.orchestrator.component import (Status,
@@ -36,7 +37,7 @@ def create_component_with_status_queue(conf):
 async def test_delayed_start_stop():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0.01,
         'revive': False,
         'start_delay': 0.001,
@@ -61,7 +62,7 @@ async def test_delayed_start_stop():
 async def test_revive_on_stop():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': True,
         'start_delay': 0.001,
@@ -97,7 +98,7 @@ async def test_revive_on_stop():
 async def test_revive_on_component_finish():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
-        'args': ['sleep', '0.001'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(0.001)'],
         'delay': 0,
         'revive': True,
         'start_delay': 0.001,
@@ -121,7 +122,7 @@ async def test_revive_on_component_finish():
 async def test_revive_on_delay():
     component = Component({
         'name': 'name',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 1,
         'revive': False,
         'start_delay': 0.001,
@@ -140,7 +141,7 @@ async def test_revive_on_delay():
 async def test_stop_during_delay():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 1,
         'revive': False,
         'start_delay': 0.001,
@@ -159,7 +160,7 @@ async def test_stop_during_delay():
 async def test_initial_status():
     component = Component({
         'name': 'name',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 1,
         'revive': False,
         'start_delay': 0.001,
@@ -172,7 +173,7 @@ async def test_initial_status():
 
     component = Component({
         'name': 'name',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 0,
         'revive': False})
     assert component.status == Status.STOPPED
@@ -183,7 +184,7 @@ async def test_initial_status():
 async def test_closed():
     component = Component({
         'name': 'name',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -197,7 +198,7 @@ async def test_closed():
 
 async def test_conf_properties():
     conf = {'name': 'name',
-            'args': ['sleep', '10'],
+            'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
             'delay': 0,
             'revive': False,
             'start_delay': 0.001,
@@ -217,7 +218,7 @@ async def test_call_create_subprocess_exec_without_revive():
         create.return_value.stdout.readline.return_value = None
         component = Component({
             'name': 'name',
-            'args': ['sleep', '0'],
+            'args': [sys.executable, '-c', 'import time; time.sleep(0)'],
             'delay': 0,
             'revive': False,
             'start_delay': 0.001,
@@ -234,7 +235,7 @@ async def test_call_create_subprocess_exec_with_revive():
         create.return_value.stdout.readline.return_value = None
         component = Component({
             'name': 'name',
-            'args': ['sleep', '0'],
+            'args': [sys.executable, '-c', 'import time; time.sleep(0)'],
             'delay': 0,
             'revive': True,
             'start_delay': 0.001,
@@ -249,7 +250,7 @@ async def test_call_create_subprocess_exec_with_revive():
 async def test_process_stopped_on_close(process_queue):
     component = Component({
         'name': 'name',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -267,7 +268,7 @@ async def test_process_stopped_on_close(process_queue):
 async def test_process_stopped_on_stop(process_queue):
     component = Component({
         'name': 'name',
-        'args': ['sleep', '10'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(10)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -284,7 +285,7 @@ async def test_process_stopped_on_stop(process_queue):
 async def test_new_process_on_start(process_queue):
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
-        'args': ['sleep', '100'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(100)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -323,7 +324,7 @@ async def test_soft_terminate_process(process_queue, tmpdir):
 
     component = Component({
         'name': 'name',
-        'args': ['python', str(component_path)],
+        'args': [sys.executable, str(component_path)],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -353,7 +354,7 @@ async def test_hard_terminate_process(process_queue, tmpdir):
 
     component = Component({
         'name': 'name',
-        'args': ['python', str(component_path)],
+        'args': [sys.executable, str(component_path)],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -372,7 +373,7 @@ async def test_hard_terminate_process(process_queue, tmpdir):
 async def test_noop_revive():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': True,
         'start_delay': 0.001,
@@ -397,7 +398,7 @@ async def test_noop_revive():
 async def test_noop_start():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -422,7 +423,7 @@ async def test_noop_start():
 async def test_noop_stop():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -449,7 +450,7 @@ async def test_noop_stop():
 async def test_starting_no_interrupt():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -476,7 +477,7 @@ async def test_starting_no_interrupt():
 async def test_stopping_no_interrupt():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -506,7 +507,7 @@ async def test_stopping_no_interrupt():
 async def test_actions_not_queued_for_seq_exec():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['sleep', '30'],
+        'args': [sys.executable, '-c', 'import time; time.sleep(30)'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
@@ -533,7 +534,7 @@ async def test_actions_not_queued_for_seq_exec():
 async def test_console_output(capsys):
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
-        'args': ['echo', 'abc'],
+        'args': [sys.executable, '-c', 'print("abc")'],
         'delay': 0,
         'revive': False,
         'start_delay': 0.001,
