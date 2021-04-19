@@ -32,6 +32,10 @@ components:
         - "sleep 5 && echo test"
     delay: 0
     revive: true
+    start_delay: 0.5
+    create_timeout: 2
+    sigint_timeout: 5
+    sigkill_timeout: 2
 ui:
     address: "http://127.0.0.1:23021"
 EOF

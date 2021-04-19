@@ -5,30 +5,16 @@ import contextlib
 import datetime
 import enum
 import logging
-import signal
-import subprocess
-import sys
 import typing
 
 from hat import aio
 from hat import json
 from hat import util
+import hat.orchestrator.process
 
 
 mlog: logging.Logger = logging.getLogger(__name__)
 """Module logger"""
-
-start_delay: float = 0.5
-"""Process start delay in seconds"""
-
-create_timeout: float = 2
-"""Create process timeout in seconds"""
-
-sigint_timeout: float = 5
-"""SIGINT timeout in seconds"""
-
-sigkill_timeout: float = 2
-"""SIGKILL timeout in seconds"""
 
 
 Status = enum.Enum('Status', [
@@ -45,11 +31,15 @@ class Component(aio.Resource):
     Args:
         conf: configuration defined by
             ``hat://orchestrator.yaml#/definitions/component``
+        win32_job: win32 job instance
 
     """
 
-    def __init__(self, conf: json.Data):
+    def __init__(self,
+                 conf: json.Data,
+                 win32_job: typing.Optional[hat.orchestrator.process.Win32Job] = None):  # NOQA
         self._conf = conf
+        self._win32_job = win32_job
         self._status = Status.DELAYED if conf['delay'] else Status.STOPPED
         self._revive = conf['revive']
         self._change_cbs = util.CallbackRegistry(
@@ -73,11 +63,6 @@ class Component(aio.Resource):
     def name(self) -> str:
         """Component name"""
         return self._conf['name']
-
-    @property
-    def args(self) -> typing.List[str]:
-        """Command line arguments"""
-        return self._conf['args']
 
     @property
     def delay(self) -> float:
@@ -130,7 +115,7 @@ class Component(aio.Resource):
             self._started_queue.put_nowait(started)
 
             while True:
-                await asyncio.sleep(start_delay)
+                await asyncio.sleep(self._conf['start_delay'])
 
                 started = False
                 while not (started or self.revive):
@@ -140,8 +125,8 @@ class Component(aio.Resource):
 
                 try:
                     self._set_status(Status.STARTING)
-                    process = await asyncio.wait_for(self._start_process(),
-                                                     create_timeout)
+                    process = await asyncio.wait_for(
+                        self._start_process(), self._conf['create_timeout'])
                 except asyncio.CancelledError:
                     raise
                 except Exception as e:
@@ -152,19 +137,24 @@ class Component(aio.Resource):
 
                 try:
                     self._set_status(Status.RUNNING)
-                    read_future = self._async_group.spawn(self._read_stdout,
-                                                          process)
                     started = True
+
+                    closing_future = self._async_group.spawn(
+                        aio.call_on_done,
+                        self._async_group.spawn(self._read_stdout, process),
+                        process.wait_closing)
+
                     while started:
                         started_future = self._async_group.spawn(
                             self._started_queue.get_until_empty)
-                        await asyncio.wait([started_future, read_future],
+                        await asyncio.wait([started_future, closing_future],
                                            return_when=asyncio.FIRST_COMPLETED)
                         if started_future.done():
                             started = started_future.result()
                         else:
                             started_future.cancel()
                             break
+
                 finally:
                     self._set_status(Status.STOPPING)
                     await self._stop_process(process)
@@ -173,9 +163,11 @@ class Component(aio.Resource):
 
         except asyncio.CancelledError:
             raise
+
         except Exception as e:
             mlog.error("component %s run loop error: %s",
                        self.name, e, exc_info=e)
+
         finally:
             if process:
                 await aio.uncancellable(self._stop_process(process),
@@ -192,28 +184,17 @@ class Component(aio.Resource):
         self._change_cbs.notify()
 
     async def _start_process(self):
-        creationflags = (subprocess.CREATE_NEW_PROCESS_GROUP
-                         if sys.platform == 'win32' else 0)
-        process = await asyncio.create_subprocess_exec(
-            *self.args, stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT, creationflags=creationflags,
-            preexec_fn=_preexec_fn)
+        process = await hat.orchestrator.process.create_process(
+            args=self._conf['args'],
+            sigint_timeout=self._conf['sigint_timeout'],
+            sigkill_timeout=self._conf['sigkill_timeout'])
+        if self._win32_job:
+            self._win32_job.add_process(process)
         mlog.info("component %s (%s) started", self.name, process.pid)
         return process
 
     async def _stop_process(self, process):
-        if process.returncode is None:
-            with contextlib.suppress(Exception):
-                process.send_signal(signal.CTRL_BREAK_EVENT
-                                    if sys.platform == 'win32'
-                                    else signal.SIGINT)
-            with contextlib.suppress(asyncio.TimeoutError):
-                await asyncio.wait_for(process.wait(), sigint_timeout)
-        if process.returncode is None:
-            with contextlib.suppress(Exception):
-                process.kill()
-            with contextlib.suppress(asyncio.TimeoutError):
-                await asyncio.wait_for(process.wait(), sigkill_timeout)
+        await process.async_close()
         if process.returncode is None:
             mlog.info("component %s (%s) failed to stop",
                       self.name, process.pid)
@@ -222,26 +203,14 @@ class Component(aio.Resource):
                       self.name, process.pid, process.returncode)
 
     async def _read_stdout(self, process):
-        while True:
-            line = await process.stdout.readline()
-            if not line:
-                break
-            line = line.decode('utf-8', 'ignore').rstrip()
-            mlog.info("component %s (%s) stdout: %s",
-                      self.name, process.pid, line)
-            now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f"[{now} {self.name} ({process.pid})] {line}")
+        try:
+            while True:
+                line = await process.readline()
+                mlog.info("component %s (%s) stdout: %s",
+                          self.name, process.pid, line)
+                now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                print(f"[{now} {self.name} ({process.pid})] {line}")
 
-
-if sys.platform == 'linux':
-
-    def _preexec_fn():
-        import ctypes
-        libc = ctypes.cdll.LoadLibrary('libc.so.6')
-        PR_SET_PDEATHSIG = 1
-        SIGKILL = 9
-        libc.prctl(PR_SET_PDEATHSIG, SIGKILL)
-
-else:
-
-    _preexec_fn = None
+        except ConnectionError:
+            mlog.debug("component %s (%s) stdout closed",
+                       self.name, process.pid)

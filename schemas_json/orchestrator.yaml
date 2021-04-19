@@ -35,6 +35,8 @@ definitions:
             - args
             - delay
             - revive
+            - sigint_timeout
+            - sigkill_timeout
         properties:
             name:
                 title: Component name
@@ -59,6 +61,32 @@ definitions:
                     If this property is set to true, orchestrator will start
                     component's process if process is stopped.
                 type: boolean
+            start_delay:
+                title: Start delay
+                description: |
+                    Delay in seconds applied before each component's startup.
+                type: number
+                default: 0.5
+            create_timeout:
+                title: Create timeout
+                description: |
+                    Timeout in seconds for creating process.
+                type: number
+                default: 2
+            sigint_timeout:
+                title: SIGINT timeout
+                description: |
+                    Timeout in seconds for waiting return code after sending
+                    SIGINT.
+                type: number
+                default: 5
+            sigkill_timeout:
+                title: SIGKILL timeout
+                description: |
+                    Timeout in seconds for waiting return code after sending
+                    SIGKILL.
+                type: number
+                default: 2
     ui:
         title: Server
         type: object

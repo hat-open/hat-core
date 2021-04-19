@@ -188,7 +188,11 @@ def test_orchestrator_kills_children(run_orchestrator_factory):
         components=[{'name': f'comp-{i}',
                      'args': ['sleep', '10'],
                      'delay': 0,
-                     'revive': False} for i in range(3)])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2} for i in range(3)])
     wait_until(lambda p: count_subprocess_running(p) == 3, process)
     children = process.children()
     stop_process(process)
@@ -202,7 +206,11 @@ def test_orchestrator_kills_children_on_kill(run_orchestrator_factory):
         components=[{'name': f'comp-{i}',
                      'args': ['sleep', '10'],
                      'delay': 0,
-                     'revive': False} for i in range(3)])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2} for i in range(3)])
     wait_until(lambda p: count_subprocess_running(p) == 3, process)
     children = process.children()
     process.kill()
@@ -214,7 +222,11 @@ def test_revive_killed_child(run_orchestrator_factory):
     process = run_orchestrator_factory(components=[{'name': 'revive',
                                                     'args': ['sleep', '10'],
                                                     'delay': 0,
-                                                    'revive': True}])
+                                                    'revive': True,
+                                                    'start_delay': 0.5,
+                                                    'create_timeout': 2,
+                                                    'sigint_timeout': 5,
+                                                    'sigkill_timeout': 2}])
     wait_until(lambda p: count_subprocess_running(p) == 1, process)
     for child in list(process.children()):
         stop_process(child)
@@ -225,11 +237,19 @@ def test_revive(run_orchestrator_factory):
     process = run_orchestrator_factory(components=[{'name': 'revive',
                                                     'args': ['sleep', '0.5'],
                                                     'delay': 0,
-                                                    'revive': True},
+                                                    'revive': True,
+                                                    'start_delay': 0.5,
+                                                    'create_timeout': 2,
+                                                    'sigint_timeout': 5,
+                                                    'sigkill_timeout': 2},
                                                    {'name': 'no revive',
                                                     'args': ['sleep', '0.5'],
                                                     'delay': 0,
-                                                    'revive': False}])
+                                                    'revive': False,
+                                                    'start_delay': 0.5,
+                                                    'create_timeout': 2,
+                                                    'sigint_timeout': 5,
+                                                    'sigkill_timeout': 2}])
     wait_until(lambda p: count_subprocess_running(p) == 2, process)
     time.sleep(1.1)
     assert count_subprocess_running(process) == 1
@@ -239,7 +259,11 @@ def test_delay(run_orchestrator_factory):
     process = run_orchestrator_factory(components=[{'name': 'revive',
                                                     'args': ['sleep', '10'],
                                                     'delay': 1,
-                                                    'revive': False}])
+                                                    'revive': False,
+                                                    'start_delay': 0.5,
+                                                    'create_timeout': 2,
+                                                    'sigint_timeout': 5,
+                                                    'sigkill_timeout': 2}])
     time.sleep(0.9)
     assert count_subprocess_running(process) == 0
     wait_until(lambda p: count_subprocess_running(p) == 1, process)
@@ -252,7 +276,11 @@ async def test_process_ui_consistency(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '20'],
                      'delay': 0,
-                     'revive': False}])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     for _ in range(3):
         wait_until(count_subprocess_running, process)
         await asyncio.sleep(ui_timeout)
@@ -271,7 +299,11 @@ async def test_ui_process_consistency(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '20'],
                      'delay': 0,
-                     'revive': False}])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     for _ in range(3):
         await wait_status_and_assert_process(process, change_queue, 'RUNNING')
         client.stop(client.components[0].id)
@@ -289,7 +321,11 @@ async def test_revive_after_end(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '0.5'],
                      'delay': 0,
-                     'revive': True}])
+                     'revive': True,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     for i in range(3):
         await wait_status_and_assert_process(process, change_queue, 'RUNNING')
         await wait_status_and_assert_process(process, change_queue, 'STOPPED')
@@ -301,7 +337,11 @@ async def test_revive_after_stop(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 0,
-                     'revive': True}])
+                     'revive': True,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     for i in range(3):
         await wait_status_and_assert_process(process, change_queue, 'RUNNING')
         client.stop(client.components[0].id)
@@ -314,7 +354,11 @@ async def test_revive_on_delay(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 10,
-                     'revive': False}])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     await wait_status_and_assert_process(process, change_queue, 'DELAYED')
     client.revive(client.components[0].id, True)
     await wait_status_and_assert_process(process, change_queue, 'DELAYED')
@@ -328,7 +372,11 @@ async def test_start_on_delay(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 10,
-                     'revive': False}])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     await wait_status_and_assert_process(process, change_queue, 'DELAYED')
     client.start(client.components[0].id)
     await wait_status_and_assert_process(process, change_queue, 'RUNNING')
@@ -340,7 +388,11 @@ async def test_stop_on_delay(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 10,
-                     'revive': False}])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     await wait_status_and_assert_process(process, change_queue, 'DELAYED')
     client.stop(client.components[0].id)
     await wait_status_and_assert_process(process, change_queue, 'STOPPED')
@@ -352,7 +404,11 @@ async def test_noop_revive(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 0,
-                     'revive': True}])
+                     'revive': True,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     await wait_status_and_assert_process(process, change_queue, 'RUNNING')
     for _ in range(3):
         client.revive(client.components[0].id, True)
@@ -367,7 +423,11 @@ async def test_noop_start(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 0,
-                     'revive': True}])
+                     'revive': True,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     await wait_status_and_assert_process(process, change_queue, 'RUNNING')
     for _ in range(3):
         client.start(client.components[0].id)
@@ -382,7 +442,11 @@ async def test_noop_stop(run_orchestrator_ui_client_factory):
         components=[{'name': 'revive',
                      'args': ['sleep', '10'],
                      'delay': 0,
-                     'revive': False}])
+                     'revive': False,
+                     'start_delay': 0.5,
+                     'create_timeout': 2,
+                     'sigint_timeout': 5,
+                     'sigkill_timeout': 2}])
     await wait_status_and_assert_process(process, change_queue, 'RUNNING')
     client.stop(client.components[0].id)
     await wait_status_and_assert_process(process, change_queue, 'STOPPED')

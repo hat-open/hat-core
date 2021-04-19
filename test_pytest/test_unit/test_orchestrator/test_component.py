@@ -6,17 +6,9 @@ import sys
 from hat import aio
 from hat.orchestrator.component import (Status,
                                         Component)
-import hat.orchestrator.component
 
 
-@pytest.fixture()
-def short_start_delay(monkeypatch):
-    monkeypatch.setattr(hat.orchestrator.component, 'start_delay', 0.001)
-
-
-@pytest.fixture()
-def short_sigint_timeout(monkeypatch):
-    monkeypatch.setattr(hat.orchestrator.component, 'sigint_timeout', 0.001)
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture()
@@ -41,13 +33,16 @@ def create_component_with_status_queue(conf):
     return component, status_queue
 
 
-@pytest.mark.asyncio
-async def test_delayed_start_stop(short_start_delay):
+async def test_delayed_start_stop():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
         'args': ['sleep', '30'],
         'delay': 0.01,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     assert component.status == Status.DELAYED
     assert (await status_queue.get() == Status.STARTING)
@@ -63,13 +58,16 @@ async def test_delayed_start_stop(short_start_delay):
     assert component.is_closed
 
 
-@pytest.mark.asyncio
-async def test_revive_on_stop(short_start_delay):
+async def test_revive_on_stop():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': True})
+        'revive': True,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     assert component.status == Status.STOPPED
     assert (await status_queue.get() == Status.STARTING)
@@ -96,13 +94,16 @@ async def test_revive_on_stop(short_start_delay):
     assert component.is_closed
 
 
-@pytest.mark.asyncio
-async def test_revive_on_component_finish(short_start_delay):
+async def test_revive_on_component_finish():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
         'args': ['sleep', '0.001'],
         'delay': 0,
-        'revive': True})
+        'revive': True,
+        'start_delay': 0.001,
+        'create_timeout': 2,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     assert component.status == Status.STOPPED
     assert (await status_queue.get() == Status.STARTING)
@@ -117,13 +118,16 @@ async def test_revive_on_component_finish(short_start_delay):
     assert component.is_closed
 
 
-@pytest.mark.asyncio
 async def test_revive_on_delay():
     component = Component({
         'name': 'name',
         'args': ['sleep', '10'],
         'delay': 1,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     for revive in [True, False] * 5:
         component.set_revive(revive)
         assert component.revive == revive
@@ -133,13 +137,16 @@ async def test_revive_on_delay():
     assert component.status == Status.STOPPED
 
 
-@pytest.mark.asyncio
-async def test_stop_during_delay(short_start_delay):
+async def test_stop_during_delay():
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
         'args': ['sleep', '10'],
         'delay': 1,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     assert component.status == Status.DELAYED
     component.stop()
@@ -149,13 +156,16 @@ async def test_stop_during_delay(short_start_delay):
     assert component.is_closed
 
 
-@pytest.mark.asyncio
 async def test_initial_status():
     component = Component({
         'name': 'name',
         'args': ['sleep', '10'],
         'delay': 1,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     assert component.status == Status.DELAYED
     await component.async_close()
     assert component.status == Status.STOPPED
@@ -170,68 +180,82 @@ async def test_initial_status():
     assert component.status == Status.STOPPED
 
 
-@pytest.mark.asyncio
 async def test_closed():
     component = Component({
         'name': 'name',
         'args': ['sleep', '10'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     assert not component.is_closed
     await component.async_close()
     assert component.is_closed
 
 
-@pytest.mark.asyncio
 async def test_conf_properties():
     conf = {'name': 'name',
             'args': ['sleep', '10'],
             'delay': 0,
-            'revive': False}
+            'revive': False,
+            'start_delay': 0.001,
+            'create_timeout': 0.1,
+            'sigint_timeout': 0.001,
+            'sigkill_timeout': 0.001}
     component = Component(conf)
     assert component.name == conf['name']
-    assert component.args == conf['args']
     assert component.delay == conf['delay']
     assert component.revive == conf['revive']
     await component.async_close()
 
 
 @pytest.mark.timeout(1)
-@pytest.mark.asyncio
-async def test_call_create_subprocess_exec_without_revive(short_start_delay):
+async def test_call_create_subprocess_exec_without_revive():
     with unittest.mock.patch('asyncio.create_subprocess_exec') as create:
         create.return_value.stdout.readline.return_value = None
         component = Component({
             'name': 'name',
             'args': ['sleep', '0'],
             'delay': 0,
-            'revive': False})
+            'revive': False,
+            'start_delay': 0.001,
+            'create_timeout': 0.1,
+            'sigint_timeout': 0.001,
+            'sigkill_timeout': 0.001})
         while create.call_count < 1:
             await asyncio.sleep(0.001)
         await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_call_create_subprocess_exec_with_revive(short_start_delay):
+async def test_call_create_subprocess_exec_with_revive():
     with unittest.mock.patch('asyncio.create_subprocess_exec') as create:
         create.return_value.stdout.readline.return_value = None
         component = Component({
             'name': 'name',
             'args': ['sleep', '0'],
             'delay': 0,
-            'revive': True})
+            'revive': True,
+            'start_delay': 0.001,
+            'create_timeout': 0.1,
+            'sigint_timeout': 0.001,
+            'sigkill_timeout': 0.001})
         while create.call_count <= 5:
             await asyncio.sleep(0.001)
         await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_process_stopped_on_close(short_start_delay, process_queue):
+async def test_process_stopped_on_close(process_queue):
     component = Component({
         'name': 'name',
         'args': ['sleep', '10'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     p = await process_queue.get()
     await asyncio.sleep(0.01)
     assert p.returncode is None
@@ -240,13 +264,16 @@ async def test_process_stopped_on_close(short_start_delay, process_queue):
 
 
 @pytest.mark.timeout(1)
-@pytest.mark.asyncio
-async def test_process_stopped_on_stop(short_start_delay, process_queue):
+async def test_process_stopped_on_stop(process_queue):
     component = Component({
         'name': 'name',
         'args': ['sleep', '10'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     p = await process_queue.get()
     assert p.returncode is None
     component.stop()
@@ -254,13 +281,16 @@ async def test_process_stopped_on_stop(short_start_delay, process_queue):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_new_process_on_start(short_start_delay, process_queue):
+async def test_new_process_on_start(process_queue):
     component, status_queue = create_component_with_status_queue({
         'name': 'comp-xy',
         'args': ['sleep', '100'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     for i in range(5):
         if i != 0:
@@ -280,9 +310,7 @@ async def test_new_process_on_start(short_start_delay, process_queue):
     assert process_queue.empty()
 
 
-@pytest.mark.asyncio
-async def test_soft_terminate_process(short_start_delay, process_queue,
-                                      tmpdir):
+async def test_soft_terminate_process(process_queue, tmpdir):
     component_path = tmpdir / 'component.py'
     running_path = tmpdir / 'running'
     signum = 'signal.SIGBREAK' if sys.platform == 'win32' else 'signal.SIGINT'
@@ -297,7 +325,11 @@ async def test_soft_terminate_process(short_start_delay, process_queue,
         'name': 'name',
         'args': ['python', str(component_path)],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 1,
+        'sigkill_timeout': 0.001})
     while not running_path.exists():
         await asyncio.sleep(0.001)
 
@@ -308,9 +340,7 @@ async def test_soft_terminate_process(short_start_delay, process_queue,
 
 
 @pytest.mark.timeout(1)
-@pytest.mark.asyncio
-async def test_hard_terminate_process(short_start_delay, short_sigint_timeout,
-                                      process_queue, tmpdir):
+async def test_hard_terminate_process(process_queue, tmpdir):
     component_path = tmpdir / 'component.py'
     running_path = tmpdir / 'running'
     signum = 'signal.SIGBREAK' if sys.platform == 'win32' else 'signal.SIGINT'
@@ -325,7 +355,11 @@ async def test_hard_terminate_process(short_start_delay, short_sigint_timeout,
         'name': 'name',
         'args': ['python', str(component_path)],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     while not running_path.exists():
         await asyncio.sleep(0.001)
 
@@ -335,13 +369,16 @@ async def test_hard_terminate_process(short_start_delay, short_sigint_timeout,
     assert p.returncode is not None
 
 
-@pytest.mark.asyncio
-async def test_noop_revive(short_start_delay):
+async def test_noop_revive():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': True})
+        'revive': True,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     assert component.status == Status.STOPPED
     assert (await status_queue.get() == Status.STARTING)
@@ -357,13 +394,16 @@ async def test_noop_revive(short_start_delay):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_noop_start(short_start_delay):
+async def test_noop_start():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     while True:
         if await status_queue.get() == Status.RUNNING:
@@ -379,13 +419,16 @@ async def test_noop_start(short_start_delay):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_noop_stop(short_start_delay):
+async def test_noop_stop():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     await status_queue.get() == Status.STARTING
     component.stop()
@@ -403,13 +446,16 @@ async def test_noop_stop(short_start_delay):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_starting_no_interrupt(short_start_delay):
+async def test_starting_no_interrupt():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     assert component.status == Status.STOPPED
     assert (await status_queue.get() == Status.STARTING)
@@ -427,13 +473,16 @@ async def test_starting_no_interrupt(short_start_delay):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_stopping_no_interrupt(short_start_delay):
+async def test_stopping_no_interrupt():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     while True:
         if await status_queue.get() == Status.RUNNING:
@@ -454,13 +503,16 @@ async def test_stopping_no_interrupt(short_start_delay):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_actions_not_queued_for_seq_exec(short_start_delay):
+async def test_actions_not_queued_for_seq_exec():
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['sleep', '30'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
 
     while True:
         if await status_queue.get() == Status.RUNNING:
@@ -478,13 +530,16 @@ async def test_actions_not_queued_for_seq_exec(short_start_delay):
     await component.async_close()
 
 
-@pytest.mark.asyncio
-async def test_console_output(short_start_delay, capsys):
+async def test_console_output(capsys):
     component, status_queue = create_component_with_status_queue({
         'name': 'name',
         'args': ['echo', 'abc'],
         'delay': 0,
-        'revive': False})
+        'revive': False,
+        'start_delay': 0.001,
+        'create_timeout': 0.1,
+        'sigint_timeout': 0.001,
+        'sigkill_timeout': 0.001})
     while (await status_queue.get()) != Status.STOPPED:
         pass
     await component.async_close()

@@ -13,6 +13,9 @@ import hat.orchestrator.component
 import hat.orchestrator.ui
 
 
+pytestmark = pytest.mark.asyncio
+
+
 class Component(typing.NamedTuple):
     id: int
     name: str
@@ -98,11 +101,6 @@ async def wait_for_status(components_queue, status):
 
 
 @pytest.fixture
-def short_start_delay(monkeypatch):
-    monkeypatch.setattr(hat.orchestrator.component, 'start_delay', 0.01)
-
-
-@pytest.fixture
 def server_address(unused_tcp_port_factory):
     port = unused_tcp_port_factory()
     return f'http://localhost:{port}'
@@ -113,13 +111,16 @@ def short_autoflush_delay(monkeypatch):
     monkeypatch.setattr(hat.orchestrator.ui, 'autoflush_delay', 0)
 
 
-@pytest.mark.asyncio
-async def test_backend_to_frontend(short_start_delay, server_address, tmpdir,
+async def test_backend_to_frontend(server_address, tmpdir,
                                    short_autoflush_delay):
     conf = {'name': 'comp-xy',
             'args': ['sleep', '0.01'],
             'delay': 0.1,
-            'revive': False}
+            'revive': False,
+            'start_delay': 0.001,
+            'create_timeout': 0.1,
+            'sigint_timeout': 0.001,
+            'sigkill_timeout': 0.001}
 
     component = hat.orchestrator.component.Component(conf)
     server = await create_server(server_address, tmpdir, [component])
@@ -151,13 +152,16 @@ async def test_backend_to_frontend(short_start_delay, server_address, tmpdir,
     assert server.is_closed
 
 
-@pytest.mark.asyncio
-async def test_frontend_to_backend(short_start_delay, server_address, tmpdir,
+async def test_frontend_to_backend(server_address, tmpdir,
                                    short_autoflush_delay):
     conf = {'name': 'comp-xy',
             'args': ['sleep', '50'],
             'delay': 0.1,
-            'revive': False}
+            'revive': False,
+            'start_delay': 0.001,
+            'create_timeout': 0.1,
+            'sigint_timeout': 0.001,
+            'sigkill_timeout': 0.001}
     component = hat.orchestrator.component.Component(conf)
     server = await create_server(server_address, tmpdir, [component])
     client, components_queue = await create_client_with_components_queue(
@@ -198,7 +202,6 @@ async def test_frontend_to_backend(short_start_delay, server_address, tmpdir,
     await client.wait_closed()
 
 
-@pytest.mark.asyncio
 async def test_get_static_files(server_address, tmpdir):
     with open(tmpdir / 'index.html', 'w', encoding='utf-8') as f:
         f.write('123')
@@ -221,7 +224,6 @@ async def test_get_static_files(server_address, tmpdir):
     await server.async_close()
 
 
-@pytest.mark.asyncio
 async def test_connect_disconnect(server_address, tmpdir):
     server = await create_server(server_address, tmpdir, [])
     assert not server.is_closed
@@ -240,7 +242,6 @@ async def test_connect_disconnect(server_address, tmpdir):
 
 
 @pytest.mark.timeout(1)
-@pytest.mark.asyncio
 async def test_invalid_client_message(server_address, tmpdir):
     server = await create_server(server_address, tmpdir, [])
 
@@ -265,7 +266,6 @@ async def test_invalid_client_message(server_address, tmpdir):
     await server.async_close()
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("responsive", [True, False])
 async def test_close_server_with_active_websocket(server_address, tmpdir,
                                                   responsive):

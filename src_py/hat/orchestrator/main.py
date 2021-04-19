@@ -13,6 +13,7 @@ import click
 from hat import aio
 from hat import json
 import hat.orchestrator.component
+import hat.orchestrator.process
 import hat.orchestrator.ui
 
 
@@ -63,9 +64,16 @@ async def async_main(conf: json.Data,
     async_group.spawn(aio.call_on_cancel, asyncio.sleep, 0.1)
 
     try:
+        if sys.platform == 'win32':
+            win32_job = hat.orchestrator.process.Win32Job()
+            _bind_resource(async_group, win32_job)
+        else:
+            win32_job = None
+
         components = []
         for component_conf in conf['components']:
-            component = hat.orchestrator.component.Component(component_conf)
+            component = hat.orchestrator.component.Component(component_conf,
+                                                             win32_job)
             _bind_resource(async_group, component)
             components.append(component)
 
