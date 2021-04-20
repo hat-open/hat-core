@@ -3,7 +3,6 @@
 import asyncio
 import contextlib
 import ctypes
-import ctypes.wintypes
 import signal
 import subprocess
 import sys
@@ -165,6 +164,8 @@ if sys.platform == 'linux':
     SIGINT = signal.SIGINT
 
 elif sys.platform == 'win32':
+
+    import ctypes.wintypes
 
     class SECURITY_ATTRIBUTES(ctypes.Structure):
         _fields_ = [("nLength", ctypes.wintypes.DWORD),

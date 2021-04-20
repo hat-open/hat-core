@@ -35,6 +35,8 @@ definitions:
             - args
             - delay
             - revive
+            - start_delay
+            - create_timeout
             - sigint_timeout
             - sigkill_timeout
         properties:
