@@ -19,3 +19,5 @@ socat
 sqlite
 unixodbc
 yarn
+binutils-mingw-w64-x86-64
+gcc-mingw-w64-x86-64
