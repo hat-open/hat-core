@@ -52,26 +52,32 @@ function eventTreeNode(deviceId, node) {
         ));
     }
 
+    const type = node.type[node.type.length - 1];
+    const serverId = !node.event ? '' : String(node.event.event_id.server);
+    const instanceId = !node.event ? '' : String(node.event.event_id.instance);
+    const timestamp = !node.event ? '' : datetime.utcTimestampToLocalString(node.event.timestamp);
+    const sourceTimestamp = !node.event ? '' : datetime.utcTimestampToLocalString(node.event.source_timestamp);
+    const payload = !node.event ? '' : JSON.stringify(node.event.payload);
+
     return [
         ['tr',
-            ['td.col-type',
+            ['td.col-type', {
+                props: {
+                    title: type
+                }},
                 [`span.expand-icon.fa.${expandIcon}`, {
                     props: {
-                        style: `margin-left: ${(node.type.length - 1) * 20}px`},
+                        style: `margin-left: ${(node.type.length - 1) * 1}rem`},
                     on: {
                         click: expandClick}
                 }],
-                node.type[node.type.length - 1]],
-            ['td.col-id', (!node.event ? '' :
-                String(node.event.event_id.server))],
-            ['td.col-id', (!node.event ? '' :
-                String(node.event.event_id.instance))],
-            ['td.col-timestamp', (!node.event ? '' :
-                datetime.utcTimestampToLocalString(node.event.timestamp))],
-            ['td.col-timestamp', (!node.event ? '' :
-                datetime.utcTimestampToLocalString(node.event.source_timestamp))],
-            ['td.col-payload', (!node.event ? '' :
-                JSON.stringify(node.event.payload))]
+                type
+            ],
+            ['td.col-id', {props: {title: serverId}}, serverId],
+            ['td.col-id', {props: {title: instanceId}}, instanceId],
+            ['td.col-timestamp', {props: {title: timestamp}}, timestamp],
+            ['td.col-timestamp', {props: {title: sourceTimestamp}}, sourceTimestamp],
+            ['td.col-payload', {props: {title: payload}}, payload]
         ],
         (!isExpanded ? [] :
             node.children.map(i => eventTreeNode(deviceId, i)))

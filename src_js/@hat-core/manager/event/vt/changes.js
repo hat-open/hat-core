@@ -18,26 +18,24 @@ export function main(deviceId) {
                 ]
             ],
             ['tbody',
-                changes.map(event => ['tr',
-                    ['td.col-type',
-                        event.event_type.join(', ')
-                    ],
-                    ['td.col-id',
-                        String(event.event_id.server)
-                    ],
-                    ['td.col-id',
-                        String(event.event_id.instance)
-                    ],
-                    ['td.col-timestamp',
-                        datetime.utcTimestampToLocalString(event.timestamp)
-                    ],
-                    ['td.col-timestamp',
-                        datetime.utcTimestampToLocalString(event.source_timestamp)
-                    ],
-                    ['td.col-payload',
-                        JSON.stringify(event.payload)
-                    ]
-                ])
+                changes.map(event => {
+                    const columns = [
+                        ['col-type', event.event_type.join(', ')],
+                        ['col-id', String(event.event_id.server)],
+                        ['col-id', String(event.event_id.instance)],
+                        ['col-timestamp', datetime.utcTimestampToLocalString(event.timestamp)],
+                        ['col-timestamp', datetime.utcTimestampToLocalString(event.source_timestamp)],
+                        ['col-payload', JSON.stringify(event.payload)]
+                    ];
+                    return ['tr', columns.map(([type, value]) =>
+                        [`td.${type}`, {
+                            props: {
+                                title: value
+                            }},
+                            value
+                        ]
+                    )];
+                })
             ]
         ]
     ];
