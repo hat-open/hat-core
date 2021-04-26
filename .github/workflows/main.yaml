@@ -18,7 +18,7 @@ jobs:
           - name: checkout repository
             uses: actions/checkout@v2
           - name: install requirements.github.ubuntu.txt
-            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
+            run: sudo apt install -q -y $(< requirements.github.ubuntu.txt)
           - name: install python
             uses: actions/setup-python@v1
             with:
@@ -46,7 +46,7 @@ jobs:
           - name: checkout repository
             uses: actions/checkout@v2
           - name: install ubuntu requirements
-            run: sudo apt-get install -q -y $(< requirements.github.ubuntu.txt)
+            run: sudo apt install -q -y $(< requirements.github.ubuntu.txt)
           - name: install python
             uses: actions/setup-python@v1
             with:
