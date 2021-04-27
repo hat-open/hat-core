@@ -35,7 +35,7 @@ properties:
     latest:
         type: object
         required:
-            - subscriptions:
+            - subscriptions
         properties:
             subscriptions:
                 "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
