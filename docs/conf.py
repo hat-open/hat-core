@@ -1,19 +1,22 @@
 from pathlib import Path
+import subprocess
 
 
 root_path = Path(__file__).parent.parent.resolve()
 
-extensions = ['sphinx.ext.graphviz',
-              'sphinx.ext.todo',
-              'sphinx.ext.imgmath',
-              'sphinxcontrib.plantuml',
-              'sphinxcontrib.programoutput',
-              'hat.sphinx.include_dir',
-              'hat.sphinx.exec',
-              'hat.sphinx.scxml']
+extensions = [
+    'hat.sphinx.exec',
+    'hat.sphinx.include_dir',
+    'hat.sphinx.scxml',
+    'sphinx.ext.graphviz',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.todo',
+    'sphinxcontrib.drawio',
+    'sphinxcontrib.plantuml',
+    'sphinxcontrib.programoutput'
+]
 
-with open(root_path / 'VERSION', encoding='utf-8') as f:
-    version = f.read().strip()
+version = (root_path / 'VERSION').read_text(encoding='utf-8').strip()
 project = 'Hat Core'
 copyright = '2020-2021, Hat Open AUTHORS'
 master_doc = 'index'
@@ -31,4 +34,5 @@ html_sidebars = {'**': ["sidebar/brand.html",
 
 todo_include_todos = True
 
-plantuml = f"java -jar {root_path / 'cache/tools/plantuml.jar'}"
+p = subprocess.run(['which', 'drawio'], capture_output=True, check=True)
+drawio_binary_path = p.stdout.decode('utf-8').strip()

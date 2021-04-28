@@ -1,17 +1,20 @@
+binutils-mingw-w64-x86-64
 clang
 doxygen
 gcc
+gcc-mingw-w64-x86-64
 git
 graphviz
-libjansson-dev
 libffi-dev
 libisoburn-dev
+libjansson-dev
 libuv1-dev
 libyaml-dev
 nodejs
 npm
 openssl
 pandoc
+plantuml
 python
 python-pip
 samba
@@ -19,5 +22,3 @@ socat
 sqlite
 unixodbc
 yarn
-binutils-mingw-w64-x86-64
-gcc-mingw-w64-x86-64

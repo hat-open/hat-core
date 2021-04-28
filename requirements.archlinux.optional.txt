@@ -1,3 +1,0 @@
-texlive-bin
-texlive-most
-mingw-w64-toolchain

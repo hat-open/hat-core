@@ -23,6 +23,7 @@ pytest-timeout == 1.4.2
 PyYAML == 5.3.1
 setuptools == 51.1.1
 Sphinx == 3.4.1
+sphinxcontrib-drawio == 0.0.12
 sphinxcontrib-plantuml == 0.19
 sphinxcontrib-programoutput == 0.16
 wheel == 0.36.2

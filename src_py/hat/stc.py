@@ -9,50 +9,126 @@ import xml.etree.ElementTree
 from hat import aio
 
 
-EventName = str
+# HACK use typing.TypeAlias instead
+_EventName = str
+EventName: typing.Type[_EventName] = typing.TypeVar(
+    'EventName', _EventName, _EventName)
 """Event name"""
 
-StateName = str
+# HACK use typing.TypeAlias instead
+_StateName = str
+StateName: typing.Type[_StateName] = typing.TypeVar(
+    'StateName', _StateName, _StateName)
 """State name"""
 
-ActionName = str
+# HACK use typing.TypeAlias instead
+_ActionName = str
+ActionName: typing.Type[_ActionName] = typing.TypeVar(
+    'ActionName', _ActionName, _ActionName)
 """Action name"""
 
-ConditionName = str
+# HACK use typing.TypeAlias instead
+_ConditionName = str
+ConditionName: typing.Type[_ConditionName] = typing.TypeVar(
+    'ConditionName', _ConditionName, _ConditionName)
 """Condition name"""
 
 
 class Event(typing.NamedTuple):
+    """Event instance"""
     name: EventName
+    """Event name"""
     payload: typing.Any = None
+    """Optional payload"""
 
 
 class Transition(typing.NamedTuple):
+    """Transition definition"""
     event: EventName
+    """Event identifier. Occurrence of event with this exact identifier can
+    trigger state transition."""
     target: typing.Optional[StateName]
+    """Destination state identifier. If destination state is not defined,
+    local transition is assumed - state is not changed and transition
+    actions are triggered."""
     actions: typing.List[ActionName] = []
+    """Actions executed on transition."""
     conditions: typing.List[ConditionName] = []
+    """List of conditions. Transition is triggered only if all provided
+    conditions are met."""
     internal: bool = False
+    """Internal transition modifier. Determines whether the source state is
+    exited in transitions whose target state is a descendant of the source
+    state."""
 
 
 class State(typing.NamedTuple):
+    """State definition"""
     name: StateName
+    """Unique state identifier."""
     children: typing.List['State'] = []
+    """Optional child states. If state has children, first child is
+    considered as its initial state."""
     transitions: typing.List[Transition] = []
+    """Possible transitions to other states."""
     entries: typing.List[ActionName] = []
+    """Actions executed when state is entered."""
     exits: typing.List[ActionName] = []
+    """Actions executed when state is exited."""
     final: bool = False
+    """Is state final."""
 
 
 Action = typing.Callable[[typing.Optional[Event]], None]
-"""Action function"""
+Action: typing.Type[Action] = Action
+"""Action function
+
+Action implementation which can be executed as part of entering/exiting
+state or transition execution. It is called with single argument - `Event`
+which triggered transition. In case of initial actions, run during
+transition to initial state, it is called with ``None``.
+
+"""
 
 Condition = typing.Callable[[typing.Optional[Event]], bool]
-"""Condition function"""
+Condition: typing.Type[Condition] = Condition
+"""Condition function
+
+Condition implementation used as transition guard. It is called with single
+argument - `Event` which triggered transition. Return value ``True`` is
+interpreted as satisfied condition.
+
+"""
 
 
 class Statechart:
-    """Statechart engine"""
+    """Statechart engine
+
+    Each instance is initialized with state definitions (first state is
+    considered initial) and action and condition definitions.
+
+    Statechart execution is simulated by calling `Statechart.run` coroutine.
+    When this coroutine is called, statechart will transition to initial state
+    and wait for new event occurrences. Coroutine `run` continues execution
+    until statechart transitions to final state. Once final state is reached,
+    `Statechart.run` finishes execution.
+
+    New events are registered with `Statechart.register` method which accepts
+    event instances containing event name and optional event payload. All event
+    registrations are queued and processed sequentially.
+
+    During statechart execution, actions and conditions are called based on
+    state changes and associated transitions provided during initialization.
+
+    Condition is considered met only if result of calling condition function is
+    ``True``.
+
+    Args:
+        states: all state definitions with (first state is initial)
+        actions: mapping of action names to their implementation
+        conditions: mapping of conditions names to their implementation
+
+    """
 
     def __init__(self,
                  states: typing.Iterable[State],
@@ -84,7 +160,11 @@ class Statechart:
         self._queue.put_nowait(event)
 
     async def run(self):
-        """Run statechart"""
+        """Run statechart
+
+        This coroutine finishes once statechart enters final state.
+
+        """
         self._walk_up(None, None)
         self._walk_down(self._initial, None)
         while True:
@@ -162,7 +242,7 @@ class Statechart:
 
 def parse_scxml(scxml: typing.Union[typing.TextIO, pathlib.Path]
                 ) -> typing.List[State]:
-    """Parse SCXML"""
+    """Parse SCXML into list of state definitions"""
     if isinstance(scxml, pathlib.Path):
         with open(scxml, encoding='utf-8') as f:
             root_el = _read_xml(f)

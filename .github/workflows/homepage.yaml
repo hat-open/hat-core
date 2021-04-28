@@ -15,11 +15,17 @@ jobs:
           - name: checkout repository
             uses: actions/checkout@v2
           - name: install ubuntu requirements
-            run: sudo apt install -q -y $(< requirements.github.ubuntu.txt)
+            env:
+                DRAWIO_VERSION: '14.5.1'
+            run: |
+                sudo apt update
+                sudo apt install -q -y $(< requirements.github.ubuntu.txt)
+                wget https://github.com/jgraph/drawio-desktop/releases/download/v$DRAWIO_VERSION/drawio-amd64-$DRAWIO_VERSION.deb
+                sudo apt install -q -y ./drawio-amd64-$DRAWIO_VERSION.deb
           - name: install python
             uses: actions/setup-python@v1
             with:
-                python-version: 3.8
+                python-version: 3.9
           - name: setup cache
             uses: actions/cache@v2
             with:

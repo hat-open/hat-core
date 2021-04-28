@@ -8,10 +8,12 @@ libffi
 libisoburn
 libuv
 libyaml
+mingw-w64-toolchain
 nodejs
 npm
 openssl
 pandoc
+plantuml
 python
 python-pip
 samba
