@@ -8,7 +8,9 @@ __all__ = ['task_test']
 def task_test():
     """Test - run pytest tests"""
     def run(args):
-        cmd = [sys.executable, '-m', 'pytest', '-s', '-p', 'no:cacheprovider']
+        cmd = [sys.executable, '-m', 'pytest',
+               '-s', '-p', 'no:cacheprovider',
+               '-m', 'not tutorial']
         if args:
             cmd += args
         subprocess.run(cmd,

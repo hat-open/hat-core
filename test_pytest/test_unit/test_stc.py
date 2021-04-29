@@ -323,117 +323,234 @@ async def test_local_transitions():
         await f
 
 
-async def test_example_docs():
+@pytest.mark.tutorial
+async def test_tutorial_01():
+    scxml = io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
+    <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+        <state id="opened">
+            <onentry>printState</onentry>
+            <transition event="close" target="closed"/>
+        </state>
+        <state id="closed">
+            <onentry>printState</onentry>
+            <transition event="open" target="opened"/>
+        </state>
+    </scxml>
+    """)  # NOQA
 
-    states = stc.parse_scxml(io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
-        <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="on" version="1.0">
-            <state id="on" initial="operand1">
-                <onentry>clear</onentry>
-                <transition event="C" target="on"/>
-                <transition event="OFF" target="off"/>
-                <state id="operand1">
-                    <transition event="number" target="operand1">appendOperand1</transition>
-                    <transition event="operator" target="opEntered"/>
-                </state>
-                <state id="opEntered">
-                    <onentry>setOperator</onentry>
-                    <transition event="number" target="operand2">setOperand2</transition>
-                </state>
-                <state id="operand2">
-                    <transition event="number" target="operand2">appendOperand2</transition>
-                    <transition event="equals" target="result"/>
-                </state>
-                <state id="result">
-                    <onentry>calculate</onentry>
-                    <transition event="number" target="operand1">setOperand1</transition>
-                    <transition event="operator" target="opEntered">resultAsOperand1</transition>
-                </state>
-            </state>
-            <final id="off"/>
-        </scxml>"""))  # NOQA
+    def act_print_state(evt):
+        print('current state:', door.state)
 
-    class Calculator:
+    states = stc.parse_scxml(scxml)
+    actions = {'printState': act_print_state}
+    door = stc.Statechart(states, actions)
+
+    run_task = asyncio.create_task(door.run())
+    await asyncio.sleep(1)
+
+    print('registering close event')
+    door.register(stc.Event('close'))
+    await asyncio.sleep(1)
+
+    print('registering open event')
+    door.register(stc.Event('open'))
+    await asyncio.sleep(1)
+
+    run_task.cancel()
+
+
+@pytest.mark.tutorial
+async def test_tutorial_02():
+    scxml = io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
+    <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+        <state id="opened">
+            <onentry>printState</onentry>
+            <transition event="close" target="closed"/>
+        </state>
+        <state id="closed">
+            <onentry>printState</onentry>
+            <transition event="open" target="opened"/>
+        </state>
+    </scxml>
+    """)  # NOQA
+
+    door_states = stc.parse_scxml(scxml)
+
+    class Door:
 
         def __init__(self):
-            actions = {'clear': self._act_clear,
-                       'setOperand1': self._act_setOperand1,
-                       'appendOperand1': self._act_appendOperand1,
-                       'setOperand2': self._act_setOperand2,
-                       'appendOperand2': self._act_appendOperand2,
-                       'resultAsOperand1': self._act_resultAsOperand1,
-                       'setOperator': self._act_setOperator,
-                       'calculate': self._act_calculate}
-            self._operand1 = None
-            self._operand2 = None
-            self._operator = None
-            self._result = None
-            self._machine = stc.Statechart(states, actions)
+            actions = {'printState': self._act_print_state}
+            self._stc = stc.Statechart(door_states, actions)
+            self._run_task = asyncio.create_task(self._stc.run())
 
-        @property
-        def result(self):
-            return self._result
+        def close(self):
+            print('registering close event')
+            self._stc.register(stc.Event('close'))
 
-        def push_number(self, number):
-            self._machine.register(stc.Event('number', number))
+        def open(self):
+            print('registering open event')
+            self._stc.register(stc.Event('open'))
 
-        def push_operator(self, operator):
-            self._machine.register(stc.Event('operator', operator))
+        def finish(self):
+            self._run_task.cancel()
 
-        def push_equals(self):
-            self._machine.register(stc.Event('equals'))
+        def _act_print_state(self, evt):
+            print('current state:', self._stc.state)
 
-        def push_C(self):
-            self._machine.register(stc.Event('C'))
+    door = Door()
+    await asyncio.sleep(1)
 
-        def push_OFF(self):
-            self._machine.register(stc.Event('OFF'))
+    door.close()
+    await asyncio.sleep(1)
 
-        async def run(self):
-            await self._machine.run()
+    door.open()
+    await asyncio.sleep(1)
 
-        def _act_clear(self, evt):
-            self._operand1 = 0
-            self._operand2 = 0
-            self._operator = None
-            self._result = 0
+    door.finish()
 
-        def _act_setOperand1(self, evt):
-            self._operand1 = evt.payload
 
-        def _act_appendOperand1(self, evt):
-            self._operand1 = self._operand1 * 10 + evt.payload
+@pytest.mark.tutorial
+async def test_tutorial_03():
+    scxml = io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
+    <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+        <state id="opened">
+            <onentry>printState</onentry>
+            <transition event="close" target="closed"/>
+        </state>
+        <state id="closed">
+            <onentry>printState</onentry>
+            <transition event="open" target="opened"/>
+        </state>
+    </scxml>
+    """)  # NOQA
 
-        def _act_setOperand2(self, evt):
-            self._operand2 = evt.payload
+    door_states = stc.parse_scxml(scxml)
 
-        def _act_appendOperand2(self, evt):
-            self._operand2 = self._operand2 * 10 + evt.payload
+    class Door:
 
-        def _act_resultAsOperand1(self, evt):
-            self._operand1 = self._result
+        def __init__(self):
+            actions = {'printState': self._act_print_state}
+            self._stc = stc.Statechart(door_states, actions)
+            self._run_task = asyncio.create_task(self._stc.run())
 
-        def _act_setOperator(self, evt):
-            self._operator = evt.payload
+        def close(self, force):
+            print('registering close event')
+            self._stc.register(stc.Event('close', force))
 
-        def _act_calculate(self, evt):
-            if self._operator == '+':
-                self._result = self._operand1 + self._operand2
-            elif self._operator == '-':
-                self._result = self._operand1 - self._operand2
-            elif self._operator == '*':
-                self._result = self._operand1 * self._operand2
-            elif self._operator == '/':
-                self._result = self._operand1 / self._operand2
-            else:
-                raise Exception('invalid operator')
+        def open(self, force):
+            print('registering open event')
+            self._stc.register(stc.Event('open', force))
 
-    calc = Calculator()
-    calc.push_number(1)
-    calc.push_number(2)
-    calc.push_number(3)
-    calc.push_operator('*')
-    calc.push_number(2)
-    calc.push_equals()
-    calc.push_OFF()
-    await calc.run()
-    assert calc.result == 246
+        def finish(self):
+            self._run_task.cancel()
+
+        def _act_print_state(self, evt):
+            force = evt.payload if evt else None
+            print(f'force {force} caused transition to {self._stc.state}')
+
+    door = Door()
+    await asyncio.sleep(1)
+
+    door.close(20)
+    await asyncio.sleep(1)
+
+    door.open(50)
+    await asyncio.sleep(1)
+
+    door.finish()
+
+
+@pytest.mark.tutorial
+async def test_tutorial_04():
+    scxml = io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
+    <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+        <state id="opened">
+            <onentry>printState</onentry>
+            <transition event="close" target="closed"/>
+        </state>
+        <state id="closed">
+            <onentry>printState</onentry>
+            <transition event="open" target="opened"/>
+        </state>
+    </scxml>
+    """)  # NOQA
+
+    door_states = stc.parse_scxml(scxml)
+
+    class Door:
+
+        def __init__(self):
+            actions = {'printState': self._act_print_state}
+            self._stc = stc.Statechart(door_states, actions)
+            self._run_task = asyncio.create_task(self._stc.run())
+
+        def close(self, force):
+            print('registering close event')
+            self._stc.register(stc.Event('close', force))
+
+        def open(self, force):
+            print('registering open event')
+            self._stc.register(stc.Event('open', force))
+
+        def finish(self):
+            self._run_task.cancel()
+
+        def _act_print_state(self, evt):
+            force = evt.payload if evt else None
+            print(f'force {force} caused transition to {self._stc.state}')
+
+    door = Door()
+    door.close(20)
+    door.open(50)
+
+    await asyncio.sleep(1)
+    door.finish()
+
+
+@pytest.mark.tutorial
+async def test_tutorial_05():
+    scxml = io.StringIO(r"""<?xml version="1.0" encoding="UTF-8"?>
+    <scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+        <state id="opened">
+            <onentry>printState</onentry>
+            <transition event="close" target="closed"/>
+        </state>
+        <state id="closed">
+            <onentry>printState</onentry>
+            <transition event="open" target="opened"/>
+        </state>
+    </scxml>
+    """)  # NOQA
+
+    door_states = stc.parse_scxml(scxml)
+
+    class Door:
+
+        def __init__(self):
+            actions = {'printState': self._act_print_state}
+            self._stc = stc.Statechart(door_states, actions)
+            self._run_task = asyncio.create_task(self._stc.run())
+
+        def close(self, force):
+            print('registering close event')
+            self._stc.register(stc.Event('close', force))
+
+        def open(self, force):
+            print('registering open event')
+            self._stc.register(stc.Event('open', force))
+
+        def finish(self):
+            self._run_task.cancel()
+
+        def _act_print_state(self, evt):
+            force = evt.payload if evt else None
+            print(f'force {force} caused transition to {self._stc.state}')
+
+    door = Door()
+    door.open(10)
+    door.close(20)
+    door.close(30)
+    door.open(40)
+
+    await asyncio.sleep(1)
+    door.finish()
