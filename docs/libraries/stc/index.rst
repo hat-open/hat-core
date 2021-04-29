@@ -422,25 +422,152 @@ produces following output::
 Transition guards
 '''''''''''''''''
 
-.. todo::
+Each transition can have list of conditions which have to be met for event to
+cause state transition. These condition guards are convenient way of adding
+additional statechart logic without adding new states.
 
-    ...
+To demonstrate usage of transition conditions, we will update behavior of
+our door definition by limiting number of times successful open/close
+operations can occur during single door instance lifetime. Lets say that
+we can open or close door maximum N times.
+
+.. drawio-image:: tutorial.drawio
+   :page-index: 4
+   :align: center
+
+.. literalinclude:: door_05.scxml
+    :language: xml
+    :caption: door_05.scxml
+
+Condition `isOperational` and `incCounter` action have to be added to our
+implementation:
+
+.. literalinclude:: tutorial_08.py
+    :language: python
+    :caption: tutorial_08.py - snippet
+    :lines: 8-22,57-61
+
+Execution of testing sequence
+
+.. literalinclude:: tutorial_08.py
+    :language: python
+    :caption: tutorial_08.py - snippet
+    :lines: 71-87
+
+produces following output::
+
+    entering state open_group
+    entering state opened
+    registering close event
+    exiting state opened
+    exiting state open_group
+    transitioning because of event Event(name='close', payload=10)
+    entering state close_group
+    entering state closing
+    waiting for 0.09 seconds
+    exiting state closing
+    transitioning because of event Event(name='timeout', payload=None)
+    entering state closed
+    registering open event
+    exiting state closed
+    exiting state close_group
+    transitioning because of event Event(name='open', payload=20)
+    entering state open_group
+    entering state opening
+    waiting for 0.08 seconds
+    exiting state opening
+    transitioning because of event Event(name='timeout', payload=None)
+    entering state opened
+    registering close event
+    exiting state opened
+    exiting state open_group
+    transitioning because of event Event(name='close', payload=30)
+    entering state close_group
+    entering state closing
+    waiting for 0.07 seconds
+    exiting state closing
+    transitioning because of event Event(name='timeout', payload=None)
+    entering state closed
+    registering open event
 
 
-Final states
-''''''''''''
+Final state
+'''''''''''
 
-.. todo::
+In our previous example, it is obvious that once counter reaches maximum value,
+door are no longer operational. Instead of limiting future operations,
+we could allow one more time for user to try and operate the door. However,
+since the door have reach their operational limit, it is expected that
+next operation will permanently disable the door instance.
 
-    ...
+For those cases where future changes of statechart states is no longer
+possible, final state can be used. Final state is state as any other with
+one exception, once the statechart enters this state, `hat.stc.Statechart.run`
+will cease its execution.
 
+.. drawio-image:: tutorial.drawio
+   :page-index: 5
+   :align: center
 
-Conclusion
-''''''''''
+.. literalinclude:: door_06.scxml
+    :language: xml
+    :caption: door_06.scxml
 
-.. todo::
+Modification to implementation:
 
-    ...
+.. literalinclude:: tutorial_09.py
+    :language: python
+    :caption: tutorial_09.py - snippet
+    :lines: 24-27,68-69
+
+Execution of testing sequence
+
+.. literalinclude:: tutorial_09.py
+    :language: python
+    :caption: tutorial_09.py - snippet
+    :lines: 79-97
+
+produces following output::
+
+    entering state open_group
+    entering state opened
+    registering close event
+    exiting state opened
+    exiting state open_group
+    transitioning because of event Event(name='close', payload=10)
+    entering state close_group
+    entering state closing
+    waiting for 0.09 seconds
+    exiting state closing
+    transitioning because of event Event(name='timeout', payload=None)
+    entering state closed
+    registering open event
+    exiting state closed
+    exiting state close_group
+    transitioning because of event Event(name='open', payload=20)
+    entering state open_group
+    entering state opening
+    waiting for 0.08 seconds
+    exiting state opening
+    transitioning because of event Event(name='timeout', payload=None)
+    entering state opened
+    registering close event
+    exiting state opened
+    exiting state open_group
+    transitioning because of event Event(name='close', payload=30)
+    entering state close_group
+    entering state closing
+    waiting for 0.07 seconds
+    exiting state closing
+    transitioning because of event Event(name='timeout', payload=None)
+    entering state closed
+    is finished: False
+    registering open event
+    exiting state closed
+    exiting state close_group
+    transitioning because of event Event(name='open', payload=40)
+    entering state final
+    is finished: True
 
 
 API

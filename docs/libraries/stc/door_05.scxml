@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" initial="open_group" version="1.0">
+    <state id="open_group" initial="opened">
+        <onentry>logEnter</onentry>
+        <onexit>logExit</onexit>
+        <transition event="close" target="close_group" cond="isOperational">
+            logTransition
+            incCounter
+        </transition>
+        <transition event="open">logInvalid</transition>
+        <state id="opened">
+            <onentry>logEnter</onentry>
+            <onexit>logExit</onexit>
+        </state>
+        <state id="opening">
+            <onentry>logEnter</onentry>
+            <onexit>logExit</onexit>
+            <onentry>startTimer</onentry>
+            <onexit>stopTimer</onexit>
+            <transition event="timeout" target="opened">logTransition</transition>
+        </state>
+    </state>
+    <state id="close_group" initial="closing">
+        <onentry>logEnter</onentry>
+        <onexit>logExit</onexit>
+        <transition event="open" target="opening" cond="isOperational">
+            logTransition
+            incCounter
+        </transition>
+        <transition event="close">logInvalid</transition>
+        <state id="closing">
+            <onentry>logEnter</onentry>
+            <onexit>logExit</onexit>
+            <onentry>startTimer</onentry>
+            <onexit>stopTimer</onexit>
+            <transition event="timeout" target="closed">logTransition</transition>
+        </state>
+        <state id="closed">
+            <onentry>logEnter</onentry>
+            <onexit>logExit</onexit>
+        </state>
+    </state>
+</scxml>
