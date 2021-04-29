@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+    <state id="opened">
+        <onentry>logEnter</onentry>
+        <onexit>logExit</onexit>
+        <transition event="close" target="closing">logTransition</transition>
+    </state>
+    <state id="closing">
+        <onentry>logEnter</onentry>
+        <onexit>logExit</onexit>
+        <onentry>startTimer</onentry>
+        <transition event="timeout" target="closed">logTransition</transition>
+    </state>
+    <state id="closed">
+        <onentry>logEnter</onentry>
+        <onexit>logExit</onexit>
+        <transition event="open" target="opening">logTransition</transition>
+    </state>
+    <state id="opening">
+        <onentry>logEnter</onentry>
+        <onexit>logExit</onexit>
+        <onentry>startTimer</onentry>
+        <transition event="timeout" target="opened">logTransition</transition>
+    </state>
+</scxml>

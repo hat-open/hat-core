@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" initial="opened" version="1.0">
+    <state id="opened">
+        <onentry>printState</onentry>
+        <transition event="close" target="closed"/>
+    </state>
+    <state id="closed">
+        <onentry>printState</onentry>
+        <transition event="open" target="opened"/>
+    </state>
+</scxml>
