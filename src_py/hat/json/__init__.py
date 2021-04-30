@@ -13,17 +13,27 @@ import jsonpatch
 import jsonschema.validators
 import yaml
 
+from hat import util
+
 
 Array: typing.Type = typing.List['Data']
+"""JSON Array"""
+util.register_type_alias('Array')
+
 Object: typing.Type = typing.Dict[str, 'Data']
+"""JSON Object"""
+util.register_type_alias('Object')
+
 Data: typing.Type = typing.Union[None, bool, int, float, str, Array, Object]
 """JSON data type identifier."""
+util.register_type_alias('Data')
 
 Format = enum.Enum('Format', ['JSON', 'YAML'])
 """Encoding format"""
 
 Path: typing.Type = typing.Union[int, str, typing.List['Path']]
 """Data path"""
+util.register_type_alias('Path')
 
 
 def equals(a: Data,

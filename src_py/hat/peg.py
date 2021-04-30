@@ -99,6 +99,7 @@ class Node(typing.NamedTuple):
 
 Action = typing.Callable[[Node, typing.List], typing.Any]
 """Action"""
+util.register_type_alias('Action')
 
 
 def walk_ast(node: Node,
@@ -170,6 +171,8 @@ class Dot(typing.NamedTuple):
 
 Expression = typing.Union[Sequence, Choice, Not, And, OneOrMore, ZeroOrMore,
                           Optional, Identifier, Literal, Class, Dot]
+"""Expression"""
+util.register_type_alias('Expression')
 
 
 class MatchResult(typing.NamedTuple):
@@ -197,9 +200,13 @@ class MatchCallFrame(typing.NamedTuple):
 
 
 MatchCallStack = typing.Iterable[MatchCallFrame]
+"""Match call stack"""
+util.register_type_alias('MatchCallStack')
 
 
 DebugCb = typing.Callable[[MatchResult, MatchCallStack], None]
+"""Debug callback"""
+util.register_type_alias('DebugCb')
 
 
 class Grammar:

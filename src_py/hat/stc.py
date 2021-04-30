@@ -7,31 +7,24 @@ import typing
 import xml.etree.ElementTree
 
 from hat import aio
+from hat import util
 
 
-# HACK use typing.TypeAlias instead
-_EventName = str
-EventName: typing.Type[_EventName] = typing.TypeVar(
-    'EventName', _EventName, _EventName)
+EventName = str
 """Event name"""
+util.register_type_alias('EventName')
 
-# HACK use typing.TypeAlias instead
-_StateName = str
-StateName: typing.Type[_StateName] = typing.TypeVar(
-    'StateName', _StateName, _StateName)
+StateName = str
 """State name"""
+util.register_type_alias('StateName')
 
-# HACK use typing.TypeAlias instead
-_ActionName = str
-ActionName: typing.Type[_ActionName] = typing.TypeVar(
-    'ActionName', _ActionName, _ActionName)
+ActionName = str
 """Action name"""
+util.register_type_alias('ActionName')
 
-# HACK use typing.TypeAlias instead
-_ConditionName = str
-ConditionName: typing.Type[_ConditionName] = typing.TypeVar(
-    'ConditionName', _ConditionName, _ConditionName)
+ConditionName = str
 """Condition name"""
+util.register_type_alias('ConditionName')
 
 
 class Event(typing.NamedTuple):

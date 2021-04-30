@@ -22,6 +22,7 @@ mlog: logging.Logger = logging.getLogger(__name__)
 
 ConnectionCb = typing.Callable[['Connection'], None]
 """Connection callback"""
+util.register_type_alias('ConnectionCb')
 
 
 async def connect(address: str, *,

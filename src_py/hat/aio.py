@@ -13,6 +13,8 @@ import signal
 import sys
 import typing
 
+from hat import util
+
 
 mlog: logging.Logger = logging.getLogger(__name__)
 """Module logger"""
@@ -230,6 +232,7 @@ This coroutine takes a function and its arguments, executes the
 function in executor and returns the result.
 
 """
+util.register_type_alias('Executor')
 
 
 def create_executor(*args: typing.Any,
@@ -602,6 +605,7 @@ class Queue:
 
 ExceptionCb = typing.Callable[[Exception], None]
 """Exception callback"""
+util.register_type_alias('ExceptionCb')
 
 
 class Group:

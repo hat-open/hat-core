@@ -1,11 +1,29 @@
 """Common utility functions"""
 
 import contextlib
+import inspect
 import socket
 import typing
 
 
 T = typing.TypeVar('T')
+
+
+def register_type_alias(name: str):
+    """Register type alias
+
+    This function is temporary hack replacement for typing.TypeAlias.
+
+    It is expected that calling location will have `name` in local namespace
+    with type value. This function will wrap that type inside `typing.TypeVar`
+    and update annotations.
+
+    """
+    frame = inspect.stack()[1][0]
+    f_locals = frame.f_locals
+    t = f_locals[name]
+    f_locals[name] = typing.TypeVar(name, t, t)
+    f_locals.setdefault('__annotations__', {})[name] = typing.Type[t]
 
 
 def first(xs: typing.Iterable[T],
@@ -49,8 +67,9 @@ class RegisterCallbackHandle(typing.NamedTuple):
         self.cancel()
 
 
-ExceptionCb: typing.Type = typing.Callable[[Exception], None]
+ExceptionCb = typing.Callable[[Exception], None]
 """Exception callback"""
+register_type_alias('ExceptionCb')
 
 
 class CallbackRegistry:

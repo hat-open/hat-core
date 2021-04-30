@@ -67,7 +67,7 @@ def task_pyhat_aio():
     return _get_task_build(name='hat-aio',
                            description='Hat async utility library',
                            readme_path=Path('README.hat-aio.rst'),
-                           dependencies=[],
+                           dependencies=['hat-util'],
                            mappings=mappings)
 
 
@@ -86,7 +86,8 @@ def task_pyhat_json():
                            readme_path=Path('README.hat-json.rst'),
                            dependencies=['pyyaml',
                                          'jsonschema',
-                                         'jsonpatch'],
+                                         'jsonpatch',
+                                         'hat-util'],
                            mappings=mappings)
 
 
@@ -100,7 +101,8 @@ def task_pyhat_qt():
                            description='Hat Qt utility library',
                            readme_path=Path('README.hat-qt.rst'),
                            dependencies=['PySide2',
-                                         'hat-aio'],
+                                         'hat-aio',
+                                         'hat-util'],
                            mappings=mappings)
 
 
@@ -128,7 +130,8 @@ def task_pyhat_stc():
     return _get_task_build(name='hat-stc',
                            description='Hat statechart engine',
                            readme_path=Path('README.hat-stc.rst'),
-                           dependencies=['hat-aio'],
+                           dependencies=['hat-aio',
+                                         'hat-util'],
                            mappings=mappings)
 
 

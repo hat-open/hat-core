@@ -13,13 +13,16 @@ import PySide2.QtWebEngineWidgets
 import PySide2.QtWidgets
 
 from hat import aio
+from hat import util
 
 
 QtExecutor = typing.Callable[..., typing.Awaitable[typing.Any]]
 """First argument is Callable called with additional arguments"""
+util.register_type_alias('QtExecutor')
 
 AsyncMain = typing.Callable[..., typing.Awaitable[typing.Any]]
 """First argument is QtExecutor"""
+util.register_type_alias('AsyncMain')
 
 
 def run(async_main: AsyncMain, *args, **kwargs):
