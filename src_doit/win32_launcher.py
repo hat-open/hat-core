@@ -81,7 +81,7 @@ def task_win32_launcher():
                         'help': 'administrator privileges'}]}
 
 
-_admin_manifest = r"""<?xml version="1.0" encoding="utf-8" standalone="yes"?>',
+_admin_manifest = r"""<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1"
           manifestVersion="1.0">
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
