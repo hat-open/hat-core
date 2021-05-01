@@ -67,7 +67,7 @@ The same statechart can be described with following SCXML definition:
 
 .. literalinclude:: door_01.scxml
     :language: xml
-    :caption: door_01.scxml
+    :caption: :download:`door_01.scxml <door_01.scxml>`
 
 `hat.stc` library provides function ``hat.stc.parse_scxml`` which can be used
 for parsing SCXML definitions into state definitions usable by
@@ -95,12 +95,12 @@ create execution environment with new statechart instance:
 
 .. literalinclude:: tutorial_01.py
     :language: python
-    :caption: tutorial_01.py
+    :caption: :download:`tutorial_01.py <tutorial_01.py>`
 
 During instance initialization, together with state definitions, we provide
 action bindings. Action bindings is dictionary which contains all action
 names, used in state definitions, associated with regular functions
-providing action implementation. In out case, definition contains action
+providing action implementation. In our case, definition contains action
 ``printState`` (same action is used as entry action for both `opened` and
 `closed` state) which is associated with ``act_print_state`` function - simple
 function that prints current state of our statechart instance.
@@ -120,7 +120,7 @@ transitions:
 
 .. literalinclude:: tutorial_02.py
     :language: python
-    :caption: tutorial_02.py - snippet
+    :caption: :download:`tutorial_02.py - snippet <tutorial_02.py>`
     :lines: 13-24
 
 By executing this example, following output can be expected::
@@ -140,14 +140,14 @@ functionality as single class:
 
 .. literalinclude:: tutorial_03.py
     :language: python
-    :caption: tutorial_03.py - snippet
+    :caption: :download:`tutorial_03.py - snippet <tutorial_03.py>`
     :lines: 4-25
 
 Now we can instantiate and test our simple door:
 
 .. literalinclude:: tutorial_03.py
     :language: python
-    :caption: tutorial_03.py - snippet
+    :caption: :download:`tutorial_03.py - snippet <tutorial_03.py>`
     :lines: 28-37
 
 This execution produces same result as our previous example::
@@ -171,14 +171,14 @@ This enhancement can be represented with following changes to door methods:
 
 .. literalinclude:: tutorial_04.py
     :language: python
-    :caption: tutorial_04.py - snippet
+    :caption: :download:`tutorial_04.py - snippet <tutorial_04.py>`
     :lines: 16-26
 
 Now our test sequence:
 
 .. literalinclude:: tutorial_04.py
     :language: python
-    :caption: tutorial_04.py - snippet
+    :caption: :download:`tutorial_04.py - snippet <tutorial_04.py>`
     :lines: 30-39
 
 results in::
@@ -204,7 +204,7 @@ opening/closing doors, we can expect same transitions. Therefore:
 
 .. literalinclude:: tutorial_04.py
     :language: python
-    :caption: tutorial_04.py - snippet
+    :caption: :download:`tutorial_04.py - snippet <tutorial_04.py>`
     :lines: 43-48
 
 results in::
@@ -220,7 +220,7 @@ this operations will be ignored. Therefore:
 
 .. literalinclude:: tutorial_04.py
     :language: python
-    :caption: tutorial_04.py - snippet
+    :caption: :download:`tutorial_04.py - snippet <tutorial_04.py>`
     :lines: 52-59
 
 results in::
@@ -249,7 +249,7 @@ proportional to the amount of applied force.
 
 .. literalinclude:: door_02.scxml
     :language: xml
-    :caption: door_02.scxml
+    :caption: :download:`door_02.scxml <door_02.scxml>`
 
 To help us about state transitions, we have added additional logs which
 will inform us when state is entered (``logEnter``), state is exited
@@ -262,14 +262,14 @@ To implement timer behaviour, we will be using asyncio `loop.call_later
 
 .. literalinclude:: tutorial_05.py
     :language: python
-    :caption: tutorial_05.py - snippet
+    :caption: :download:`tutorial_05.py - snippet <tutorial_05.py>`
     :lines: 4-48
 
 Execution our simple testing sequence:
 
 .. literalinclude:: tutorial_05.py
     :language: python
-    :caption: tutorial_05.py - snippet
+    :caption: :download:`tutorial_05.py - snippet <tutorial_05.py>`
     :lines: 51-60
 
 will result in::
@@ -307,7 +307,7 @@ This problem can be tackled by adding additional transitions to
 returning from originating state.
 
 In case of more complex statechart definitions, addition of transitions for
-each possible event to each state can soon become "unmanageable". Alternative
+each possible event to each state can soon become hard to maintain. Alternative
 to this approach is grouping states into hierarchy.
 
 Each hierarchical statechart can be represented by equivalent non-hierarchical
@@ -323,21 +323,21 @@ Hierarchical statechart definition:
 
 .. literalinclude:: door_03.scxml
     :language: xml
-    :caption: door_03.scxml
+    :caption: :download:`door_03.scxml <door_03.scxml>`
 
 Implementation of `Door` class can remain mostly the same with addition
 of `stopTimer` action:
 
 .. literalinclude:: tutorial_06.py
     :language: python
-    :caption: tutorial_06.py - snippet
+    :caption: :download:`tutorial_06.py - snippet <tutorial_06.py>`
     :lines: 38-47
 
 Execution of testing sequence
 
 .. literalinclude:: tutorial_06.py
     :language: python
-    :caption: tutorial_06.py - snippet
+    :caption: :download:`tutorial_06.py - snippet <tutorial_06.py>`
     :lines: 57-67
 
 produces following output::
@@ -370,7 +370,7 @@ Together with regular transitions, `hat.stc` provides support for local
 transitions and internal transitions.
 
 Local transitions can not be used to change state and do not have target state.
-Therefor, only useful part of local transition is possibility to associate
+Therefore, only useful part of local transition is possibility to associate
 action which will be executed once appropriate event occurs without any state
 changes.
 
@@ -383,20 +383,20 @@ inside `open_group` state and `close` events in `close_group` state.
 
 .. literalinclude:: door_04.scxml
     :language: xml
-    :caption: door_04.scxml
+    :caption: :download:`door_04.scxml <door_04.scxml>`
 
 In door implementation, we should add implementation of `logInvalid` action:
 
 .. literalinclude:: tutorial_07.py
     :language: python
-    :caption: tutorial_07.py - snippet
+    :caption: :download:`tutorial_07.py - snippet <tutorial_07.py>`
     :lines: 39-40
 
 Execution of testing sequence
 
 .. literalinclude:: tutorial_07.py
     :language: python
-    :caption: tutorial_07.py - snippet
+    :caption: :download:`tutorial_07.py - snippet <tutorial_07.py>`
     :lines: 61-73
 
 produces following output::
@@ -437,21 +437,21 @@ we can open or close door maximum N times.
 
 .. literalinclude:: door_05.scxml
     :language: xml
-    :caption: door_05.scxml
+    :caption: :download:`door_05.scxml <door_05.scxml>`
 
 Condition `isOperational` and `incCounter` action have to be added to our
 implementation:
 
 .. literalinclude:: tutorial_08.py
     :language: python
-    :caption: tutorial_08.py - snippet
+    :caption: :download:`tutorial_08.py - snippet <tutorial_08.py>`
     :lines: 8-22,57-61
 
 Execution of testing sequence
 
 .. literalinclude:: tutorial_08.py
     :language: python
-    :caption: tutorial_08.py - snippet
+    :caption: :download:`tutorial_08.py - snippet <tutorial_08.py>`
     :lines: 71-87
 
 produces following output::
@@ -511,20 +511,20 @@ will cease its execution.
 
 .. literalinclude:: door_06.scxml
     :language: xml
-    :caption: door_06.scxml
+    :caption: :download:`door_06.scxml <door_06.scxml>`
 
 Modification to implementation:
 
 .. literalinclude:: tutorial_09.py
     :language: python
-    :caption: tutorial_09.py - snippet
+    :caption: :download:`tutorial_09.py - snippet <tutorial_09.py>`
     :lines: 24-27,68-69
 
 Execution of testing sequence
 
 .. literalinclude:: tutorial_09.py
     :language: python
-    :caption: tutorial_09.py - snippet
+    :caption: :download:`tutorial_09.py - snippet <tutorial_09.py>`
     :lines: 79-97
 
 produces following output::
