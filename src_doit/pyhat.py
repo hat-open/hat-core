@@ -147,7 +147,8 @@ def task_pyhat_sbs():
     return _get_task_build(name='hat-sbs',
                            description='Hat simple binary serializer',
                            readme_path=Path('README.hat-sbs.rst'),
-                           dependencies=['hat-json',
+                           dependencies=['hat-util',
+                                         'hat-json',
                                          'hat-peg'],
                            mappings=mappings,
                            platform_specific=True)

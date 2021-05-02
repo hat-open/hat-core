@@ -1,5 +1,7 @@
 import typing
 
+from hat import util
+
 
 class Ref(typing.NamedTuple):
     module: typing.Optional[str]
@@ -47,8 +49,10 @@ Type = typing.Union[Ref,
                     ArrayType,
                     TupleType,
                     UnionType]
+util.register_type_alias('Type')
 
 Data = typing.Union[bool, int, float, str, bytes,
                     typing.List['Data'],
                     typing.Dict[str, 'Data'],
                     typing.Tuple[str, 'Data']]
+util.register_type_alias('Data')

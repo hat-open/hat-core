@@ -1,6 +1,7 @@
 """Abstract Syntax Notation One
 
-Value mapping:
+Value mapping
+-------------
 
     +-----------------------+------------------+
     | ASN.1 type            | Python type      |
@@ -13,7 +14,7 @@ Value mapping:
     +-----------------------+------------------+
     | OctetString           | bytes            |
     +-----------------------+------------------+
-    | Null                  | ``None``         |
+    | Null                  | NoneType         |
     +-----------------------+------------------+
     | ObjectIdentifier      | List[int]        |
     +-----------------------+------------------+
@@ -40,7 +41,7 @@ Value mapping:
     | ABSTRACT-SYNTAX.&Type | Entity           |
     +-----------------------+------------------+
 
-    For Choice, Set and Sequence, `str` represents field name.
+For Choice, Set and Sequence, `str` represents field name.
 
 """
 
