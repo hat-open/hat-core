@@ -1,8 +1,10 @@
-"""Sphinx extension for for automatic include of all files in directory"""
+"""Sphinx extension for automatic include of all files in directory"""
 
-from docutils import nodes
+from pathlib import Path
+import io
+
 import docutils.parsers.rst
-import pathlib
+import docutils.statemachine
 
 
 def setup(app):
@@ -15,17 +17,22 @@ class IncludeDirDirective(docutils.parsers.rst.Directive):
     required_arguments = 1
 
     def run(self):
-        container = nodes.definition_list()
         env = self.state.document.settings.env
-        root = pathlib.Path(env.relfn2path(self.arguments[0])[1])
-        for file_path in root.glob('**/*'):
-            if file_path.is_dir():
+        source = self.state_machine.input_lines.source(
+            self.lineno - self.state_machine.input_offset - 1)
+
+        root_rel = Path(self.arguments[0])
+        root_abs = Path(env.relfn2path(self.arguments[0])[1])
+        text = io.StringIO()
+
+        for path in root_abs.glob('**/*'):
+            if path.is_dir():
                 continue
-            with open(str(file_path), encoding='utf-8', errors='ignore') as f:
-                data = f.read()
-            container += nodes.definition_list_item()
-            container[-1] += nodes.term(
-                text=str(file_path)[len(str(root))+1:])
-            container[-1] += nodes.definition()
-            container[-1][-1] += nodes.literal_block(text=data)
-        return [container]
+            path = path.relative_to(root_abs)
+            text.write(
+                f'.. literalinclude:: {root_rel / path}\n'
+                f'   :caption: :download:`{path} <{root_rel / path}>`\n\n')
+
+        lines = docutils.statemachine.string2lines(text.getvalue())
+        self.state_machine.insert_input(lines, source)
+        return []
