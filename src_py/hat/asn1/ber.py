@@ -679,4 +679,4 @@ def _uint_to_bebytes(x):
 
 
 def _is_data(x):
-    return any(isinstance(x, i) for i in typing.get_args(common.Data))
+    return any(isinstance(x, i) for i in (bytes, bytearray, memoryview))
