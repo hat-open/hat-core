@@ -73,7 +73,6 @@ class State(typing.NamedTuple):
 
 
 Action = typing.Callable[[typing.Optional[Event]], None]
-Action: typing.Type[Action] = Action
 """Action function
 
 Action implementation which can be executed as part of entering/exiting
@@ -82,9 +81,9 @@ which triggered transition. In case of initial actions, run during
 transition to initial state, it is called with ``None``.
 
 """
+util.register_type_alias('Action')
 
 Condition = typing.Callable[[typing.Optional[Event]], bool]
-Condition: typing.Type[Condition] = Condition
 """Condition function
 
 Condition implementation used as transition guard. It is called with single
@@ -92,6 +91,7 @@ argument - `Event` which triggered transition. Return value ``True`` is
 interpreted as satisfied condition.
 
 """
+util.register_type_alias('Condition')
 
 
 class Statechart:

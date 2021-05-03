@@ -38,5 +38,4 @@ Supported communication drivers:
     * `hat.drivers.mms` - Manufacturing Message Specification
     * `hat.drivers.iec104` - IEC 60870-5-104
     * `hat.drivers.modbus` - Modbus
-    * `hat.drivers.hue` - Philips Hue bridge
-    * `hat.drivers.upnp` - Universal Plug and Play
+    * `hat.drivers.ssdp` - Simple Service Discovery Protocol

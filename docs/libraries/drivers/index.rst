@@ -18,5 +18,4 @@ are used for communication with external devices and other systems.
     mms
     iec104
     modbus
-    hue
-    upnp
+    ssdp

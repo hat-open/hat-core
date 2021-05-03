@@ -5,6 +5,8 @@ import enum
 import time
 import typing
 
+from hat import util
+
 
 # TODO: support NormalizedValue without quality (M_ME_ND)
 class Data(typing.NamedTuple):
@@ -92,6 +94,8 @@ DataValue = typing.Union[SingleValue,
                          ScaledValue,
                          FloatingValue,
                          BinaryCounterValue]
+"""Data value"""
+util.register_type_alias('DataValue')
 
 
 CommandValue = typing.Union[SingleValue,
@@ -100,6 +104,8 @@ CommandValue = typing.Union[SingleValue,
                             NormalizedValue,
                             ScaledValue,
                             FloatingValue]
+"""Command value"""
+util.register_type_alias('CommandValue')
 
 
 class Quality(typing.NamedTuple):

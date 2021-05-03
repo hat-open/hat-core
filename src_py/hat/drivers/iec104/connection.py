@@ -6,6 +6,7 @@ import logging
 import typing
 
 from hat import aio
+from hat import util
 from hat.drivers import tcp
 from hat.drivers.iec104 import _iec104
 from hat.drivers.iec104 import common
@@ -14,9 +15,10 @@ from hat.drivers.iec104 import common
 mlog: logging.Logger = logging.getLogger(__name__)
 """Module logger"""
 
-InterrogateCb: typing.Type = aio.AsyncCallable[
-   ['Connection', int],
-   typing.Optional[typing.List[common.Data]]]
+
+InterrogateCb = aio.AsyncCallable[
+    ['Connection', int],
+    typing.Optional[typing.List[common.Data]]]
 """Interrogate callback
 
 This method is called when local peer receives interrogate request.
@@ -24,6 +26,8 @@ Called with asdu address, returns list of data. If ``None`` is returned,
 negative response is sent.
 
 """
+util.register_type_alias('InterrogateCb')
+
 
 CounterInterrogateCb = aio.AsyncCallable[
    ['Connection', int, common.FreezeCode],
@@ -35,6 +39,8 @@ Called with asdu address and freeze code, returns list of data. If ``None``
 is returned, negative response is sent.
 
 """
+util.register_type_alias('CounterInterrogateCb')
+
 
 CommandCb = aio.AsyncCallable[
     ['Connection', typing.List[common.Command]],
@@ -45,9 +51,12 @@ This method is called when local peer receives command request.
 Called with list of commands, returns if commands are successful.
 
 """
+util.register_type_alias('CommandCb')
+
 
 ConnectionCb = aio.AsyncCallable[['Connection'], None]
 """Connection callback"""
+util.register_type_alias('ConnectionCb')
 
 
 class Address(typing.NamedTuple):

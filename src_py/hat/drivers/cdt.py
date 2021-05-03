@@ -1,3 +1,5 @@
+"""WIP Chrome DevTools Protocol"""
+
 import asyncio
 import logging
 import typing
