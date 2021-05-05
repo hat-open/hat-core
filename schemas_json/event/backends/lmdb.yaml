@@ -54,10 +54,7 @@ properties:
                 subscriptions:
                     "$ref": "hat://event/backends/lmdb.yaml#/definitions/event_types"
                 limit:
-                    type: number
-                    description: |
-                        limit for the persisted history based on keys expressed
-                        as duration in seconds
+                    "$ref": "hat://event/backends/lmdb.yaml#/definitions/limit"
 definitions:
     event_types:
         type: array
@@ -65,6 +62,27 @@ definitions:
             type: array
             items:
                 type: string
+    limit:
+        type: object
+        properties:
+            min_entries:
+                type: number
+                description: |
+                    number of entries kept despite of other limits
+            max_entries:
+                type: number
+                description: |
+                    maximum number of entries
+            duration:
+                type: number
+                description: |
+                    limit for the persisted history based on keys
+                    expressed as duration in seconds
+            size:
+                type: number
+                description: |
+                    memory consumption size in bytes that triggers
+                    additional cleanup based on average entry size
     condition:
         oneOf:
             - "$ref": "hat://event/backends/lmdb.yaml#/definitions/conditions/all"

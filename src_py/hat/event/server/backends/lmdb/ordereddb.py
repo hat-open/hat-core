@@ -6,6 +6,7 @@ import typing
 import lmdb
 
 from hat import aio
+from hat import json
 from hat.event.server.backends.lmdb import common
 from hat.event.server.backends.lmdb import encoder
 from hat.event.server.backends.lmdb.conditions import Conditions
@@ -17,7 +18,7 @@ async def create(executor: aio.Executor,
                  subscription: common.Subscription,
                  conditions: Conditions,
                  order_by: common.OrderBy,
-                 limit: typing.Optional[float]
+                 limit: typing.Optional[json.Data]
                  ) -> 'OrderedDb':
     db = OrderedDb()
     db._executor = executor
@@ -241,6 +242,8 @@ class OrderedDb:
 
     def _ext_flush(self, changes, parent, now):
         with self._env.begin(db=self._db, parent=parent, write=True) as txn:
+            stat = txn.stat(self._db)
+
             for key, value in changes:
                 # TODO: maybe call put with append=True
                 txn.put(encoder.encode_timestamp_id(key),
@@ -249,12 +252,42 @@ class OrderedDb:
             if self._limit is None:
                 return
 
-            stop_key = encoder.encode_timestamp_id((now.add(-self._limit), 0))
-
+            min_entries = self._limit.get('min_entries', 0)
+            entries = stat['entries'] + len(changes)
             cursor = txn.cursor()
             more = cursor.first()
-            while more and bytes(cursor.key()) < stop_key:
-                more = cursor.delete()
+
+            if 'max_entries' in self._limit:
+                max_entries = self._limit['max_entries']
+
+                while (more and
+                        entries > min_entries and
+                        entries > max_entries):
+                    more = cursor.delete()
+                    entries -= 1
+
+            if 'duration' in self._limit:
+                duration = self._limit['duration']
+                stop_key = encoder.encode_timestamp_id((now.add(-duration), 0))
+
+                while (more and
+                        entries > min_entries and
+                        bytes(cursor.key()) < stop_key):
+                    more = cursor.delete()
+                    entries -= 1
+
+            if 'size' in self._limit and stat['entries']:
+                total_size = stat['psize'] * (stat['branch_pages'] +
+                                              stat['leaf_pages'] +
+                                              stat['overflow_pages'])
+                entry_size = total_size / stat['entries']
+                max_entries = int(self._limit['size'] / entry_size)
+
+                while (more and
+                        entries > min_entries and
+                        entries > max_entries):
+                    more = cursor.delete()
+                    entries -= 1
 
 
 def _filter_events(events, subscription, event_ids, t_from, t_to,

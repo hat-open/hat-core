@@ -91,3 +91,36 @@ writing all memory caches to disk also include cleanup operation which enabled
 deletion of oldest entries in time series storages. Each time series storage
 can have its own configuration defined limit which specifies event
 persistent period based on event timestamp or event source timestamp.
+
+
+Limiting time series size
+-------------------------
+
+Each time series storage can optionally limit number of stored events. This
+functionality is associated with disk persisting procedure and is part
+of same database transaction. Supported limits include:
+
+    * `min_entries`
+
+        Minimum number of events preserved in database despite of other
+        limits. This property can be used as "low water mark" - number
+        of entries always available.
+
+    * `max_entries`
+
+        Maximum number of event preserver in database. This property can be
+        used as "high water mark" - number of entries will never exceed this
+        number.
+
+    * `duration`
+
+        Time in seconds representing maximum duration between current time
+        and time used as time series key. All entries which exceed this
+        duration will be removed.
+
+    * `size`
+
+        Size in bytes allocated for associated time series. Once time series
+        exceeds this storage size, some of the oldest entries are removed.
+        Number of removed entries is calculated based on average entry size
+        and limiting storage size.

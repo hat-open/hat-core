@@ -432,11 +432,65 @@ async def test_query_unique_type(executor, env, flush, query, create_event,
 
 
 @pytest.mark.parametrize('order_by', common.OrderBy)
-async def test_limit(executor, env, flush, query, create_event, order_by):
+async def test_limit_max_entries(executor, env, flush, query, create_event,
+                                 order_by):
     name = 'name'
     subscription = common.Subscription([('*',)])
     conditions = hat.event.server.backends.lmdb.conditions.Conditions([])
-    limit = 1
+    limit = {'max_entries': 3}
+    db = await hat.event.server.backends.lmdb.ordereddb.create(
+        executor=executor,
+        env=env,
+        name=name,
+        subscription=subscription,
+        conditions=conditions,
+        order_by=order_by,
+        limit=limit)
+
+    for i in range(limit['max_entries'] * 2):
+        db.add(create_event(('a',), True))
+        await flush(db)
+
+        expected_len = (i + 1 if i < limit['max_entries']
+                        else limit['max_entries'])
+        result = await query(db)
+        assert expected_len == len(result)
+
+
+@pytest.mark.parametrize('order_by', common.OrderBy)
+async def test_limit_min_entries(executor, env, flush, query, create_event,
+                                 order_by):
+    name = 'name'
+    subscription = common.Subscription([('*',)])
+    conditions = hat.event.server.backends.lmdb.conditions.Conditions([])
+    limit = {'min_entries': 5,
+             'max_entries': 3}
+    db = await hat.event.server.backends.lmdb.ordereddb.create(
+        executor=executor,
+        env=env,
+        name=name,
+        subscription=subscription,
+        conditions=conditions,
+        order_by=order_by,
+        limit=limit)
+
+    for i in range(limit['min_entries'] * 2):
+        db.add(create_event(('a',), True))
+        await flush(db)
+
+        expected_len = (i + 1 if i < limit['min_entries']
+                        else limit['min_entries'])
+        result = await query(db)
+        assert expected_len == len(result)
+
+
+@pytest.mark.parametrize('order_by', common.OrderBy)
+async def test_limit_duration(executor, env, flush, query, create_event,
+                              order_by):
+    name = 'name'
+    subscription = common.Subscription([('*',)])
+    conditions = hat.event.server.backends.lmdb.conditions.Conditions([])
+    limit = {'duration': 1}
     db = await hat.event.server.backends.lmdb.ordereddb.create(
         executor=executor,
         env=env,
@@ -447,8 +501,8 @@ async def test_limit(executor, env, flush, query, create_event, order_by):
         limit=limit)
 
     t1 = common.now()
-    t2 = t1._replace(s=t1.s + 2 * limit)
-    t3 = t2._replace(s=t2.s + 2 * limit)
+    t2 = t1._replace(s=t1.s + 2 * limit['duration'])
+    t3 = t2._replace(s=t2.s + 2 * limit['duration'])
 
     event1 = create_event(('a',), True)._replace(timestamp=t1,
                                                  source_timestamp=t1)
@@ -470,3 +524,9 @@ async def test_limit(executor, env, flush, query, create_event, order_by):
 
     result = await query(db)
     assert result == []
+
+
+@pytest.mark.parametrize('order_by', common.OrderBy)
+async def test_limit_size(executor, env, flush, query, create_event, order_by):
+    # TODO
+    pass
