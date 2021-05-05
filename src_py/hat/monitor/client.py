@@ -30,7 +30,7 @@ connection to monitor server is closed, component is closed.
 
 Example of high-level interface usage::
 
-    async def monitor_async_run(f):
+    async def monitor_async_run(_, f):
         await asyncio.sleep(10)
         f.set_result(13)
 
