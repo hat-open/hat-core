@@ -21,7 +21,7 @@ class Door:
         print('registering open event')
         self._stc.register(hat.stc.Event('open', force))
 
-    def _act_print_state(self, evt):
+    def _act_print_state(self, inst, evt):
         force = evt.payload if evt else None
         print(f'force {force} caused transition to {self._stc.state}')
 

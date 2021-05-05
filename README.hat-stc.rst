@@ -59,10 +59,10 @@ visualization::
         exits: typing.List[ActionName] = []
         final: bool = False
 
-    Action = typing.Callable[[typing.Optional[Event]], None]
+    Action = typing.Callable[['Statechart', typing.Optional[Event]], None]
     """Action function"""
 
-    Condition = typing.Callable[[typing.Optional[Event]], bool]
+    Condition = typing.Callable[['Statechart', typing.Optional[Event]], bool]
     """Condition function"""
 
     class Statechart:

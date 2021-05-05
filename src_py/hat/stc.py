@@ -72,22 +72,22 @@ class State(typing.NamedTuple):
     """Is state final."""
 
 
-Action = typing.Callable[[typing.Optional[Event]], None]
+Action = typing.Callable[['Statechart', typing.Optional[Event]], None]
 """Action function
 
 Action implementation which can be executed as part of entering/exiting
-state or transition execution. It is called with single argument - `Event`
-which triggered transition. In case of initial actions, run during
+state or transition execution. It is called with statechart instance and
+`Event` which triggered transition. In case of initial actions, run during
 transition to initial state, it is called with ``None``.
 
 """
 util.register_type_alias('Action')
 
-Condition = typing.Callable[[typing.Optional[Event]], bool]
+Condition = typing.Callable[['Statechart', typing.Optional[Event]], bool]
 """Condition function
 
-Condition implementation used as transition guard. It is called with single
-argument - `Event` which triggered transition. Return value ``True`` is
+Condition implementation used as transition guard. It is called with statechart
+instance and `Event` which triggered transition. Return value ``True`` is
 interpreted as satisfied condition.
 
 """
@@ -203,7 +203,7 @@ class Statechart:
             for transition in self._states[state].transitions:
                 if transition.event != event.name:
                     continue
-                if not all(self._conditions[condition](event)
+                if not all(self._conditions[condition](self, event)
                            for condition in transition.conditions):
                     continue
                 return state, transition
@@ -230,7 +230,7 @@ class Statechart:
     def _exec_actions(self, names, event):
         for name in names:
             action = self._actions[name]
-            action(event)
+            action(self, event)
 
 
 def parse_scxml(scxml: typing.Union[typing.TextIO, pathlib.Path]

@@ -27,19 +27,19 @@ class Door:
         print('registering open event')
         self._stc.register(hat.stc.Event('open', force))
 
-    def _act_log_enter(self, evt):
+    def _act_log_enter(self, inst, evt):
         print(f'entering state {self._stc.state}')
 
-    def _act_log_exit(self, evt):
+    def _act_log_exit(self, inst, evt):
         print(f'exiting state {self._stc.state}')
 
-    def _act_log_transition(self, evt):
+    def _act_log_transition(self, inst, evt):
         print(f'transitioning because of event {evt}')
 
-    def _act_log_invalid(self, evt):
+    def _act_log_invalid(self, inst, evt):
         print(f'invalid operation {evt.name} in state {self._stc.state}')
 
-    def _act_start_timer(self, evt):
+    def _act_start_timer(self, inst, evt):
         force = evt.payload
         delay = force_to_delay(force)
         print(f'waiting for {delay} seconds')
@@ -47,7 +47,7 @@ class Door:
         self._timer = loop.call_later(delay, self._stc.register,
                                       hat.stc.Event('timeout'))
 
-    def _act_stop_timer(self, evt):
+    def _act_stop_timer(self, inst, evt):
         self._timer.cancel()
 
 def force_to_delay(force):

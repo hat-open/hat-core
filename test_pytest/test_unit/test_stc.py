@@ -103,9 +103,9 @@ async def test_single_state():
                             stc.Transition('e2', 's1', ['transit'], [], True)],
                         entries=['enter'],
                         exits=['exit'])]
-    actions = {'enter': lambda e: queue.put_nowait(('enter', e)),
-               'exit': lambda e: queue.put_nowait(('exit', e)),
-               'transit': lambda e: queue.put_nowait(('transit', e))}
+    actions = {'enter': lambda _, e: queue.put_nowait(('enter', e)),
+               'exit': lambda _, e: queue.put_nowait(('exit', e)),
+               'transit': lambda _, e: queue.put_nowait(('transit', e))}
     machine = stc.Statechart(states, actions)
     assert machine.state is None
 
@@ -174,16 +174,16 @@ async def test_nested_states():
         transitions=[stc.Transition('e2', 's2', ['transit2'])],
         entries=['enter_s1'],
         exits=['exit_s1'])]
-    actions = {'enter_s1': lambda e: queue.put_nowait(('enter_s1', e)),
-               'exit_s1': lambda e: queue.put_nowait(('exit_s1', e)),
-               'enter_s2': lambda e: queue.put_nowait(('enter_s2', e)),
-               'exit_s2': lambda e: queue.put_nowait(('exit_s2', e)),
-               'enter_s3': lambda e: queue.put_nowait(('enter_s3', e)),
-               'exit_s3': lambda e: queue.put_nowait(('exit_s3', e)),
-               'enter_s4': lambda e: queue.put_nowait(('enter_s4', e)),
-               'exit_s4': lambda e: queue.put_nowait(('exit_s4', e)),
-               'transit1': lambda e: queue.put_nowait(('transit1', e)),
-               'transit2': lambda e: queue.put_nowait(('transit2', e))}
+    actions = {'enter_s1': lambda _, e: queue.put_nowait(('enter_s1', e)),
+               'exit_s1': lambda _, e: queue.put_nowait(('exit_s1', e)),
+               'enter_s2': lambda _, e: queue.put_nowait(('enter_s2', e)),
+               'exit_s2': lambda _, e: queue.put_nowait(('exit_s2', e)),
+               'enter_s3': lambda _, e: queue.put_nowait(('enter_s3', e)),
+               'exit_s3': lambda _, e: queue.put_nowait(('exit_s3', e)),
+               'enter_s4': lambda _, e: queue.put_nowait(('enter_s4', e)),
+               'exit_s4': lambda _, e: queue.put_nowait(('exit_s4', e)),
+               'transit1': lambda _, e: queue.put_nowait(('transit1', e)),
+               'transit2': lambda _, e: queue.put_nowait(('transit2', e))}
     machine = stc.Statechart(states, actions)
     assert machine.state is None
 
@@ -242,10 +242,10 @@ async def test_conditions():
         transitions=[
             stc.Transition('e', 's1', conditions=['c1'], actions=['a1']),
             stc.Transition('e', 's1', conditions=['c2'], actions=['a2'])])]
-    conditions = {'c1': lambda e: e.payload == 1,
-                  'c2': lambda e: e.payload == 2}
-    actions = {'a1': lambda e: queue.put_nowait('a1'),
-               'a2': lambda e: queue.put_nowait('a2')}
+    conditions = {'c1': lambda _, e: e.payload == 1,
+                  'c2': lambda _, e: e.payload == 2}
+    actions = {'a1': lambda _, e: queue.put_nowait('a1'),
+               'a2': lambda _, e: queue.put_nowait('a2')}
 
     machine = stc.Statechart(states, actions, conditions)
     f = asyncio.ensure_future(machine.run())
@@ -288,9 +288,9 @@ async def test_local_transitions():
         transitions=[
             stc.Transition('e1', 's1', actions=['a1']),
             stc.Transition('e2', None, actions=['a2'])])]
-    actions = {'enter': lambda e: queue.put_nowait('enter'),
-               'a1': lambda e: queue.put_nowait('a1'),
-               'a2': lambda e: queue.put_nowait('a2')}
+    actions = {'enter': lambda _, e: queue.put_nowait('enter'),
+               'a1': lambda _, e: queue.put_nowait('a1'),
+               'a2': lambda _, e: queue.put_nowait('a2')}
 
     machine = stc.Statechart(states, actions)
     f = asyncio.ensure_future(machine.run())

@@ -24,16 +24,16 @@ class Door:
         print('registering open event')
         self._stc.register(hat.stc.Event('open', force))
 
-    def _act_log_enter(self, evt):
+    def _act_log_enter(self, inst, evt):
         print(f'entering state {self._stc.state}')
 
-    def _act_log_exit(self, evt):
+    def _act_log_exit(self, inst, evt):
         print(f'exiting state {self._stc.state}')
 
-    def _act_log_transition(self, evt):
+    def _act_log_transition(self, inst, evt):
         print(f'transitioning because of event {evt}')
 
-    def _act_start_timer(self, evt):
+    def _act_start_timer(self, inst, evt):
         force = evt.payload
         delay = force_to_delay(force)
         print(f'waiting for {delay} seconds')

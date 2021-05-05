@@ -21,7 +21,7 @@ class Door:
     def finish(self):
         self._run_task.cancel()
 
-    def _act_print_state(self, evt):
+    def _act_print_state(self, inst, evt):
         print('current state:', self._stc.state)
 
 async def main():
