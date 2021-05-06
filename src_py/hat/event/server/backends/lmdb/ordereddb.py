@@ -249,7 +249,7 @@ class OrderedDb:
                 txn.put(encoder.encode_timestamp_id(key),
                         encoder.encode_event(value))
 
-            if self._limit is None:
+            if not self._limit:
                 return
 
             min_entries = self._limit.get('min_entries', 0)
