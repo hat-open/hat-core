@@ -3,12 +3,26 @@
 from pathlib import Path
 import ctypes
 import sys
+import typing
+
+from hat import util
+
+
+Data = typing.Union[None, bool, int, float, str,
+                    typing.List['Data'], typing.Dict[str, 'Data'],
+                    typing.Callable]
+"""Supported data types"""
+util.register_type_alias('Data')
+
+
+class EvalError(Exception):
+    """Evaluation error"""
 
 
 class Interpreter:
     """JavaScript interpreter
 
-    High-level python wrapper to duktape JavaScript interpreter.
+    High-level python wrapper for duktape JavaScript interpreter.
 
     Current implementation caches all function objects for preventing
     garbage collection.
@@ -31,33 +45,23 @@ class Interpreter:
         _lib.duk_destroy_heap(self._ctx)
         self._fns = []
 
-    def eval(self, code):
-        """Evaluate JS code
-
-        Args:
-            code (str): JS code
-
-        Returns:
-            Any
-
-        """
+    def eval(self,
+             code: str,
+             with_result: bool = True
+             ) -> Data:
+        """Evaluate JS code and optionally return last expression"""
         top = _lib.duk_get_top(self._ctx)
         try:
-            _lib.duk_eval_string(self._ctx, code.encode('utf-8'))
-            return self._peek(-1)
+            if _lib.duk_peval_string(self._ctx, code.encode('utf-8')):
+                stacktrace_bytes = _lib.duk_safe_to_stacktrace(self._ctx, -1)
+                raise EvalError(stacktrace_bytes.decode('utf-8'))
+            if with_result:
+                return self._peek(-1)
         finally:
             _lib.duk_set_top(self._ctx, top)
 
-    def get(self, name):
-        """Get global value
-
-        Args:
-            name (str): global name
-
-        Returns:
-            Any
-
-        """
+    def get(self, name: str) -> Data:
+        """Get global value"""
         top = _lib.duk_get_top(self._ctx)
         try:
             key = name.encode('utf-8')
@@ -66,14 +70,8 @@ class Interpreter:
         finally:
             _lib.duk_set_top(self._ctx, top)
 
-    def set(self, name, value):
-        """Set global value
-
-        Args:
-            name (str): global name
-            value (Any): value
-
-        """
+    def set(self, name: str, value: Data):
+        """Set global value"""
         top = _lib.duk_get_top(self._ctx)
         try:
             self._push(value)
@@ -325,6 +323,8 @@ class _Lib:
             (duk_bool_t, 'duk_put_prop_string', [duk_context_p,
                                                  duk_idx_t,
                                                  ctypes.c_char_p]),
+            (ctypes.c_char_p, 'duk_safe_to_stacktrace', [duk_context_p,
+                                                         duk_idx_t]),
             (None, 'duk_set_top', [duk_context_p,
                                    duk_idx_t])
         ]
@@ -338,6 +338,7 @@ class _Lib:
     def _init_constants(self, lib):
         DUK_ERR_ERROR = 1
         DUK_COMPILE_EVAL = (1 << 3)
+        DUK_COMPILE_SAFE = (1 << 7)
         DUK_COMPILE_NOSOURCE = (1 << 9)
         DUK_COMPILE_STRLEN = (1 << 10)
         DUK_COMPILE_NOFILENAME = (1 << 11)
@@ -349,9 +350,9 @@ class _Lib:
         self.DUK_VARARGS = -1
         self.DUK_RET_ERROR = - DUK_ERR_ERROR
 
-        self.duk_eval_string = lambda ctx, src: lib.duk_eval_raw(
+        self.duk_peval_string = lambda ctx, src: lib.duk_eval_raw(
             ctx, src, 0,
-            0 | DUK_COMPILE_EVAL | DUK_COMPILE_NOSOURCE |
+            0 | DUK_COMPILE_EVAL | DUK_COMPILE_SAFE | DUK_COMPILE_NOSOURCE |
             DUK_COMPILE_STRLEN | DUK_COMPILE_NOFILENAME)
 
         self.duk_is_null_or_undefined = lambda ctx, idx: bool(

@@ -9,6 +9,12 @@ def test_eval():
     assert result == 1 + 2
 
 
+def test_eval_without_result():
+    inter = duktape.Interpreter()
+    result = inter.eval("1 + 2", False)
+    assert result is None
+
+
 @pytest.mark.parametrize("val", [
     None,
     0, 1, -1, 12345, -12345,
@@ -38,6 +44,12 @@ def test_invalid_set_value(val):
         inter.set('val', val)
 
 
+def test_invalid_get_value():
+    inter = duktape.Interpreter()
+    result = inter.get('xyz')
+    assert result is None
+
+
 def test_set_function():
     inter = duktape.Interpreter()
     inter.set('f', lambda x: x)
@@ -52,9 +64,20 @@ def test_call_function():
     assert inter.eval('f(1, 2)') == [1, 2]
 
 
-@pytest.mark.skip("duktape fatal error closes process")
-def test_invalid_call_function():
+def test_invalid_call_native_function():
     inter = duktape.Interpreter()
     inter.set('f', lambda x, y: [x, y])
 
-    assert inter.eval('f(1)') == [1, None]
+    with pytest.raises(duktape.EvalError):
+        inter.eval('f(1)')
+
+
+def test_invalid_call_js_function():
+    inter = duktape.Interpreter()
+    result = inter.eval(r"""
+        function f(x, y) {
+            return [x, y];
+        }
+        f(1);
+    """)
+    assert result == [1, None]
