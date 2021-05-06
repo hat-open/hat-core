@@ -4,9 +4,13 @@ import itertools
 import struct
 
 from hat.drivers.modbus import common
+from hat.drivers.modbus import transport
 
 
-async def read_adu(modbus_type, direction, reader):
+async def read_adu(modbus_type: common.ModbusType,
+                   direction: common.Direction,
+                   reader: transport.Reader
+                   ) -> common.Adu:
     if modbus_type == common.ModbusType.TCP:
         return await _read_adu_tcp(direction, reader)
 
@@ -19,7 +23,7 @@ async def read_adu(modbus_type, direction, reader):
     raise ValueError("unsupported modbus type")
 
 
-def encode_adu(adu):
+def encode_adu(adu: common.Adu) -> transport.Data:
     if isinstance(adu, common.TcpAdu):
         return _encode_adu_tcp(adu)
 
@@ -314,7 +318,7 @@ async def _read_adu_tcp(direction, reader):
     if identifier:
         raise Exception('Invalid protocol identifier')
     data = await reader.read(length - 1)
-    memory_reader = common.MemoryReader(data)
+    memory_reader = transport.MemoryReader(data)
     pdu = await _read_pdu(direction, memory_reader)
     return common.TcpAdu(transaction_id=transaction_id,
                          device_id=device_id,
@@ -322,7 +326,7 @@ async def _read_adu_tcp(direction, reader):
 
 
 async def _read_adu_rtu(direction, reader):
-    caching_reader = common.CachingReader(reader)
+    caching_reader = transport.CachingReader(reader)
     device_id = (await caching_reader.read(1))[0]
     pdu = await _read_pdu(direction, caching_reader)
     crc = _calculate_crc(caching_reader.cache)
@@ -341,8 +345,8 @@ async def _read_adu_ascii(direction, reader):
         if temp == b'\r\n':
             break
         data.append(int(temp, 16))
-    memory_reader = common.MemoryReader(data)
-    caching_reader = common.CachingReader(memory_reader)
+    memory_reader = transport.MemoryReader(data)
+    caching_reader = transport.CachingReader(memory_reader)
     device_id = (await caching_reader.read(1))[0]
     pdu = await _read_pdu(direction, caching_reader)
     lrc = _calculate_lrc(caching_reader.cache)

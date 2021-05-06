@@ -49,8 +49,6 @@ async def listen(connection_cb: ConnectionCb,
     If `bind_connections` is ``True``, closing server will close all open
     incoming connections.
 
-
-
     Additional arguments are passed directly to `asyncio.start_server`.
 
     """

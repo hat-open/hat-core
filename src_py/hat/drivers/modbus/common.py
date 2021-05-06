@@ -1,7 +1,6 @@
 """Modbus common data structures"""
 
 import abc
-import contextlib
 import enum
 import typing
 
@@ -117,80 +116,3 @@ class AsciiAdu(typing.NamedTuple):
 
 
 Adu = typing.Union[TcpAdu, RtuAdu, AsciiAdu]
-
-
-class TcpWriter:
-
-    def __init__(self, writer):
-        self._writer = writer
-
-    async def write(self, data):
-        self._writer.write(data)
-        await self._writer.drain()
-
-    async def async_close(self):
-        with contextlib.suppress(Exception):
-            self._writer.close()
-        with contextlib.suppress(ConnectionError):
-            await self._writer.wait_closed()
-
-
-class SerialWriter:
-
-    def __init__(self, conn):
-        self._conn = conn
-
-    async def write(self, data):
-        await self._conn.write(data)
-
-    async def async_close(self):
-        await self._conn.async_close()
-
-
-class TcpReader:
-
-    def __init__(self, reader):
-        self._reader = reader
-
-    async def read(self, size):
-        return await self._reader.readexactly(size)
-
-
-class SerialReader:
-
-    def __init__(self, conn):
-        self._conn = conn
-
-    async def read(self, size):
-        data = await self._conn.read(size)
-        if len(data) < size:
-            raise EOFError()
-        return data
-
-
-class MemoryReader:
-
-    def __init__(self, data):
-        self._data = memoryview(data)
-
-    async def read(self, size):
-        if len(self._data) < size:
-            raise EOFError()
-        data, self._data = self._data[:size], self._data[size:]
-        return data
-
-
-class CachingReader:
-
-    def __init__(self, reader):
-        self._reader = reader
-        self._cache = bytearray()
-
-    @property
-    def cache(self):
-        return self._cache
-
-    async def read(self, size):
-        data = await self._reader.read(size)
-        self._cache.extend(data)
-        return data

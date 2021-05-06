@@ -1,52 +1,93 @@
 """Modbus slave"""
 
 import asyncio
-import contextlib
 import logging
 import typing
 
 from hat import aio
+from hat import util
 from hat.drivers import serial
+from hat.drivers import tcp
 from hat.drivers.modbus import common
 from hat.drivers.modbus import encoder
+from hat.drivers.modbus import transport
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
 SlaveCb = aio.AsyncCallable[['Slave'], None]
+"""Slave callback
 
-ReadCb = aio.AsyncCallable[['Slave',  # slave
-                            int,  # device_id
-                            common.DataType,  # data_type
-                            int,  # start_address
-                            typing.Optional[int]  # quantity
+Args:
+    slave: slave instance
+
+"""
+util.register_type_alias('SlaveCb')
+
+
+ReadCb = aio.AsyncCallable[['Slave',
+                            int,
+                            common.DataType,
+                            int,
+                            typing.Optional[int]
                             ], typing.Union[typing.List[int], common.Error]]
+"""Read callback
 
-WriteCb = aio.AsyncCallable[['Slave',  # slave
-                             int,  # device_id
-                             common.DataType,  # data_type
-                             int,  # start_address
-                             typing.List[int]  # values
+Args:
+    slave: slave instance
+    device_id: device identifier
+    data_type: data type
+    start_address: staring address
+    quantity: number of registers
+
+Returns:
+    list of register values or error
+
+"""
+util.register_type_alias('ReadCb')
+
+
+WriteCb = aio.AsyncCallable[['Slave',
+                             int,
+                             common.DataType,
+                             int,
+                             typing.List[int]
                              ], typing.Optional[common.Error]]
+"""Write callback
+
+Args:
+    slave: slave instance
+    device_id: device identifier
+    data_type: data type
+    start_address: staring address
+    values: register values
+
+Returns:
+    ``None`` on success or error
+
+"""
+util.register_type_alias('WriteCb')
 
 
 async def create_tcp_server(modbus_type: common.ModbusType,
-                            host: str,
-                            port: int,
+                            addr: tcp.Address,
                             slave_cb: SlaveCb,
                             read_cb: ReadCb,
-                            write_cb: WriteCb
+                            write_cb: WriteCb,
+                            **kwargs
                             ) -> 'TcpServer':
     """Create TCP server
 
     Args:
         modbus_type: modbus type
-        host: local listening host name
-        port: local listening TCP port
+        addr: local listening host address
         slave_cb: slave callback
         read_cb: read callback
         write_cb: write callback
+        kwargs: additional arguments used for creating TCP server
+            (see `tcp.listen`)
 
     """
     server = TcpServer()
@@ -54,11 +95,8 @@ async def create_tcp_server(modbus_type: common.ModbusType,
     server._slave_cb = slave_cb
     server._read_cb = read_cb
     server._write_cb = write_cb
-    server._async_group = aio.Group(exception_cb=_on_exception)
-    server._srv = await asyncio.start_server(
-        lambda r, w: server._async_group.spawn(server._on_connection, r, w),
-        host, port)
-    server._async_group.spawn(aio.call_on_cancel, server._on_close)
+    server._srv = await tcp.listen(server._on_connection, addr,
+                                   bind_connections=True, **kwargs)
     return server
 
 
@@ -82,10 +120,10 @@ async def create_serial_slave(modbus_type: common.ModbusType,
 
     """
     conn = await serial.create(port, silent_interval=silent_interval, **kwargs)
-    reader = common.SerialReader(conn)
-    writer = common.SerialWriter(conn)
-    return _create_slave(aio.Group(exception_cb=_on_exception), modbus_type,
-                         read_cb, write_cb, reader, writer)
+    reader = transport.SerialReader(conn)
+    writer = transport.SerialWriter(conn)
+    return _create_slave(conn.async_group, modbus_type, read_cb, write_cb,
+                         reader, writer)
 
 
 class TcpServer(aio.Resource):
@@ -100,25 +138,18 @@ class TcpServer(aio.Resource):
     @property
     def async_group(self) -> aio.Group:
         """Async group"""
-        return self._async_group
+        return self._srv.async_group
 
-    async def _on_close(self):
-        with contextlib.suppress(Exception):
-            self._srv.close()
-        with contextlib.suppress(ConnectionError):
-            await self._srv.wait_closed()
-
-    async def _on_connection(self, reader, writer):
-        async_group = self._async_group.create_subgroup()
-        reader = common.TcpReader(reader)
-        writer = common.TcpWriter(writer)
-        slave = _create_slave(async_group, self._modbus_type,
+    async def _on_connection(self, conn):
+        reader = transport.TcpReader(conn)
+        writer = transport.TcpWriter(conn)
+        slave = _create_slave(conn.async_group, self._modbus_type,
                               self._read_cb, self._write_cb, reader, writer)
         try:
             await aio.call(self._slave_cb, slave)
         except Exception as e:
             mlog.error('error in slave callback: %s', e, exc_info=e)
-            await slave.async_close()
+            slave.close()
 
 
 def _create_slave(async_group, modbus_type, read_cb, write_cb, reader, writer):
@@ -129,7 +160,6 @@ def _create_slave(async_group, modbus_type, read_cb, write_cb, reader, writer):
     slave._write_cb = write_cb
     slave._reader = reader
     slave._writer = writer
-    slave._async_group.spawn(aio.call_on_cancel, writer.async_close)
     slave._async_group.spawn(slave._receive_loop)
     return slave
 
@@ -154,7 +184,9 @@ class Slave(aio.Resource):
                     req_adu = await encoder.read_adu(self._modbus_type,
                                                      common.Direction.REQUEST,
                                                      self._reader)
-                except (asyncio.IncompleteReadError, EOFError):
+                except (asyncio.IncompleteReadError,
+                        EOFError,
+                        ConnectionError):
                     break
 
                 if isinstance(req_adu.pdu, common.ReadReqPdu):
@@ -228,8 +260,4 @@ class Slave(aio.Resource):
                 await self._writer.write(res_adu_bytes)
 
         finally:
-            self._async_group.close()
-
-
-def _on_exception(exc):
-    mlog.error("modbus slave error: %s", exc, exc_info=exc)
+            self.close()

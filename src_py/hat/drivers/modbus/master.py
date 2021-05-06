@@ -6,29 +6,33 @@ import typing
 
 from hat import aio
 from hat.drivers import serial
+from hat.drivers import tcp
 from hat.drivers.modbus import common
 from hat.drivers.modbus import encoder
+from hat.drivers.modbus import transport
 
 
-mlog = logging.getLogger(__name__)
+mlog: logging.Logger = logging.getLogger(__name__)
+"""Module logger"""
 
 
 async def create_tcp_master(modbus_type: common.ModbusType,
-                            host: str,
-                            port: int
+                            addr: tcp.Address,
+                            **kwargs
                             ) -> 'Master':
     """Create TCP master
 
     Args:
         modbus_type: modbus type
-        host: remote host name
-        port: remote TCP port
+        addr: remote host address
+        kwargs: additional arguments used for creating TCP connection
+            (see `tcp.connect`)
 
     """
-    reader, writer = await asyncio.open_connection(host, port)
-    reader = common.TcpReader(reader)
-    writer = common.TcpWriter(writer)
-    return _create_master(modbus_type, reader, writer)
+    conn = await tcp.connect(addr, **kwargs)
+    reader = transport.TcpReader(conn)
+    writer = transport.TcpWriter(conn)
+    return _create_master(modbus_type, conn.async_group, reader, writer)
 
 
 async def create_serial_master(modbus_type: common.ModbusType,
@@ -47,19 +51,18 @@ async def create_serial_master(modbus_type: common.ModbusType,
 
     """
     conn = await serial.create(port, silent_interval=silent_interval, **kwargs)
-    reader = common.SerialReader(conn)
-    writer = common.SerialWriter(conn)
-    return _create_master(modbus_type, reader, writer)
+    reader = transport.SerialReader(conn)
+    writer = transport.SerialWriter(conn)
+    return _create_master(modbus_type, conn.async_group, reader, writer)
 
 
-def _create_master(modbus_type, reader, writer):
+def _create_master(modbus_type, async_group, reader, writer):
     master = Master()
     master._modbus_type = modbus_type
+    master._async_group = async_group
     master._reader = reader
     master._writer = writer
     master._send_queue = aio.Queue()
-    master._async_group = aio.Group(exception_cb=_on_exception)
-    master._async_group.spawn(aio.call_on_cancel, writer.async_close)
     master._async_group.spawn(master._send_loop)
     return master
 
@@ -239,10 +242,7 @@ class Master(aio.Resource):
                 future.set_exception(ConnectionError())
             while not self._send_queue.empty():
                 future = self._send_queue.get_nowait()
-                future.set_exception(ConnectionError())
+                if not future.done():
+                    future.set_exception(ConnectionError())
             self._send_queue.close()
-            self._async_group.close()
-
-
-def _on_exception(exc):
-    mlog.error("modbus master error: %s", exc, exc_info=exc)
+            self.close()

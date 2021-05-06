@@ -9,7 +9,9 @@ import sys
 import pytest
 
 from hat import aio
+from hat import util
 from hat.drivers import modbus
+from hat.drivers import tcp
 
 
 pytestmark = pytest.mark.asyncio
@@ -25,8 +27,8 @@ else:
 
 
 @pytest.fixture
-def tcp_port(unused_tcp_port):
-    return unused_tcp_port
+def tcp_addr():
+    return tcp.Address('127.0.0.1', util.get_unused_tcp_port())
 
 
 @pytest.fixture
@@ -49,17 +51,17 @@ def nullmodem(request, tmp_path):
 
 
 @pytest.fixture
-async def create_master_slave(tcp_port, nullmodem):
+async def create_master_slave(tcp_addr, nullmodem):
 
     @contextlib.asynccontextmanager
     async def create_master_slave(modbus_type, comm_type, read_cb, write_cb):
         if comm_type == CommType.TCP:
             slave_queue = aio.Queue()
             srv = await modbus.create_tcp_server(
-                modbus_type, '127.0.0.1', tcp_port, slave_queue.put_nowait,
+                modbus_type, tcp_addr, slave_queue.put_nowait,
                 read_cb, write_cb)
             master = await modbus.create_tcp_master(
-                modbus_type, '127.0.0.1', tcp_port)
+                modbus_type, tcp_addr)
             slave = await slave_queue.get()
             try:
                 yield master, slave
@@ -85,12 +87,12 @@ async def create_master_slave(tcp_port, nullmodem):
 
 
 @pytest.mark.parametrize("modbus_type", list(modbus.ModbusType))
-async def test_create_tcp(tcp_port, modbus_type):
+async def test_create_tcp(tcp_addr, modbus_type):
     with pytest.raises(Exception):
-        await modbus.create_tcp_master(modbus_type, '127.0.0.1', tcp_port)
+        await modbus.create_tcp_master(modbus_type, tcp_addr)
 
     slave_queue = aio.Queue()
-    srv = await modbus.create_tcp_server(modbus_type, '127.0.0.1', tcp_port,
+    srv = await modbus.create_tcp_server(modbus_type, tcp_addr,
                                          slave_queue.put_nowait, None, None)
     assert not srv.is_closed
     assert slave_queue.empty()
@@ -99,8 +101,7 @@ async def test_create_tcp(tcp_port, modbus_type):
     slaves = []
 
     for _ in range(10):
-        master = await modbus.create_tcp_master(modbus_type, '127.0.0.1',
-                                                tcp_port)
+        master = await modbus.create_tcp_master(modbus_type, tcp_addr)
         assert not master.is_closed
         masters.append(master)
 
@@ -120,8 +121,7 @@ async def test_create_tcp(tcp_port, modbus_type):
     slaves = []
 
     for _ in range(10):
-        master = await modbus.create_tcp_master(modbus_type, '127.0.0.1',
-                                                tcp_port)
+        master = await modbus.create_tcp_master(modbus_type, tcp_addr)
         assert not master.is_closed
         masters.append(master)
 
