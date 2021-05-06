@@ -81,11 +81,11 @@ class Master(common.Device):
             return
 
         result = await self._master.read(device_id=device_id,
-                                         data_type=common.DataType[data_type],
+                                         data_type=modbus.DataType[data_type],
                                          start_address=start_address,
                                          quantity=quantity)
         value = (result.name if isinstance(result, modbus.Error)
-                 else ', '.join(result))
+                 else ', '.join(str(i) for i in result))
         self._add_data('read', device_id, data_type, start_address, value)
 
     async def _act_write(self, device_id, data_type, start_address, values):
@@ -94,10 +94,10 @@ class Master(common.Device):
             return
 
         result = await self._master.write(device_id=device_id,
-                                          data_type=common.DataType[data_type],
+                                          data_type=modbus.DataType[data_type],
                                           start_address=start_address,
                                           values=values)
-        value = result.name if result else ', '.join(values)
+        value = result.name if result else ', '.join(str(i) for i in values)
         self._add_data('write', device_id, data_type, start_address, value)
 
     def _add_data(self, action, device_id, data_type, start_address, value):
@@ -189,12 +189,12 @@ class Slave(common.Device):
     def _on_read(self, slave, device_id, data_type, start_address, quantity):
         self._logger.log('received read request')
         quantity = quantity or 1
-        data = {i['addr']: i['value']
+        data = {i['address']: i['value']
                 for i in self._data.data['data'].values()
                 if device_id == i['device_id'] and
-                data_type.name == i['type'] and
-                i['addr'] is not None and
-                start_address <= i['addr'] < start_address + quantity}
+                data_type.name == i['data_type'] and
+                i['address'] is not None and
+                start_address <= i['address'] < start_address + quantity}
         result = [(data.get(i) or 0)
                   for i in range(start_address, start_address + quantity)]
         return result
@@ -205,10 +205,10 @@ class Slave(common.Device):
         data = {}
         for data_id, i in self._data.data['data'].items():
             if ((device_id == i['device_id'] or device_id == 0) and
-                    data_type.name == i['type'] and
-                    i['addr'] is not None and
-                    start_address <= i['addr'] < start_address + quantity):
-                data[data_id] = values[i['addr'] - start_address]
+                    data_type.name == i['data_type'] and
+                    i['address'] is not None and
+                    start_address <= i['address'] < start_address + quantity):
+                data[data_id] = values[i['address'] - start_address]
 
         self._logger.log(f'changing data values (count: {len(data)})')
         for data_id, value in data.items():
@@ -222,8 +222,8 @@ class Slave(common.Device):
         self._logger.log('creating new data')
         data_id = next(self._next_data_ids)
         self._data.set(['data', data_id], {'device_id': None,
-                                           'type': None,
-                                           'addr': None,
+                                           'data_type': None,
+                                           'address': None,
                                            'value': None})
         return data_id
 
