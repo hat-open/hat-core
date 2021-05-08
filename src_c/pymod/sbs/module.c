@@ -22,7 +22,7 @@ static PyObject *decode_generic(hat_buff_t *buff, module_state_t *module_state,
                                 PyObject *refs, PyObject *t);
 
 
-static inline _Bool is_type(PyObject *inst, PyObject *cls) {
+static inline bool is_type(PyObject *inst, PyObject *cls) {
     return Py_TYPE(inst) == (PyTypeObject *)cls;
 }
 
@@ -253,7 +253,7 @@ static ssize_t encode_union(hat_buff_t *buff, module_state_t *module_state,
 
 
 static PyObject *decode_boolean(hat_buff_t *buff) {
-    _Bool value;
+    bool value;
     if (hat_sbs_decode_boolean(buff, &value))
         return NULL;
     return PyBool_FromLong(value);

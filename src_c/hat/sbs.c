@@ -1,7 +1,7 @@
 #include <string.h>
 #include "sbs.h"
 
-static inline _Bool is_little_endian() {
+static inline bool is_little_endian() {
     union {
         uint16_t u;
         uint8_t c[2];
@@ -19,7 +19,7 @@ static void swap_endians(uint8_t *data, size_t data_len) {
 }
 
 
-size_t hat_sbs_encode_boolean(hat_buff_t *buff, _Bool value) {
+size_t hat_sbs_encode_boolean(hat_buff_t *buff, bool value) {
     if (!hat_buff_available(buff))
         return 1;
     buff->data[buff->pos] = value ? 0x01 : 0x00;
@@ -35,7 +35,7 @@ size_t hat_sbs_encode_integer(hat_buff_t *buff, int64_t value) {
         if (size <= available)
             buff->data[buff->pos + size - 1] =
                 (size == 1 ? 0x80 : 0x00) | (value & 0x7F);
-        _Bool sign = value & 0x40;
+        bool sign = value & 0x40;
         value >>= 7;
         if ((value == 0 && !sign) || (value == -1 && sign))
             break;
@@ -86,7 +86,7 @@ size_t hat_sbs_encode_union_header(hat_buff_t *buff, size_t id) {
 }
 
 
-int hat_sbs_decode_boolean(hat_buff_t *buff, _Bool *value) {
+int hat_sbs_decode_boolean(hat_buff_t *buff, bool *value) {
     if (!hat_buff_available(buff))
         return HAT_SBS_ERROR;
     *value = buff->data[buff->pos];

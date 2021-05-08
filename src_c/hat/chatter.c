@@ -1,11 +1,36 @@
 #include "chatter.h"
 
 
+typedef struct hat_chatter_conn_t {
+    void *ctx;
+    hat_allocator_t *alloc;
+    uint64_t timestamp;
+    hat_chatter_msg_cb msg_cb;
+    hat_chatter_write_cb write_cb;
+    hat_chatter_timeout_cb timeout_cb;
+    hat_buff_t buff;
+    struct {
+        hat_chatter_conv_t conv;
+        uint64_t timestamp;
+    } timeouts[HAT_CHATTER_MAX_ACTIVE_TIMEOUTS];
+    size_t timeouts_len;
+    uint64_t last_msg_id;
+    uint64_t last_ping_timestamp;
+}
+
+
+static void realloc_buff(hat_chatter_conn_t *conn, size_t size) {
+    hat_buff_t *buff = &(conn->buff);
+    buff->data = hat_allocator_alloc(conn->alloc, size, buff->data);
+    buff->size = (buff->data ? size : 0);
+}
+
+
 static int ensure_buff_available(hat_chatter_conn_t *conn, size_t available) {
     hat_buff_t *buff = &(conn->buff);
     if (hat_buff_available(buff) >= available)
         return HAT_CHATTER_SUCCESS;
-    conn->realloc_cb(conn->ctx, buff, buff->pos + available);
+    realloc_buff(conn, buff->pos + available);
     if (hat_buff_available(buff) < available)
         return HAT_CHATTER_ERROR;
     return HAT_CHATTER_SUCCESS;
@@ -121,13 +146,14 @@ static int process_msg(hat_chatter_conn_t *conn, hat_chatter_msg_t *msg) {
 }
 
 
-void hat_chatter_init(hat_chatter_conn_t *conn, void *ctx, uint64_t timestamp,
+void hat_chatter_init(hat_chatter_conn_t *conn, void *ctx,
+                      hat_allocator_t *alloc, uint64_t timestamp,
                       hat_chatter_realloc_cb realloc_cb,
                       hat_chatter_msg_cb msg_cb, hat_chatter_write_cb write_cb,
                       hat_chatter_timeout_cb timeout_cb) {
     conn->ctx = ctx;
+    conn->alloc = alloc;
     conn->timestamp = timestamp;
-    conn->realloc_cb = realloc_cb;
     conn->msg_cb = msg_cb;
     conn->write_cb = write_cb;
     conn->timeout_cb = timeout_cb;
@@ -135,7 +161,13 @@ void hat_chatter_init(hat_chatter_conn_t *conn, void *ctx, uint64_t timestamp,
     conn->timeouts_len = 0;
     conn->last_msg_id = 0;
     conn->last_ping_timestamp = timestamp;
-    realloc_cb(ctx, &(conn->buff), HAT_CHATTER_INITIAL_BUFFER_SIZE);
+
+    realloc_buff(conn, HAT_CHATTER_INITIAL_BUFFER_SIZE);
+}
+
+
+void hat_chatter_destroy(hat_chatter_conn_t *conn) {
+    realloc_buff(conn, 0);
 }
 
 
