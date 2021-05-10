@@ -169,6 +169,7 @@ Devices available as part of `hat-gateway` package:
        :maxdepth: 1
 
        devices/iec104
+       devices/modbus
 
 
 Implementation

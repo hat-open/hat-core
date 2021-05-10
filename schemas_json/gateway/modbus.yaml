@@ -1,0 +1,206 @@
+---
+"$schema": "http://json-schema.org/schema#"
+id: "hat://gateway/modbus.yaml#"
+title: Modbus devices
+definitions:
+    master:
+        type: object
+        title: Modbus master
+        required:
+            - connection
+            - modbus_type
+            - connect_timeout
+            - connect_delay
+            - request_timeout
+            - request_retry_count
+            - request_retry_delay
+            - data
+        properties:
+            connection:
+                oneOf:
+                  - type: object
+                    required:
+                        - type
+                        - host
+                        - port
+                    properties:
+                        type:
+                            enum: TCP
+                        host:
+                            type: string
+                            description: |
+                                Remote host name
+                        port:
+                            type: integer
+                            description: |
+                                Remote host TCP port
+                            default: 502
+                  - type: object
+                    required:
+                        - type
+                        - port
+                        - baudrate
+                        - bytesize
+                        - parity
+                        - stopbits
+                        - flow_control
+                    properties:
+                        type:
+                            enum: SERIAL
+                        port:
+                            type: string
+                            description: |
+                                Serial port name (e.g. /dev/ttyS0)
+                        baudrate:
+                            type: integer
+                            description: |
+                                Baud rate (e.g. 9600)
+                        bytesize:
+                            description: |
+                                Number of data bits
+                            enum:
+                                - FIVEBITS
+                                - SIXBITS
+                                - SEVENBITS
+                                - EIGHTBITS
+                        parity:
+                            description: |
+                                Parity checking
+                            enum:
+                                - PARITY_NONE
+                                - PARITY_EVEN
+                                - PARITY_ODD
+                                - PARITY_MARK
+                                - PARITY_SPACE
+                        stopbits:
+                            description: |
+                                Number of stop bits
+                            enum:
+                                - STOPBITS_ONE
+                                - STOPBITS_ONE_POINT_FIVE
+                                - STOPBITS_TWO
+                        flow_control:
+                            type: object
+                            required:
+                                - xonxoff
+                                - rtscts
+                                - dsrdtr
+                            properties:
+                                xonxoff:
+                                    type: boolean
+                                    description: |
+                                        Enable software flow control
+                                rtscts:
+                                    type: boolean
+                                    description: |
+                                        Enable hardware (RTS/CTS) flow control
+                                dsrdtr:
+                                    type: boolean
+                                    description: |
+                                        Enable hardware (DSR/DTR) flow control
+            modbus_type:
+                description: |
+                    Modbus message encoding type
+                enum:
+                    - TCP
+                    - RTU
+                    - ASCII
+            connect_timeout:
+                type: number
+                description: |
+                    Maximum number of seconds available to single connection
+                    attempt
+            connect_delay:
+                type: number
+                description: |
+                    Delay (in seconds) between two consecutive connection
+                    establishment attempts
+            request_timeout:
+                type: number
+                description: |
+                    Maximum duration (in seconds) of read or write
+                    request/response exchange.
+            request_retry_count:
+                type: integer
+                description: |
+                    Number of request retries before remote data is considered
+                    unavailable
+            request_retry_delay:
+                type: number
+                description: |
+                    Delay (in seconds) between two consecutive request retries
+            data:
+                type: array
+                items:
+                    type: object
+                    required:
+                        - name
+                        - direction
+                        - device_id
+                        - modbus_type
+                        - start_address
+                        - start_bit
+                        - bit_count
+                    properties:
+                        name:
+                            type: string
+                            description: |
+                                Data point name
+                        direction:
+                            oneOf:
+                              - type: object
+                                required:
+                                    - type
+                                    - interval
+                                    - decode
+                                properties:
+                                    type:
+                                        enum: READ
+                                    interval:
+                                        type: number
+                                        description: |
+                                            Polling interval in seconds
+                                    decode:
+                                        type: string
+                                        description: |
+                                            Value decoding expression
+                              - type: object
+                                required:
+                                    - type
+                                    - encode
+                                properties:
+                                    type:
+                                        enum: WRITE
+                                    encode:
+                                        type: string
+                                        description: |
+                                            Value encoding expression
+                        device_id:
+                            type: integer
+                            description: |
+                                Modbus device identifier
+                        modbus_type:
+                            description: |
+                                Modbus register type
+                            enum:
+                                - COIL
+                                - DISCRETE_INPUT
+                                - HOLDING_REGISTER
+                                - INPUT_REGISTER
+                                - QUEUE
+                        start_address:
+                            type: integer
+                            description: |
+                                Starting address of modbus register
+                        start_bit:
+                            type: integer
+                            description: |
+                                Starting register bit (in case of 16bit
+                                register, 0 is most significent bit and 15 is
+                                least significent bit)
+                        bit_count:
+                            type: integer
+                            description: |
+                                Number of bits used by encode/decode
+                                expressions
+...
