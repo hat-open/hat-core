@@ -152,7 +152,6 @@ definitions:
                                 required:
                                     - type
                                     - interval
-                                    - decode
                                 properties:
                                     type:
                                         enum: READ
@@ -160,21 +159,12 @@ definitions:
                                         type: number
                                         description: |
                                             Polling interval in seconds
-                                    decode:
-                                        type: string
-                                        description: |
-                                            Value decoding expression
                               - type: object
                                 required:
                                     - type
-                                    - encode
                                 properties:
                                     type:
                                         enum: WRITE
-                                    encode:
-                                        type: string
-                                        description: |
-                                            Value encoding expression
                         device_id:
                             type: integer
                             description: |
