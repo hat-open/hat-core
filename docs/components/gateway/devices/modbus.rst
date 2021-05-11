@@ -20,9 +20,51 @@ Modbus device configurations are defined by schema:
 Data value
 ----------
 
-.. todo::
+All modbus native data types are encoded as 1bit or 16bit addressable values.
+Because of different data encoding schemas, single user defined data values
+can occupy only parts of modbus registers or spawn across multiple registers.
+To accommodate these different encoding rules, modbus gateway devices represent
+single data point values as list of bits, encoded as single unsigned integer,
+with size specified by configuration parameters.
 
-    explain encoding/decoding of data values based on modbus registers
+Among other parameters, each data specifies:
+
+    * data type (1bit or 16bit register size)
+    * bit size
+    * starting register address
+    * starting register bit (bit offset)
+
+List of bit values is created by iterative reading of register values starting
+with `starting register address` and incrementing register address by 1. Bits
+in each register are read starting with most significant and advancing to the
+least significant bit. Starting register bit defines bit offset - number of
+bits which are skipped during start of this iterative procedure. These skipped
+bits are not included in resulting value and are not taken into account in
+bit size calculation.
+
+
+Encoding/decoding example
+'''''''''''''''''''''''''
+
+In case of 16bit registers with content:
+
+    +---------+--------+
+    | Address | Value  |
+    +=========+========+
+    | 1000    | 0x1234 |
+    +---------+--------+
+    | 1001    | 0x5678 |
+    +---------+--------+
+    | 1002    | 0x9abc |
+    +---------+--------+
+
+When data item is configured with properties:
+
+    * bit size: 32
+    * starting register address: 1000
+    * starting register bit: 16
+
+Data value is unlimited unsigned integer 0x3456789a.
 
 
 Modbus master
