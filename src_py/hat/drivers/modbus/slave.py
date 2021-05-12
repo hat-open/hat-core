@@ -71,11 +71,34 @@ Returns:
 util.register_type_alias('WriteCb')
 
 
+WriteMaskCb = aio.AsyncCallable[['Slave',
+                                 int,
+                                 int,
+                                 int,
+                                 int
+                                 ], typing.Optional[common.Error]]
+"""Write mask callback
+
+Args:
+    slave: slave instance
+    device_id: device identifier
+    address: address
+    and_mask: and mask
+    or_mask: or mask
+
+Returns:
+    ``None`` on success or error
+
+"""
+util.register_type_alias('WriteMaskCb')
+
+
 async def create_tcp_server(modbus_type: common.ModbusType,
                             addr: tcp.Address,
                             slave_cb: SlaveCb,
                             read_cb: ReadCb,
                             write_cb: WriteCb,
+                            write_mask_cb: WriteMaskCb,
                             **kwargs
                             ) -> 'TcpServer':
     """Create TCP server
@@ -86,6 +109,7 @@ async def create_tcp_server(modbus_type: common.ModbusType,
         slave_cb: slave callback
         read_cb: read callback
         write_cb: write callback
+        write_mask_cb: write mask callback
         kwargs: additional arguments used for creating TCP server
             (see `tcp.listen`)
 
@@ -95,6 +119,7 @@ async def create_tcp_server(modbus_type: common.ModbusType,
     server._slave_cb = slave_cb
     server._read_cb = read_cb
     server._write_cb = write_cb
+    server._write_mask_cb = write_mask_cb
     server._srv = await tcp.listen(server._on_connection, addr,
                                    bind_connections=True, **kwargs)
     return server
@@ -103,7 +128,8 @@ async def create_tcp_server(modbus_type: common.ModbusType,
 async def create_serial_slave(modbus_type: common.ModbusType,
                               port: str,
                               read_cb: ReadCb,
-                              write_cb: WriteCb, *,
+                              write_cb: WriteCb,
+                              write_mask_cb: WriteMaskCb, *,
                               silent_interval: float = 0.005,
                               **kwargs
                               ) -> 'Slave':
@@ -114,6 +140,7 @@ async def create_serial_slave(modbus_type: common.ModbusType,
         port: port name (see `serial.create`)
         read_cb: read callback
         write_cb: write callback
+        write_mask_cb: write mask callback
         silent_interval: silent interval (see `serial.create`)
         kwargs: additional arguments used for opening serial connection
             (see `serial.create`)
@@ -123,7 +150,7 @@ async def create_serial_slave(modbus_type: common.ModbusType,
     reader = transport.SerialReader(conn)
     writer = transport.SerialWriter(conn)
     return _create_slave(conn.async_group, modbus_type, read_cb, write_cb,
-                         reader, writer)
+                         write_mask_cb, reader, writer)
 
 
 class TcpServer(aio.Resource):
@@ -144,7 +171,8 @@ class TcpServer(aio.Resource):
         reader = transport.TcpReader(conn)
         writer = transport.TcpWriter(conn)
         slave = _create_slave(conn.async_group, self._modbus_type,
-                              self._read_cb, self._write_cb, reader, writer)
+                              self._read_cb, self._write_cb,
+                              self._write_mask_cb, reader, writer)
         try:
             await aio.call(self._slave_cb, slave)
         except Exception as e:
@@ -152,12 +180,14 @@ class TcpServer(aio.Resource):
             slave.close()
 
 
-def _create_slave(async_group, modbus_type, read_cb, write_cb, reader, writer):
+def _create_slave(async_group, modbus_type, read_cb, write_cb, write_mask_cb,
+                  reader, writer):
     slave = Slave()
     slave._async_group = async_group
     slave._modbus_type = modbus_type
     slave._read_cb = read_cb
     slave._write_cb = write_cb
+    slave._write_mask_cb = write_mask_cb
     slave._reader = reader
     slave._writer = writer
     slave._async_group.spawn(slave._receive_loop)
@@ -235,6 +265,20 @@ class Slave(aio.Resource):
                             data_type=req_adu.pdu.data_type,
                             address=req_adu.pdu.address,
                             quantity=len(req_adu.pdu.values))
+
+                elif isinstance(req_adu.pdu, common.WriteMaskReqPdu):
+                    result = await aio.call(self._write_mask_cb, self,
+                                            req_adu.device_id,
+                                            req_adu.pdu.address,
+                                            req_adu.pdu.and_mask,
+                                            req_adu.pdu.or_mask)
+                    if isinstance(result, common.Error):
+                        res_pdu = common.WriteMaskErrPdu(error=result)
+                    else:
+                        res_pdu = common.WriteMaskResPdu(
+                            address=req_adu.pdu.address,
+                            and_mask=req_adu.pdu.and_mask,
+                            or_mask=req_adu.pdu.or_mask)
 
                 else:
                     raise Exception("invalid request pdu type")

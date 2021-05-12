@@ -142,7 +142,8 @@ class Slave(common.Device):
                                  properties['tcp_port']),
                 slave_cb=self._slave_loop,
                 read_cb=self._on_read,
-                write_cb=self._on_write)
+                write_cb=self._on_write,
+                write_mask_cb=self._on_write_mask)
             return srv
 
         if properties['link_type'] == 'SERIAL':
@@ -151,6 +152,7 @@ class Slave(common.Device):
                 port=properties['serial_port'],
                 read_cb=self._on_read,
                 write_cb=self._on_write,
+                write_mask_cb=self._on_write_mask,
                 silent_interval=properties['serial_silent_interval'])
             slave.async_group.spawn(self._slave_loop, slave)
             return slave
@@ -209,6 +211,20 @@ class Slave(common.Device):
                     i['address'] is not None and
                     start_address <= i['address'] < start_address + quantity):
                 data[data_id] = values[i['address'] - start_address]
+
+        self._logger.log(f'changing data values (count: {len(data)})')
+        for data_id, value in data.items():
+            self._data.set(['data', data_id, 'value'], value)
+
+    def _on_write_mask(self, slave, device_id, address, and_mask, or_mask):
+        self._logger.log('received write mask request')
+        data = {}
+        for data_id, i in self._data.data['data'].items():
+            if ((device_id == i['device_id'] or device_id == 0) and
+                    i['data_type'] == 'HOLDING_REGISTER' and
+                    i['address'] == address):
+                data[data_id] = (((i['value'] or 0) & and_mask) |
+                                 (or_mask & (~and_mask)))
 
         self._logger.log(f'changing data values (count: {len(data)})')
         for data_id, value in data.items():

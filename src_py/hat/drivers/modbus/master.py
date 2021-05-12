@@ -166,6 +166,49 @@ class Master(aio.Resource):
 
         raise Exception("invalid response pdu type")
 
+    async def write_mask(self,
+                         device_id: int,
+                         address: int,
+                         and_mask: int,
+                         or_mask: int
+                         ) -> typing.Optional[common.Error]:
+        """Write mask to modbus device HOLDING_REGISTER
+
+        Args:
+            device_id: slave device identifier
+            address: modbus data address
+            and_mask: and mask
+            or_mask: or mask
+
+        Raises:
+            ConnectionError
+
+        """
+        req_pdu = common.WriteMaskReqPdu(address=address,
+                                         and_mask=and_mask,
+                                         or_mask=or_mask)
+
+        future = asyncio.Future()
+        try:
+            self._send_queue.put_nowait((device_id, req_pdu, future))
+        except aio.QueueClosedError:
+            raise ConnectionError()
+        res_pdu = await future
+
+        if isinstance(res_pdu, common.WriteMaskResPdu):
+            if (res_pdu.address != address):
+                raise Exception("invalid response pdu address")
+            if (res_pdu.and_mask != and_mask):
+                raise Exception("invalid response pdu and mask")
+            if (res_pdu.or_mask != or_mask):
+                raise Exception("invalid response pdu or mask")
+            return
+
+        if isinstance(res_pdu, common.WriteMaskErrPdu):
+            return res_pdu.error
+
+        raise Exception("invalid response pdu type")
+
     async def _send_loop(self):
         transaction_id = 0
         future = None
@@ -173,6 +216,8 @@ class Master(aio.Resource):
         try:
             while True:
                 device_id, req_pdu, future = await self._send_queue.get()
+                if future.done():
+                    continue
 
                 if self._modbus_type == common.ModbusType.TCP:
                     transaction_id += 1
@@ -198,44 +243,69 @@ class Master(aio.Resource):
                     continue
                 await self._writer.write(req_adu_bytes)
 
-                res_adu = await encoder.read_adu(self._modbus_type,
-                                                 common.Direction.RESPONSE,
-                                                 self._reader)
+                while True:
+                    async with self.async_group.create_subgroup() as subgroup:
+                        read_future = subgroup.spawn(
+                            encoder.read_adu, self._modbus_type,
+                            common.Direction.RESPONSE, self._reader)
+                        await asyncio.wait([read_future, future],
+                                           return_when=asyncio.FIRST_COMPLETED)
+                        if future.done():
+                            break
+                        res_adu = read_future.result()
 
-                if self._modbus_type == common.ModbusType.TCP:
-                    if req_adu.transaction_id != res_adu.transaction_id:
-                        raise Exception("invalid response transaction id")
+                    if self._modbus_type == common.ModbusType.TCP:
+                        if req_adu.transaction_id != res_adu.transaction_id:
+                            mlog.warning("received invalid response "
+                                         "transaction id")
+                            continue
 
-                if req_adu.device_id:
-                    if req_adu.device_id != res_adu.device_id:
-                        raise Exception("invalid response device id")
+                    if req_adu.device_id:
+                        if req_adu.device_id != res_adu.device_id:
+                            mlog.warning("received invalid response "
+                                         "device id")
+                            continue
 
-                if isinstance(req_adu.pdu, common.ReadReqPdu):
-                    if (not isinstance(res_adu.pdu, common.ReadResPdu)
-                            and not isinstance(res_adu.pdu,
-                                               common.ReadErrPdu)):
-                        raise Exception("invalid response pdu type")
+                    if isinstance(req_adu.pdu, common.ReadReqPdu):
+                        if (not isinstance(res_adu.pdu, common.ReadResPdu)
+                                and not isinstance(res_adu.pdu,
+                                                   common.ReadErrPdu)):
+                            raise Exception("invalid response pdu type")
 
-                elif isinstance(req_adu.pdu, common.WriteSingleReqPdu):
-                    if (not isinstance(res_adu.pdu, common.WriteSingleResPdu)
-                            and not isinstance(res_adu.pdu,
-                                               common.WriteSingleErrPdu)):
-                        raise Exception("invalid response pdu type")
+                    elif isinstance(req_adu.pdu, common.WriteSingleReqPdu):
+                        if (not isinstance(res_adu.pdu,
+                                           common.WriteSingleResPdu)
+                                and not isinstance(res_adu.pdu,
+                                                   common.WriteSingleErrPdu)):
+                            raise Exception("invalid response pdu type")
 
-                elif isinstance(req_adu.pdu, common.WriteMultipleReqPdu):
-                    if (not isinstance(res_adu.pdu, common.WriteMultipleResPdu)
-                            and not isinstance(res_adu.pdu,
-                                               common.WriteMultipleErrPdu)):
-                        raise Exception("invalid response pdu type")
+                    elif isinstance(req_adu.pdu, common.WriteMultipleReqPdu):
+                        if (not isinstance(res_adu.pdu,
+                                           common.WriteMultipleResPdu)
+                                and not isinstance(res_adu.pdu,
+                                                   common.WriteMultipleErrPdu)):  # NOQA
+                            raise Exception("invalid response pdu type")
 
-                else:
-                    raise Exception("unsupported request pdu type")
+                    elif isinstance(req_adu.pdu, common.WriteMaskReqPdu):
+                        if (not isinstance(res_adu.pdu,
+                                           common.WriteMaskResPdu)
+                                and not isinstance(res_adu.pdu,
+                                                   common.WriteMaskErrPdu)):
+                            raise Exception("invalid response pdu type")
 
-                if req_adu.pdu.data_type != res_adu.pdu.data_type:
-                    raise Exception("invalid response data type")
+                    else:
+                        raise Exception("unsupported request pdu type")
 
-                if not future.done():
-                    future.set_result(res_adu.pdu)
+                    if (not isinstance(req_adu.pdu, common.WriteMaskReqPdu) and
+                            req_adu.pdu.data_type != res_adu.pdu.data_type):
+                        raise Exception("invalid response data type")
+
+                    if not future.done():
+                        future.set_result(res_adu.pdu)
+                    break
+
+        except Exception as e:
+            mlog.error("error in send loop: %s", e, exc_info=e)
 
         finally:
             if future and not future.done():

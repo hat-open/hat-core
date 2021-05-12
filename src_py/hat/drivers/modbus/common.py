@@ -5,6 +5,12 @@ import enum
 import typing
 
 
+class ModbusType(enum.Enum):
+    TCP = 0
+    RTU = 1
+    ASCII = 2
+
+
 class DataType(enum.Enum):
     COIL = 1
     DISCRETE_INPUT = 2
@@ -18,12 +24,6 @@ class Error(enum.Enum):
     INVALID_DATA_ADDRESS = 2
     INVALID_DATA_VALUE = 3
     FUNCTION_ERROR = 4
-
-
-class ModbusType(enum.Enum):
-    TCP = 0
-    RTU = 1
-    ASCII = 2
 
 
 class Direction(enum.Enum):
@@ -81,20 +81,39 @@ class WriteMultipleErrPdu(typing.NamedTuple):
     error: Error
 
 
+class WriteMaskReqPdu(typing.NamedTuple):
+    address: int
+    and_mask: int
+    or_mask: int
+
+
+class WriteMaskResPdu(typing.NamedTuple):
+    address: int
+    and_mask: int
+    or_mask: int
+
+
+class WriteMaskErrPdu(typing.NamedTuple):
+    error: Error
+
+
 ReqPdu = type('ReqPdu', (abc.ABC, ), {})
 ReqPdu.register(ReadReqPdu)
 ReqPdu.register(WriteSingleReqPdu)
 ReqPdu.register(WriteMultipleReqPdu)
+ReqPdu.register(WriteMaskReqPdu)
 
 ResPdu = type('ResPdu', (abc.ABC, ), {})
 ResPdu.register(ReadResPdu)
 ResPdu.register(WriteSingleResPdu)
 ResPdu.register(WriteMultipleResPdu)
+ResPdu.register(WriteMaskResPdu)
 
 ErrPdu = type('ErrPdu', (abc.ABC, ), {})
 ErrPdu.register(ReadErrPdu)
 ErrPdu.register(WriteSingleErrPdu)
 ErrPdu.register(WriteMultipleErrPdu)
+ErrPdu.register(WriteMaskErrPdu)
 
 Pdu = typing.Union[ReqPdu, ResPdu, ErrPdu]
 

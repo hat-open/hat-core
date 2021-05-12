@@ -86,6 +86,9 @@ def _encode_pdu_req(pdu):
     if isinstance(pdu, common.WriteMultipleReqPdu):
         return _encode_pdu_req_write_multiple(pdu)
 
+    if isinstance(pdu, common.WriteMaskReqPdu):
+        return _encode_pdu_req_write_mask(pdu)
+
     raise ValueError("invalid pdu")
 
 
@@ -99,6 +102,9 @@ def _encode_pdu_res(pdu):
     if isinstance(pdu, common.WriteMultipleResPdu):
         return _encode_pdu_res_write_multiple(pdu)
 
+    if isinstance(pdu, common.WriteMaskResPdu):
+        return _encode_pdu_res_write_mask(pdu)
+
     raise ValueError("invalid pdu")
 
 
@@ -111,6 +117,9 @@ def _encode_pdu_err(pdu):
 
     if isinstance(pdu, common.WriteMultipleErrPdu):
         return _encode_pdu_err_write_multiple(pdu)
+
+    if isinstance(pdu, common.WriteMaskErrPdu):
+        return _encode_pdu_err_write_mask(pdu)
 
     raise ValueError("invalid pdu")
 
@@ -181,6 +190,12 @@ def _encode_pdu_req_write_multiple(pdu):
     else:
         raise ValueError("unsupported data type")
 
+    return bytes([fc, *data])
+
+
+def _encode_pdu_req_write_mask(pdu):
+    fc = 22
+    data = struct.pack('>HHH', pdu.address, pdu.and_mask, pdu.or_mask)
     return bytes([fc, *data])
 
 
@@ -263,6 +278,12 @@ def _encode_pdu_res_write_multiple(pdu):
     return bytes([fc, *data])
 
 
+def _encode_pdu_res_write_mask(pdu):
+    fc = 22
+    data = struct.pack('>HHH', pdu.address, pdu.and_mask, pdu.or_mask)
+    return bytes([fc, *data])
+
+
 def _encode_pdu_err_read(pdu):
     if pdu.data_type == common.DataType.COIL:
         fc = 1
@@ -308,6 +329,11 @@ def _encode_pdu_err_write_multiple(pdu):
     else:
         raise ValueError("unsupported data type")
 
+    return bytes([0x80 | fc, pdu.error.value])
+
+
+def _encode_pdu_err_write_mask(pdu):
+    fc = 22
     return bytes([0x80 | fc, pdu.error.value])
 
 
@@ -432,6 +458,13 @@ async def _read_pdu_req(reader):
                                           address=address,
                                           values=values)
 
+    if fc == 22:
+        address, and_mask, or_mask = struct.unpack('>HHH',
+                                                   await reader.read(6))
+        return common.WriteMaskReqPdu(address=address,
+                                      and_mask=and_mask,
+                                      or_mask=or_mask)
+
     if fc == 24:
         data_type = common.DataType.QUEUE
         address = struct.unpack('>H', await reader.read(2))[0]
@@ -540,6 +573,15 @@ async def _read_pdu_res(reader):
         return common.WriteMultipleResPdu(data_type=data_type,
                                           address=address,
                                           quantity=quantity)
+
+    if fc == 22:
+        if error:
+            return common.WriteMaskErrPdu(error)
+        address, and_mask, or_mask = struct.unpack('>HHH',
+                                                   await reader.read(6))
+        return common.WriteMaskResPdu(address=address,
+                                      and_mask=and_mask,
+                                      or_mask=or_mask)
 
     if fc == 24:
         data_type = common.DataType.QUEUE

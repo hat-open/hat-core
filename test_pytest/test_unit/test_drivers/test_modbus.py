@@ -54,12 +54,13 @@ def nullmodem(request, tmp_path):
 async def create_master_slave(tcp_addr, nullmodem):
 
     @contextlib.asynccontextmanager
-    async def create_master_slave(modbus_type, comm_type, read_cb, write_cb):
+    async def create_master_slave(modbus_type, comm_type, read_cb, write_cb,
+                                  write_mask_cb):
         if comm_type == CommType.TCP:
             slave_queue = aio.Queue()
             srv = await modbus.create_tcp_server(
                 modbus_type, tcp_addr, slave_queue.put_nowait,
-                read_cb, write_cb)
+                read_cb, write_cb, write_mask_cb)
             master = await modbus.create_tcp_master(
                 modbus_type, tcp_addr)
             slave = await slave_queue.get()
@@ -73,7 +74,7 @@ async def create_master_slave(tcp_addr, nullmodem):
             master = await modbus.create_serial_master(
                 modbus_type, nullmodem[0])
             slave = await modbus.create_serial_slave(
-                modbus_type, nullmodem[1], read_cb, write_cb)
+                modbus_type, nullmodem[1], read_cb, write_cb, write_mask_cb)
             try:
                 yield master, slave
             finally:
@@ -93,7 +94,8 @@ async def test_create_tcp(tcp_addr, modbus_type):
 
     slave_queue = aio.Queue()
     srv = await modbus.create_tcp_server(modbus_type, tcp_addr,
-                                         slave_queue.put_nowait, None, None)
+                                         slave_queue.put_nowait, None, None,
+                                         None)
     assert not srv.is_closed
     assert slave_queue.empty()
 
@@ -141,7 +143,7 @@ async def test_create_tcp(tcp_addr, modbus_type):
 async def test_create_serial(nullmodem, modbus_type):
     master = await modbus.create_serial_master(modbus_type, nullmodem[0])
     slave = await modbus.create_serial_slave(modbus_type, nullmodem[1],
-                                             None, None)
+                                             None, None, None)
     assert not master.is_closed
     assert not slave.is_closed
     await master.async_close()
@@ -179,7 +181,7 @@ async def test_read(create_master_slave, modbus_type, comm_type,
         return await f
 
     async with create_master_slave(modbus_type, comm_type,
-                                   on_read, None) as (master, slave):
+                                   on_read, None, None) as (master, slave):
 
         read_future = asyncio.ensure_future(master.read(
             device_id, data_type, start_address, quantity))
@@ -220,7 +222,7 @@ async def test_write(create_master_slave, modbus_type, comm_type,
         return await f
 
     async with create_master_slave(modbus_type, comm_type,
-                                   None, on_write) as (master, slave):
+                                   None, on_write, None) as (master, slave):
 
         write_future = asyncio.ensure_future(master.write(
             device_id, data_type, start_address, values))
