@@ -105,7 +105,7 @@ system, following event types are used:
                     - CONNECTING
                     - CONNECTED
 
-        * ..., 'remote_status', <device_id>
+        * ..., 'remote_device', <device_id>, 'status'
 
             Status of a remote modbus device, where `<device_id>` is
             remote modbus device identifier `device_id` defined in
@@ -117,7 +117,7 @@ system, following event types are used:
                     - DISCONNECTED
                     - CONNECTED
 
-        * ..., 'read', <data_name>
+        * ..., 'remote_device', <device_id>, 'read', <data_name>
 
             Read response reporting current data value. Data value and cause
             of event reporting are available only in case of successful read.
@@ -156,7 +156,7 @@ system, following event types are used:
             .. note:: if data is not received within `request_timeout`
               after polling, `read` event with result ``TIMEOUT`` is registered.
 
-        * ..., 'write', <data_name>
+        * ..., 'remote_device', <device_id>, 'write', <data_name>
 
             Write response reporting resulting success value. Together with
             `result` that contains success value, this event contains the same
@@ -186,7 +186,7 @@ system, following event types are used:
 
     * 'gateway', <gateway_name>, 'modbus_master', <device_name>, 'system', ...
 
-        * ..., 'enable', <device_id>
+        * ..., 'remote_device', <device_id>, 'enable'
 
             Enable polling of data associated with remote modbus device with
             `<device_id>` identifier.
@@ -195,7 +195,7 @@ system, following event types are used:
             enabling remote device and set to ``false`` in case of disabling
             remote device.
 
-        * ..., 'write', <data_name>
+        * ..., 'remote_device', <device_id>, 'write', <data_name>
 
             Write request containing data value and session identifier used
             for pairing of request/response messages.
@@ -220,4 +220,5 @@ system, following event types are used:
     * is device_id status CONNECTED when any of data points is available or if
       all or if all data points are available?
 
-    * do we need [..., 'system', 'read', <data_name>] explicit read request?
+    * do we need [..., 'system', 'remote_device', <device_id>, 'read',
+      <data_name>] explicit read request?

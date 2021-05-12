@@ -7,15 +7,22 @@ definitions:
         type: object
         title: Modbus master
         required:
-            - connection
             - modbus_type
+            - connection
             - connect_timeout
             - connect_delay
             - request_timeout
             - request_retry_count
             - request_retry_delay
-            - data
+            - remote_devices
         properties:
+            modbus_type:
+                description: |
+                    Modbus message encoding type
+                enum:
+                    - TCP
+                    - RTU
+                    - ASCII
             connection:
                 oneOf:
                   - type: object
@@ -98,13 +105,6 @@ definitions:
                                     type: boolean
                                     description: |
                                         Enable hardware (DSR/DTR) flow control
-            modbus_type:
-                description: |
-                    Modbus message encoding type
-                enum:
-                    - TCP
-                    - RTU
-                    - ASCII
             connect_timeout:
                 type: number
                 description: |
@@ -129,68 +129,77 @@ definitions:
                 type: number
                 description: |
                     Delay (in seconds) between two consecutive request retries
-            data:
+            remote_devices:
                 type: array
                 items:
                     type: object
                     required:
-                        - name
-                        - direction
                         - device_id
-                        - modbus_type
-                        - start_address
-                        - start_bit
-                        - bit_count
+                        - data
                     properties:
-                        name:
-                            type: string
-                            description: |
-                                Data point name
-                        direction:
-                            oneOf:
-                              - type: object
-                                required:
-                                    - type
-                                    - interval
-                                properties:
-                                    type:
-                                        enum: READ
-                                    interval:
-                                        type: number
-                                        description: |
-                                            Polling interval in seconds
-                              - type: object
-                                required:
-                                    - type
-                                properties:
-                                    type:
-                                        enum: WRITE
                         device_id:
                             type: integer
                             description: |
                                 Modbus device identifier
-                        modbus_type:
-                            description: |
-                                Modbus register type
-                            enum:
-                                - COIL
-                                - DISCRETE_INPUT
-                                - HOLDING_REGISTER
-                                - INPUT_REGISTER
-                                - QUEUE
-                        start_address:
-                            type: integer
-                            description: |
-                                Starting address of modbus register
-                        start_bit:
-                            type: integer
-                            description: |
-                                Starting register bit (in case of 16bit
-                                register, 0 is most significent bit and 15 is
-                                least significent bit)
-                        bit_count:
-                            type: integer
-                            description: |
-                                Number of bits used by encode/decode
-                                expressions
+                        data:
+                            type: array
+                            items:
+                                type: object
+                                required:
+                                    - name
+                                    - direction
+                                    - data_type
+                                    - start_address
+                                    - start_bit
+                                    - bit_count
+                                properties:
+                                    name:
+                                        type: string
+                                        description: |
+                                            Data point name
+                                    direction:
+                                        oneOf:
+                                          - type: object
+                                            required:
+                                                - type
+                                                - interval
+                                            properties:
+                                                type:
+                                                    enum: READ
+                                                interval:
+                                                    type: number
+                                                    description: |
+                                                        Polling interval in
+                                                        seconds
+                                          - type: object
+                                            required:
+                                                - type
+                                            properties:
+                                                type:
+                                                    enum: WRITE
+                                    data_type:
+                                        description: |
+                                            Modbus register type
+                                        enum:
+                                            - COIL
+                                            - DISCRETE_INPUT
+                                            - HOLDING_REGISTER
+                                            - INPUT_REGISTER
+                                            - QUEUE
+                                    start_address:
+                                        type: integer
+                                        description: |
+                                            Starting address of modbus register
+                                    start_bit:
+                                        type: integer
+                                        description: |
+                                            Starting register bit (in case of
+                                            16bit register, 0 is most
+                                            significent bit and 15 is least
+                                            significent bit)
+                                    bit_count:
+                                        type: integer
+                                        description: |
+                                            Number of bits used for
+                                            encoding/decoding value
 ...
