@@ -22,7 +22,7 @@ Data value
 
 All modbus native data types are encoded as 1bit or 16bit addressable values.
 Because of different data encoding schemas, single user defined data values
-can occupy only parts of modbus registers or spawn across multiple registers.
+can occupy only parts of modbus registers or span across multiple registers.
 To accommodate these different encoding rules, modbus gateway devices represent
 single data point values as list of bits, encoded as single unsigned integer,
 with size specified by configuration parameters.
@@ -85,6 +85,9 @@ status of communication connection and each modbus device identified by
 is calculated according to availability of all data associated with that
 `device_id`: in case all data of a `device_id` are not available, that devices
 is considered as ``DISCONNECTED``.
+
+Polling of data values can be enabled/disabled based on `device_id`. Initially,
+polling for all remote devices is disabled and has to be explicitly enabled.
 
 To enable communication between modbus master device and rest of the hat
 system, following event types are used:
@@ -183,6 +186,15 @@ system, following event types are used:
 
     * 'gateway', <gateway_name>, 'modbus_master', <device_name>, 'system', ...
 
+        * ..., 'enable', <device_id>
+
+            Enable polling of data associated with remote modbus device with
+            `<device_id>` identifier.
+
+            Payload is JSON boolean value which is set to ``true`` in case of
+            enabling remote device and set to ``false`` in case of disabling
+            remote device.
+
         * ..., 'write', <data_name>
 
             Write request containing data value and session identifier used
@@ -207,8 +219,5 @@ system, following event types are used:
 
     * is device_id status CONNECTED when any of data points is available or if
       all or if all data points are available?
-
-    * add [..., 'system', 'status', <device_id>] event to enable/disable
-      device polling?
 
     * do we need [..., 'system', 'read', <data_name>] explicit read request?
