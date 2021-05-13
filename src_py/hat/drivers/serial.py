@@ -20,6 +20,9 @@ from hat import aio
 mlog: logging.Logger = logging.getLogger(__name__)
 """Module logger"""
 
+read_timeout: float = 0.5
+"""Read timeout"""
+
 
 class ByteSize(enum.Enum):
     FIVEBITS = 'FIVEBITS'
@@ -47,6 +50,7 @@ async def create(port: str, *,
                  bytesize: ByteSize = ByteSize.EIGHTBITS,
                  parity: Parity = Parity.NONE,
                  stopbits: StopBits = StopBits.ONE,
+                 xonxoff: bool = False,
                  rtscts: bool = False,
                  dsrdtr: bool = False,
                  silent_interval: float = 0
@@ -60,6 +64,7 @@ async def create(port: str, *,
         bytesize: number of data bits
         parity: parity checking
         stopbits: number of stop bits
+        xonxoff: enable software flow control
         rtscts: enable hardware RTS/CTS flow control
         dsrdtr: enable hardware DSR/DTR flow control
         silent_interval: minimum time in seconds between writing two
@@ -79,9 +84,10 @@ async def create(port: str, *,
         bytesize=getattr(serial, bytesize.value),
         parity=getattr(serial, parity.value),
         stopbits=getattr(serial, stopbits.value),
+        xonxoff=xonxoff,
         rtscts=rtscts,
         dsrdtr=dsrdtr,
-        timeout=1)
+        timeout=read_timeout)
 
     conn._async_group = aio.Group()
     conn._async_group.spawn(aio.call_on_cancel, conn._on_close)
@@ -142,11 +148,12 @@ class Connection(aio.Resource):
         try:
             async for size, result in self._read_queue:
                 data = bytearray()
-                while len(data) < size:
+                while len(data) < size and not result.done():
                     temp = await self._executor(self._serial.read,
                                                 size - len(data))
                     data.extend(temp)
-                result.set_result(bytes(data))
+                if not result.done():
+                    result.set_result(bytes(data))
 
         except Exception as e:
             mlog.warning('read loop error: %s', e, exc_info=e)
@@ -163,7 +170,8 @@ class Connection(aio.Resource):
             async for data, result in self._write_queue:
                 await self._executor(self._serial.write, data)
                 await self._executor(self._serial.flush)
-                result.set_result(None)
+                if not result.done():
+                    result.set_result(None)
                 await asyncio.sleep(self._silent_interval)
 
         except Exception as e:

@@ -7,128 +7,138 @@ definitions:
         type: object
         title: Modbus master
         required:
-            - modbus_type
             - connection
-            - connect_timeout
-            - connect_delay
-            - request_timeout
-            - request_retry_count
-            - request_retry_delay
             - remote_devices
         properties:
-            modbus_type:
-                description: |
-                    Modbus message encoding type
-                enum:
-                    - TCP
-                    - RTU
-                    - ASCII
             connection:
-                oneOf:
-                  - type: object
-                    required:
-                        - type
-                        - host
-                        - port
-                    properties:
-                        type:
-                            enum: TCP
-                        host:
-                            type: string
-                            description: |
-                                Remote host name
-                        port:
-                            type: integer
-                            description: |
-                                Remote host TCP port
-                            default: 502
-                  - type: object
-                    required:
-                        - type
-                        - port
-                        - baudrate
-                        - bytesize
-                        - parity
-                        - stopbits
-                        - flow_control
-                    properties:
-                        type:
-                            enum: SERIAL
-                        port:
-                            type: string
-                            description: |
-                                Serial port name (e.g. /dev/ttyS0)
-                        baudrate:
-                            type: integer
-                            description: |
-                                Baud rate (e.g. 9600)
-                        bytesize:
-                            description: |
-                                Number of data bits
-                            enum:
-                                - FIVEBITS
-                                - SIXBITS
-                                - SEVENBITS
-                                - EIGHTBITS
-                        parity:
-                            description: |
-                                Parity checking
-                            enum:
-                                - PARITY_NONE
-                                - PARITY_EVEN
-                                - PARITY_ODD
-                                - PARITY_MARK
-                                - PARITY_SPACE
-                        stopbits:
-                            description: |
-                                Number of stop bits
-                            enum:
-                                - STOPBITS_ONE
-                                - STOPBITS_ONE_POINT_FIVE
-                                - STOPBITS_TWO
-                        flow_control:
-                            type: object
+                type: object
+                required:
+                    - modbus_type
+                    - transport
+                    - connect_timeout
+                    - connect_delay
+                    - request_timeout
+                    - request_retry_count
+                    - request_retry_delay
+                properties:
+                    modbus_type:
+                        description: |
+                            Modbus message encoding type
+                        enum:
+                            - TCP
+                            - RTU
+                            - ASCII
+                    transport:
+                        oneOf:
+                          - type: object
                             required:
-                                - xonxoff
-                                - rtscts
-                                - dsrdtr
+                                - type
+                                - host
+                                - port
                             properties:
-                                xonxoff:
-                                    type: boolean
+                                type:
+                                    enum: TCP
+                                host:
+                                    type: string
                                     description: |
-                                        Enable software flow control
-                                rtscts:
-                                    type: boolean
+                                        Remote host name
+                                port:
+                                    type: integer
                                     description: |
-                                        Enable hardware (RTS/CTS) flow control
-                                dsrdtr:
-                                    type: boolean
+                                        Remote host TCP port
+                                    default: 502
+                          - type: object
+                            required:
+                                - type
+                                - port
+                                - baudrate
+                                - bytesize
+                                - parity
+                                - stopbits
+                                - flow_control
+                                - silent_interval
+                            properties:
+                                type:
+                                    enum: SERIAL
+                                port:
+                                    type: string
                                     description: |
-                                        Enable hardware (DSR/DTR) flow control
-            connect_timeout:
-                type: number
-                description: |
-                    Maximum number of seconds available to single connection
-                    attempt
-            connect_delay:
-                type: number
-                description: |
-                    Delay (in seconds) between two consecutive connection
-                    establishment attempts
-            request_timeout:
-                type: number
-                description: |
-                    Maximum duration (in seconds) of read or write
-                    request/response exchange.
-            request_retry_count:
-                type: integer
-                description: |
-                    Number of request retries before remote data is considered
-                    unavailable
-            request_retry_delay:
-                type: number
-                description: |
-                    Delay (in seconds) between two consecutive request retries
+                                        Serial port name (e.g. /dev/ttyS0)
+                                baudrate:
+                                    type: integer
+                                    description: |
+                                        Baud rate (e.g. 9600)
+                                bytesize:
+                                    description: |
+                                        Number of data bits
+                                    enum:
+                                        - FIVEBITS
+                                        - SIXBITS
+                                        - SEVENBITS
+                                        - EIGHTBITS
+                                parity:
+                                    description: |
+                                        Parity checking
+                                    enum:
+                                        - NONE
+                                        - EVEN
+                                        - ODD
+                                        - MARK
+                                        - SPACE
+                                stopbits:
+                                    description: |
+                                        Number of stop bits
+                                    enum:
+                                        - ONE
+                                        - ONE_POINT_FIVE
+                                        - TWO
+                                flow_control:
+                                    type: object
+                                    required:
+                                        - xonxoff
+                                        - rtscts
+                                        - dsrdtr
+                                    properties:
+                                        xonxoff:
+                                            type: boolean
+                                            description: |
+                                                Enable software flow control
+                                        rtscts:
+                                            type: boolean
+                                            description: |
+                                                Enable hardware (RTS/CTS) flow control
+                                        dsrdtr:
+                                            type: boolean
+                                            description: |
+                                                Enable hardware (DSR/DTR) flow control
+                                silent_interval:
+                                    type: float
+                                    description: |
+                                        Serial communication silet interval
+                    connect_timeout:
+                        type: number
+                        description: |
+                            Maximum number of seconds available to single connection
+                            attempt
+                    connect_delay:
+                        type: number
+                        description: |
+                            Delay (in seconds) between two consecutive connection
+                            establishment attempts
+                    request_timeout:
+                        type: number
+                        description: |
+                            Maximum duration (in seconds) of read or write
+                            request/response exchange.
+                    request_retry_count:
+                        type: integer
+                        description: |
+                            Number of request retries before remote data is considered
+                            unavailable
+                    request_retry_delay:
+                        type: number
+                        description: |
+                            Delay (in seconds) between two consecutive request retries
             remote_devices:
                 type: array
                 items:
@@ -147,7 +157,7 @@ definitions:
                                 type: object
                                 required:
                                     - name
-                                    - direction
+                                    - interval
                                     - data_type
                                     - start_address
                                     - start_bit
@@ -157,26 +167,13 @@ definitions:
                                         type: string
                                         description: |
                                             Data point name
-                                    direction:
-                                        oneOf:
-                                          - type: object
-                                            required:
-                                                - type
-                                                - interval
-                                            properties:
-                                                type:
-                                                    enum: READ
-                                                interval:
-                                                    type: number
-                                                    description: |
-                                                        Polling interval in
-                                                        seconds
-                                          - type: object
-                                            required:
-                                                - type
-                                            properties:
-                                                type:
-                                                    enum: WRITE
+                                    interval:
+                                        type:
+                                            - number
+                                            - "null"
+                                        description: |
+                                            Polling interval in seconds or
+                                            null if polling is disabled
                                     data_type:
                                         description: |
                                             Modbus register type
