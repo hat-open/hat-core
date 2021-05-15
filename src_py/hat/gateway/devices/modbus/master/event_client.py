@@ -62,17 +62,19 @@ class EventClientProxy(aio.Resource):
         self.async_group.spawn(self._read_loop)
 
     @property
-    def async_group(self):
+    def async_group(self) -> aio.Group:
         return self._event_client.async_group
 
     def write(self, responses: typing.List[Response]):
-        self._event_client.register([
+        register_events = [
             _response_to_register_event(self._event_type_prefix, i)
-            for i in responses])
+            for i in responses]
+        self._event_client.register(register_events)
 
     async def read(self) -> Request:
         try:
             return await self._read_queue.get()
+
         except aio.QueueClosedError:
             raise ConnectionError()
 
@@ -85,6 +87,7 @@ class EventClientProxy(aio.Resource):
                     try:
                         req = _request_from_event(event)
                         self._read_queue.put_nowait(req)
+
                     except Exception:
                         pass
 

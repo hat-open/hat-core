@@ -10,6 +10,9 @@ from hat.drivers import serial
 from hat.drivers import tcp
 
 
+DataType = modbus.DataType
+
+
 Error = enum.Enum('Error', [
     'INVALID_FUNCTION_CODE',
     'INVALID_DATA_ADDRESS',
@@ -55,13 +58,17 @@ async def connect(conf: json.Data) -> 'Connection':
     conn = Connection()
     conn._conf = conf
     conn._master = master
+    conn._request_queue = aio.Queue()
+
+    conn.async_group.spawn(conn._request_loop)
+
     return conn
 
 
 class Connection(aio.Resource):
 
     @property
-    def async_group(self):
+    def async_group(self) -> aio.Group:
         return self._master.async_group
 
     async def read(self,
@@ -70,8 +77,8 @@ class Connection(aio.Resource):
                    start_address: int,
                    quantity: int
                    ) -> typing.Union[typing.List[int], Error]:
-        return await self._request(self._master.read, device_id, data_type,
-                                   start_address, quantity)
+        return self._request(self._master.read, device_id, data_type,
+                             start_address, quantity)
 
     async def write(self,
                     device_id: int,
@@ -79,8 +86,8 @@ class Connection(aio.Resource):
                     start_address: int,
                     values: typing.List[int]
                     ) -> typing.Optional[Error]:
-        return await self._request(self._master.write, device_id, data_type,
-                                   start_address, values)
+        return self._request(self._master.write, device_id, data_type,
+                             start_address, values)
 
     async def write_mask(self,
                          device_id: int,
@@ -91,7 +98,34 @@ class Connection(aio.Resource):
         return await self._request(self._master.write_mask, device_id,
                                    address, and_mask, or_mask)
 
+    async def _request_loop(self):
+        try:
+            while True:
+                fn, args, future = await self._request_queue.get()
+                if future.done():
+                    continue
+
+                try:
+                    result = await self._communicate(fn, *args)
+                    if not future.done():
+                        future.set_result(result)
+                except Exception as e:
+                    future.set_exception(e)
+
+        finally:
+            self._request_queue.close()
+            self.close()
+
     async def _request(self, fn, *args):
+        try:
+            future = asyncio.Future()
+            self._request_queue.put_nowait((fn, args, future))
+            return await future
+
+        except aio.QueueClosedError:
+            raise ConnectionError()
+
+    async def _communicate(self, fn, *args):
         for retry_count in range(self._conf['request_retry_count']):
             with contextlib.suppres(asyncio.TimeoutError):
                 result = await asyncio.wait_for(
