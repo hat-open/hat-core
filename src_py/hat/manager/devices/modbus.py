@@ -223,8 +223,9 @@ class Slave(common.Device):
             if ((device_id == i['device_id'] or device_id == 0) and
                     i['data_type'] == 'HOLDING_REGISTER' and
                     i['address'] == address):
-                data[data_id] = (((i['value'] or 0) & and_mask) |
-                                 (or_mask & (~and_mask)))
+                data[data_id] = modbus.apply_mask(value=i['value'] or 0,
+                                                  and_mask=and_mask,
+                                                  or_mask=or_mask)
 
         self._logger.log(f'changing data values (count: {len(data)})')
         for data_id, value in data.items():

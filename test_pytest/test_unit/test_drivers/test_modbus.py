@@ -54,8 +54,8 @@ def nullmodem(request, tmp_path):
 async def create_master_slave(tcp_addr, nullmodem):
 
     @contextlib.asynccontextmanager
-    async def create_master_slave(modbus_type, comm_type, read_cb, write_cb,
-                                  write_mask_cb):
+    async def create_master_slave(modbus_type, comm_type, read_cb=None,
+                                  write_cb=None, write_mask_cb=None):
         if comm_type == CommType.TCP:
             slave_queue = aio.Queue()
             srv = await modbus.create_tcp_server(
@@ -94,8 +94,7 @@ async def test_create_tcp(tcp_addr, modbus_type):
 
     slave_queue = aio.Queue()
     srv = await modbus.create_tcp_server(modbus_type, tcp_addr,
-                                         slave_queue.put_nowait, None, None,
-                                         None)
+                                         slave_queue.put_nowait)
     assert not srv.is_closed
     assert slave_queue.empty()
 
@@ -142,8 +141,7 @@ async def test_create_tcp(tcp_addr, modbus_type):
 @pytest.mark.parametrize("modbus_type", list(modbus.ModbusType))
 async def test_create_serial(nullmodem, modbus_type):
     master = await modbus.create_serial_master(modbus_type, nullmodem[0])
-    slave = await modbus.create_serial_slave(modbus_type, nullmodem[1],
-                                             None, None, None)
+    slave = await modbus.create_serial_slave(modbus_type, nullmodem[1])
     assert not master.is_closed
     assert not slave.is_closed
     await master.async_close()
@@ -163,12 +161,12 @@ async def test_create_serial(nullmodem, modbus_type):
         (7, modbus.DataType.HOLDING_REGISTER, 1, 4, [1, 255, 1234, 0xFFFF]),
         (8, modbus.DataType.INPUT_REGISTER, 1, 1, [0]),
         (9, modbus.DataType.INPUT_REGISTER, 1, 4, [1, 255, 1234, 0xFFFF]),
-        (0, modbus.DataType.INPUT_REGISTER, 1, 4, [1, 255, 1234, 0xFFFF]),
-        (0, modbus.DataType.QUEUE, 123, None, [1, 255, 1234, 0xFFFF]),
-        (0, modbus.DataType.COIL, 1, 1, modbus.Error.INVALID_FUNCTION_CODE),
-        (0, modbus.DataType.COIL, 1, 3, modbus.Error.INVALID_DATA_ADDRESS),
-        (0, modbus.DataType.COIL, 1, 1, modbus.Error.INVALID_DATA_VALUE),
-        (0, modbus.DataType.COIL, 1, 3, modbus.Error.FUNCTION_ERROR)
+        (1, modbus.DataType.INPUT_REGISTER, 1, 4, [1, 255, 1234, 0xFFFF]),
+        (1, modbus.DataType.QUEUE, 123, None, [1, 255, 1234, 0xFFFF]),
+        (1, modbus.DataType.COIL, 1, 1, modbus.Error.INVALID_FUNCTION_CODE),
+        (1, modbus.DataType.COIL, 1, 3, modbus.Error.INVALID_DATA_ADDRESS),
+        (1, modbus.DataType.COIL, 1, 1, modbus.Error.INVALID_DATA_VALUE),
+        (1, modbus.DataType.COIL, 1, 3, modbus.Error.FUNCTION_ERROR)
     ])
 async def test_read(create_master_slave, modbus_type, comm_type,
                     device_id, data_type, start_address, quantity, result):
@@ -181,7 +179,7 @@ async def test_read(create_master_slave, modbus_type, comm_type,
         return await f
 
     async with create_master_slave(modbus_type, comm_type,
-                                   on_read, None, None) as (master, slave):
+                                   read_cb=on_read) as (master, slave):
 
         read_future = asyncio.ensure_future(master.read(
             device_id, data_type, start_address, quantity))
@@ -206,10 +204,10 @@ async def test_read(create_master_slave, modbus_type, comm_type,
         (3, modbus.DataType.COIL, 3, [1, 0, 1, 0], None),
         (6, modbus.DataType.HOLDING_REGISTER, 1, [0], None),
         (7, modbus.DataType.HOLDING_REGISTER, 1, [1, 255, 1234, 0xFFFF], None),
-        (0, modbus.DataType.COIL, 1, [0], modbus.Error.INVALID_FUNCTION_CODE),
-        (0, modbus.DataType.COIL, 1, [0], modbus.Error.INVALID_DATA_ADDRESS),
-        (0, modbus.DataType.COIL, 1, [0], modbus.Error.INVALID_DATA_VALUE),
-        (0, modbus.DataType.COIL, 1, [0], modbus.Error.FUNCTION_ERROR)
+        (1, modbus.DataType.COIL, 1, [0], modbus.Error.INVALID_FUNCTION_CODE),
+        (1, modbus.DataType.COIL, 1, [0], modbus.Error.INVALID_DATA_ADDRESS),
+        (1, modbus.DataType.COIL, 1, [0], modbus.Error.INVALID_DATA_VALUE),
+        (1, modbus.DataType.COIL, 1, [0], modbus.Error.FUNCTION_ERROR)
     ])
 async def test_write(create_master_slave, modbus_type, comm_type,
                      device_id, data_type, start_address, values, result):
@@ -222,7 +220,7 @@ async def test_write(create_master_slave, modbus_type, comm_type,
         return await f
 
     async with create_master_slave(modbus_type, comm_type,
-                                   None, on_write, None) as (master, slave):
+                                   write_cb=on_write) as (master, slave):
 
         write_future = asyncio.ensure_future(master.write(
             device_id, data_type, start_address, values))

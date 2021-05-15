@@ -10,6 +10,7 @@ from hat.drivers import serial
 from hat.drivers import tcp
 from hat.drivers.modbus import common
 from hat.drivers.modbus import encoder
+from hat.drivers.modbus import messages
 from hat.drivers.modbus import transport
 
 
@@ -95,10 +96,10 @@ util.register_type_alias('WriteMaskCb')
 
 async def create_tcp_server(modbus_type: common.ModbusType,
                             addr: tcp.Address,
-                            slave_cb: SlaveCb,
-                            read_cb: ReadCb,
-                            write_cb: WriteCb,
-                            write_mask_cb: WriteMaskCb,
+                            slave_cb: typing.Optional[SlaveCb] = None,
+                            read_cb: typing.Optional[ReadCb] = None,
+                            write_cb: typing.Optional[WriteCb] = None,
+                            write_mask_cb: typing.Optional[WriteMaskCb] = None,
                             **kwargs
                             ) -> 'TcpServer':
     """Create TCP server
@@ -127,9 +128,9 @@ async def create_tcp_server(modbus_type: common.ModbusType,
 
 async def create_serial_slave(modbus_type: common.ModbusType,
                               port: str,
-                              read_cb: ReadCb,
-                              write_cb: WriteCb,
-                              write_mask_cb: WriteMaskCb, *,
+                              read_cb: typing.Optional[ReadCb] = None,
+                              write_cb: typing.Optional[WriteCb] = None,
+                              write_mask_cb: typing.Optional[WriteMaskCb] = None,  # NOQA
                               silent_interval: float = 0.005,
                               **kwargs
                               ) -> 'Slave':
@@ -212,96 +213,180 @@ class Slave(aio.Resource):
             while True:
                 try:
                     req_adu = await encoder.read_adu(self._modbus_type,
-                                                     common.Direction.REQUEST,
+                                                     encoder.Direction.REQUEST,
                                                      self._reader)
                 except (asyncio.IncompleteReadError,
                         EOFError,
                         ConnectionError):
                     break
 
-                if isinstance(req_adu.pdu, common.ReadReqPdu):
-                    result = await aio.call(self._read_cb, self,
-                                            req_adu.device_id,
-                                            req_adu.pdu.data_type,
-                                            req_adu.pdu.address,
-                                            req_adu.pdu.quantity)
-                    if isinstance(result, common.Error):
-                        res_pdu = common.ReadErrPdu(
-                            data_type=req_adu.pdu.data_type,
-                            error=result)
-                    else:
-                        res_pdu = common.ReadResPdu(
-                            data_type=req_adu.pdu.data_type,
-                            values=result)
+                device_id = req_adu.device_id
+                fc = req_adu.pdu.fc
+                req = req_adu.pdu.data
 
-                elif isinstance(req_adu.pdu, common.WriteSingleReqPdu):
-                    result = await aio.call(self._write_cb, self,
-                                            req_adu.device_id,
-                                            req_adu.pdu.data_type,
-                                            req_adu.pdu.address,
-                                            [req_adu.pdu.value])
-                    if isinstance(result, common.Error):
-                        res_pdu = common.WriteSingleErrPdu(
-                            data_type=req_adu.pdu.data_type,
-                            error=result)
-                    else:
-                        res_pdu = common.WriteSingleResPdu(
-                            data_type=req_adu.pdu.data_type,
-                            address=req_adu.pdu.address,
-                            value=req_adu.pdu.value)
+                res = await self._process_request(device_id, fc, req)
+                res_pdu = messages.Pdu(fc=fc, data=res)
 
-                elif isinstance(req_adu.pdu, common.WriteMultipleReqPdu):
-                    result = await aio.call(self._write_cb, self,
-                                            req_adu.device_id,
-                                            req_adu.pdu.data_type,
-                                            req_adu.pdu.address,
-                                            req_adu.pdu.values)
-                    if isinstance(result, common.Error):
-                        res_pdu = common.WriteMultipleErrPdu(
-                            data_type=req_adu.pdu.data_type,
-                            error=result)
-                    else:
-                        res_pdu = common.WriteMultipleResPdu(
-                            data_type=req_adu.pdu.data_type,
-                            address=req_adu.pdu.address,
-                            quantity=len(req_adu.pdu.values))
-
-                elif isinstance(req_adu.pdu, common.WriteMaskReqPdu):
-                    result = await aio.call(self._write_mask_cb, self,
-                                            req_adu.device_id,
-                                            req_adu.pdu.address,
-                                            req_adu.pdu.and_mask,
-                                            req_adu.pdu.or_mask)
-                    if isinstance(result, common.Error):
-                        res_pdu = common.WriteMaskErrPdu(error=result)
-                    else:
-                        res_pdu = common.WriteMaskResPdu(
-                            address=req_adu.pdu.address,
-                            and_mask=req_adu.pdu.and_mask,
-                            or_mask=req_adu.pdu.or_mask)
-
-                else:
-                    raise Exception("invalid request pdu type")
+                if device_id == 0:
+                    continue
 
                 if self._modbus_type == common.ModbusType.TCP:
-                    res_adu = common.TcpAdu(
+                    res_adu = messages.TcpAdu(
                         transaction_id=req_adu.transaction_id,
                         device_id=req_adu.device_id,
                         pdu=res_pdu)
 
                 elif self._modbus_type == common.ModbusType.RTU:
-                    res_adu = common.RtuAdu(device_id=req_adu.device_id,
-                                            pdu=res_pdu)
-
-                elif self._modbus_type == common.ModbusType.ASCII:
-                    res_adu = common.AsciiAdu(device_id=req_adu.device_id,
+                    res_adu = messages.RtuAdu(device_id=req_adu.device_id,
                                               pdu=res_pdu)
 
+                elif self._modbus_type == common.ModbusType.ASCII:
+                    res_adu = messages.AsciiAdu(device_id=req_adu.device_id,
+                                                pdu=res_pdu)
+
                 else:
-                    raise Exception("invalid modbus type")
+                    raise ValueError("invalid modbus type")
 
                 res_adu_bytes = encoder.encode_adu(res_adu)
                 await self._writer.write(res_adu_bytes)
 
         finally:
             self.close()
+
+    async def _process_request(self, device_id, fc, req):
+        if fc == messages.FunctionCode.READ_COILS:
+            if self._read_cb:
+                data_type = common.DataType.COIL
+                result = await aio.call(self._read_cb, self, device_id,
+                                        data_type, req.address, req.quantity)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.ReadCoilsRes(values=result)
+
+        if fc == messages.FunctionCode.READ_DISCRETE_INPUTS:
+            if self._read_cb:
+                data_type = common.DataType.DISCRETE_INPUT
+                result = await aio.call(self._read_cb, self, device_id,
+                                        data_type, req.address, req.quantity)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.ReadDiscreteInputsRes(values=result)
+
+        if fc == messages.FunctionCode.READ_HOLDING_REGISTERS:
+            if self._read_cb:
+                data_type = common.DataType.HOLDING_REGISTER
+                result = await aio.call(self._read_cb, self, device_id,
+                                        data_type, req.address, req.quantity)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.ReadHoldingRegistersRes(values=result)
+
+        if fc == messages.FunctionCode.READ_INPUT_REGISTERS:
+            if self._read_cb:
+                data_type = common.DataType.INPUT_REGISTER
+                result = await aio.call(self._read_cb, self, device_id,
+                                        data_type, req.address, req.quantity)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.ReadInputRegistersRes(values=result)
+
+        if fc == messages.FunctionCode.WRITE_SINGLE_COIL:
+            if self._write_cb:
+                data_type = common.DataType.COIL
+                result = await aio.call(self._write_cb, self, device_id,
+                                        data_type, req.address, [req.value])
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.WriteSingleCoilRes(address=req.address,
+                                               value=req.value)
+
+        if fc == messages.FunctionCode.WRITE_SINGLE_REGISTER:
+            if self._write_cb:
+                data_type = common.DataType.HOLDING_REGISTER
+                result = await aio.call(self._write_cb, self, device_id,
+                                        data_type, req.address, [req.value])
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.WriteSingleRegisterRes(address=req.address,
+                                                   value=req.value)
+
+        if fc == messages.FunctionCode.WRITE_MULTIPLE_COILS:
+            if self._write_cb:
+                data_type = common.DataType.COIL
+                result = await aio.call(self._write_cb, self, device_id,
+                                        data_type, req.address, req.values)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.WriteMultipleCoilsRes(address=req.address,
+                                                  quantity=len(req.values))
+
+        if fc == messages.FunctionCode.WRITE_MULTIPLE_REGISTER:
+            if self._write_cb:
+                data_type = common.DataType.HOLDING_REGISTER
+                result = await aio.call(self._write_cb, self, device_id,
+                                        data_type, req.address, req.values)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.WriteMultipleRegistersRes(address=req.address,
+                                                      quantity=len(req.values))
+
+        if fc == messages.FunctionCode.MASK_WRITE_REGISTER:
+            if self._write_mask_cb:
+                result = await aio.call(self._write_mask_cb, self, device_id,
+                                        req.address, req.and_mask, req.or_mask)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.MaskWriteRegisterRes(address=req.address,
+                                                 and_mask=req.and_mask,
+                                                 or_mask=req.or_mask)
+
+        if fc == messages.FunctionCode.READ_FIFO_QUEUE:
+            if self._read_cb:
+                data_type = common.DataType.QUEUE
+                result = await aio.call(self._read_cb, self, device_id,
+                                        data_type, req.address, None)
+            else:
+                result = common.Error.FUNCTION_ERROR
+
+            if isinstance(result, common.Error):
+                return result
+
+            return messages.ReadFifoQueueRes(values=result)
+
+        return common.Error.INVALID_FUNCTION_CODE

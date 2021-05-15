@@ -1,16 +1,23 @@
 """Modbus encoder"""
 
+import enum
 import itertools
 import struct
 
 from hat.drivers.modbus import common
+from hat.drivers.modbus import messages
 from hat.drivers.modbus import transport
 
 
+class Direction(enum.Enum):
+    REQUEST = 0
+    RESPONSE = 1
+
+
 async def read_adu(modbus_type: common.ModbusType,
-                   direction: common.Direction,
+                   direction: Direction,
                    reader: transport.Reader
-                   ) -> common.Adu:
+                   ) -> messages.Adu:
     if modbus_type == common.ModbusType.TCP:
         return await _read_adu_tcp(direction, reader)
 
@@ -23,14 +30,14 @@ async def read_adu(modbus_type: common.ModbusType,
     raise ValueError("unsupported modbus type")
 
 
-def encode_adu(adu: common.Adu) -> transport.Data:
-    if isinstance(adu, common.TcpAdu):
+def encode_adu(adu: messages.Adu) -> transport.Data:
+    if isinstance(adu, messages.TcpAdu):
         return _encode_adu_tcp(adu)
 
-    if isinstance(adu, common.RtuAdu):
+    if isinstance(adu, messages.RtuAdu):
         return _encode_adu_rtu(adu)
 
-    if isinstance(adu, common.AsciiAdu):
+    if isinstance(adu, messages.AsciiAdu):
         return _encode_adu_ascii(adu)
 
     raise ValueError("unsupported modbus type")
@@ -64,277 +71,132 @@ def _encode_adu_ascii(adu):
 
 
 def _encode_pdu(pdu):
-    if isinstance(pdu, common.ReqPdu):
-        return _encode_pdu_req(pdu)
+    if isinstance(pdu.data, messages.Request):
+        fc = pdu.fc.value
+        data = _encode_req(pdu.data)
 
-    if isinstance(pdu, common.ResPdu):
-        return _encode_pdu_res(pdu)
+    elif isinstance(pdu.data, messages.Response):
+        fc = pdu.fc.value
+        data = _encode_res(pdu.data)
 
-    if isinstance(pdu, common.ErrPdu):
-        return _encode_pdu_err(pdu)
-
-    raise ValueError("invalid pdu")
-
-
-def _encode_pdu_req(pdu):
-    if isinstance(pdu, common.ReadReqPdu):
-        return _encode_pdu_req_read(pdu)
-
-    if isinstance(pdu, common.WriteSingleReqPdu):
-        return _encode_pdu_req_write_single(pdu)
-
-    if isinstance(pdu, common.WriteMultipleReqPdu):
-        return _encode_pdu_req_write_multiple(pdu)
-
-    if isinstance(pdu, common.WriteMaskReqPdu):
-        return _encode_pdu_req_write_mask(pdu)
-
-    raise ValueError("invalid pdu")
-
-
-def _encode_pdu_res(pdu):
-    if isinstance(pdu, common.ReadResPdu):
-        return _encode_pdu_res_read(pdu)
-
-    if isinstance(pdu, common.WriteSingleResPdu):
-        return _encode_pdu_res_write_single(pdu)
-
-    if isinstance(pdu, common.WriteMultipleResPdu):
-        return _encode_pdu_res_write_multiple(pdu)
-
-    if isinstance(pdu, common.WriteMaskResPdu):
-        return _encode_pdu_res_write_mask(pdu)
-
-    raise ValueError("invalid pdu")
-
-
-def _encode_pdu_err(pdu):
-    if isinstance(pdu, common.ReadErrPdu):
-        return _encode_pdu_err_read(pdu)
-
-    if isinstance(pdu, common.WriteSingleErrPdu):
-        return _encode_pdu_err_write_single(pdu)
-
-    if isinstance(pdu, common.WriteMultipleErrPdu):
-        return _encode_pdu_err_write_multiple(pdu)
-
-    if isinstance(pdu, common.WriteMaskErrPdu):
-        return _encode_pdu_err_write_mask(pdu)
-
-    raise ValueError("invalid pdu")
-
-
-def _encode_pdu_req_read(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 1
-        data = struct.pack('>HH', pdu.address, pdu.quantity)
-
-    elif pdu.data_type == common.DataType.DISCRETE_INPUT:
-        fc = 2
-        data = struct.pack('>HH', pdu.address, pdu.quantity)
-
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 3
-        data = struct.pack('>HH', pdu.address, pdu.quantity)
-
-    elif pdu.data_type == common.DataType.INPUT_REGISTER:
-        fc = 4
-        data = struct.pack('>HH', pdu.address, pdu.quantity)
-
-    elif pdu.data_type == common.DataType.QUEUE:
-        fc = 24
-        data = struct.pack('>H', pdu.address)
+    elif isinstance(pdu.data, common.Error):
+        fc = pdu.fc.value + 0x80
+        data = [pdu.data.value]
 
     else:
-        raise ValueError("unsupported data type")
+        raise ValueError('unsupported pdu data')
 
     return bytes([fc, *data])
 
 
-def _encode_pdu_req_write_single(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 5
-        data = struct.pack('>HH', pdu.address, 0xFF00 if pdu.value else 0)
+def _encode_req(req):
+    if isinstance(req, messages.ReadCoilsReq):
+        return struct.pack('>HH', req.address, req.quantity)
 
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 6
-        data = struct.pack('>HH', pdu.address, pdu.value)
+    if isinstance(req, messages.ReadDiscreteInputsReq):
+        return struct.pack('>HH', req.address, req.quantity)
 
-    else:
-        raise ValueError("unsupported data type")
+    if isinstance(req, messages.ReadHoldingRegistersReq):
+        return struct.pack('>HH', req.address, req.quantity)
 
-    return bytes([fc, *data])
+    if isinstance(req, messages.ReadInputRegistersReq):
+        return struct.pack('>HH', req.address, req.quantity)
 
+    if isinstance(req, messages.WriteSingleCoilReq):
+        return struct.pack('>HH', req.address, 0xFF00 if req.value else 0)
 
-def _encode_pdu_req_write_multiple(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 15
-        quantity = len(pdu.values)
+    if isinstance(req, messages.WriteSingleRegisterReq):
+        return struct.pack('>HH', req.address, req.value)
+
+    if isinstance(req, messages.WriteMultipleCoilsReq):
+        quantity = len(req.values)
         count = quantity // 8 + (1 if quantity % 8 else 0)
-        data = bytearray(struct.pack('>HHB', pdu.address, quantity, count))
+        data = bytearray(struct.pack('>HHB', req.address, quantity, count))
         for i in range(count):
             data_byte = 0
             for j in range(8):
-                if len(pdu.values) > i * 8 + j and pdu.values[i * 8 + j]:
+                if len(req.values) > i * 8 + j and req.values[i * 8 + j]:
                     data_byte = data_byte | (1 << j)
             data.append(data_byte)
+        return data
 
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 16
-        quantity = len(pdu.values)
+    if isinstance(req, messages.WriteMultipleRegistersReq):
+        quantity = len(req.values)
         count = 2 * quantity
-        data = bytearray(struct.pack('>HHB', pdu.address, quantity, count))
+        data = bytearray(struct.pack('>HHB', req.address, quantity, count))
         for i in range(count):
-            data.append((pdu.values[i // 2] >> (0 if i % 2 else 8)) & 0xFF)
+            data.append((req.values[i // 2] >> (0 if i % 2 else 8)) & 0xFF)
+        return data
 
-    else:
-        raise ValueError("unsupported data type")
+    if isinstance(req, messages.MaskWriteRegisterReq):
+        return struct.pack('>HHH', req.address, req.and_mask, req.or_mask)
 
-    return bytes([fc, *data])
+    if isinstance(req, messages.ReadFifoQueueReq):
+        return struct.pack('>H', req.address)
 
-
-def _encode_pdu_req_write_mask(pdu):
-    fc = 22
-    data = struct.pack('>HHH', pdu.address, pdu.and_mask, pdu.or_mask)
-    return bytes([fc, *data])
+    raise ValueError('unsupported request type')
 
 
-def _encode_pdu_res_read(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 1
-        quantity = len(pdu.values)
+def _encode_res(res):
+    if isinstance(res, messages.ReadCoilsRes):
+        quantity = len(res.values)
         count = quantity // 8 + (1 if quantity % 8 else 0)
         data = bytearray([count])
         for i in range(count):
             data_byte = 0
             for j in range(8):
-                if len(pdu.values) > i * 8 + j and pdu.values[i * 8 + j]:
+                if (len(res.values) > i * 8 + j and
+                        res.values[i * 8 + j]):
                     data_byte = data_byte | (1 << j)
             data.append(data_byte)
+        return data
 
-    elif pdu.data_type == common.DataType.DISCRETE_INPUT:
-        fc = 2
-        quantity = len(pdu.values)
+    if isinstance(res, messages.ReadDiscreteInputsRes):
+        quantity = len(res.values)
         count = quantity // 8 + (1 if quantity % 8 else 0)
         data = bytearray([count])
         for i in range(count):
             data_byte = 0
             for j in range(8):
-                if len(pdu.values) > i * 8 + j and pdu.values[i * 8 + j]:
+                if len(res.values) > i * 8 + j and res.values[i * 8 + j]:
                     data_byte = data_byte | (1 << j)
             data.append(data_byte)
+        return data
 
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 3
-        data = bytearray([len(pdu.values) * 2])
-        for i in pdu.values:
+    if isinstance(res, messages.ReadHoldingRegistersRes):
+        data = bytearray([len(res.values) * 2])
+        for i in res.values:
             data.extend([(i >> 8) & 0xFF, i & 0xFF])
+        return data
 
-    elif pdu.data_type == common.DataType.INPUT_REGISTER:
-        fc = 4
-        data = bytearray([len(pdu.values) * 2])
-        for i in pdu.values:
+    if isinstance(res, messages.ReadInputRegistersRes):
+        data = bytearray([len(res.values) * 2])
+        for i in res.values:
             data.extend([(i >> 8) & 0xFF, i & 0xFF])
+        return data
 
-    elif pdu.data_type == common.DataType.QUEUE:
-        fc = 24
-        data = bytearray([len(pdu.values) * 2])
-        for i in pdu.values:
+    if isinstance(res, messages.WriteSingleCoilRes):
+        return struct.pack('>HH', res.address, 0xFF00 if res.value else 0)
+
+    if isinstance(res, messages.WriteSingleRegisterRes):
+        return struct.pack('>HH', res.address, res.value)
+
+    if isinstance(res, messages.WriteMultipleCoilsRes):
+        return struct.pack('>HH', res.address, res.quantity)
+
+    if isinstance(res, messages.WriteMultipleRegistersRes):
+        return struct.pack('>HH', res.address, res.quantity)
+
+    if isinstance(res, messages.MaskWriteRegisterRes):
+        return struct.pack('>HHH', res.address, res.and_mask, res.or_mask)
+
+    if isinstance(res, messages.ReadFifoQueueRes):
+        data = bytearray([len(res.values) * 2])
+        for i in res.values:
             data.extend([(i >> 8) & 0xFF, i & 0xFF])
+        return data
 
-    else:
-        raise ValueError("unsupported data type")
-
-    return bytes([fc, *data])
-
-
-def _encode_pdu_res_write_single(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 5
-        data = struct.pack('>HH', pdu.address, 0xFF00 if pdu.value else 0)
-
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 6
-        data = struct.pack('>HH', pdu.address, pdu.value)
-
-    else:
-        raise ValueError("unsupported data type")
-
-    return bytes([fc, *data])
-
-
-def _encode_pdu_res_write_multiple(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 15
-        data = struct.pack('>HH', pdu.address, pdu.quantity)
-
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 16
-        data = struct.pack('>HH', pdu.address, pdu.quantity)
-
-    else:
-        raise ValueError("unsupported data type")
-
-    return bytes([fc, *data])
-
-
-def _encode_pdu_res_write_mask(pdu):
-    fc = 22
-    data = struct.pack('>HHH', pdu.address, pdu.and_mask, pdu.or_mask)
-    return bytes([fc, *data])
-
-
-def _encode_pdu_err_read(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 1
-
-    elif pdu.data_type == common.DataType.DISCRETE_INPUT:
-        fc = 2
-
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 3
-
-    elif pdu.data_type == common.DataType.INPUT_REGISTER:
-        fc = 4
-
-    elif pdu.data_type == common.DataType.QUEUE:
-        fc = 24
-
-    else:
-        raise ValueError("unsupported data type")
-
-    return bytes([0x80 | fc, pdu.error.value])
-
-
-def _encode_pdu_err_write_single(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 5
-
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 6
-
-    else:
-        raise ValueError("unsupported data type")
-
-    return bytes([0x80 | fc, pdu.error.value])
-
-
-def _encode_pdu_err_write_multiple(pdu):
-    if pdu.data_type == common.DataType.COIL:
-        fc = 15
-
-    elif pdu.data_type == common.DataType.HOLDING_REGISTER:
-        fc = 16
-
-    else:
-        raise ValueError("unsupported data type")
-
-    return bytes([0x80 | fc, pdu.error.value])
-
-
-def _encode_pdu_err_write_mask(pdu):
-    fc = 22
-    return bytes([0x80 | fc, pdu.error.value])
+    raise ValueError('unsupported request type')
 
 
 async def _read_adu_tcp(direction, reader):
@@ -346,9 +208,9 @@ async def _read_adu_tcp(direction, reader):
     data = await reader.read(length - 1)
     memory_reader = transport.MemoryReader(data)
     pdu = await _read_pdu(direction, memory_reader)
-    return common.TcpAdu(transaction_id=transaction_id,
-                         device_id=device_id,
-                         pdu=pdu)
+    return messages.TcpAdu(transaction_id=transaction_id,
+                           device_id=device_id,
+                           pdu=pdu)
 
 
 async def _read_adu_rtu(direction, reader):
@@ -359,7 +221,7 @@ async def _read_adu_rtu(direction, reader):
     crc_bytes = await reader.read(2)
     if (crc_bytes[1] << 8) | crc_bytes[0] != crc:
         raise Exception("CRC didn't match received message")
-    return common.RtuAdu(device_id=device_id, pdu=pdu)
+    return messages.RtuAdu(device_id=device_id, pdu=pdu)
 
 
 async def _read_adu_ascii(direction, reader):
@@ -378,225 +240,173 @@ async def _read_adu_ascii(direction, reader):
     lrc = _calculate_lrc(caching_reader.cache)
     if lrc != (await caching_reader.read(1))[0]:
         raise Exception("LRC didn't match received message")
-    return common.AsciiAdu(device_id=device_id, pdu=pdu)
+    return messages.AsciiAdu(device_id=device_id, pdu=pdu)
 
 
 async def _read_pdu(direction, reader):
-    if direction == common.Direction.REQUEST:
-        return await _read_pdu_req(reader)
-
-    if direction == common.Direction.RESPONSE:
-        return await _read_pdu_res(reader)
-
-    raise ValueError('invalid direction')
-
-
-async def _read_pdu_req(reader):
     fc = (await reader.read(1))[0]
 
-    if fc == 1:
-        data_type = common.DataType.COIL
-        address, quantity = struct.unpack('>HH', await reader.read(4))
-        return common.ReadReqPdu(data_type=data_type,
-                                 address=address,
-                                 quantity=quantity)
+    if direction == Direction.REQUEST:
+        fc = messages.FunctionCode(fc)
+        data = await _read_req(fc, reader)
 
-    if fc == 2:
-        data_type = common.DataType.DISCRETE_INPUT
-        address, quantity = struct.unpack('>HH', await reader.read(4))
-        return common.ReadReqPdu(data_type=data_type,
-                                 address=address,
-                                 quantity=quantity)
+    elif direction == Direction.RESPONSE:
+        if fc & 0x80:
+            fc = messages.FunctionCode(fc & 0x7F)
+            data = common.Error((await reader.read(1))[0])
+        else:
+            fc = messages.FunctionCode(fc)
+            data = await _read_res(fc, reader)
 
-    if fc == 3:
-        data_type = common.DataType.HOLDING_REGISTER
-        address, quantity = struct.unpack('>HH', await reader.read(4))
-        return common.ReadReqPdu(data_type=data_type,
-                                 address=address,
-                                 quantity=quantity)
+    else:
+        raise ValueError('invalid direction')
 
-    if fc == 4:
-        data_type = common.DataType.INPUT_REGISTER
-        address, quantity = struct.unpack('>HH', await reader.read(4))
-        return common.ReadReqPdu(data_type=data_type,
-                                 address=address,
-                                 quantity=quantity)
+    return messages.Pdu(fc=fc, data=data)
 
-    if fc == 5:
-        data_type = common.DataType.COIL
+
+async def _read_req(fc, reader):
+    if fc == messages.FunctionCode.READ_COILS:
+        address, quantity = struct.unpack('>HH', await reader.read(4))
+        return messages.ReadCoilsReq(address=address,
+                                     quantity=quantity)
+
+    if fc == messages.FunctionCode.READ_DISCRETE_INPUTS:
+        address, quantity = struct.unpack('>HH', await reader.read(4))
+        return messages.ReadDiscreteInputsReq(address=address,
+                                              quantity=quantity)
+
+    if fc == messages.FunctionCode.READ_HOLDING_REGISTERS:
+        address, quantity = struct.unpack('>HH', await reader.read(4))
+        return messages.ReadHoldingRegistersReq(address=address,
+                                                quantity=quantity)
+
+    if fc == messages.FunctionCode.READ_INPUT_REGISTERS:
+        address, quantity = struct.unpack('>HH', await reader.read(4))
+        return messages.ReadInputRegistersReq(address=address,
+                                              quantity=quantity)
+
+    if fc == messages.FunctionCode.WRITE_SINGLE_COIL:
         address, value = struct.unpack('>HH', await reader.read(4))
-        return common.WriteSingleReqPdu(data_type=data_type,
-                                        address=address,
-                                        value=bool(value))
+        return messages.WriteSingleCoilReq(address=address,
+                                           value=bool(value))
 
-    if fc == 6:
-        data_type = common.DataType.HOLDING_REGISTER
+    if fc == messages.FunctionCode.WRITE_SINGLE_REGISTER:
         address, value = struct.unpack('>HH', await reader.read(4))
-        return common.WriteSingleReqPdu(data_type=data_type,
-                                        address=address,
-                                        value=value)
+        return messages.WriteSingleRegisterReq(address=address,
+                                               value=value)
 
-    if fc == 15:
-        data_type = common.DataType.COIL
+    if fc == messages.FunctionCode.WRITE_MULTIPLE_COILS:
         address, quantity, byte_count = struct.unpack('>HHB',
                                                       await reader.read(5))
         values_bytes = await reader.read(byte_count)
         values = [int(bool(values_bytes[i // 8] & (1 << (i % 8))))
                   for i in range(quantity)]
-        return common.WriteMultipleReqPdu(data_type=data_type,
-                                          address=address,
-                                          values=values)
+        return messages.WriteMultipleCoilsReq(address=address,
+                                              values=values)
 
-    if fc == 16:
-        data_type = common.DataType.HOLDING_REGISTER
+    if fc == messages.FunctionCode.WRITE_MULTIPLE_REGISTER:
         address, quantity, byte_count = struct.unpack('>HHB',
                                                       await reader.read(5))
         values_bytes = await reader.read(byte_count)
         values = [(values_bytes[i * 2] << 8) | values_bytes[i * 2 + 1]
                   for i in range(quantity)]
-        return common.WriteMultipleReqPdu(data_type=data_type,
-                                          address=address,
-                                          values=values)
+        return messages.WriteMultipleRegistersReq(address=address,
+                                                  values=values)
 
-    if fc == 22:
+    if fc == messages.FunctionCode.MASK_WRITE_REGISTER:
         address, and_mask, or_mask = struct.unpack('>HHH',
                                                    await reader.read(6))
-        return common.WriteMaskReqPdu(address=address,
-                                      and_mask=and_mask,
-                                      or_mask=or_mask)
+        return messages.MaskWriteRegisterReq(address=address,
+                                             and_mask=and_mask,
+                                             or_mask=or_mask)
 
-    if fc == 24:
-        data_type = common.DataType.QUEUE
+    if fc == messages.FunctionCode.READ_FIFO_QUEUE:
         address = struct.unpack('>H', await reader.read(2))[0]
-        return common.ReadReqPdu(data_type=data_type,
-                                 address=address,
-                                 quantity=None)
+        return messages.ReadFifoQueueReq(address=address)
 
-    raise Exception("unsupported function code %s", fc)
+    raise ValueError("unsupported function code")
 
 
-async def _read_pdu_res(reader):
-    fc = (await reader.read(1))[0]
-    is_err, fc = bool(fc & 0x80), (fc & 0x7F)
-    error = common.Error((await reader.read(1))[0]) if is_err else None
-
-    if fc == 1:
-        data_type = common.DataType.COIL
-        if error:
-            return common.ReadErrPdu(data_type, error)
+async def _read_res(fc, reader):
+    if fc == messages.FunctionCode.READ_COILS:
         byte_count = (await reader.read(1))[0]
         data = await reader.read(byte_count)
         values = list(itertools.chain.from_iterable(((i >> j) & 1
                                                      for j in range(8))
                                                     for i in data))
-        return common.ReadResPdu(data_type=data_type,
-                                 values=values)
+        return messages.ReadCoilsRes(values=values)
 
-    if fc == 2:
-        data_type = common.DataType.DISCRETE_INPUT
-        if error:
-            return common.ReadErrPdu(data_type, error)
+    if fc == messages.FunctionCode.READ_DISCRETE_INPUTS:
         byte_count = (await reader.read(1))[0]
         data = await reader.read(byte_count)
         values = list(itertools.chain.from_iterable(((i >> j) & 1
                                                      for j in range(8))
                                                     for i in data))
-        return common.ReadResPdu(data_type=data_type,
-                                 values=values)
+        return messages.ReadDiscreteInputsRes(values=values)
 
-    if fc == 3:
-        data_type = common.DataType.HOLDING_REGISTER
-        if error:
-            return common.ReadErrPdu(data_type, error)
+    if fc == messages.FunctionCode.READ_HOLDING_REGISTERS:
         byte_count = (await reader.read(1))[0]
         if byte_count % 2:
             raise Exception('invalid number of bytes')
         data = await reader.read(byte_count)
         values = [(data[i * 2] << 8) | data[1 + i * 2]
                   for i in range(byte_count // 2)]
-        return common.ReadResPdu(data_type=data_type,
-                                 values=values)
+        return messages.ReadHoldingRegistersRes(values=values)
 
-    if fc == 4:
-        data_type = common.DataType.INPUT_REGISTER
-        if error:
-            return common.ReadErrPdu(data_type, error)
+    if fc == messages.FunctionCode.READ_INPUT_REGISTERS:
         byte_count = (await reader.read(1))[0]
         if byte_count % 2:
             raise Exception('invalid number of bytes')
         data = await reader.read(byte_count)
         values = [(data[i * 2] << 8) | data[1 + i * 2]
                   for i in range(byte_count // 2)]
-        return common.ReadResPdu(data_type=data_type,
-                                 values=values)
+        return messages.ReadInputRegistersRes(values=values)
 
-    if fc == 5:
-        data_type = common.DataType.COIL
-        if error:
-            return common.WriteSingleErrPdu(data_type, error)
+    if fc == messages.FunctionCode.WRITE_SINGLE_COIL:
         data = await reader.read(4)
         address = (data[0] << 8) | data[1]
         value = int(bool((data[2] << 8) | data[3]))
-        return common.WriteSingleResPdu(data_type=data_type,
-                                        address=address,
-                                        value=value)
+        return messages.WriteSingleCoilRes(address=address,
+                                           value=value)
 
-    if fc == 6:
-        data_type = common.DataType.HOLDING_REGISTER
-        if error:
-            return common.WriteSingleErrPdu(data_type, error)
+    if fc == messages.FunctionCode.WRITE_SINGLE_REGISTER:
         data = await reader.read(4)
         address = (data[0] << 8) | data[1]
         value = (data[2] << 8) | data[3]
-        return common.WriteSingleResPdu(data_type=data_type,
-                                        address=address,
-                                        value=value)
+        return messages.WriteSingleRegisterRes(address=address,
+                                               value=value)
 
-    if fc == 15:
-        data_type = common.DataType.COIL
-        if error:
-            return common.WriteMultipleErrPdu(data_type, error)
+    if fc == messages.FunctionCode.WRITE_MULTIPLE_COILS:
         data = await reader.read(4)
         address = (data[0] << 8) | data[1]
         quantity = (data[2] << 8) | data[3]
-        return common.WriteMultipleResPdu(data_type=data_type,
-                                          address=address,
-                                          quantity=quantity)
+        return messages.WriteMultipleCoilsRes(address=address,
+                                              quantity=quantity)
 
-    if fc == 16:
-        data_type = common.DataType.HOLDING_REGISTER
-        if error:
-            return common.WriteMultipleErrPdu(data_type, error)
+    if fc == messages.FunctionCode.WRITE_MULTIPLE_REGISTER:
         data = await reader.read(4)
         address = (data[0] << 8) | data[1]
         quantity = (data[2] << 8) | data[3]
-        return common.WriteMultipleResPdu(data_type=data_type,
-                                          address=address,
-                                          quantity=quantity)
+        return messages.WriteMultipleRegistersRes(address=address,
+                                                  quantity=quantity)
 
-    if fc == 22:
-        if error:
-            return common.WriteMaskErrPdu(error)
+    if fc == messages.FunctionCode.MASK_WRITE_REGISTER:
         address, and_mask, or_mask = struct.unpack('>HHH',
                                                    await reader.read(6))
-        return common.WriteMaskResPdu(address=address,
-                                      and_mask=and_mask,
-                                      or_mask=or_mask)
+        return messages.MaskWriteRegisterRes(address=address,
+                                             and_mask=and_mask,
+                                             or_mask=or_mask)
 
-    if fc == 24:
-        data_type = common.DataType.QUEUE
-        if error:
-            return common.ReadErrPdu(data_type, error)
+    if fc == messages.FunctionCode.READ_FIFO_QUEUE:
         byte_count = (await reader.read(1))[0]
         if byte_count % 2:
             raise Exception('invalid number of bytes')
         data = await reader.read(byte_count)
         values = [(data[i * 2] << 8) | data[1 + i * 2]
                   for i in range(byte_count // 2)]
-        return common.ReadResPdu(data_type=data_type,
-                                 values=values)
+        return messages.ReadFifoQueueRes(values=values)
 
-    raise Exception("unsupported function code %s", fc)
+    raise ValueError("unsupported function code")
 
 
 def _calculate_crc(data):

@@ -9,6 +9,7 @@ from hat.drivers import serial
 from hat.drivers import tcp
 from hat.drivers.modbus import common
 from hat.drivers.modbus import encoder
+from hat.drivers.modbus import messages
 from hat.drivers.modbus import transport
 
 
@@ -100,27 +101,41 @@ class Master(aio.Resource):
             ConnectionError
 
         """
-        quantity = quantity if data_type != common.DataType.QUEUE else None
-        req_pdu = common.ReadReqPdu(data_type=data_type,
-                                    address=start_address,
-                                    quantity=quantity)
+        if device_id == 0:
+            raise ValueError('unsupported device id')
 
-        future = asyncio.Future()
-        try:
-            self._send_queue.put_nowait((device_id, req_pdu, future))
-        except aio.QueueClosedError:
-            raise ConnectionError()
-        res_pdu = await future
+        if data_type == common.DataType.COIL:
+            req = messages.ReadCoilsReq(address=start_address,
+                                        quantity=quantity)
 
-        if isinstance(res_pdu, common.ReadResPdu):
-            if data_type == common.DataType.QUEUE:
-                return res_pdu.values
-            return res_pdu.values[:quantity]
+        elif data_type == common.DataType.DISCRETE_INPUT:
+            req = messages.ReadDiscreteInputsReq(address=start_address,
+                                                 quantity=quantity)
 
-        if isinstance(res_pdu, common.ReadErrPdu):
-            return res_pdu.error
+        elif data_type == common.DataType.HOLDING_REGISTER:
+            req = messages.ReadHoldingRegistersReq(address=start_address,
+                                                   quantity=quantity)
 
-        raise Exception("invalid response pdu type")
+        elif data_type == common.DataType.INPUT_REGISTER:
+            req = messages.ReadInputRegistersReq(address=start_address,
+                                                 quantity=quantity)
+
+        elif data_type == common.DataType.QUEUE:
+            req = messages.ReadFifoQueueReq(address=start_address)
+
+        else:
+            raise ValueError('unsupported data type')
+
+        res = await self._send(device_id, req)
+
+        if isinstance(res, messages.Response):
+            return (res.values if data_type == common.DataType.QUEUE
+                    else res.values[:quantity])
+
+        if isinstance(res, common.Error):
+            return res
+
+        raise ValueError("unsupported response pdu data")
 
     async def write(self,
                     device_id: int,
@@ -143,28 +158,32 @@ class Master(aio.Resource):
             ConnectionError
 
         """
-        req_pdu = common.WriteMultipleReqPdu(data_type=data_type,
-                                             address=start_address,
-                                             values=values)
+        if data_type == common.DataType.COIL:
+            req = messages.WriteMultipleCoilsReq(address=start_address,
+                                                 values=values)
 
-        future = asyncio.Future()
-        try:
-            self._send_queue.put_nowait((device_id, req_pdu, future))
-        except aio.QueueClosedError:
-            raise ConnectionError()
-        res_pdu = await future
+        elif data_type == common.DataType.HOLDING_REGISTER:
+            req = messages.WriteMultipleRegistersReq(address=start_address,
+                                                     values=values)
 
-        if isinstance(res_pdu, common.WriteMultipleResPdu):
-            if (res_pdu.address != start_address):
+        else:
+            raise ValueError('unsupported data type')
+
+        res = await self._send(device_id, req)
+        if res is None:
+            return
+
+        if isinstance(res, messages.Response):
+            if (res.address != start_address):
                 raise Exception("invalid response pdu address")
-            if (res_pdu.quantity != len(values)):
+            if (res.quantity != len(values)):
                 raise Exception("invalid response pdu quantity")
             return
 
-        if isinstance(res_pdu, common.WriteMultipleErrPdu):
-            return res_pdu.error
+        if isinstance(res, common.Error):
+            return res
 
-        raise Exception("invalid response pdu type")
+        raise ValueError("unsupported response pdu data")
 
     async def write_mask(self,
                          device_id: int,
@@ -184,30 +203,43 @@ class Master(aio.Resource):
             ConnectionError
 
         """
-        req_pdu = common.WriteMaskReqPdu(address=address,
-                                         and_mask=and_mask,
-                                         or_mask=or_mask)
+        req = common.MaskWriteRegisterReq(address=address,
+                                          and_mask=and_mask,
+                                          or_mask=or_mask)
 
-        future = asyncio.Future()
-        try:
-            self._send_queue.put_nowait((device_id, req_pdu, future))
-        except aio.QueueClosedError:
-            raise ConnectionError()
-        res_pdu = await future
+        res = await self._send(device_id, req)
+        if res is None:
+            return
 
-        if isinstance(res_pdu, common.WriteMaskResPdu):
-            if (res_pdu.address != address):
+        if isinstance(res, messages.Response):
+            if (res.address != address):
                 raise Exception("invalid response pdu address")
-            if (res_pdu.and_mask != and_mask):
+            if (res.and_mask != and_mask):
                 raise Exception("invalid response pdu and mask")
-            if (res_pdu.or_mask != or_mask):
+            if (res.or_mask != or_mask):
                 raise Exception("invalid response pdu or mask")
             return
 
-        if isinstance(res_pdu, common.WriteMaskErrPdu):
-            return res_pdu.error
+        if isinstance(res, common.Error):
+            return res
 
-        raise Exception("invalid response pdu type")
+        raise ValueError("unsupported response pdu data")
+
+    async def _send(self, device_id, req):
+        req_pdu = messages.Pdu(fc=_get_req_fc(req), data=req)
+        future = asyncio.Future()
+
+        try:
+            self._send_queue.put_nowait((device_id, req_pdu, future))
+
+        except aio.QueueClosedError:
+            raise ConnectionError()
+
+        res_pdu = await future
+        if res_pdu.fc != req_pdu.fc:
+            raise Exception("invalid response function code")
+
+        return res_pdu.data
 
     async def _send_loop(self):
         transaction_id = 0
@@ -221,17 +253,17 @@ class Master(aio.Resource):
 
                 if self._modbus_type == common.ModbusType.TCP:
                     transaction_id += 1
-                    req_adu = common.TcpAdu(transaction_id=transaction_id,
-                                            device_id=device_id,
-                                            pdu=req_pdu)
+                    req_adu = messages.TcpAdu(transaction_id=transaction_id,
+                                              device_id=device_id,
+                                              pdu=req_pdu)
 
                 elif self._modbus_type == common.ModbusType.RTU:
-                    req_adu = common.RtuAdu(device_id=device_id,
-                                            pdu=req_pdu)
+                    req_adu = messages.RtuAdu(device_id=device_id,
+                                              pdu=req_pdu)
 
                 elif self._modbus_type == common.ModbusType.ASCII:
-                    req_adu = common.AsciiAdu(device_id=device_id,
-                                              pdu=req_pdu)
+                    req_adu = messages.AsciiAdu(device_id=device_id,
+                                                pdu=req_pdu)
 
                 else:
                     raise Exception("invalid modbus type")
@@ -243,11 +275,16 @@ class Master(aio.Resource):
                     continue
                 await self._writer.write(req_adu_bytes)
 
-                while True:
+                if device_id == 0:
+                    res_pdu = messages.Pdu(req_pdu.fc, None)
+                else:
+                    res_pdu = None
+
+                while not res_pdu:
                     async with self.async_group.create_subgroup() as subgroup:
                         read_future = subgroup.spawn(
                             encoder.read_adu, self._modbus_type,
-                            common.Direction.RESPONSE, self._reader)
+                            encoder.Direction.RESPONSE, self._reader)
                         await asyncio.wait([read_future, future],
                                            return_when=asyncio.FIRST_COMPLETED)
                         if future.done():
@@ -260,49 +297,15 @@ class Master(aio.Resource):
                                          "transaction id")
                             continue
 
-                    if req_adu.device_id:
-                        if req_adu.device_id != res_adu.device_id:
-                            mlog.warning("received invalid response "
-                                         "device id")
-                            continue
+                    if req_adu.device_id != res_adu.device_id:
+                        mlog.warning("received invalid response "
+                                     "device id")
+                        continue
 
-                    if isinstance(req_adu.pdu, common.ReadReqPdu):
-                        if (not isinstance(res_adu.pdu, common.ReadResPdu)
-                                and not isinstance(res_adu.pdu,
-                                                   common.ReadErrPdu)):
-                            raise Exception("invalid response pdu type")
+                    res_pdu = res_adu.pdu
 
-                    elif isinstance(req_adu.pdu, common.WriteSingleReqPdu):
-                        if (not isinstance(res_adu.pdu,
-                                           common.WriteSingleResPdu)
-                                and not isinstance(res_adu.pdu,
-                                                   common.WriteSingleErrPdu)):
-                            raise Exception("invalid response pdu type")
-
-                    elif isinstance(req_adu.pdu, common.WriteMultipleReqPdu):
-                        if (not isinstance(res_adu.pdu,
-                                           common.WriteMultipleResPdu)
-                                and not isinstance(res_adu.pdu,
-                                                   common.WriteMultipleErrPdu)):  # NOQA
-                            raise Exception("invalid response pdu type")
-
-                    elif isinstance(req_adu.pdu, common.WriteMaskReqPdu):
-                        if (not isinstance(res_adu.pdu,
-                                           common.WriteMaskResPdu)
-                                and not isinstance(res_adu.pdu,
-                                                   common.WriteMaskErrPdu)):
-                            raise Exception("invalid response pdu type")
-
-                    else:
-                        raise Exception("unsupported request pdu type")
-
-                    if (not isinstance(req_adu.pdu, common.WriteMaskReqPdu) and
-                            req_adu.pdu.data_type != res_adu.pdu.data_type):
-                        raise Exception("invalid response data type")
-
-                    if not future.done():
-                        future.set_result(res_adu.pdu)
-                    break
+                if not future.done():
+                    future.set_result(res_pdu)
 
         except Exception as e:
             mlog.error("error in send loop: %s", e, exc_info=e)
@@ -316,3 +319,37 @@ class Master(aio.Resource):
                     future.set_exception(ConnectionError())
             self._send_queue.close()
             self.close()
+
+
+def _get_req_fc(req):
+    if isinstance(req, messages.ReadCoilsReq):
+        return messages.FunctionCode.READ_COILS
+
+    if isinstance(req, messages.ReadDiscreteInputsReq):
+        return messages.FunctionCode.READ_DISCRETE_INPUTS
+
+    if isinstance(req, messages.ReadHoldingRegistersReq):
+        return messages.FunctionCode.READ_HOLDING_REGISTERS
+
+    if isinstance(req, messages.ReadInputRegistersReq):
+        return messages.FunctionCode.READ_INPUT_REGISTERS
+
+    if isinstance(req, messages.WriteSingleCoilReq):
+        return messages.FunctionCode.WRITE_SINGLE_COIL
+
+    if isinstance(req, messages.WriteSingleRegisterReq):
+        return messages.FunctionCode.WRITE_SINGLE_REGISTER
+
+    if isinstance(req, messages.WriteMultipleCoilsReq):
+        return messages.FunctionCode.WRITE_MULTIPLE_COILS
+
+    if isinstance(req, messages.WriteMultipleRegistersReq):
+        return messages.FunctionCode.WRITE_MULTIPLE_REGISTER
+
+    if isinstance(req, messages.MaskWriteRegisterReq):
+        return messages.FunctionCode.MASK_WRITE_REGISTER
+
+    if isinstance(req, messages.ReadFifoQueueReq):
+        return messages.FunctionCode.READ_FIFO_QUEUE
+
+    raise ValueError('unsupported request type')
