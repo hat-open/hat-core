@@ -1,9 +1,10 @@
 import asyncio
 import collections
+import contextlib
 import itertools
+import logging
 import math
 import typing
-import contextlib
 
 from hat import aio
 from hat import json
@@ -24,6 +25,9 @@ from hat.gateway.devices.modbus.master.event_client import (RemoteDeviceEnableRe
 import hat.event.common
 
 
+mlog = logging.getLogger(__name__)
+
+
 ResponseCb = typing.Callable[[Response], None]
 
 
@@ -36,6 +40,7 @@ async def create(conf: common.DeviceConf,
                                                           event_type_prefix)
     device._conf = conf
     device._event_client = EventClientProxy(event_client, event_type_prefix)
+    device._status = None
     device._conn = None
     device._devices = {}
     device._device_readers = {}
@@ -92,7 +97,10 @@ class ModbusMasterDevice(aio.Resource):
                     raise ValueError('invalid request')
 
         except ConnectionError:
-            pass
+            mlog.debug('event client connection closed')
+
+        except Exception as e:
+            mlog.error('event client loop error: %s', e, exc_info=e)
 
         finally:
             self.close()
@@ -100,20 +108,23 @@ class ModbusMasterDevice(aio.Resource):
     async def _connection_loop(self):
         try:
             while True:
-                self._notify_response(StatusRes('CONNECTING'))
+                self._set_status('CONNECTING')
 
                 try:
-                    self._conn = await asyncio.wait_for(
+                    self._conn = await aio.wait_for(
                         connect(self._conf['connection']),
                         self._conf['connection']['connect_timeout'])
-
-                except Exception:
-                    self._notify_response(StatusRes('DISCONNECTED'))
+                except aio.CancelledWithResultError as e:
+                    self._conn = e.result
+                    raise
+                except Exception as e:
+                    mlog.info('connecting error: %s', e, exc_info=e)
+                    self._set_status('DISCONNECTED')
                     await asyncio.sleep(
                         self._conf['connection']['connect_delay'])
                     continue
 
-                self._notify_response(StatusRes('CONNECTED'))
+                self._set_status('CONNECTED')
 
                 for device_conf in self._conf['remote_devices']:
                     device = RemoteDevice(device_conf, self._conn)
@@ -126,17 +137,27 @@ class ModbusMasterDevice(aio.Resource):
 
                 self._devices = {}
                 self._device_readers = {}
+                self._set_status('DISCONNECTED')
 
                 await self._conn.async_close()
-                self._notify_response(StatusRes('DISCONNECTED'))
+
+        except Exception as e:
+            mlog.error('connection loop error: %s', e, exc_info=e)
 
         finally:
             self.close()
             if self._conn:
                 await aio.uncancellable(self._conn.async_close())
+            self._set_status('DISCONNECTED')
 
     def _notify_response(self, response):
         pass
+
+    def _set_status(self, status):
+        if self._status == status:
+            return
+        self._status = status
+        self._notify_response(StatusRes(status))
 
     def _enable_remote_device(self, device_id):
         if device_id in self._enabled_devices:

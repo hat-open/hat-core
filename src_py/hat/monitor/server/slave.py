@@ -90,7 +90,7 @@ async def connect(addresses: str,
     for _ in counter:
         for address in addresses:
             with contextlib.suppress(Exception):
-                conn = await asyncio.wait_for(
+                conn = await aio.wait_for(
                     chatter.connect(common.sbs_repo, address),
                     connect_timeout)
                 return conn

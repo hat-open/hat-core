@@ -159,8 +159,8 @@ class Transport(aio.Resource):
                 self._test_event.clear()
                 self._write_apdu(common.APDUU(common.ApduFunction.TESTFR_ACT))
 
-                await asyncio.wait_for(self._test_event.wait(),
-                                       self._response_timeout)
+                await aio.wait_for(self._test_event.wait(),
+                                   self._response_timeout)
 
         except Exception as e:
             mlog.warning('test loop error: %s', e, exc_info=e)

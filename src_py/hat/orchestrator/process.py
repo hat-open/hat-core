@@ -87,7 +87,7 @@ class Process(aio.Resource):
             self._process.send_signal(SIGINT)
 
         with contextlib.suppress(asyncio.TimeoutError):
-            await asyncio.wait_for(self._process.wait(), self._sigint_timeout)
+            await aio.wait_for(self._process.wait(), self._sigint_timeout)
 
         if self._process.returncode is not None:
             return
@@ -96,7 +96,7 @@ class Process(aio.Resource):
             self._process.kill()
 
         with contextlib.suppress(asyncio.TimeoutError):
-            await asyncio.wait_for(self._process.wait(), self._sigkill_timeout)
+            await aio.wait_for(self._process.wait(), self._sigkill_timeout)
 
 
 class Win32Job(aio.Resource):

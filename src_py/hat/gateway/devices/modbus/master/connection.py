@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import enum
+import logging
 import typing
 
 from hat import json
@@ -8,6 +9,9 @@ from hat import aio
 from hat.drivers import modbus
 from hat.drivers import serial
 from hat.drivers import tcp
+
+
+mlog = logging.getLogger(__name__)
 
 
 DataType = modbus.DataType
@@ -22,24 +26,24 @@ Error = enum.Enum('Error', [
 
 
 async def connect(conf: json.Data) -> 'Connection':
-    link_conf = conf['link']
+    transport_conf = conf['transport']
     modbus_type = modbus.ModbusType[conf['modbus_type']]
 
-    if link_conf['type'] == 'TCP':
-        addr = tcp.Address(link_conf['host'], link_conf['port'])
+    if transport_conf['type'] == 'TCP':
+        addr = tcp.Address(transport_conf['host'], transport_conf['port'])
         master = await modbus.create_tcp_master(modbus_type=modbus_type,
                                                 addr=addr)
 
-    elif link_conf['type'] == 'SERIAL':
-        port = link_conf['port']
-        baudrate = link_conf['baudrate']
-        bytesize = serial.ByteSize[link_conf['bytesize']]
-        parity = serial.Parity[link_conf['parity']]
-        stopbits = serial.StopBits[link_conf['stopbits']]
-        xonxoff = link_conf['flow_control']['xonxoff']
-        rtscts = link_conf['flow_control']['rtscts']
-        dsrdtr = link_conf['flow_control']['dsrdtr']
-        silent_interval = link_conf['silent_interval']
+    elif transport_conf['type'] == 'SERIAL':
+        port = transport_conf['port']
+        baudrate = transport_conf['baudrate']
+        bytesize = serial.ByteSize[transport_conf['bytesize']]
+        parity = serial.Parity[transport_conf['parity']]
+        stopbits = serial.StopBits[transport_conf['stopbits']]
+        xonxoff = transport_conf['flow_control']['xonxoff']
+        rtscts = transport_conf['flow_control']['rtscts']
+        dsrdtr = transport_conf['flow_control']['dsrdtr']
+        silent_interval = transport_conf['silent_interval']
         master = await modbus.create_serial_master(
             modbus_type=modbus_type,
             port=port,
@@ -99,6 +103,8 @@ class Connection(aio.Resource):
                                    address, and_mask, or_mask)
 
     async def _request_loop(self):
+        future = None
+
         try:
             while True:
                 fn, args, future = await self._request_queue.get()
@@ -112,9 +118,18 @@ class Connection(aio.Resource):
                 except Exception as e:
                     future.set_exception(e)
 
+        except Exception as e:
+            mlog.error('request loop error: %s', e, exc_info=e)
+
         finally:
-            self._request_queue.close()
             self.close()
+            self._request_queue.close()
+            if future and not future.done():
+                future.set_exception(ConnectionError())
+            while not self._request_queue.empty():
+                _, __, future = self._request_queue.get_nowait()
+                if not future.done():
+                    future.set_exception(ConnectionError())
 
     async def _request(self, fn, *args):
         try:
@@ -128,8 +143,8 @@ class Connection(aio.Resource):
     async def _communicate(self, fn, *args):
         for retry_count in range(self._conf['request_retry_count']):
             with contextlib.suppres(asyncio.TimeoutError):
-                result = await asyncio.wait_for(
-                    fn(*args), self._conf['request_timeout'])
+                result = await aio.wait_for(fn(*args),
+                                            self._conf['request_timeout'])
 
                 if isinstance(result, modbus.Error):
                     return Error[result]

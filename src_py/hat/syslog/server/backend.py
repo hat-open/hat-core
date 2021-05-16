@@ -144,7 +144,7 @@ class Backend(aio.Resource):
             async_group = aio.Group()
             try:
                 f = async_group.spawn(self._msg_queue.get)
-                await asyncio.wait_for(asyncio.shield(f), timeout)
+                await aio.wait_for(asyncio.shield(f), timeout)
             except asyncio.TimeoutError:
                 break
             finally:

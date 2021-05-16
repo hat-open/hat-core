@@ -37,7 +37,7 @@ definitions:
                                 - port
                             properties:
                                 type:
-                                    enum: TCP
+                                    const: TCP
                                 host:
                                     type: string
                                     description: |
@@ -59,7 +59,7 @@ definitions:
                                 - silent_interval
                             properties:
                                 type:
-                                    enum: SERIAL
+                                    const: SERIAL
                                 port:
                                     type: string
                                     description: |
@@ -112,7 +112,7 @@ definitions:
                                             description: |
                                                 Enable hardware (DSR/DTR) flow control
                                 silent_interval:
-                                    type: float
+                                    type: number
                                     description: |
                                         Serial communication silet interval
                     connect_timeout:

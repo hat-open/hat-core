@@ -110,7 +110,7 @@ class Component(aio.Resource):
             started = True
             if self.delay:
                 with contextlib.suppress(asyncio.TimeoutError):
-                    started = await asyncio.wait_for(
+                    started = await aio.wait_for(
                         self._started_queue.get_until_empty(), self.delay)
             self._started_queue.put_nowait(started)
 
@@ -125,8 +125,8 @@ class Component(aio.Resource):
 
                 try:
                     self._set_status(Status.STARTING)
-                    process = await asyncio.wait_for(
-                        self._start_process(), self._conf['create_timeout'])
+                    process = await aio.wait_for(self._start_process(),
+                                                 self._conf['create_timeout'])
                 except asyncio.CancelledError:
                     raise
                 except Exception as e:

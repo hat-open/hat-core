@@ -34,7 +34,7 @@ class RemoteDeviceReadRes(typing.NamedTuple):
     device_id: int
     data_name: str
     result: str
-    value: typing.Optionaln[int]
+    value: typing.Optional[int]
     cause: typing.Optional[str]
 
 

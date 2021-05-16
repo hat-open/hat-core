@@ -114,7 +114,7 @@ async def connect(addr: Address,
 
     try:
         write_apdu(_iec104.APDUU(_iec104.ApduFunction.STARTDT_ACT))
-        await asyncio.wait_for(wait_startdt_con(), response_timeout)
+        await aio.wait_for(wait_startdt_con(), response_timeout)
 
     except Exception:
         await aio.uncancellable(conn.async_close())
