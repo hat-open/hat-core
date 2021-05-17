@@ -5,6 +5,7 @@ import logging
 import typing
 
 from hat import aio
+from hat import util
 from hat.drivers import serial
 from hat.drivers import tcp
 from hat.drivers.modbus import common
@@ -64,7 +65,9 @@ def _create_master(modbus_type, async_group, reader, writer):
     master._reader = reader
     master._writer = writer
     master._send_queue = aio.Queue()
+    master._receive_cbs = util.CallbackRegistry()
     master._async_group.spawn(master._send_loop)
+    master._async_group.spawn(master._receive_loop)
     return master
 
 
@@ -273,36 +276,39 @@ class Master(aio.Resource):
                 except Exception as e:
                     future.set_exception(e)
                     continue
-                await self._writer.write(req_adu_bytes)
 
-                if device_id == 0:
-                    res_pdu = messages.Pdu(req_pdu.fc, None)
-                else:
-                    res_pdu = None
+                res_adu_queue = aio.Queue()
+                with self._receive_cbs.register(res_adu_queue.put_nowait):
 
-                while not res_pdu:
-                    async with self.async_group.create_subgroup() as subgroup:
-                        read_future = subgroup.spawn(
-                            encoder.read_adu, self._modbus_type,
-                            encoder.Direction.RESPONSE, self._reader)
-                        await asyncio.wait([read_future, future],
-                                           return_when=asyncio.FIRST_COMPLETED)
-                        if future.done():
-                            break
-                        res_adu = read_future.result()
+                    await self._writer.write(req_adu_bytes)
 
-                    if self._modbus_type == common.ModbusType.TCP:
-                        if req_adu.transaction_id != res_adu.transaction_id:
+                    if device_id == 0:
+                        res_pdu = messages.Pdu(req_pdu.fc, None)
+                    else:
+                        res_pdu = None
+
+                    while not res_pdu:
+                        async with self.async_group.create_subgroup() as subgroup: # NOQA
+                            res_adu_future = subgroup.spawn(res_adu_queue.get)
+                            await asyncio.wait(
+                                [res_adu_future, future],
+                                return_when=asyncio.FIRST_COMPLETED)
+                            if future.done():
+                                break
+                            res_adu = res_adu_future.result()
+
+                        if self._modbus_type == common.ModbusType.TCP:
+                            if req_adu.transaction_id != res_adu.transaction_id:  # NOQA
+                                mlog.warning("received invalid response "
+                                             "transaction id")
+                                continue
+
+                        if req_adu.device_id != res_adu.device_id:
                             mlog.warning("received invalid response "
-                                         "transaction id")
+                                         "device id")
                             continue
 
-                    if req_adu.device_id != res_adu.device_id:
-                        mlog.warning("received invalid response "
-                                     "device id")
-                        continue
-
-                    res_pdu = res_adu.pdu
+                        res_pdu = res_adu.pdu
 
                 if not future.done():
                     future.set_result(res_pdu)
@@ -318,6 +324,20 @@ class Master(aio.Resource):
                 if not future.done():
                     future.set_exception(ConnectionError())
             self._send_queue.close()
+            self.close()
+
+    async def _receive_loop(self):
+        try:
+            while True:
+                adu = await encoder.read_adu(self._modbus_type,
+                                             encoder.Direction.RESPONSE,
+                                             self._reader)
+                self._receive_cbs.notify(adu)
+
+        except Exception as e:
+            mlog.error("error in read loop: %s", e, exc_info=e)
+
+        finally:
             self.close()
 
 

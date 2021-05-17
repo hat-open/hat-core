@@ -7,6 +7,7 @@ from hat.drivers import modbus
 from hat.drivers import tcp
 from hat.gateway import common
 from hat.gateway.devices.modbus import master
+import hat.event.common
 
 
 pytestmark = pytest.mark.asyncio
@@ -77,6 +78,26 @@ def connection_conf(slave_addr):
             'request_retry_delay': 1}
 
 
+@pytest.fixture
+def create_event():
+    counter = 0
+
+    def create_event(event_type, payload_data):
+        nonlocal counter
+        counter += 1
+        event_id = hat.event.common.EventId(1, counter)
+        payload = hat.event.common.EventPayload(
+            hat.event.common.EventPayloadType.JSON, payload_data)
+        event = hat.event.common.Event(event_id=event_id,
+                                       event_type=event_type,
+                                       timestamp=hat.event.common.now(),
+                                       source_timestamp=None,
+                                       payload=payload)
+        return event
+
+    return create_event
+
+
 @pytest.mark.parametrize("conf", [
     {'connection': {'modbus_type': 'TCP',
                     'transport': {'type': 'TCP',
@@ -145,5 +166,171 @@ async def test_create(slave_addr, connection_conf):
 
     await device.async_close()
     await slave.wait_closing()
+    await server.async_close()
+    await event_client.async_close()
+
+
+async def test_reconnect(slave_addr, connection_conf):
+    slave_queue = aio.Queue()
+    server = await modbus.create_tcp_server(modbus.ModbusType.TCP, slave_addr,
+                                            slave_cb=slave_queue.put_nowait)
+
+    conf = {'connection': connection_conf,
+            'remote_devices': []}
+
+    event_client = EventClient()
+    device = await aio.call(master.create, conf, event_client,
+                            event_type_prefix)
+
+    slave = await slave_queue.get()
+    assert slave.is_open
+
+    assert slave_queue.empty()
+
+    await slave.async_close()
+
+    assert device.is_open
+
+    slave = await slave_queue.get()
+    assert slave.is_open
+
+    assert slave_queue.empty()
+
+    await device.async_close()
+    await slave.wait_closing()
+    await server.async_close()
+    await event_client.async_close()
+
+
+async def test_status(slave_addr, connection_conf):
+    slave_queue = aio.Queue()
+    server = await modbus.create_tcp_server(modbus.ModbusType.TCP, slave_addr,
+                                            slave_cb=slave_queue.put_nowait)
+
+    conf = {'connection': connection_conf,
+            'remote_devices': []}
+
+    event_client = EventClient()
+    assert event_client.register_queue.empty()
+
+    device = await aio.call(master.create, conf, event_client,
+                            event_type_prefix)
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'CONNECTING'
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'CONNECTED'
+
+    assert event_client.register_queue.empty()
+
+    slave = await slave_queue.get()
+    await slave.async_close()
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'DISCONNECTED'
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'CONNECTING'
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'CONNECTED'
+
+    assert event_client.register_queue.empty()
+
+    await device.async_close()
+    await slave.wait_closing()
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'DISCONNECTED'
+
+    assert event_client.register_queue.empty()
+
+    await server.async_close()
+    await event_client.async_close()
+
+
+async def test_remote_device_status(slave_addr, connection_conf, create_event):
+    slave_queue = aio.Queue()
+    server = await modbus.create_tcp_server(modbus.ModbusType.TCP, slave_addr,
+                                            slave_cb=slave_queue.put_nowait)
+
+    conf = {'connection': connection_conf,
+            'remote_devices': [{'device_id': 1,
+                                'data': []}]}
+
+    event_client = EventClient()
+    assert event_client.register_queue.empty()
+
+    device = await aio.call(master.create, conf, event_client,
+                            event_type_prefix)
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'CONNECTING'
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'CONNECTED'
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
+                                '1', 'status')
+    assert event.payload.data == 'DISABLED'
+
+    assert event_client.register_queue.empty()
+
+    slave = await slave_queue.get()
+
+    event = create_event((*event_type_prefix, 'system', 'remote_device',
+                          '1', 'enable'),
+                         True)
+    event_client.receive_queue.put_nowait([event])
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
+                                '1', 'status')
+    assert event.payload.data == 'CONNECTED'
+
+    event = create_event((*event_type_prefix, 'system', 'remote_device',
+                          '1', 'enable'),
+                         False)
+    event_client.receive_queue.put_nowait([event])
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
+                                '1', 'status')
+    assert event.payload.data == 'DISABLED'
+
+    event = create_event((*event_type_prefix, 'system', 'remote_device',
+                          '1', 'enable'),
+                         True)
+    event_client.receive_queue.put_nowait([event])
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
+                                '1', 'status')
+    assert event.payload.data == 'CONNECTED'
+
+    await device.async_close()
+    await slave.wait_closing()
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
+                                '1', 'status')
+    assert event.payload.data == 'DISABLED'
+
+    event = await event_client.register_queue.get()
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == 'DISCONNECTED'
+
+    assert event_client.register_queue.empty()
+
     await server.async_close()
     await event_client.async_close()

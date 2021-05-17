@@ -8,6 +8,7 @@ from hat.gateway.devices.modbus.master.connection import connect
 from hat.gateway.devices.modbus.master.event_client import (RemoteDeviceEnableReq,  # NOQA
                                                             RemoteDeviceWriteReq,  # NOQA
                                                             StatusRes,
+                                                            RemoteDeviceStatusRes,  # NOQA
                                                             RemoteDeviceWriteRes,  # NOQA
                                                             EventClientProxy)
 from hat.gateway.devices.modbus.master.remote_device import (RemoteDevice,
@@ -97,9 +98,15 @@ class ModbusMasterDevice(aio.Resource):
                 for device_conf in self._conf['remote_devices']:
                     device = RemoteDevice(device_conf, self._conn)
                     self._devices[device.device_id] = device
-                    if device.device_id in device._enabled_devices:
+
+                    if device.device_id in self._enabled_devices:
                         self._device_readers[device.device_id] = \
                             RemoteDeviceReader(device, self._on_response)
+
+                    else:
+                        self._notify_response(RemoteDeviceStatusRes(
+                            device_id=device.device_id,
+                            status='DISABLED'))
 
                 await self._conn.wait_closing()
 
@@ -137,7 +144,7 @@ class ModbusMasterDevice(aio.Resource):
             return
 
         self._device_readers[device.device_id] = \
-            RemoteDeviceReader(device, self._on_response)
+            RemoteDeviceReader(device, self._notify_response)
 
     def _disable_remote_device(self, device_id):
         if device_id not in self._enabled_devices:

@@ -1,8 +1,11 @@
+import logging
 import typing
 
 from hat import aio
 from hat.gateway import common
 import hat.event.common
+
+mlog = logging.getLogger(__name__)
 
 
 class RemoteDeviceEnableReq(typing.NamedTuple):
@@ -88,8 +91,11 @@ class EventClientProxy(aio.Resource):
                         req = _request_from_event(event)
                         self._read_queue.put_nowait(req)
 
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        mlog.info('received invalid event: %s', e, exc_info=e)
+
+        except Exception as e:
+            mlog.error('read loop error: %s', e, exc_info=e)
 
         finally:
             self.close()
@@ -99,7 +105,7 @@ class EventClientProxy(aio.Resource):
 def _request_from_event(event):
     event_type_suffix = event.event_type[5:]
 
-    if event_type_suffix[0] != 'remote_devices':
+    if event_type_suffix[0] != 'remote_device':
         raise Exception('unsupported event type')
 
     device_id = int(event_type_suffix[1])
@@ -128,7 +134,7 @@ def _response_to_register_event(event_type_prefix, res):
 
     elif isinstance(res, RemoteDeviceStatusRes):
         event_type = (*event_type_prefix, 'gateway', 'remote_device',
-                      str(res.device_id))
+                      str(res.device_id), 'status')
         payload = res.status
 
     elif isinstance(res, RemoteDeviceReadRes):

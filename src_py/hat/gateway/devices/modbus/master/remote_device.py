@@ -56,7 +56,8 @@ class RemoteDeviceReader(aio.Resource):
         self._data_readers = collections.deque()
 
         for data in remote_device.data.values():
-            data_reader = DataReader(data, self._on_response)
+            data_reader = DataReader(self._async_group, data,
+                                     self._on_response)
             self._async_group.spawn(aio.call_on_cancel,
                                     data_reader.async_close)
             self._async_group.spawn(aio.call_on_done,
@@ -64,9 +65,8 @@ class RemoteDeviceReader(aio.Resource):
                                     self._async_group.close)
             self._data_readers.append(data_reader)
 
-        self._set_status('DISCONNECTED')
-        self._async_group.spawn(aio.call_on_cancel, self._set_status,
-                                'DISCONNECTED')
+        self._async_group.spawn(aio.call_on_cancel, self._eval_status)
+        self._eval_status()
 
     @property
     def async_group(self) -> aio.Group:
@@ -74,12 +74,19 @@ class RemoteDeviceReader(aio.Resource):
 
     def _on_response(self, res):
         self._on_response(res)
-        is_connected = all(i.is_connected for i in self._data_readers)
-        self._set_status('CONNECTED' if is_connected else 'DISCONNECTED')
+        self._eval_status()
 
-    def _set_status(self, status):
+    def _eval_status(self):
+        if not self.is_open:
+            status = 'DISABLED'
+        elif all(i.is_connected for i in self._data_readers):
+            status = 'CONNECTED'
+        else:
+            status = 'DISCONNECTED'
+
         if self._status == status:
             return
+
         self._status = status
         self._response_cb(RemoteDeviceStatusRes(device_id=self._device_id,
                                                 status=status))
@@ -133,17 +140,20 @@ class Data:
 
 class DataReader(aio.Resource):
 
-    def __init__(self, data: Data, response_cb: ResponseCb):
+    def __init__(self,
+                 async_group: aio.Group,
+                 data: Data,
+                 response_cb: ResponseCb):
         self._data = data
         self._response_cb = response_cb
         self._device_id = data.device_id
         self._name = data.name
         self._interval = data.interval
-        self._async_group = data.conn.async_group.create_subgroup()
+        self._async_group = async_group
         self._last_response = None
 
         if self._interval is not None:
-            self._async_group.spawn(self._read_loop)
+            async_group.spawn(self._read_loop)
 
     @property
     def async_group(self):
@@ -184,6 +194,9 @@ class DataReader(aio.Resource):
                     self._response_cb(response)
 
                 await asyncio.sleep(self._interval)
+
+        except Exception as e:
+            mlog.error('read loop error: %s', e, exc_info=e)
 
         finally:
             self.close()

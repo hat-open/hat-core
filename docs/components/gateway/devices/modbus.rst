@@ -114,6 +114,7 @@ system, following event types are used:
             Payload is defined by schema::
 
                 enum:
+                    - DISABLED
                     - DISCONNECTED
                     - CONNECTED
 

@@ -90,9 +90,14 @@ async def connect(addresses: str,
     for _ in counter:
         for address in addresses:
             with contextlib.suppress(Exception):
-                conn = await aio.wait_for(
-                    chatter.connect(common.sbs_repo, address),
-                    connect_timeout)
+                try:
+                    conn = await aio.wait_for(
+                        chatter.connect(common.sbs_repo, address),
+                        connect_timeout)
+                except aio.CancelledWithResultError as e:
+                    if e.result:
+                        await aio.uncancellable(e.result.async_close())
+                    raise
                 return conn
         await asyncio.sleep(connect_retry_delay)
 
