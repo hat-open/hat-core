@@ -257,7 +257,7 @@ async def wait_for(f: typing.Awaitable,
     returning result, this implementation raises `CancelledWithResultError`.
 
     """
-    group = Group()
+    group = Group(exception_cb=lambda e: None)
     group.spawn(call_on_done, asyncio.sleep(timeout), group.close)
 
     f = group.wrap(f)

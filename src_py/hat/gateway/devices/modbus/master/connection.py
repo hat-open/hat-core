@@ -81,8 +81,8 @@ class Connection(aio.Resource):
                    start_address: int,
                    quantity: int
                    ) -> typing.Union[typing.List[int], Error]:
-        return self._request(self._master.read, device_id, data_type,
-                             start_address, quantity)
+        return await self._request(self._master.read, device_id, data_type,
+                                   start_address, quantity)
 
     async def write(self,
                     device_id: int,
@@ -90,8 +90,8 @@ class Connection(aio.Resource):
                     start_address: int,
                     values: typing.List[int]
                     ) -> typing.Optional[Error]:
-        return self._request(self._master.write, device_id, data_type,
-                             start_address, values)
+        return await self._request(self._master.write, device_id, data_type,
+                                   start_address, values)
 
     async def write_mask(self,
                          device_id: int,
@@ -117,6 +117,10 @@ class Connection(aio.Resource):
                         future.set_result(result)
                 except Exception as e:
                     future.set_exception(e)
+                    raise
+
+        except ConnectionError:
+            pass
 
         except Exception as e:
             mlog.error('request loop error: %s', e, exc_info=e)
@@ -142,7 +146,7 @@ class Connection(aio.Resource):
 
     async def _communicate(self, fn, *args):
         for retry_count in range(self._conf['request_retry_count']):
-            with contextlib.suppres(asyncio.TimeoutError):
+            with contextlib.suppress(asyncio.TimeoutError):
                 result = await aio.wait_for(fn(*args),
                                             self._conf['request_timeout'])
 

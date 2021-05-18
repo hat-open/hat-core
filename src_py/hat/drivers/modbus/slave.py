@@ -174,6 +174,10 @@ class TcpServer(aio.Resource):
         slave = _create_slave(conn.async_group, self._modbus_type,
                               self._read_cb, self._write_cb,
                               self._write_mask_cb, reader, writer)
+
+        if not self._slave_cb:
+            return
+
         try:
             await aio.call(self._slave_cb, slave)
         except Exception as e:

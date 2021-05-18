@@ -58,11 +58,6 @@ class RemoteDeviceReader(aio.Resource):
         for data in remote_device.data.values():
             data_reader = DataReader(self._async_group, data,
                                      self._on_response)
-            self._async_group.spawn(aio.call_on_cancel,
-                                    data_reader.async_close)
-            self._async_group.spawn(aio.call_on_done,
-                                    data_reader.wait_closing(),
-                                    self._async_group.close)
             self._data_readers.append(data_reader)
 
         self._async_group.spawn(aio.call_on_cancel, self._eval_status)
@@ -73,7 +68,7 @@ class RemoteDeviceReader(aio.Resource):
         return self._async_group
 
     def _on_response(self, res):
-        self._on_response(res)
+        self._response_cb(res)
         self._eval_status()
 
     def _eval_status(self):
@@ -194,6 +189,9 @@ class DataReader(aio.Resource):
                     self._response_cb(response)
 
                 await asyncio.sleep(self._interval)
+
+        except ConnectionError:
+            pass
 
         except Exception as e:
             mlog.error('read loop error: %s', e, exc_info=e)

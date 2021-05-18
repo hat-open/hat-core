@@ -101,7 +101,7 @@ class ModbusMasterDevice(aio.Resource):
 
                     if device.device_id in self._enabled_devices:
                         self._device_readers[device.device_id] = \
-                            RemoteDeviceReader(device, self._on_response)
+                            RemoteDeviceReader(device, self._notify_response)
 
                     else:
                         self._notify_response(RemoteDeviceStatusRes(
@@ -187,7 +187,7 @@ async def _query_enabled_devices(event_client, event_type_prefix):
             continue
 
         device_id_str = event.event_type[6]
-        with contextlib.suppress:
+        with contextlib.suppress(ValueError):
             enabled_devices.add(int(device_id_str))
 
     return enabled_devices

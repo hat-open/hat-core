@@ -317,14 +317,14 @@ class Master(aio.Resource):
             mlog.error("error in send loop: %s", e, exc_info=e)
 
         finally:
+            self.close()
+            self._send_queue.close()
             if future and not future.done():
                 future.set_exception(ConnectionError())
             while not self._send_queue.empty():
-                future = self._send_queue.get_nowait()
+                _, __, future = self._send_queue.get_nowait()
                 if not future.done():
                     future.set_exception(ConnectionError())
-            self._send_queue.close()
-            self.close()
 
     async def _receive_loop(self):
         try:

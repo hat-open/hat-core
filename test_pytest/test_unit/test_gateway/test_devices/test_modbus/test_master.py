@@ -1,3 +1,4 @@
+import asyncio
 
 import pytest
 
@@ -60,6 +61,33 @@ class EventClient(common.DeviceEventClient):
         return self._query_result
 
 
+def assert_status_event(event, status):
+    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
+    assert event.payload.data == status
+
+
+def assert_remote_device_status_event(event, device_id, status):
+    assert event.event_type == (*event_type_prefix, 'gateway',
+                                'remote_device', str(device_id), 'status')
+    assert event.payload.data == status
+
+
+def assert_remote_device_read_event(event, device_id, data_name,
+                                    payload_data):
+    assert event.event_type == (*event_type_prefix, 'gateway',
+                                'remote_device', str(device_id), 'read',
+                                data_name)
+    assert event.payload.data == payload_data
+
+
+def assert_remote_device_write_event(event, device_id, data_name,
+                                     payload_data):
+    assert event.event_type == (*event_type_prefix, 'gateway',
+                                'remote_device', str(device_id), 'write',
+                                data_name)
+    assert event.payload.data == payload_data
+
+
 @pytest.fixture
 def slave_addr():
     return tcp.Address('127.0.0.1', util.get_unused_tcp_port())
@@ -96,6 +124,29 @@ def create_event():
         return event
 
     return create_event
+
+
+@pytest.fixture
+def create_remote_device_enable_event(create_event):
+
+    def create_remote_device_enable_event(device_id, enable):
+        return create_event((*event_type_prefix, 'system', 'remote_device',
+                             str(device_id), 'enable'),
+                            enable)
+
+    return create_remote_device_enable_event
+
+
+@pytest.fixture
+def create_remote_device_write_event(create_event):
+
+    def create_remote_device_write_event(device_id, request_id, value):
+        return create_event((*event_type_prefix, 'system', 'remote_device',
+                             str(device_id), 'enable'),
+                            {'request_id': request_id,
+                             'value': value})
+
+    return create_remote_device_write_event
 
 
 @pytest.mark.parametrize("conf", [
@@ -217,12 +268,10 @@ async def test_status(slave_addr, connection_conf):
                             event_type_prefix)
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'CONNECTING'
+    assert_status_event(event, 'CONNECTING')
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'CONNECTED'
+    assert_status_event(event, 'CONNECTED')
 
     assert event_client.register_queue.empty()
 
@@ -230,16 +279,13 @@ async def test_status(slave_addr, connection_conf):
     await slave.async_close()
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'DISCONNECTED'
+    assert_status_event(event, 'DISCONNECTED')
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'CONNECTING'
+    assert_status_event(event, 'CONNECTING')
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'CONNECTED'
+    assert_status_event(event, 'CONNECTED')
 
     assert event_client.register_queue.empty()
 
@@ -247,8 +293,7 @@ async def test_status(slave_addr, connection_conf):
     await slave.wait_closing()
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'DISCONNECTED'
+    assert_status_event(event, 'DISCONNECTED')
 
     assert event_client.register_queue.empty()
 
@@ -256,7 +301,8 @@ async def test_status(slave_addr, connection_conf):
     await event_client.async_close()
 
 
-async def test_remote_device_status(slave_addr, connection_conf, create_event):
+async def test_remote_device_status(slave_addr, connection_conf,
+                                    create_remote_device_enable_event):
     slave_queue = aio.Queue()
     server = await modbus.create_tcp_server(modbus.ModbusType.TCP, slave_addr,
                                             slave_cb=slave_queue.put_nowait)
@@ -272,63 +318,139 @@ async def test_remote_device_status(slave_addr, connection_conf, create_event):
                             event_type_prefix)
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'CONNECTING'
+    assert_status_event(event, 'CONNECTING')
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'CONNECTED'
+    assert_status_event(event, 'CONNECTED')
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
-                                '1', 'status')
-    assert event.payload.data == 'DISABLED'
+    assert_remote_device_status_event(event, 1, 'DISABLED')
 
     assert event_client.register_queue.empty()
 
     slave = await slave_queue.get()
 
-    event = create_event((*event_type_prefix, 'system', 'remote_device',
-                          '1', 'enable'),
-                         True)
+    event = create_remote_device_enable_event(1, True)
     event_client.receive_queue.put_nowait([event])
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
-                                '1', 'status')
-    assert event.payload.data == 'CONNECTED'
+    assert_remote_device_status_event(event, 1, 'CONNECTED')
 
-    event = create_event((*event_type_prefix, 'system', 'remote_device',
-                          '1', 'enable'),
-                         False)
+    event = create_remote_device_enable_event(1, False)
     event_client.receive_queue.put_nowait([event])
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
-                                '1', 'status')
-    assert event.payload.data == 'DISABLED'
+    assert_remote_device_status_event(event, 1, 'DISABLED')
 
-    event = create_event((*event_type_prefix, 'system', 'remote_device',
-                          '1', 'enable'),
-                         True)
+    event = create_remote_device_enable_event(1, True)
     event_client.receive_queue.put_nowait([event])
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
-                                '1', 'status')
-    assert event.payload.data == 'CONNECTED'
+    assert_remote_device_status_event(event, 1, 'CONNECTED')
 
     await device.async_close()
     await slave.wait_closing()
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'remote_device',
-                                '1', 'status')
-    assert event.payload.data == 'DISABLED'
+    assert_remote_device_status_event(event, 1, 'DISABLED')
 
     event = await event_client.register_queue.get()
-    assert event.event_type == (*event_type_prefix, 'gateway', 'status')
-    assert event.payload.data == 'DISCONNECTED'
+    assert_status_event(event, 'DISCONNECTED')
+
+    assert event_client.register_queue.empty()
+
+    await server.async_close()
+    await event_client.async_close()
+
+
+@pytest.mark.parametrize('data_type, start_bit, bit_count, registers, value', [
+    ('COIL',
+     0,
+     1,
+     [0],
+     0),
+
+    ('COIL',
+     0,
+     1,
+     [1],
+     1),
+
+    ('DISCRETE_INPUT',
+     0,
+     2,
+     [1, 1],
+     3),
+
+    ('HOLDING_REGISTER',
+     0,
+     32,
+     [0, 1],
+     1),
+
+    ('HOLDING_REGISTER',
+     0,
+     2,
+     [0x4000],
+     1),
+
+    ('INPUT_REGISTER',
+     8,
+     2,
+     [0x80],
+     2),
+])
+async def test_read(slave_addr, connection_conf,
+                    create_remote_device_enable_event,
+                    data_type, start_bit, bit_count, registers, value):
+
+    async def on_read(slave, device_id, _data_type, start_address, quantity):
+        assert device_id == 1
+        assert data_type == _data_type.name
+        assert start_address == 123
+        assert quantity == len(registers)
+        return registers
+
+    server = await modbus.create_tcp_server(modbus.ModbusType.TCP, slave_addr,
+                                            read_cb=on_read)
+
+    conf = {'connection': connection_conf,
+            'remote_devices': [{'device_id': 1,
+                                'data': [{'name': 'data',
+                                          'interval': 1,
+                                          'data_type': data_type,
+                                          'start_address': 123,
+                                          'start_bit': start_bit,
+                                          'bit_count': bit_count}]}]}
+
+    event_client = EventClient([create_remote_device_enable_event(1, True)])
+    device = await aio.call(master.create, conf, event_client,
+                            event_type_prefix)
+
+    event = await event_client.register_queue.get()
+    assert_status_event(event, 'CONNECTING')
+
+    event = await event_client.register_queue.get()
+    assert_status_event(event, 'CONNECTED')
+
+    event = await event_client.register_queue.get()
+    assert_remote_device_status_event(event, 1, 'DISCONNECTED')
+
+    event = await event_client.register_queue.get()
+    assert_remote_device_read_event(event, 1, 'data', {'result': 'SUCCESS',
+                                                       'value': value,
+                                                       'cause': 'INTERROGATE'})
+
+    event = await event_client.register_queue.get()
+    assert_remote_device_status_event(event, 1, 'CONNECTED')
+
+    await device.async_close()
+
+    event = await event_client.register_queue.get()
+    assert_remote_device_status_event(event, 1, 'DISABLED')
+
+    event = await event_client.register_queue.get()
+    assert_status_event(event, 'DISCONNECTED')
 
     assert event_client.register_queue.empty()
 
