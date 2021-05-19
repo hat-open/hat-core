@@ -206,9 +206,9 @@ class Master(aio.Resource):
             ConnectionError
 
         """
-        req = common.MaskWriteRegisterReq(address=address,
-                                          and_mask=and_mask,
-                                          or_mask=or_mask)
+        req = messages.MaskWriteRegisterReq(address=address,
+                                            and_mask=and_mask,
+                                            or_mask=or_mask)
 
         res = await self._send(device_id, req)
         if res is None:

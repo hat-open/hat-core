@@ -122,7 +122,57 @@ class Data:
         return self._device_id
 
     async def write(self, value: int) -> typing.Optional[Error]:
-        pass
+        if self._data_type == DataType.COIL:
+            address = self._start_address + self._start_bit
+            registers = [(value >> (self._bit_count - i - 1)) & 1
+                         for i in range(self._bit_count)]
+            result = await self._conn.write(self._device_id, self._data_type,
+                                            address, registers)
+            return result
+
+        elif self._data_type == DataType.HOLDING_REGISTER:
+            address = self._start_address + (self._start_bit // 16)
+            bit_count = self._bit_count
+
+            start_bit = self._start_bit % 16
+            if self._start_bit % 16:
+                mask_prefix_size = start_bit
+                mask_suffix_size = max(16 - start_bit - bit_count, 0)
+                mask_size = 16 - mask_prefix_size - mask_suffix_size
+                and_mask = (((0xFFFF << (16 - mask_prefix_size)) & 0xFFFF) |
+                            ((0xFFFF << mask_suffix_size) >> 16))
+                or_mask = (((value >> (bit_count - mask_size)) &
+                            ((1 << mask_size) - 1)) <<
+                           mask_suffix_size)
+                result = await self._conn.write_mask(self._device_id, address,
+                                                     and_mask, or_mask)
+                if result:
+                    return result
+                address += 1
+                bit_count -= mask_size
+
+            register_count = bit_count // 16
+            if register_count:
+                registers = [(value >> (bit_count - 16 * (i + 1))) & 0xFFFF
+                             for i in range(register_count)]
+                result = await self._conn.write(self._device_id,
+                                                self._data_type,
+                                                address, registers)
+                if result:
+                    return result
+                address += register_count
+                bit_count -= 16 * register_count
+
+            if bit_count:
+                and_mask = (0xFFFF << (16 - bit_count)) >> 16
+                or_mask = (value & ((1 << bit_count) - 1)) << (16 - bit_count)
+                result = await self._conn.write_mask(self._device_id, address,
+                                                     and_mask, or_mask)
+                return result
+
+            return
+
+        raise Exception(f'write unsupported for {self._data_type}')
 
     async def read(self) -> typing.Union[int, Error]:
         result = await self._conn.read(self._device_id, self._data_type,

@@ -1,5 +1,3 @@
-import asyncio
-
 import pytest
 
 from hat import aio
@@ -140,9 +138,10 @@ def create_remote_device_enable_event(create_event):
 @pytest.fixture
 def create_remote_device_write_event(create_event):
 
-    def create_remote_device_write_event(device_id, request_id, value):
+    def create_remote_device_write_event(device_id, data_name, request_id,
+                                         value):
         return create_event((*event_type_prefix, 'system', 'remote_device',
-                             str(device_id), 'enable'),
+                             str(device_id), 'write', data_name),
                             {'request_id': request_id,
                              'value': value})
 
@@ -456,3 +455,120 @@ async def test_read(slave_addr, connection_conf,
 
     await server.async_close()
     await event_client.async_close()
+
+
+@pytest.mark.parametrize('data_type, start_bit, bit_count, registers, value', [
+    ('COIL',
+     0,
+     1,
+     [0],
+     0),
+
+    ('COIL',
+     0,
+     1,
+     [1],
+     1),
+
+    ('COIL',
+     2,
+     2,
+     [0, 0, 1, 1],
+     3),
+
+    ('HOLDING_REGISTER',
+     0,
+     16,
+     [123],
+     123),
+
+    ('HOLDING_REGISTER',
+     0,
+     32,
+     [0x1234, 0x5678],
+     0x12345678),
+
+    ('HOLDING_REGISTER',
+     0,
+     2,
+     [0xc000],
+     3),
+
+    ('HOLDING_REGISTER',
+     2,
+     2,
+     [0x3000],
+     3),
+
+    ('HOLDING_REGISTER',
+     8,
+     16,
+     [0xFF, 0xFF00],
+     0xFFFF),
+
+    ('HOLDING_REGISTER',
+     8,
+     32,
+     [0xFF, 0xFFFF, 0xFF00],
+     0xFFFFFFFF),
+])
+async def test_write(slave_addr, connection_conf,
+                     create_remote_device_write_event,
+                     data_type, start_bit, bit_count, registers, value):
+
+    data = [0] * len(registers)
+
+    async def on_write_mask(slave, device_id, address, and_mask, or_mask):
+        assert device_id == 1
+        data[address] = modbus.apply_mask(data[address], and_mask, or_mask)
+
+    async def on_write(slave, device_id, _data_type, start_address, registers):
+        assert device_id == 1
+        assert data_type == _data_type.name
+        for i, register in enumerate(registers):
+            data[start_address + i] = register
+
+    server = await modbus.create_tcp_server(modbus.ModbusType.TCP, slave_addr,
+                                            write_cb=on_write,
+                                            write_mask_cb=on_write_mask)
+
+    conf = {'connection': connection_conf,
+            'remote_devices': [{'device_id': 1,
+                                'data': [{'name': 'data',
+                                          'interval': None,
+                                          'data_type': data_type,
+                                          'start_address': 0,
+                                          'start_bit': start_bit,
+                                          'bit_count': bit_count}]}]}
+
+    event_client = EventClient()
+    device = await aio.call(master.create, conf, event_client,
+                            event_type_prefix)
+
+    event = await event_client.register_queue.get()
+    assert_status_event(event, 'CONNECTING')
+
+    event = await event_client.register_queue.get()
+    assert_status_event(event, 'CONNECTED')
+
+    event = await event_client.register_queue.get()
+    assert_remote_device_status_event(event, 1, 'DISABLED')
+
+    event = create_remote_device_write_event(1, 'data', 123, value)
+    event_client.receive_queue.put_nowait([event])
+
+    event = await event_client.register_queue.get()
+    assert_remote_device_write_event(event, 1, 'data', {'request_id': 123,
+                                                        'result': 'SUCCESS'})
+
+    await device.async_close()
+
+    event = await event_client.register_queue.get()
+    assert_status_event(event, 'DISCONNECTED')
+
+    assert event_client.register_queue.empty()
+
+    await server.async_close()
+    await event_client.async_close()
+
+    assert data == registers
