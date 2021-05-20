@@ -145,7 +145,8 @@ class Connection(aio.Resource):
             raise ConnectionError()
 
     async def _communicate(self, fn, *args):
-        for retry_count in range(self._conf['request_retry_count']):
+        count = 0
+        while True:
             with contextlib.suppress(asyncio.TimeoutError):
                 result = await aio.wait_for(fn(*args),
                                             self._conf['request_timeout'])
@@ -155,7 +156,10 @@ class Connection(aio.Resource):
 
                 return result
 
-            if retry_count + 1 != self._conf['request_retry_count']:
-                await self._conf['request_retry_delay']
+            count += 1
+            if count >= self._conf['request_retry_count']:
+                break
+
+            await self._conf['request_retry_delay']
 
         return Error.TIMEOUT
