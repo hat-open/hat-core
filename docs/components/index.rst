@@ -10,3 +10,4 @@ Components
     event/index
     gateway/index
     gui/index
+    manager/index
