@@ -74,10 +74,11 @@ class RemoteDeviceReader(aio.Resource):
     def _eval_status(self):
         if not self.is_open:
             status = 'DISABLED'
-        elif all(i.is_connected for i in self._data_readers):
+        elif (not self._data_readers or
+                any(i.is_connected for i in self._data_readers)):
             status = 'CONNECTED'
         else:
-            status = 'DISCONNECTED'
+            status = 'CONNECTING'
 
         if self._status == status:
             return

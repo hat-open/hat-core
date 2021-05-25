@@ -82,9 +82,22 @@ not be established, device repeatedly tries to establish new connection after
 Together with read and write processing, device continuously reports current
 status of communication connection and each modbus device identified by
 `device_id` data parameter. Status of modbus device identified by `device_id`
-is calculated according to availability of all data associated with that
-`device_id`: in case all data of a `device_id` are not available, that devices
-is considered as ``DISCONNECTED``.
+is calculated according to availability of data associated with that
+`device_id`. Alailable remote device statuses:
+
+    * ``DISABLED``
+
+        Data polling is not enabled
+
+    * ``CONNECTING``
+
+        Data polling is enabled and all data read requests have resulted
+        in timeout or haven't completed.
+
+    * ``CONNECTED``
+
+        Data polling is enabled and data with valid read request response
+        exists.
 
 Polling of data values can be enabled/disabled based on `device_id`. Initially,
 polling for all remote devices is disabled and has to be explicitly enabled.
@@ -115,7 +128,7 @@ system, following event types are used:
 
                 enum:
                     - DISABLED
-                    - DISCONNECTED
+                    - CONNECTING
                     - CONNECTED
 
         * ..., 'remote_device', <device_id>, 'read', <data_name>
@@ -214,12 +227,6 @@ system, following event types are used:
                         type: integer
 
 .. todo::
-
-    * add status GI - when is this state active in case of connection status
-      or in case of device_id?
-
-    * is device_id status CONNECTED when any of data points is available or if
-      all or if all data points are available?
 
     * do we need [..., 'system', 'remote_device', <device_id>, 'read',
       <data_name>] explicit read request?
