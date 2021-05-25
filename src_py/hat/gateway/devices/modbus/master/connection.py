@@ -81,6 +81,7 @@ class Connection(aio.Resource):
                    start_address: int,
                    quantity: int
                    ) -> typing.Union[typing.List[int], Error]:
+        mlog.debug('enqueuing read request')
         return await self._request(self._master.read, device_id, data_type,
                                    start_address, quantity)
 
@@ -90,6 +91,7 @@ class Connection(aio.Resource):
                     start_address: int,
                     values: typing.List[int]
                     ) -> typing.Optional[Error]:
+        mlog.debug('enqueuing write request')
         return await self._request(self._master.write, device_id, data_type,
                                    start_address, values)
 
@@ -99,6 +101,7 @@ class Connection(aio.Resource):
                          and_mask: int,
                          or_mask: int
                          ) -> typing.Optional[Error]:
+        mlog.debug('enqueuing write mask request')
         return await self._request(self._master.write_mask, device_id,
                                    address, and_mask, or_mask)
 
@@ -106,26 +109,32 @@ class Connection(aio.Resource):
         future = None
 
         try:
+            mlog.debug('starting request loop')
             while True:
                 fn, args, future = await self._request_queue.get()
+                mlog.debug('dequed request')
+
                 if future.done():
                     continue
 
                 try:
                     result = await self._communicate(fn, *args)
                     if not future.done():
+                        mlog.debug('setting request result')
                         future.set_result(result)
                 except Exception as e:
+                    mlog.debug('setting request exception')
                     future.set_exception(e)
                     raise
 
         except ConnectionError:
-            pass
+            mlog.debug('connection closed')
 
         except Exception as e:
             mlog.error('request loop error: %s', e, exc_info=e)
 
         finally:
+            mlog.debug('closing request loop')
             self.close()
             self._request_queue.close()
             if future and not future.done():
@@ -147,19 +156,24 @@ class Connection(aio.Resource):
     async def _communicate(self, fn, *args):
         count = 0
         while True:
+            mlog.debug('sending request')
             with contextlib.suppress(asyncio.TimeoutError):
                 result = await aio.wait_for(fn(*args),
                                             self._conf['request_timeout'])
+                mlog.debug('received result %s', result)
 
                 if isinstance(result, modbus.Error):
                     return Error[result]
 
                 return result
 
+            mlog.debug('single request timeout')
             count += 1
             if count >= self._conf['request_retry_count']:
                 break
 
-            await self._conf['request_retry_delay']
+            mlog.debug('waiting for request retry')
+            await asyncio.sleep(self._conf['request_retry_delay'])
 
+        mlog.debug('request resulting in timeout')
         return Error.TIMEOUT

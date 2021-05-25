@@ -5,6 +5,7 @@ from hat import aio
 from hat.gateway import common
 import hat.event.common
 
+
 mlog = logging.getLogger(__name__)
 
 
@@ -83,8 +84,10 @@ class EventClientProxy(aio.Resource):
 
     async def _read_loop(self):
         try:
+            mlog.debug('starting read loop')
             while True:
                 events = await self._event_client.receive()
+                mlog.debug('received %s events', len(events))
 
                 for event in events:
                     try:
@@ -94,10 +97,14 @@ class EventClientProxy(aio.Resource):
                     except Exception as e:
                         mlog.info('received invalid event: %s', e, exc_info=e)
 
+        except ConnectionError:
+            mlog.debug('connection closed')
+
         except Exception as e:
             mlog.error('read loop error: %s', e, exc_info=e)
 
         finally:
+            mlog.debug('closing read loop')
             self.close()
             self._read_queue.close()
 

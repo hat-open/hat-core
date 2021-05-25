@@ -83,6 +83,8 @@ class RemoteDeviceReader(aio.Resource):
         if self._status == status:
             return
 
+        mlog.debug('changing remote device status: %s -> %s', self._status,
+                   status)
         self._status = status
         self._response_cb(RemoteDeviceStatusRes(device_id=self._device_id,
                                                 status=status))
@@ -216,38 +218,49 @@ class DataReader(aio.Resource):
 
     async def _read_loop(self):
         try:
+            mlog.debug('starting read loop')
             while True:
+                mlog.debug('reading data')
                 result = await self._data.read()
+                mlog.debug('received response (device_id: %s; data_name: %s)',
+                           self._device_id, self._name)
 
                 if isinstance(result, Error):
+                    mlog.debug('received error response: %s', result)
                     response = self._create_response(
                         result.name, None, None)
 
                 elif (self._last_response is None or
                         self._last_response.result != 'SUCCESS'):
+                    mlog.debug('received initial value: %s', result)
                     response = self._create_response(
                         'SUCCESS', result, 'INTERROGATE')
 
                 elif self._last_response.value != result:
+                    mlog.debug('data value change: %s -> %s',
+                               self._last_response.value, result)
                     response = self._create_response(
                         'SUCCESS', result, 'CHANGE')
 
                 else:
+                    mlog.debug('no data change')
                     response = None
 
                 if response:
                     self._last_response = response
                     self._response_cb(response)
 
+                mlog.debug('waiting poll interval: %s', self._interval)
                 await asyncio.sleep(self._interval)
 
         except ConnectionError:
-            pass
+            mlog.debug('connection closed')
 
         except Exception as e:
             mlog.error('read loop error: %s', e, exc_info=e)
 
         finally:
+            mlog.debug('closing read loop')
             self.close()
 
     def _create_response(self, result, value, cause):

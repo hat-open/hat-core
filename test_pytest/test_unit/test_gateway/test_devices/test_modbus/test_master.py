@@ -433,7 +433,7 @@ async def test_read(slave_addr, connection_conf,
     assert_status_event(event, 'CONNECTED')
 
     event = await event_client.register_queue.get()
-    assert_remote_device_status_event(event, 1, 'DISCONNECTED')
+    assert_remote_device_status_event(event, 1, 'CONNECTING')
 
     event = await event_client.register_queue.get()
     assert_remote_device_read_event(event, 1, 'data', {'result': 'SUCCESS',
