@@ -163,7 +163,7 @@ class Connection(aio.Resource):
                 mlog.debug('received result %s', result)
 
                 if isinstance(result, modbus.Error):
-                    return Error[result]
+                    return Error[result.name]
 
                 return result
 
