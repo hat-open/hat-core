@@ -34,6 +34,8 @@ async def create(conf: common.DeviceConf,
     device._device_readers = {}
     device._async_group = aio.Group()
 
+    device._async_group.spawn(aio.call_on_cancel,
+                              device._event_client.async_close)
     device._async_group.spawn(device._event_client_loop)
     device._async_group.spawn(device._connection_loop)
     return device

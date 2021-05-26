@@ -62,12 +62,13 @@ class EventClientProxy(aio.Resource):
                  event_type_prefix: common.EventTypePrefix):
         self._event_client = event_client
         self._event_type_prefix = event_type_prefix
+        self._async_group = event_client.async_group.create_subgroup()
         self._read_queue = aio.Queue()
         self.async_group.spawn(self._read_loop)
 
     @property
     def async_group(self) -> aio.Group:
-        return self._event_client.async_group
+        return self._async_group
 
     def write(self, responses: typing.List[Response]):
         register_events = [
