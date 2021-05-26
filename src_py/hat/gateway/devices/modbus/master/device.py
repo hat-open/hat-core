@@ -56,7 +56,7 @@ class ModbusMasterDevice(aio.Resource):
                     if request.enable:
                         self._enable_remote_device(request.device_id)
                     else:
-                        self._disable_remote_device(request.device_id)
+                        await self._disable_remote_device(request.device_id)
 
                 elif isinstance(request, RemoteDeviceWriteReq):
                     mlog.debug('received remote device write request')
@@ -99,6 +99,8 @@ class ModbusMasterDevice(aio.Resource):
                     continue
 
                 self._set_status('CONNECTED')
+                self._devices = {}
+                self._device_readers = {}
 
                 mlog.debug('creating remote devices')
                 for device_conf in self._conf['remote_devices']:
@@ -106,23 +108,15 @@ class ModbusMasterDevice(aio.Resource):
                     self._devices[device.device_id] = device
 
                     if device.device_id in self._enabled_devices:
-                        mlog.debug('creating remote device reader '
-                                   '(device_id: %s)', device.device_id)
-                        self._device_readers[device.device_id] = \
-                            RemoteDeviceReader(device, self._notify_response)
-
+                        self._enable_remote_device(device.device_id)
                     else:
                         self._notify_response(RemoteDeviceStatusRes(
                             device_id=device.device_id,
                             status='DISABLED'))
 
                 await self._conn.wait_closing()
-
-                self._devices = {}
-                self._device_readers = {}
-                self._set_status('DISCONNECTED')
-
                 await self._conn.async_close()
+                self._set_status('DISCONNECTED')
 
         except Exception as e:
             mlog.error('connection loop error: %s', e, exc_info=e)
@@ -146,35 +140,35 @@ class ModbusMasterDevice(aio.Resource):
 
     def _enable_remote_device(self, device_id):
         mlog.debug('enabling device %s', device_id)
-
-        if device_id in self._enabled_devices:
-            mlog.debug('device %s already enabled', device_id)
-            return
-
         self._enabled_devices.add(device_id)
+
         device = self._devices.get(device_id)
         if not device:
             mlog.debug('device %s is not available', device_id)
+            return
+        if not device.conn.is_open:
+            mlog.debug('connection is not available')
+            return
+
+        device_reader = self._device_readers.get(device_id)
+        if device_reader and device_reader.is_open:
+            mlog.debug('device reader %s is already running', device_id)
             return
 
         mlog.debug('creating reader for device %s', device_id)
         self._device_readers[device.device_id] = \
             RemoteDeviceReader(device, self._notify_response)
 
-    def _disable_remote_device(self, device_id):
+    async def _disable_remote_device(self, device_id):
         mlog.debug('disabling device %s', device_id)
+        self._enabled_devices.discard(device_id)
 
-        if device_id not in self._enabled_devices:
-            mlog.debug('device %s is not enabled', device_id)
-            return
-
-        self._enabled_devices.remove(device_id)
         device_reader = self._device_readers.pop(device_id, None)
         if not device_reader:
             mlog.debug('device reader %s is not available', device_id)
             return
 
-        device_reader.close()
+        await device_reader.async_close()
 
     async def _write(self, device_id, data_name, request_id, value):
         mlog.debug('writing (device_id: %s; data_name: %s; value: %s)',
