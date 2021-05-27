@@ -109,3 +109,125 @@ Supported device implementations:
     devices/modbus_slave
     devices/iec104_master
     devices/iec104_slave
+
+
+Back-end/front-end communication
+--------------------------------
+
+Back-end state definition:
+
+.. code:: yaml
+
+    type: object
+    required:
+        - log
+        - devices
+        - settings
+    properties:
+        log:
+            type: array
+            descriptions: |
+                list of log entries shown on GUI
+            items:
+                type: object
+                required:
+                    - timestamp
+                    - message
+                properties:
+                    timestamp:
+                        type: number
+                    message:
+                        type: string
+        devices:
+            type: object
+            description: |
+                dictionary of device states where key is device identifier
+                and value is device state with structure dependant on device
+                type
+        settings:
+            type: object
+            required:
+                - ui
+                - log
+            properties:
+                ui:
+                    type: object
+                    required:
+                        - address
+                    properties:
+                        address:
+                            type: string
+                            default: 'http://127.0.0.1:23024'
+                log:
+                    type: object
+                    required:
+                        - level
+                        - syslog
+                        - console
+                    properties:
+                        level:
+                            type: string
+                            default: INFO
+                        syslog:
+                            type: object
+                            required:
+                                - enabled
+                                - host
+                                - port
+                            properties:
+                                enabled:
+                                    type: boolean
+                                    default: false
+                                host:
+                                    type: string
+                                    default: '127.0.0.1'
+                                port:
+                                    type: integer
+                                    default: 6514
+                        console:
+                            type: object
+                            required:
+                                - enabled
+                            properties:
+                                enabled:
+                                    type: boolean
+                                    default: false
+
+Available RPC actions:
+
+    * ``set_settings(path: json.Path, value: json.Data) -> None``
+
+        change settings parameter
+
+    * ``save() -> None``
+
+        save current configuration to disk
+
+    * ``add(device_type: str) -> str``
+
+        add new device and return newly created device's identifier
+
+    * ``remove(device_id: str) -> None``
+
+        remove device
+
+    * ``start(device_id: str) -> None``
+
+        start device
+
+    * ``stop(device_id: str) -> None``
+
+        stop device
+
+    * ``set_name(device_id: str, name: str) -> None``
+
+        change device name
+
+    * ``set_auto_start(device_id: str, auto_start: bool) -> None``
+
+        change device auto start property
+
+    * ``execute(device_id: str, action: str, *args: json.Data) -> json.Data``
+
+        execute device action and return it's result (supported actions are
+        dependant on device type)
