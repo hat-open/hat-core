@@ -102,8 +102,8 @@ class Data:
         self._register_size = _get_register_size(self._data_type)
         self._start_address = conf['start_address']
         self._bit_count = conf['bit_count']
-        self._start_bit = conf['start_bit']
-        self._quantity = math.ceil((self._bit_count + self._start_bit) /
+        self._bit_offset = conf['bit_offset']
+        self._quantity = math.ceil((self._bit_count + self._bit_offset) /
                                    self._register_size)
         self._interval = conf['interval']
         self._name = conf['name']
@@ -126,7 +126,7 @@ class Data:
 
     async def write(self, value: int) -> typing.Optional[Error]:
         if self._data_type == DataType.COIL:
-            address = self._start_address + self._start_bit
+            address = self._start_address + self._bit_offset
             registers = [(value >> (self._bit_count - i - 1)) & 1
                          for i in range(self._bit_count)]
             result = await self._conn.write(self._device_id, self._data_type,
@@ -134,13 +134,13 @@ class Data:
             return result
 
         elif self._data_type == DataType.HOLDING_REGISTER:
-            address = self._start_address + (self._start_bit // 16)
+            address = self._start_address + (self._bit_offset // 16)
             bit_count = self._bit_count
+            bit_offset = self._bit_offset % 16
 
-            start_bit = self._start_bit % 16
-            if self._start_bit % 16:
-                mask_prefix_size = start_bit
-                mask_suffix_size = max(16 - start_bit - bit_count, 0)
+            if bit_offset:
+                mask_prefix_size = bit_offset
+                mask_suffix_size = max(16 - bit_offset - bit_count, 0)
                 mask_size = 16 - mask_prefix_size - mask_suffix_size
                 and_mask = (((0xFFFF << (16 - mask_prefix_size)) & 0xFFFF) |
                             ((0xFFFF << mask_suffix_size) >> 16))
@@ -182,7 +182,7 @@ class Data:
                                        self._start_address, self._quantity)
         if isinstance(result, Error):
             return result
-        return _get_registers_value(self._register_size, self._start_bit,
+        return _get_registers_value(self._register_size, self._bit_offset,
                                     self._bit_count, result)
 
 
@@ -285,11 +285,11 @@ def _get_register_size(data_type):
     raise ValueError('invalid data type')
 
 
-def _get_registers_value(register_size, start_bit, bit_count, values):
+def _get_registers_value(register_size, bit_offset, bit_count, values):
     result = 0
     bits = itertools.chain(_get_registers_bits(register_size, values),
                            itertools.repeat(0))
-    for i in itertools.islice(bits, start_bit, start_bit + bit_count):
+    for i in itertools.islice(bits, bit_offset, bit_offset + bit_count):
         result = (result << 1) | i
     return result
 

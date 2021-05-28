@@ -163,7 +163,7 @@ def create_remote_device_write_event(create_event):
                                    'interval': 5,
                                    'data_type': 'COIL',
                                    'start_address': 123,
-                                   'start_bit': 0,
+                                   'bit_offset': 0,
                                    'bit_count': 3}]}]},
 
     {'connection': {'modbus_type': 'RTU',
@@ -187,7 +187,7 @@ def create_remote_device_write_event(create_event):
                                    'interval': None,
                                    'data_type': 'HOLDING_REGISTER',
                                    'start_address': 321,
-                                   'start_bit': 2,
+                                   'bit_offset': 2,
                                    'bit_count': 2}]}]},
 ])
 def test_valid_conf(conf):
@@ -362,7 +362,7 @@ async def test_remote_device_status(slave_addr, connection_conf,
     await event_client.async_close()
 
 
-@pytest.mark.parametrize('data_type, start_bit, bit_count, registers, value', [
+@pytest.mark.parametrize('data_type, bit_offset, bit_count, registers, value', [
     ('COIL',
      0,
      1,
@@ -401,7 +401,7 @@ async def test_remote_device_status(slave_addr, connection_conf,
 ])
 async def test_read(slave_addr, connection_conf,
                     create_remote_device_enable_event,
-                    data_type, start_bit, bit_count, registers, value):
+                    data_type, bit_offset, bit_count, registers, value):
 
     async def on_read(slave, device_id, _data_type, start_address, quantity):
         assert device_id == 1
@@ -419,7 +419,7 @@ async def test_read(slave_addr, connection_conf,
                                           'interval': 1,
                                           'data_type': data_type,
                                           'start_address': 123,
-                                          'start_bit': start_bit,
+                                          'bit_offset': bit_offset,
                                           'bit_count': bit_count}]}]}
 
     event_client = EventClient([create_remote_device_enable_event(1, True)])
@@ -457,7 +457,7 @@ async def test_read(slave_addr, connection_conf,
     await event_client.async_close()
 
 
-@pytest.mark.parametrize('data_type, start_bit, bit_count, registers, value', [
+@pytest.mark.parametrize('data_type, bit_offset, bit_count, registers, value', [
     ('COIL',
      0,
      1,
@@ -514,7 +514,7 @@ async def test_read(slave_addr, connection_conf,
 ])
 async def test_write(slave_addr, connection_conf,
                      create_remote_device_write_event,
-                     data_type, start_bit, bit_count, registers, value):
+                     data_type, bit_offset, bit_count, registers, value):
 
     data = [0] * len(registers)
 
@@ -538,7 +538,7 @@ async def test_write(slave_addr, connection_conf,
                                           'interval': None,
                                           'data_type': data_type,
                                           'start_address': 0,
-                                          'start_bit': start_bit,
+                                          'bit_offset': bit_offset,
                                           'bit_count': bit_count}]}]}
 
     event_client = EventClient()

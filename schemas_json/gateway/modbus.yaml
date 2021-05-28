@@ -160,7 +160,7 @@ definitions:
                                     - interval
                                     - data_type
                                     - start_address
-                                    - start_bit
+                                    - bit_offset
                                     - bit_count
                                 properties:
                                     name:
@@ -187,16 +187,14 @@ definitions:
                                         type: integer
                                         description: |
                                             Starting address of modbus register
-                                    start_bit:
+                                    bit_offset:
                                         type: integer
                                         description: |
-                                            Starting register bit (in case of
-                                            16bit register, 0 is most
-                                            significent bit and 15 is least
-                                            significent bit)
+                                            Bit offset (number of bits skipped)
                                     bit_count:
                                         type: integer
                                         description: |
                                             Number of bits used for
-                                            encoding/decoding value
+                                            encoding/decoding value (not
+                                            including offset bits)
 ...

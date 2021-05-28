@@ -32,7 +32,7 @@ Among other parameters, each data specifies:
     * data type (1bit or 16bit register size)
     * bit size
     * starting register address
-    * starting register bit (bit offset)
+    * bit offset
 
 List of bit values is created by iterative reading of register values starting
 with `starting register address` and incrementing register address by 1. Bits
@@ -62,7 +62,7 @@ When data item is configured with properties:
 
     * bit size: 32
     * starting register address: 1000
-    * starting register bit: 16
+    * bit offset: 16
 
 Data value is unlimited unsigned integer 0x3456789a.
 
