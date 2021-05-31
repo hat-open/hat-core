@@ -23,23 +23,7 @@ properties:
     devices:
         type: array
         items:
-            allOf:
-              - type: object
-                required:
-                    - type
-                    - name
-                    - auto_start
-                properties:
-                    name:
-                        type: string
-                    auto_start:
-                        type: boolean
-              - oneOf:
-                    - "$ref": "hat://manager/orchestrator.yaml#"
-                    - "$ref": "hat://manager/monitor.yaml#"
-                    - "$ref": "hat://manager/event.yaml#"
-                    - "$ref": "hat://manager/iec104.yaml#"
-                    - "$ref": "hat://manager/modbus.yaml#"
+            "$ref": "hat://manager/main.yaml#/definitions/device"
 definitions:
     settings:
         type: object
@@ -83,4 +67,22 @@ definitions:
                         properties:
                             enabled:
                                 type: boolean
+    device:
+        allOf:
+          - type: object
+            required:
+                - type
+                - name
+                - auto_start
+            properties:
+                name:
+                    type: string
+                auto_start:
+                    type: boolean
+          - oneOf:
+                - "$ref": "hat://manager/orchestrator.yaml#"
+                - "$ref": "hat://manager/monitor.yaml#"
+                - "$ref": "hat://manager/event.yaml#"
+                - "$ref": "hat://manager/iec104.yaml#"
+                - "$ref": "hat://manager/modbus.yaml#"
 ...

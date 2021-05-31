@@ -390,7 +390,7 @@ class RpcConnection(aio.Resource):
 
     def __init__(self,
                  conn: Connection,
-                 actions: typing.Dict[str, aio.AsyncCallable]):
+                 actions: typing.Dict[str, aio.AsyncCallable] = {}):
         self._conn = conn
         self._actions = actions
         self._message_queue = aio.Queue()

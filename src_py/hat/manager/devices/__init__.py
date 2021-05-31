@@ -1,3 +1,5 @@
+"""Device implementations"""
+
 from hat import json
 from hat.manager import common
 import hat.manager.devices.event
@@ -8,6 +10,8 @@ import hat.manager.devices.orchestrator
 
 
 def get_default_conf(device_type: str) -> json.Data:
+    """Get default configuration associated with provided device type"""
+
     if device_type == 'orchestrator':
         return hat.manager.devices.orchestrator.default_conf
 
@@ -35,6 +39,17 @@ def get_default_conf(device_type: str) -> json.Data:
 def create_device(conf: json.Data,
                   logger: common.Logger
                   ) -> common.Device:
+    """Create device instance
+
+    Args:
+        conf: configuration defined by
+            ``hat://manager/main.yaml#/definitions/device``
+        logger: device logger
+
+    Returns:
+        device instance
+
+    """
     device_type = conf['type']
 
     if device_type == 'orchestrator':

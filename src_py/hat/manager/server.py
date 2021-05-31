@@ -1,3 +1,5 @@
+"""Web server and generic functionality"""
+
 from pathlib import Path
 import enum
 import functools
@@ -27,7 +29,14 @@ async def create_server(conf: json.Data,
                         conf_path: Path,
                         ui_path: Path
                         ) -> 'Server':
-    """Create server"""
+    """Create server
+
+    Args:
+        conf: configuration defined by ``hat://manager/main.yaml#``
+        conf_path: configuration file path
+        ui_path: static web ui frontent directory path
+
+    """
     addr = urllib.parse.urlparse(conf['settings']['ui']['address'])
 
     server = Server()
@@ -109,7 +118,6 @@ class Server(aio.Resource):
             mlog.error("device loop error: %s", e, exc_info=e)
 
         finally:
-
             self._data.remove(['devices', device_id])
             del self._devices[device_id]
             await aio.uncancellable(device.async_close())

@@ -1,3 +1,5 @@
+"""Manager main"""
+
 from pathlib import Path
 import asyncio
 import contextlib
@@ -35,6 +37,7 @@ default_ui_path: Path = package_path / 'ui'
               help='Override web ui directory path (development argument)')
 def main(conf: typing.Optional[Path],
          ui_path: Path):
+    """Main entry point"""
     aio.init_asyncio()
 
     conf, conf_path = None, conf
@@ -58,6 +61,7 @@ def main(conf: typing.Optional[Path],
 async def async_main(conf: json.Data,
                      conf_path: Path,
                      ui_path: Path):
+    """Async main entry point"""
     srv = await create_server(conf, conf_path, ui_path)
     try:
         await srv.wait_closing()

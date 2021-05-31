@@ -362,7 +362,7 @@ async def test_remote_device_status(slave_addr, connection_conf,
     await event_client.async_close()
 
 
-@pytest.mark.parametrize('data_type, bit_offset, bit_count, registers, value', [
+@pytest.mark.parametrize('data_type, bit_offset, bit_count, registers, value', [  # NOQA
     ('COIL',
      0,
      1,
@@ -457,7 +457,7 @@ async def test_read(slave_addr, connection_conf,
     await event_client.async_close()
 
 
-@pytest.mark.parametrize('data_type, bit_offset, bit_count, registers, value', [
+@pytest.mark.parametrize('data_type, bit_offset, bit_count, registers, value', [  # NOQA
     ('COIL',
      0,
      1,
