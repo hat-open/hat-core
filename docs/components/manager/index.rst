@@ -144,6 +144,29 @@ Back-end state definition:
                 dictionary of device states where key is device identifier
                 and value is device state with structure dependant on device
                 type
+            patternProperties:
+                ".+":
+                    type: object
+                    required:
+                        - type
+                        - name
+                        - auto_start
+                        - status
+                        - data
+                    properties:
+                        type:
+                            type: string
+                        name:
+                            type: string
+                        auto_start:
+                            type: boolean
+                        status:
+                            enum:
+                                - stopped
+                                - starting
+                                - started
+                                - stopping
+                        data: {}
         settings:
             type: object
             required:
