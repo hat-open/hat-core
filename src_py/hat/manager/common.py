@@ -1,3 +1,5 @@
+"""Shared common structures and function"""
+
 from pathlib import Path
 import abc
 import typing
@@ -17,14 +19,35 @@ json_schema_repo: json.SchemaRepository = json.SchemaRepository(
 
 
 def get_log_conf(settings: json.Data) -> json.Data:
-    """Generate log configuration"""
-    handlers = []
+    """Generate log configuration
+
+    .. todo::
+
+        move to hat.manager.main and run during startup
+
+    Args:
+        settings: settings conf defined by
+            ``hat://manager/main.yaml#/definitions/settings``
+
+    Returns:
+        log conf defined by ``hat://logging.yaml#``
+
+    """
+    handlers = {}
 
     if settings['log']['syslog']['enabled']:
-        handlers.append('syslog')
+        handlers['syslog'] = {'class': 'hat.syslog.handler.SysLogHandler',
+                              'host': settings['log']['syslog']['host'],
+                              'port': settings['log']['syslog']['port'],
+                              'comm_type': 'TCP',
+                              'level': 'DEBUG',
+                              'formatter': 'syslog',
+                              'queue_size': 10}
 
     if settings['log']['console']['enabled']:
-        handlers.append('console')
+        handlers['console'] = {'class': 'logging.StreamHandler',
+                               'formatter': 'console',
+                               'level': 'DEBUG'}
 
     return {
         'version': 1,
@@ -32,25 +55,13 @@ def get_log_conf(settings: json.Data) -> json.Data:
             'syslog': {},
             'console': {
                 'format': "[%(asctime)s %(levelname)s %(name)s] %(message)s"}},
-        'handlers': {
-            'syslog': {
-                'class': 'hat.syslog.handler.SysLogHandler',
-                'host': settings['log']['syslog']['host'],
-                'port': settings['log']['syslog']['port'],
-                'comm_type': 'TCP',
-                'level': 'DEBUG',
-                'formatter': 'syslog',
-                'queue_size': 10},
-            'console': {
-                'class': 'logging.StreamHandler',
-                'formatter': 'console',
-                'level': 'DEBUG'}},
+        'handlers': handlers,
         'loggers': {
             'hat': {
                 'level': settings['log']['level']}},
         'root': {
             'level': settings['log']['level'],
-            'handlers': handlers},
+            'handlers': list(handlers.keys())},
         'disable_existing_loggers': False}
 
 
@@ -60,18 +71,22 @@ default_settings: json.Data = {'ui': {'address': 'http://127.0.0.1:23024'},
                                                   'host': '127.0.0.1',
                                                   'port': 6514},
                                        'console': {'enabled': False}}}
-"""Default settings"""
+"""Default settings (``hat://manager/main.yaml#/definitions/settings``)"""
 
 default_conf: json.Data = {
     'type': 'manager',
     'log': get_log_conf(default_settings),
     'settings': default_settings,
     'devices': []}
-"""Default configuration"""
+"""Default configuration (``hat://manager/main.yaml#``)"""
 
 
 class Logger:
-    """Message logger"""
+    """Message logger
+
+    Helper class for decoupling provider/consumer log message passing.
+
+    """
 
     def __init__(self):
         self._log_cbs = util.CallbackRegistry()
@@ -88,7 +103,12 @@ class Logger:
 
 
 class DataStorage:
-    """Data storage"""
+    """Data storage
+
+    Helper class representing observable JSON data state manipulated with
+    path based set/remove functions.
+
+    """
 
     def __init__(self, data: json.Data = None):
         self._data = data

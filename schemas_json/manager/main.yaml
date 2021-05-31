@@ -19,6 +19,29 @@ properties:
     log:
         "$ref": "hat://logging.yaml#"
     settings:
+        "$ref": "hat://manager/main.yaml#/definitions/settings"
+    devices:
+        type: array
+        items:
+            allOf:
+              - type: object
+                required:
+                    - type
+                    - name
+                    - auto_start
+                properties:
+                    name:
+                        type: string
+                    auto_start:
+                        type: boolean
+              - oneOf:
+                    - "$ref": "hat://manager/orchestrator.yaml#"
+                    - "$ref": "hat://manager/monitor.yaml#"
+                    - "$ref": "hat://manager/event.yaml#"
+                    - "$ref": "hat://manager/iec104.yaml#"
+                    - "$ref": "hat://manager/modbus.yaml#"
+definitions:
+    settings:
         type: object
         required:
             - ui
@@ -60,24 +83,4 @@ properties:
                         properties:
                             enabled:
                                 type: boolean
-    devices:
-        type: array
-        items:
-            allOf:
-              - type: object
-                required:
-                    - type
-                    - name
-                    - auto_start
-                properties:
-                    name:
-                        type: string
-                    auto_start:
-                        type: boolean
-              - oneOf:
-                    - "$ref": "hat://manager/orchestrator.yaml#"
-                    - "$ref": "hat://manager/monitor.yaml#"
-                    - "$ref": "hat://manager/event.yaml#"
-                    - "$ref": "hat://manager/iec104.yaml#"
-                    - "$ref": "hat://manager/modbus.yaml#"
 ...
