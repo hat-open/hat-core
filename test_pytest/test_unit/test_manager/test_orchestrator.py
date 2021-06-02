@@ -96,10 +96,10 @@ async def test_set_address():
     conf = {'address': 'addr1'}
     logger = common.Logger()
     device = hat.manager.devices.orchestrator.Device(conf, logger)
-    assert device._data.data['address'] == 'addr1'
+    assert device.data.data['address'] == 'addr1'
 
     await device.execute('set_address', 'addr2')
-    assert device._data.data['address'] == 'addr2'
+    assert device.data.data['address'] == 'addr2'
 
     new_conf = device.get_conf()
     assert new_conf['address'] == 'addr2'
