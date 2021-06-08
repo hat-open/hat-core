@@ -1,6 +1,7 @@
 """Web server and generic functionality"""
 
 from pathlib import Path
+import asyncio
 import enum
 import functools
 import itertools
@@ -23,6 +24,9 @@ autoflush_delay: float = 0.2
 
 log_size: int = 100
 """Max log size"""
+
+auto_start_timeout: float = 1
+"""Auto start timeout"""
 
 
 async def create_server(conf: json.Data,
@@ -186,7 +190,8 @@ class _ProxyDevice(aio.Resource):
                  logger: common.Logger):
         self._logger = logger
         self._async_group = aio.Group()
-        self._subgroup = self.async_group.create_subgroup()
+        self._run_subgroup = self.async_group.create_subgroup()
+        self._auto_start_subgroup = self.async_group.create_subgroup()
 
         device_logger = common.Logger()
         handler = device_logger.register_log_cb(self._log)
@@ -207,6 +212,9 @@ class _ProxyDevice(aio.Resource):
         self._async_group.spawn(aio.call_on_cancel, self._log,
                                 'removing device')
 
+        if self._data.data['auto_start']:
+            self._run_auto_start()
+
     @property
     def async_group(self) -> aio.Group:
         return self._async_group
@@ -222,18 +230,28 @@ class _ProxyDevice(aio.Resource):
                     auto_start=self._data.data['auto_start'])
 
     def start(self):
-        previous = self._subgroup
-        self._subgroup = self._async_group.create_subgroup()
-        self._subgroup.spawn(self._run, previous, self._subgroup)
+        previous = self._run_subgroup
+        previous.close()
+        self._run_subgroup = self._async_group.create_subgroup()
+        self._run_subgroup.spawn(self._run, previous, self._run_subgroup)
 
     def stop(self):
-        self._subgroup.close()
+        self._run_subgroup.close()
 
     def set_name(self, name: str):
         self._log(f'changing name to {name}')
         self._data.set('name', name)
 
-    def set_auto_start(self, auto_start: str):
+    def set_auto_start(self, auto_start: bool):
+        previous_auto_start = self._data.data['auto_start']
+        if previous_auto_start == auto_start:
+            return
+
+        if auto_start:
+            self._run_auto_start()
+        else:
+            self._auto_start_subgroup.close()
+
         self._log(f'setting auto start {auto_start}')
         self._data.set('auto_start', auto_start)
 
@@ -268,6 +286,38 @@ class _ProxyDevice(aio.Resource):
         finally:
             current_subgroup.close()
             await aio.uncancellable(self._close_resource(resource))
+
+    def _run_auto_start(self):
+        previous_group = self._auto_start_subgroup
+        previous_group.close()
+        self._auto_start_subgroup = self._async_group.create_subgroup()
+        self._auto_start_subgroup.spawn(self._auto_start_loop,
+                                        previous_group,
+                                        self._auto_start_subgroup)
+
+    async def _auto_start_loop(self, previous_subgroup, current_subgroup):
+        try:
+            await previous_subgroup.async_close()
+            del previous_subgroup
+
+            if self._data.data['status'] == _Status.STOPPED.value:
+                self.start()
+            queue = aio.Queue()
+            with self._data.register_change_cb(queue.put_nowait):
+                while True:
+                    state = await queue.get_until_empty()
+                    if state['status'] != _Status.STOPPED.value:
+                        continue
+                    await asyncio.sleep(auto_start_timeout)
+                    if self._data.data['status'] != _Status.STOPPED.value:
+                        continue
+                    self.start()
+
+        except Exception as e:
+            mlog.error("auto_start loop error: %s", e, exc_info=e)
+
+        finally:
+            current_subgroup.close()
 
     async def _close_resource(self, resource):
         if resource:
