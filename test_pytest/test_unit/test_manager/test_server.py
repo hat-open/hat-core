@@ -311,3 +311,52 @@ async def test_execute(settings, conf_path, ui_path, addr,
 
     await conn.async_close()
     await srv.async_close()
+
+
+async def test_auto_start(settings, conf_path, ui_path, addr,
+                          patch_autoflush, patch_device_queue):
+    conf = {'settings': settings,
+            'devices': []}
+    srv = await hat.manager.server.create_server(conf, conf_path, ui_path)
+    conn = juggler.RpcConnection(await juggler.connect(addr))
+    data_devices_queue = create_remote_data_change_queue(conn, 'devices')
+
+    data_devices = await data_devices_queue.get()
+    assert data_devices == {}
+
+    device_id = await conn.call('add', 'device_type')
+    data_devices = await data_devices_queue.get()
+    assert device_id in data_devices
+    assert data_devices[device_id]['status'] == 'stopped'
+
+    await conn.call('set_auto_start', device_id, True)
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['auto_start'] is True
+
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'starting'
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'started'
+
+    await conn.call('stop', device_id)
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'stopping'
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'stopped'
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'starting'
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'started'
+
+    await conn.call('set_auto_start', device_id, False)
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['auto_start'] is False
+
+    await conn.call('stop', device_id)
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'stopping'
+    data_devices = await data_devices_queue.get()
+    assert data_devices[device_id]['status'] == 'stopped'
+
+    await conn.async_close()
+    await srv.async_close()
