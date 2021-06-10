@@ -24,6 +24,7 @@ def addr(port):
 async def server(port):
     server = Server()
     server._data = common.DataStorage()
+    server._connections = set()
     server._receive_queue = aio.Queue()
     server._srv = await juggler.listen('127.0.0.1', port,
                                        server._on_connection,
@@ -48,11 +49,16 @@ class Server(aio.Resource):
     def receive_queue(self):
         return self._receive_queue
 
+    def change_data(self, data):
+        for conn in self._connections:
+            conn.set_local_data(data)
+
     def _on_connection(self, conn):
         self.async_group.spawn(self._connection_loop, conn)
 
     async def _connection_loop(self, conn):
         try:
+            self._connections.add(conn)
             with self._data.register_change_cb(conn.set_local_data):
                 conn.set_local_data(self._data.data)
                 while True:
@@ -60,6 +66,7 @@ class Server(aio.Resource):
                     self._receive_queue.put_nowait(msg)
 
         finally:
+            self._connections.remove(conn)
             conn.close()
 
 
@@ -117,5 +124,48 @@ async def test_set_rank(addr, server):
     assert msg == {'type': 'set_rank',
                    'payload': {'cid': 1234,
                                'rank': 4321}}
+
+    await client.async_close()
+
+
+async def test_device_data(addr, server):
+    conf = {'address': addr}
+    logger = common.Logger()
+    device = hat.manager.devices.monitor.Device(conf, logger)
+    device_queue = aio.Queue()
+    device.data.register_change_cb(device_queue.put_nowait)
+
+    client = await device.create()
+    await device_queue.get()
+
+    assert device.data.data == {
+        'address': addr,
+        'mid': 0,
+        'local_components': [],
+        'global_components': []}
+
+    local_components = [{'cid': 1,
+                         'name': 'name1',
+                         'group': 'group1',
+                         'address': 'address1',
+                         'rank': 2}]
+    global_components = [{'cid': 3,
+                          'mid': 4,
+                          'name': 'name2',
+                          'group': 'group2',
+                          'address': 'address2',
+                          'rank': 5,
+                          'blessing': 6,
+                          'ready': 7}]
+    data = {'mid': 8,
+            'local_components': local_components,
+            'global_components': global_components}
+    server.change_data(data)
+
+    await device_queue.get()
+
+    assert device.data.data['mid'] == data['mid']
+    assert device.data.data['local_components'] == data['local_components']
+    assert device.data.data['global_components'] == data['global_components']
 
     await client.async_close()
