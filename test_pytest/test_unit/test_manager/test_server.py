@@ -50,6 +50,11 @@ def patch_autoflush(monkeypatch):
 
 
 @pytest.fixture
+def patch_auto_start(monkeypatch):
+    monkeypatch.setattr(hat.manager.server, 'auto_start_timeout', 0.1)
+
+
+@pytest.fixture
 def patch_device_queue(monkeypatch):
     queue = aio.Queue()
 
@@ -314,7 +319,8 @@ async def test_execute(settings, conf_path, ui_path, addr,
 
 
 async def test_auto_start(settings, conf_path, ui_path, addr,
-                          patch_autoflush, patch_device_queue):
+                          patch_autoflush, patch_device_queue,
+                          patch_auto_start):
     conf = {'settings': settings,
             'devices': []}
     srv = await hat.manager.server.create_server(conf, conf_path, ui_path)
