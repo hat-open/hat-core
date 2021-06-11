@@ -25,7 +25,7 @@ autoflush_delay: float = 0.2
 log_size: int = 100
 """Max log size"""
 
-auto_start_timeout: float = 1
+auto_start_delay: float = 1
 """Auto start timeout"""
 
 
@@ -308,7 +308,7 @@ class _ProxyDevice(aio.Resource):
                     state = await queue.get_until_empty()
                     if state['status'] != _Status.STOPPED.value:
                         continue
-                    await asyncio.sleep(auto_start_timeout)
+                    await asyncio.sleep(auto_start_delay)
                     if self._data.data['status'] != _Status.STOPPED.value:
                         continue
                     self.start()

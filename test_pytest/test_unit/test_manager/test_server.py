@@ -51,7 +51,7 @@ def patch_autoflush(monkeypatch):
 
 @pytest.fixture
 def patch_auto_start(monkeypatch):
-    monkeypatch.setattr(hat.manager.server, 'auto_start_timeout', 0.1)
+    monkeypatch.setattr(hat.manager.server, 'auto_start_delay', 0.1)
 
 
 @pytest.fixture
