@@ -319,8 +319,8 @@ async def test_execute(settings, conf_path, ui_path, addr,
 
 
 async def test_autostart(settings, conf_path, ui_path, addr,
-                          patch_autoflush, patch_device_queue,
-                          patch_autostart):
+                         patch_autoflush, patch_device_queue,
+                         patch_autostart):
     conf = {'settings': settings,
             'devices': []}
     srv = await hat.manager.server.create_server(conf, conf_path, ui_path)
