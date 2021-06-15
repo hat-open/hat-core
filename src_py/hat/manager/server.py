@@ -292,8 +292,8 @@ class _ProxyDevice(aio.Resource):
         previous_group.close()
         self._autostart_subgroup = self._async_group.create_subgroup()
         self._autostart_subgroup.spawn(self._autostart_loop,
-                                        previous_group,
-                                        self._autostart_subgroup)
+                                       previous_group,
+                                       self._autostart_subgroup)
 
     async def _autostart_loop(self, previous_subgroup, current_subgroup):
         try:
