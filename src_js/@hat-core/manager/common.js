@@ -90,7 +90,7 @@ export function setName(deviceId, name) {
 
 
 export function setAutoStart(deviceId, autoStart) {
-    app.rpc.set_auto_start(deviceId, autoStart);
+    app.rpc.set_autostart(deviceId, autoStart);
 }
 
 

@@ -150,7 +150,7 @@ Back-end state definition:
                     required:
                         - type
                         - name
-                        - auto_start
+                        - autostart
                         - status
                         - data
                     properties:
@@ -158,7 +158,7 @@ Back-end state definition:
                             type: string
                         name:
                             type: string
-                        auto_start:
+                        autostart:
                             type: boolean
                         status:
                             enum:
@@ -246,7 +246,7 @@ Available RPC actions:
 
         change device name
 
-    * ``set_auto_start(device_id: str, auto_start: bool) -> None``
+    * ``set_autostart(device_id: str, autostart: bool) -> None``
 
         change device auto start property
 

@@ -79,7 +79,7 @@ function deviceHeader() {
             ['input', {
                 props: {
                     type: 'checkbox',
-                    checked: device.auto_start
+                    checked: device.autostart
                 },
                 on: {
                     change: evt => common.setAutoStart(deviceId, evt.target.checked)

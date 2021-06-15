@@ -73,11 +73,11 @@ definitions:
             required:
                 - type
                 - name
-                - auto_start
+                - autostart
             properties:
                 name:
                     type: string
-                auto_start:
+                autostart:
                     type: boolean
           - oneOf:
                 - "$ref": "hat://manager/orchestrator.yaml#"

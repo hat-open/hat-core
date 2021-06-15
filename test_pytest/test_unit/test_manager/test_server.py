@@ -50,8 +50,8 @@ def patch_autoflush(monkeypatch):
 
 
 @pytest.fixture
-def patch_auto_start(monkeypatch):
-    monkeypatch.setattr(hat.manager.server, 'auto_start_delay', 0.1)
+def patch_autostart(monkeypatch):
+    monkeypatch.setattr(hat.manager.server, 'autostart_delay', 0.1)
 
 
 @pytest.fixture
@@ -220,7 +220,7 @@ async def test_init_device(settings, conf_path, ui_path, addr,
     conf = {'settings': settings,
             'devices': [{'type': f'type{i}',
                          'name': f'name{i}',
-                         'auto_start': False}
+                         'autostart': False}
                         for i in range(device_count)]}
 
     srv = await hat.manager.server.create_server(conf, conf_path, ui_path)
@@ -318,9 +318,9 @@ async def test_execute(settings, conf_path, ui_path, addr,
     await srv.async_close()
 
 
-async def test_auto_start(settings, conf_path, ui_path, addr,
+async def test_autostart(settings, conf_path, ui_path, addr,
                           patch_autoflush, patch_device_queue,
-                          patch_auto_start):
+                          patch_autostart):
     conf = {'settings': settings,
             'devices': []}
     srv = await hat.manager.server.create_server(conf, conf_path, ui_path)
@@ -335,9 +335,9 @@ async def test_auto_start(settings, conf_path, ui_path, addr,
     assert device_id in data_devices
     assert data_devices[device_id]['status'] == 'stopped'
 
-    await conn.call('set_auto_start', device_id, True)
+    await conn.call('set_autostart', device_id, True)
     data_devices = await data_devices_queue.get()
-    assert data_devices[device_id]['auto_start'] is True
+    assert data_devices[device_id]['autostart'] is True
 
     data_devices = await data_devices_queue.get()
     assert data_devices[device_id]['status'] == 'starting'
@@ -354,9 +354,9 @@ async def test_auto_start(settings, conf_path, ui_path, addr,
     data_devices = await data_devices_queue.get()
     assert data_devices[device_id]['status'] == 'started'
 
-    await conn.call('set_auto_start', device_id, False)
+    await conn.call('set_autostart', device_id, False)
     data_devices = await data_devices_queue.get()
-    assert data_devices[device_id]['auto_start'] is False
+    assert data_devices[device_id]['autostart'] is False
 
     await conn.call('stop', device_id)
     data_devices = await data_devices_queue.get()
