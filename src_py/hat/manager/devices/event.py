@@ -1,3 +1,4 @@
+import collections
 import io
 import itertools
 
@@ -128,17 +129,61 @@ def _event_to_json(event):
 
 def _parse_register_events(text, source_timestamp):
     reader = io.StringIO(text)
+    event_data = {}
     while line := reader.readline():
-        elements = line.split(':', 1)
-        event_type = elements[0].strip()
-        if not event_type:
+        if line.isspace():
             continue
-        event_type = tuple(event_type.split('/'))
-        payload = elements[1].strip() if len(elements) > 1 else ''
-        payload = (
-            hat.event.common.EventPayload(
-                hat.event.common.EventPayloadType.JSON,
-                json.decode(payload, json.Format.JSON))
-            if payload else None)
-        yield hat.event.common.RegisterEvent(event_type, source_timestamp,
-                                             payload)
+        if line.rstrip() == '===':
+            if event_data == {}:
+                continue
+            yield _register_event_from_lines(event_data['type'],
+                                             source_timestamp,
+                                             event_data['payload'])
+            event_data = {}
+        elif event_data == {}:
+            event_data['type'] = line
+            event_data['payload'] = []
+        else:
+            event_data['payload'].append(line)
+    if event_data != {}:
+        yield _register_event_from_lines(event_data['type'],
+                                         source_timestamp,
+                                         event_data['payload'])
+
+
+def _register_event_from_lines(event_type_line, source_timestamp,
+                               payload_lines):
+    event_type = _parse_event_type(event_type_line[:-1])
+    payload_str = '\n'.join(payload_lines)
+    payload = json.decode(payload_str, json.Format.YAML)
+    return hat.event.common.RegisterEvent(
+        event_type=event_type,
+        source_timestamp=source_timestamp,
+        payload=hat.event.common.EventPayload(
+            type=hat.event.common.EventPayloadType.JSON,
+            data=payload))
+
+
+def _parse_event_type(type_str):
+
+    def end_escape_count(s):
+        count = 0
+        while s.endswith('\\' * count):
+            count += 1
+        return count - 1
+
+    segments = collections.deque(type_str.split('/'))
+    event_type = []
+    while segments:
+        segment = segments.popleft()
+        escape_split = (segment.endswith('\\')
+                        and end_escape_count(segment) % 2 == 1)
+        segment = segment.replace('\\\\', '\\')
+        while escape_split and segments:
+            next_segment = segments.popleft()
+            escape_split = (next_segment.endswith('\\')
+                            and end_escape_count(next_segment) % 2 == 1)
+            next_segment.replace('\\\\', '\\')
+            segment = segment[:-1] + '/' + next_segment
+        event_type.append(segment)
+    return tuple(event_type)
