@@ -116,13 +116,23 @@ async def test_set_address():
 
 
 @pytest.mark.parametrize('text, register_events', [
-    ('a/b/c: 123',
-     [create_register_event(('a', 'b', 'c'), 123)]),
-
-    ('a\nb\nc',
-     [create_register_event(('a', ), None, False),
-      create_register_event(('b', ), None, False),
-      create_register_event(('c', ), None, False)]),
+    ("""
+a/b/c
+123
+     """, [create_register_event(('a', 'b', 'c'), 123)]),
+    ("""
+a\\/b/c
+     """,
+     [create_register_event(('a/b', 'c'), None, False)]),
+    ("""
+a/b/c
+a: 10
+===
+c/b/a
+b: 100
+     """,
+     [create_register_event(('a', 'b', 'c'), {'a': 10}),
+      create_register_event(('c', 'b', 'a'), {'b': 100})]),
 ])
 @pytest.mark.parametrize('with_source_timestamp', [True, False])
 async def test_register(addr, server, text, register_events,

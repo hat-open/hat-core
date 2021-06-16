@@ -154,14 +154,19 @@ def _parse_register_events(text, source_timestamp):
 def _register_event_from_lines(event_type_line, source_timestamp,
                                payload_lines):
     event_type = _parse_event_type(event_type_line[:-1])
+
     payload_str = '\n'.join(payload_lines)
-    payload = json.decode(payload_str, json.Format.YAML)
+    if payload_str and not payload_str.isspace():
+        payload = hat.event.common.EventPayload(
+            type=hat.event.common.EventPayloadType.JSON,
+            data=json.decode(payload_str, json.Format.YAML))
+    else:
+        payload = None
+
     return hat.event.common.RegisterEvent(
         event_type=event_type,
         source_timestamp=source_timestamp,
-        payload=hat.event.common.EventPayload(
-            type=hat.event.common.EventPayloadType.JSON,
-            data=payload))
+        payload=payload)
 
 
 def _parse_event_type(type_str):
