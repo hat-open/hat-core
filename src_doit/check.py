@@ -40,6 +40,5 @@ def task_check_sass():
 
 
 def _run_flake8(path):
-    subprocess.run([sys.executable, '-m', 'flake8', '.'],
-                   cwd=str(path),
+    subprocess.run([sys.executable, '-m', 'flake8', str(path)],
                    check=True)

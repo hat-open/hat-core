@@ -347,6 +347,10 @@ with properties:
 
         authenticated user identifier
 
+    * ``roles``
+
+        authenticated user roles
+
     * ``view``
 
         view's data

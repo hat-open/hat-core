@@ -162,12 +162,20 @@ class Master(aio.Resource):
 
         """
         if data_type == common.DataType.COIL:
-            req = messages.WriteMultipleCoilsReq(address=start_address,
-                                                 values=values)
+            if len(values) == 1:
+                req = messages.WriteSingleCoilReq(address=start_address,
+                                                  value=values[0])
+            else:
+                req = messages.WriteMultipleCoilsReq(address=start_address,
+                                                     values=values)
 
         elif data_type == common.DataType.HOLDING_REGISTER:
-            req = messages.WriteMultipleRegistersReq(address=start_address,
-                                                     values=values)
+            if len(values) == 1:
+                req = messages.WriteSingleRegisterReq(address=start_address,
+                                                      value=values[0])
+            else:
+                req = messages.WriteMultipleRegistersReq(address=start_address,
+                                                         values=values)
 
         else:
             raise ValueError('unsupported data type')
@@ -179,8 +187,12 @@ class Master(aio.Resource):
         if isinstance(res, messages.Response):
             if (res.address != start_address):
                 raise Exception("invalid response pdu address")
-            if (res.quantity != len(values)):
-                raise Exception("invalid response pdu quantity")
+            if len(values) == 1:
+                if (res.value != values[0]):
+                    raise Exception("invalid response pdu value")
+            else:
+                if (res.quantity != len(values)):
+                    raise Exception("invalid response pdu quantity")
             return
 
         if isinstance(res, common.Error):
