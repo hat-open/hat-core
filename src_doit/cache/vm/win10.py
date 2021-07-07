@@ -201,7 +201,7 @@ cmd /C "cd c:\Users\User && yarn install"
 cmd /C "c:\Users\User\Downloads\msys2-x86_64-20210228.exe install -c --root c:\msys64"
 cmd.exe /C "pacman -Syu --noconfirm"
 cmd.exe /C "pacman -Syu --noconfirm"
-c:\msys64\usr\bin\bash -c "pacman -S --noconfirm $(< c:/Users/User/Downloads/requirements.msys2.txt)"
+c:\msys64\usr\bin\bash -c "pacman -S --noconfirm \$(< c:/Users/User/Downloads/requirements.msys2.txt)"
 
 """  # NOQA
 }
