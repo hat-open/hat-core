@@ -221,16 +221,14 @@ export class Application extends EventTarget {
     }
 
     _onOpen() {
-        if (this._localPath == null)
-            return;
-        this._conn.setLocalData(this._renderer.get(this._localPath));
+        if (this._localPath)
+            this._conn.setLocalData(this._renderer.get(this._localPath));
         this.dispatchEvent(new CustomEvent('connected'));
     }
 
     _onClose() {
-        if (this._remotePath == null)
-            return;
-        this._renderer.set(this._remotePath, null);
+        if (this._remotePath)
+            this._renderer.set(this._remotePath, null);
         this.dispatchEvent(new CustomEvent('disconnected'));
     }
 
