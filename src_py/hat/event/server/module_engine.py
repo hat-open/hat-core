@@ -134,12 +134,12 @@ class ModuleEngine(aio.Resource):
             self._async_group.close()
             self._register_queue.close()
 
-            if future and not future.done():
-                future.set_exception(Exception('module engine closed'))
-
-            while not self._register_queue.empty():
+            while True:
+                if future and not future.done():
+                    future.set_exception(Exception('module engine closed'))
+                if self._register_queue.empty():
+                    break
                 future, _, __ = self._register_queue.get_nowait()
-                future.set_exception(Exception('module engine closed'))
 
     async def _process_sessions(self, events):
         all_events = collections.deque()
