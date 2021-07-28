@@ -24,7 +24,9 @@ def task_check():
 def task_check_pyhat():
     """Check - check pyhat with flake8"""
     return {'actions': [(_run_flake8, ['src_py']),
-                        (_run_flake8, ['test_pytest'])]}
+                        (_run_flake8, ['test_pytest']),
+                        # (_run_mypy, ['src_py'])
+                        ]}
 
 
 def task_check_jshat():
@@ -41,4 +43,9 @@ def task_check_sass():
 
 def _run_flake8(path):
     subprocess.run([sys.executable, '-m', 'flake8', str(path)],
+                   check=True)
+
+
+def _run_mypy(path):
+    subprocess.run([sys.executable, '-m', 'mypy', str(path)],
                    check=True)

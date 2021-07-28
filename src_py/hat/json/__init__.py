@@ -432,6 +432,44 @@ def decode_file(path: pathlib.PurePath,
         raise ValueError('unsupported format')
 
 
+class Storage:
+    """JSON data storage
+
+    Helper class representing observable JSON data state manipulated with
+    path based get/set/remove functions.
+
+    """
+
+    def __init__(self, data: Data = None):
+        self._data = data
+        self._change_cbs = util.CallbackRegistry()
+
+    @property
+    def data(self) -> Data:
+        """Data"""
+        return self._data
+
+    def register_change_cb(self,
+                           cb: typing.Callable[[Data], None]
+                           ) -> util.RegisterCallbackHandle:
+        """Register data change callback"""
+        return self._change_cbs.register(cb)
+
+    def get(self, path: Path):
+        """Get data"""
+        return get(self._data, path)
+
+    def set(self, path: Path, value: Data):
+        """Set data"""
+        self._data = set_(self._data, path, value)
+        self._change_cbs.notify(self._data)
+
+    def remove(self, path: Path):
+        """Remove data"""
+        self._data = remove(self._data, path)
+        self._change_cbs.notify(self._data)
+
+
 class SchemaRepository:
     """JSON Schema repository.
 

@@ -103,7 +103,7 @@ class CallbackRegistry:
     def __init__(self,
                  exception_cb: typing.Optional[ExceptionCb] = None):
         self._exception_cb = exception_cb
-        self._cbs = []
+        self._cbs = []  # type: typing.List[typing.Callable]
 
     def register(self,
                  cb: typing.Callable
@@ -124,7 +124,7 @@ class CallbackRegistry:
                     raise
 
 
-def parse_url_query(query: str) -> typing.Dict[str, str]:
+def parse_url_query(query: str) -> typing.Dict[str, typing.Optional[str]]:
     """Parse url query string.
 
     Returns a dictionary of field names and their values.
