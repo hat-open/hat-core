@@ -1,5 +1,3 @@
-import urllib.parse
-
 import pytest
 
 from hat import util
