@@ -1,3 +1,4 @@
+import collections
 import itertools
 
 import pytest
@@ -397,6 +398,27 @@ def test_encode_decode_file(tmp_path, format, indent, data):
     json.encode_file(data, path, None, indent)
     decoded = json.decode_file(path, None)
     assert data == decoded
+
+
+def test_storage():
+    data_queue = collections.deque()
+    storage = json.Storage(123)
+    storage.register_change_cb(data_queue.append)
+
+    assert storage.data == 123
+    assert storage.get([]) == 123
+
+    storage.set(['a', 'b', 'c'], 123)
+    assert storage.data == {'a': {'b': {'c': 123}}}
+    assert storage.get(['a', 'b', 'c']) == 123
+    assert data_queue.pop() == {'a': {'b': {'c': 123}}}
+
+    storage.remove(['a', 'b', 'c'])
+    assert storage.data == {'a': {'b': {}}}
+    assert storage.get(['a', 'b', 'c']) is None
+    assert data_queue.pop() == {'a': {'b': {}}}
+
+    assert not data_queue
 
 
 def test_schema_repository_init_empty():
