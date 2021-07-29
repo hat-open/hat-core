@@ -108,25 +108,6 @@ def test_callback_registry_without_exception_cb(cb_count):
     assert call_count == 1
 
 
-@pytest.mark.parametrize("query, params", [
-    ('',
-     {}),
-    ('a=1&b=2',
-     {'a': '1', 'b': '2'}),
-    ('a&b=&&=2&c=1',
-     {'a': None, 'b': '', 'c': '1'})
-])
-def test_parse_url_query(query, params):
-    result = util.parse_url_query(query)
-    assert result == params
-
-
-def test_parse_url_query_example():
-    url = urllib.parse.urlparse('https://pypi.org/search/?q=hat-util')
-    args = util.parse_url_query(url.query)
-    assert args == {'q': 'hat-util'}
-
-
 def test_get_unused_tcp_port():
     port = util.get_unused_tcp_port()
     assert isinstance(port, int)

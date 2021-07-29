@@ -124,32 +124,6 @@ class CallbackRegistry:
                     raise
 
 
-def parse_url_query(query: str) -> typing.Dict[str, typing.Optional[str]]:
-    """Parse url query string.
-
-    Returns a dictionary of field names and their values.
-
-    Args:
-        query: url query string
-
-    Example::
-
-        url = urllib.parse.urlparse('https://pypi.org/search/?q=hat-util')
-        args = parse_url_query(url.query)
-        assert args == {'q': 'hat-util'}
-
-    """
-    ret = {}
-    for i in query.split('&'):
-        if not i:
-            continue
-        temp = i.split('=')
-        if not temp[0]:
-            continue
-        ret[temp[0]] = temp[1] if len(temp) > 1 else None
-    return ret
-
-
 def get_unused_tcp_port() -> int:
     """Search for unused TCP port"""
     with contextlib.closing(socket.socket()) as sock:

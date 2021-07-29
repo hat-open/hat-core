@@ -100,22 +100,6 @@ Usage example::
     assert y == [2]
 
 
-.. _hat-util-parse_url_query:
-
-`hat.util.parse_url_query`
---------------------------
-
-URL query string parser::
-
-    def parse_url_query(query: str) -> typing.Dict[str, str]: ...
-
-Usage example::
-
-    url = urllib.parse.urlparse('https://pypi.org/search/?q=hat-util')
-    args = parse_url_query(url.query)
-    assert args == {'q': 'hat-util'}
-
-
 .. _hat-util-get_unused_tcp_port:
 .. _hat-util-get_unused_udp_port:
 

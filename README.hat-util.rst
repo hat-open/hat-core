@@ -111,25 +111,6 @@ Common utility functions not available as part of standard library.
             """Notify all registered callbacks."""
 
 
-* `hat.util.parse_url_query`::
-
-    def parse_url_query(query: str) -> typing.Dict[str, str]:
-        """Parse url query string.
-
-        Returns a dictionary of field names and their values.
-
-        Args:
-            query: url query string
-
-        Example::
-
-            url = urllib.parse.urlparse('https://pypi.org/search/?q=hat-util')
-            args = parse_url_query(url.query)
-            assert args == {'q': 'hat-util'}
-
-        """
-
-
 * `hat.util.get_unused_tcp_port` and `hat.util.get_unused_udp_port`::
 
     def get_unused_tcp_port() -> int:
