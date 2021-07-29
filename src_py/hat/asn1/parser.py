@@ -120,17 +120,35 @@ def _act_SequenceOfType(n, c):
     return common.SequenceOfType(t)
 
 
-def _act_ComponentTypeList(n, c):
-    extension = False
+def _act_ComponentTypeLists(n, c):
     components = []
     for i in c:
-        if i == '...':
-            extension = True
-        if not i or i == ',' or i == '...':
-            continue
-        if extension:
-            i = i._replace(optional=True)
-        components.append(i)
+        if i and i != ',' and i != '...':
+            components.extend(i)
+    return components
+
+
+def _act_OptionalComponentTypeList(n, c):
+    components = []
+    for i in c:
+        if i and i != ',':
+            components.extend(i)
+    return [i._replace(optional=True) for i in components]
+
+
+def _act_OptionalComponentTypeListItem(n, c):
+    if c[0] == '...':
+        return []
+    if c[0] == '[[':
+        return c[-3]
+    return c[0]
+
+
+def _act_ComponentTypeList(n, c):
+    components = []
+    for i in c:
+        if i and i != ',':
+            components.append(i)
     return components
 
 
@@ -223,6 +241,9 @@ _actions = {
     'SetOfType': _act_SetOfType,
     'SequenceType': lambda n, c: common.SequenceType(c[4]),
     'SequenceOfType': _act_SequenceOfType,
+    'ComponentTypeLists': _act_ComponentTypeLists,
+    'OptionalComponentTypeList': _act_OptionalComponentTypeList,
+    'OptionalComponentTypeListItem': _act_OptionalComponentTypeListItem,
     'ComponentTypeList': _act_ComponentTypeList,
     'ComponentType': _act_ComponentType,
     'PrefixedType': _act_PrefixedType,
@@ -532,9 +553,24 @@ RelativeIRIType  <- 'RELATIVE-OID-IRI' OS
 RelativeOIDType  <- 'RELATIVE-OID' OS
 
 ## Sequence
-SequenceType       <- 'SEQUENCE' OS '{' OS ComponentTypeList '}' OS
-ComponentTypeList  <- (ComponentType / '...' OS)
-                      (',' OS (ComponentType / '...' OS))*
+SequenceType                   <- 'SEQUENCE' OS
+                                  '{' OS ComponentTypeLists '}' OS
+ComponentTypeLists             <- ComponentTypeList
+                                  (',' OS '...' OS
+                                   (',' OS OptionalComponentTypeList)?
+                                  )?
+                                / '...' OS
+                                  (',' OS OptionalComponentTypeList)?
+                                / ()
+OptionalComponentTypeList      <- OptionalComponentTypeListItem
+                                  (',' OS OptionalComponentTypeListItem)*
+OptionalComponentTypeListItem  <- ComponentTypeList
+                                / '...' OS
+                                / '[[' OS
+                                  (VersionNumber ':' OS)?
+                                  ComponentTypeList
+                                  ']]' OS
+ComponentTypeList  <- ComponentType (',' OS ComponentType)*
 ComponentType      <- 'COMPONENTS OF' OS Type
                     / NamedType 'OPTIONAL' OS
                     / NamedType 'DEFAULT' OS Value
@@ -544,7 +580,7 @@ ComponentType      <- 'COMPONENTS OF' OS Type
 SequenceOfType  <- 'SEQUENCE OF' OS (NamedType / Type)
 
 ## Set
-SetType  <- 'SET' OS '{' OS ComponentTypeList '}' OS
+SetType  <- 'SET' OS '{' OS ComponentTypeLists '}' OS
 
 ## SetOf
 SetOfType  <- 'SET OF' OS (NamedType / Type)
