@@ -1,1 +1,0 @@
-"""Syslog server and handler"""

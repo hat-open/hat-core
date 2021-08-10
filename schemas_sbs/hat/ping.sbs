@@ -1,5 +1,0 @@
-module HatPing
-
-MsgPing = None
-
-MsgPong = None

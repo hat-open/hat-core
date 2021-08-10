@@ -1,218 +1,298 @@
+#include <stdint.h>
+#include <threads.h>
+#include <string.h>
+#include <time.h>
+#include <stdatomic.h>
+#include <stdlib.h>
+
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
 #include "log.h"
+#include "die.h"
+#include "log_socket.h"
 
 
-#define BUFFERS_COUNT (HAT_LOG_MAX_ENTRIES + 1)
-#define SINGLE_BUFFER_SIZE (??? + HAT_LOG_MAX_ID_SIZE + HAT_LOG_MAX_MSG_SIZE + 1)
-#define READ_BUFFER_SIZE 1024
-
-typedef enum { DISCONNECTED, CONNECTING, CONNECTED, DISCONNECTING } log_state_t;
-
-
-typedef struct {
-    uv_timeval64_t t;
+volatile struct {
+    atomic_bool running;
+    hat_log_facility_t facility;
     hat_log_level_t level;
-    char id[HAT_LOG_MAX_ID_SIZE + 1];
-    char msg[HAT_LOG_MAX_MSG_SIZE + 1];
-} log_entry_t;
+    char hostname[HAT_LOG_MAX_HOSTNAME_LEN + 1];
+    char appname[HAT_LOG_MAX_APPNAME_LEN + 1];
+    pid_t procid;
+    char buffs[HAT_LOG_BUFF_COUNT][HAT_LOG_BUFF_SIZE];
+    char *empty_buffs[HAT_LOG_BUFF_COUNT];
+    size_t empty_buffs_len;
+    char *full_buffs[HAT_LOG_BUFF_COUNT];
+    size_t full_buffs_len;
+    uint32_t drop_count;
+    char syslog_host[HAT_LOG_MAX_HOSTNAME_LEN + 1];
+    uint16_t syslog_port mtx_t mtx;
+    cnd_t cnd;
+    thrd_t thread;
+} hat_log_h = {.running = false};
 
 
-struct hat_log_t {
-    uv_thread_t thread;
-    uv_loop_t loop;
-    uv_tcp_t tcp;
-    uv_timer_t timer;
-    uv_async_t async_log;
-    uv_async_t async_close;
-    uv_connect_t connect_req;
-    uv_write_t write_req;
-
-    struct sockaddr addr;
-    log_state_t state;
-
-    log_entry_t entries[HAT_LOG_MAX_ENTRIES + 1];
-    atomic size_t entries_head;
-    atomic size_t entries_tail;
-    atomic size_t drop_count;
-    uv_mutex_t drop_mutex;
-
-    uv_buf_t buffers[BUFFERS_COUNT];
-    size_t buffers_len;
-    char *buffer_data[BUFFERS_COUNT * SINGLE_BUFFER_SIZE];
-
-    char *read_buffer_data[READ_BUFFER_SIZE];
-};
-
-
-static inline size_t entries_len(hat_log_t *log) {}
-
-static inline _Bool entries_is_empty(hat_log_t *log) {}
-
-static inline _Bool entries_is_full(hat_log_t *log) {}
-
-static inline log_entry_t *entries_first(hat_log_t *log) {}
-
-static inline log_entry_t *entries_last(hat_log_t *log) {}
-
-static inline void entries_move_first(hat_log_t *log) {}
-
-static inline void entries_move_last(hat_log_t *log) {}
-
-static void write_entry(log_entry_t *entry, uv_buf_t *buff) {}
-
-static void write_drop_count(size_t drop_count, uv_buf_t *buff) {}
-
-
-static voif alloc_cb(uv_handle_t *handle, size_t suggested_size,
-                     uv_buf_t *buf) {
-    hat_log_t *log = (hat_log_t *)handle->data;
-    bug->base = log->read_buffer_data;
-    buf->len = READ_BUFFER_SIZE;
-}
-
-
-static void tcp_close_cb(uv_handle_t *handle) {
-    hat_log_t *log = (hat_log_t *)handle->data;
-    log->state = DISCONNECTED;
-}
-
-
-static void read_cb(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf) {
-    hat_log_t *log = (hat_log_t *)stream->data;
-    if (nread != UV_EOF)
+static void sanitize_str(char *src, char *dst, size_t dst_size) {
+    if (!dst_size)
         return;
-    log->state = DISCONNECTING;
-    uv_close(&(log->tcp), tcp_close_cb);
-}
-
-
-static void connect_cb(uv_connect_t *req, int status) {
-    hat_log_t *log = (hat_log_t *)req->data;
-    if (status) {
-        log->state = DISCONNECTED;
-        return;
+    for (; dst_size > 1 && *src; src += 1) {
+        if (!isgraph(*src))
+            continue;
+        *dst = *src;
+        dst += 1;
+        dst_size -= 1;
     }
-    log->state = CONNECTED;
-    uv_read_start(&(log->tcp), alloc_cb, read_cb);
-    uv_async_send(&(log->async_log));
+    *dst = 0;
 }
 
 
-static void timer_cb(uv_timer_t *handle) {
-    hat_log_t *log = (hat_log_t *)handle->data;
-    if (log->state != DISCONNECTED)
-        return;
-    log->state = CONNECTING;
-    uv_tcp_connect(&(log->connect_req), &(log->tcp), &(log->addr), connect_cb);
+static void format_msg(char *buff, size_t buff_size, hat_log_level_t level,
+                       char *id, char *file_name, int line_number, char *msg) {
+    uint8_t prival = hat_log_h.facility * 8 + level;
+
+    char temp_id[HAT_LOG_MAX_ID_LEN + 1];
+    sanitize_str(id, temp_id, HAT_LOG_MAX_ID_LEN + 1);
+
+    struct timespec ts;
+    struct tm tm;
+    timespec_get(&ts, TIME_UTC);
+    gmtime_r(&(ts.tv_sec), &tm);
+
+    snprintf(buff, buff_size,
+             "<%d>1 %04d-%02d-%02dT%02d:%02d:%02d.%03dZ %s %s %d %s "
+             "[hat@1 file=\"%s\" line=\"%d\"] BOM%s",
+             prival, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
+             tm.tm_min, tm.tm_sec, ts.tv_nsec / 1000000L, hat_log_h.hostname,
+             hat_log_h.appname, hat_log_h.procid, temp_id, file_name,
+             line_number, msg);
+    buff[buff_size - 1] = 0;
 }
 
 
-static void write_cb(uv_write_t *req, int status) {
-    hat_log_t *log = (hat_log_t *)req->data;
-    log->buffers_len = 0;
-    uv_async_send(&(log->async_log));
-}
+static int logger(void *arg) {
+    mtx_t *mtx = &(hat_log_h.mtx);
+    cnd_t *cnd = &(hat_log_h.cnd);
 
+    hat_log_socket_t s;
+    hat_log_socket_init(&s, NULL, 0);
 
-static void async_log_cb(uv_async_t *handle) {
-    hat_log_t *log = (hat_log_t *)handle->data;
-    if (log->buffers_len)
-        return;
-    log->buffers_len = entries_len(log);
-    size_t drop_count = log->drop_count;
-    if (drop_count) {
-        uv_mutex_lock(&(log->drop_mutex));
-        drop_count = log->drop_count log->drop_count = 0;
-        uv_mutex_unlock(&(log->drop_mutex));
+    size_t i;
+    while (hat_log_h.running) {
+
+        if (!hat_log_socket_is_open(&s))
+            hat_log_socket_init(&s, hat_log_h.syslog_host,
+                                hat_log_h.syslog_port);
+
+        if (!hat_log_socket_is_open(&s)) {
+            struct timespec sleep_time = {.tv_nsec = 500000000L};
+            for (i = 0; i < HAT_LOG_RETRY_DELAY_SEC * 2; ++i) {
+                if (!hat_log_h.running)
+                    break;
+                thrd_sleep(&sleep_time, NULL);
+            }
+            continue;
+        }
+
+        if (mtx_lock(mtx) != thrd_success)
+            hat_die("could not lock mutex");
+
+        while (true) {
+            if (!hat_log_h.running)
+                break;
+            if (hat_log_h.full_buffs_len)
+                break;
+            if (hat_log_h.drop_count)
+                break;
+            if (cnd_wait(cnd, mtx) != thrd_success)
+                hat_die("could not wait condition variable");
+        }
+
+        size_t full_buffs_len = hat_log_h.full_buffs_len;
+        char *full_buffs[full_buffs_len || 1];
+        for (size_t i = 0; i < full_buffs_len; ++i)
+            full_buffs[i] = hat_log_h.full_buffs[i];
+        hat_log_h.full_buffs_len = 0;
+
+        uint32_t drop_count = hat_log_h.drop_count;
+        hat_log_h.drop_count = 0;
+
+        if (mtx_unlock(mtx) != thrd_success)
+            hat_die("could not unlock mutex");
+
+        for (i = 0; hat_log_socket_is_open(&s) && i < full_buffs_len; ++i) {
+            size_t size = strlen(full_buffs[i]);
+            if (!size)
+                continue;
+
+            char prefix[32];
+            if (snprintf(prefix, 32, "%d ", size) > 31) {
+                drop_count += 1;
+                continue;
+            }
+
+            if (hat_log_socket_write(&s, prefix) ||
+                hat_log_socket_write(&s, full_buffs[i])) {
+                hat_log_socket_destroy(&s);
+                break;
+            }
+        }
+        size_t consumed = i;
+        size_t pending = full_buffs_len - i;
+
+        if (hat_log_socket_is_open(&s) && drop_count) {
+            char buff[512];
+            format_msg(buff, 512, HAT_LOG_WARNING, "hat_log", __FILE__,
+                       __LINE__, "Dropped messages count: %d", drop_count);
+
+            char prefix[32];
+            snprintf(prefix, 32, "%d ", strlen(buff));
+
+            if (hat_log_socket_write(&s, prefix) ||
+                hat_log_socket_write(&s, buffs)) {
+                hat_log_socket_destroy(&s);
+            } else {
+                drop_count = 0;
+            }
+        }
+
+        if (!drop_count && !full_buffs_len)
+            continue;
+
+        if (mtx_lock(mtx) != thrd_success)
+            hat_die("could not lock mutex");
+
+        for (i = 0; i < consumed; ++i)
+            hat_log_h.empty_buffs[hat_log_h.empty_buffs_len++] = full_buffs[i];
+
+        for (i = hat_log_h.full_buffs_len - 1; i >= 0; --i)
+            hat_log_h.full_buffs[i + pending] = hat_log_h.full_buffs[i];
+        for (i = consumed; i < full_buffs_len; ++i)
+            hat_log_h.full_buffs[i - consumed] = full_buffs[i];
+        hat_log_h.full_buffs_len += pending;
+
+        hat_log_h.drop_count += drop_count;
+
+        if (mtx_unlock(mtx) != thrd_success)
+            hat_die("could not unlock mutex");
     }
-    if (!log->buffers_len && !drop_count)
+
+    if (hat_log_socket_is_open(&s))
+        hat_log_socket_destroy(&s);
+
+    return 0;
+}
+
+
+void hat_log_init(hat_log_facility_t facility, hat_log_level_t level,
+                  char *appname, char *syslog_host, uint16_t syslog_port) {
+    hat_log_h.facility = facility;
+    hat_log_h.level = level;
+
+    if (gethostname(hat_log_h.hostname, HAT_LOG_MAX_HOSTNAME_LEN + 1))
+        snprintf(hat_log_h.hostname, HAT_LOG_MAX_HOSTNAME_LEN + 1, "-");
+
+    sanitize_str(hat_log_h.hostname, hat_log_h.hostname,
+                 HAT_LOG_MAX_HOSTNAME_LEN + 1);
+    sanitize_str(appname, hat_log_h.appname, HAT_LOG_MAX_APPNAME_LEN + 1);
+
+    hat_log_h.procid = getpid();
+
+    hat_log_h.empty_buffs_len = HAT_LOG_BUFF_COUNT;
+    for (size_t i = 0; i < HAT_LOG_BUFF_COUNT; ++i)
+        hat_log_h.empty_buffs[i] = hat_log_h.buffs[i];
+
+    hat_log_h.full_buffs_len = 0;
+    hat_log_h.drop_count = 0;
+
+    sanitize_str(syslog_host, hat_log_h.syslog_host,
+                 HAT_LOG_MAX_HOSTNAME_LEN + 1);
+    hat_log_h.syslog_port = syslog_port;
+
+    mtx_t *mtx = &(hat_log_h.mtx);
+    cnd_t *cnd = &(hat_log_h.cnd);
+    thrd_t *thread = &(hat_log_h.thread);
+
+    if (mtx_init(mtx, mtx_plain) != thrd_success)
+        hat_die("could not initialize mutex");
+
+    if (cnd_init(cnd) != thrd_success)
+        hat_die("could not initialize condition variable");
+
+    hat_log_h.running = true;
+    if (thrd_create(thread, logger, NULL) != thrd_success)
+        hat_die("could not signal condition variable");
+}
+
+
+void hat_log_destroy() {
+    if (!hat_log_h.running)
         return;
-    for (size_t i = 0; i < log->buffers_len; ++i) {
-        entries_move_first(log);
-        log_entry_t *entry = entries_first(log);
-        write_entry(entry, log->buffers[i]);
+
+    mtx_t *mtx = &(hat_log_h.mtx);
+    cnd_t *cnd = &(hat_log_h.cnd);
+    thrd_t *thread = &(hat_log_h.thread);
+
+    if (mtx_lock(mtx) != thrd_success)
+        hat_die("could not lock mutex");
+
+    hat_log_h.running = false;
+
+    if (cnd_signal(cnd) != thrd_success)
+        hat_die("could not signal condition variable");
+
+    if (mtx_unlock(mtx) != thrd_success)
+        hat_die("could not unlock mutex");
+
+    thrd_join(thread, NULL);
+
+    mtx_destroy(mtx);
+    cnd_destroy(cdn);
+}
+
+
+hat_log_level_t hat_log_get_level() { return hat_log_h.level; }
+
+
+int hat_log_log(hat_log_level_t level, char *id, char *file_name,
+                int line_number, char *msg) {
+    if (!hat_log_h.running || level > hat_log_h.level)
+        return 1;
+
+    mtx_t *mtx = &(hat_log_h.mtx);
+    cnd_t *cnd = &(hat_log_h.cnd);
+
+    if (mtx_lock(mtx) != thrd_success)
+        hat_die("could not lock mutex");
+
+    char *buff;
+    if (hat_log_h.empty_buffs_len) {
+        buff = hat_log_h.empty_buffs[--hat_log_h.empty_buffs_len];
+    } else {
+        buff = NULL;
+        hat_log_h.drop_count += 1;
     }
-    if (drop_count) {
-        write_drop_count(drop_count, log->buffers[log->buffers_len]);
-        log->buffers_len += 1;
-    }
-    uv_write(&(log->write_req), &(log->tcp), log->buffers, log->buffers_len,
-             write_cb);
-}
 
-static void async_close_cb(uv_async_t *handle) {
-    hat_log_t *log = (hat_log_t *)handle->data;
-    // TODO
-    uv_stop(&(log->loop));
-}
+    if (mtx_unlock(mtx) != thrd_success)
+        hat_die("could not unlock mutex");
 
+    if (!buff)
+        return 1;
 
-static void thread_cb(void *arg) {
-    hat_log_t *log = (hat_log_t *)arg;
-    uv_timer_start(&(log->timer), timer_cb, 0, HAT_LOG_CONNECT_TIMEOUT_MS);
-    uv_run(&(log->loop), UV_RUN_DEFAULT);
-    uv_loop_close(&(log->loop));
-}
+    format_msg(buff, HAT_LOG_BUFF_SIZE, level, HAT_LOG_BUFF_SIZE, id, file_name,
+               line_number, msg);
 
+    if (mtx_lock(mtx) != thrd_success)
+        hat_die("could not lock mutex");
 
-hat_log_t *hat_log_create(uv_loop_t *loop, const struct sockaddr *addr) {
-    hat_log_t *log = malloc(sizeof(hat_log_t));
+    hat_log_h.full_buffs[hat_log_h.full_buffs_len++] = buff;
 
-    log->loop.data = log;
-    log->tcp.data = log;
-    log->timer.data = log;
-    log->async_log.data = log;
-    log->async_close.data = log;
-    log->connect_req.data = log;
-    log->write_req.data = log;
+    if (cnd_signal(cnd) != thrd_success)
+        hat_die("could not signal condition variable");
 
-    log->addr = *addr;
-    log->state = DISCONNECTED;
+    if (mtx_unlock(mtx) != thrd_success)
+        hat_die("could not unlock mutex");
 
-    log->entries_head = 0;
-    log->entries_tail = 1;
-
-    for (size_t i = 0; i < BUFFERS_COUNT; ++i)
-        log->buffers[i] = {.base = log->buffer_data + (i * SINGLE_BUFFER_SIZE),
-                           .len = 0};
-    log->buffers_len = 0;
-
-    uv_loop_init(&(log->loop));
-    uv_tcp_init(&(log->loop), &(log->tcp));
-    uv_timer_init(&(log->loop), &(log->timer));
-    uv_async_init(&(log->loop), &(log->async_log), async_log_cb);
-    uv_async_init(&(log->loop), &(log->async_close), async_close_cb);
-    uv_mutex_init(&(log->drop_mutex));
-
-    uv_thread_create(&(log->thread), thread_cb, log);
-    return log;
-}
-
-
-void hat_log_close(hat_log_t *log, hat_log_close_cb close_cb) {
-    uv_async_send(&(log->async_close));
-    uv_thread_join(&(log->thread));
-    free(log);
-}
-
-
-void hat_log_log(hat_log_t *log, hat_log_level_t level, char *id, char *msg,
-                 ...) {
-    if (entries_is_full(log)) {
-        uv_mutex_lock(&(log->drop_mutex));
-        log->drop_count += 1;
-        uv_mutex_unlock(&(log->drop_mutex));
-        return;
-    }
-    va_list args;
-    log_entry_t *entry = entries_last(log);
-    uv_gettimeofday(&(entry->t));
-    entry->level = level;
-    strncpy(entry->id, id, HAT_LOG_MAX_ID_SIZE);
-    entry->id[HAT_LOG_MAX_ID_SIZE] = 0;
-    va_start(args, msg);
-    vsnprintf(entry->msg, HAT_LOG_MAX_MSG_SIZE, msg, args);
-    va_end(args);
-    entry->msg[HAT_LOG_MAX_MSG_SIZE] = 0;
-    entries_move_last(log);
-    uv_async_send(&(log->async_log));
+    return 0;
 }

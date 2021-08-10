@@ -1,0 +1,6 @@
+git
+mingw-w64-x86_64-toolchain
+patch
+socat
+xorriso
+zip
